@@ -447,6 +447,19 @@ Reporter le résultat de chaque étape dans le journal section 5.
 
 Aucun blocker code : tout compile (`npx tsc --noEmit` OK, ruff OK, imports Python OK).
 
+### 2026-05-23 — P0 deploy Hetzner blocked
+
+Codex a repris la tâche P0 `deploy/hetzner-setup`, mais le déploiement réel ne peut pas être lancé sans les prérequis externes suivants :
+
+- IP publique du VPS Hetzner CPX21 + utilisateur SSH + clé SSH utilisable depuis cette machine.
+- Domaine final confirmé (`clipfactory.app` ou alternative) avec DNS Cloudflare pointant `api.<domain>` vers le VPS.
+- Valeurs réelles prod/test pour `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_STARTER_PRICE_ID`.
+- Valeurs réelles R2 : `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT_URL`.
+- Clés `OPENAI_API_KEY`, `OPENROUTER_API_KEY`, `ANTHROPIC_API_KEY`.
+- Confirmation du choix de déploiement P0 : bare metal systemd (recommandé V1) ou Docker Compose.
+
+Ne pas cocher T32 tant que `curl https://api.<domain>/health` ne répond pas `{"status":"ok"}` depuis l'extérieur et que la connexion DB depuis le VPS n'a pas été validée.
+
 **Bloqué par la création de comptes externes** (Augustin doit faire) :
 - Compte Stripe FR + produit Starter + webhook
 - Bucket Cloudflare R2
