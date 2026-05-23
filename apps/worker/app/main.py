@@ -9,6 +9,7 @@ import redis.asyncio as redis_async
 import structlog
 
 from .db import close_pool, get_pool, init_pool
+from .log_sanitize import scrub_email_values
 from .pipeline.runner import run_job
 from .settings import get_settings
 
@@ -23,6 +24,7 @@ def _configure_logging(level: str) -> None:
         processors=[
             structlog.processors.TimeStamper(fmt="iso"),
             structlog.processors.add_log_level,
+            scrub_email_values,
             structlog.processors.JSONRenderer(),
         ],
         wrapper_class=structlog.make_filtering_bound_logger(getattr(logging, level.upper())),

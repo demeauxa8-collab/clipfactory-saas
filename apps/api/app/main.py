@@ -12,6 +12,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 
 from .db import close_pool, init_pool
+from .log_sanitize import scrub_email_values
 from .rate_limit import limiter
 from .routers import (
     admin,
@@ -35,6 +36,7 @@ def _configure_logging(level: str) -> None:
         processors=[
             structlog.processors.TimeStamper(fmt="iso"),
             structlog.processors.add_log_level,
+            scrub_email_values,
             structlog.processors.JSONRenderer(),
         ],
         wrapper_class=structlog.make_filtering_bound_logger(getattr(logging, level.upper())),
