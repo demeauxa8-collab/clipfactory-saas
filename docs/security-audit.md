@@ -128,6 +128,24 @@ Effort : 15 min, à fine-tuner avec ce que Supabase + Stripe injectent.
 
 Effort : 5 min.
 
+**Statut 2026-05-23 : fixed.** `apps/api/app/main.py::_assert_safe_cors()` refuse de démarrer si `ENV=prod` et si `CORS_ALLOW_ORIGINS` contient `*` ou est vide.
+
+Test local :
+
+```bash
+cd apps/api
+ENV=prod CORS_ALLOW_ORIGINS='*' ./.venv/bin/python - <<'PY'
+from app.main import create_app
+create_app()
+PY
+```
+
+Résultat attendu :
+
+```text
+RuntimeError: Refusing to start: CORS_ALLOW_ORIGINS must be an explicit whitelist in prod.
+```
+
 ---
 
 ### M3 — Stripe webhook : tolérance de signature non explicitée
