@@ -216,7 +216,7 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - [x] **T28.** Admin dashboard UI (overview, users, jobs, finance)
 - [x] **T29.** Doc consolidation pass — this rewrite, `docs/admin.md`, `docs/seo.md`, `docs/deploy.md`
 - [ ] **T30.** External services setup — Stripe + R2 + OpenAI + OpenRouter + Anthropic accounts
-- [ ] **T31.** Smoke test end-to-end (11 steps, see section 10)
+- [~] **T31.** Smoke test end-to-end — harness Playwright ajouté, exécution live à faire quand les services externes sont prêts (voir section 10)
 - [ ] **T32.** Production deploy (Cloudflare Pages + Hetzner) — see `docs/deploy.md`
 - [x] **T33.** Address 5 Medium security findings before opening to public (`docs/security-audit.md`)
 
@@ -283,6 +283,13 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - **M4** : Cloudflare Turnstile ajouté sur `/login` avec endpoint API `POST /auth/turnstile/verify`.
 - **M5** : processor structlog API + worker pour hasher les emails dans les logs.
 - Nettoyage ruff de `apps/api/app/routers/admin.py` pour que le lint API repasse.
+
+### 2026-05-23 — Automated E2E smoke harness
+
+- Ajout de `apps/e2e` avec Playwright Chromium, package séparé et README d'exécution.
+- Smoke couvre auth magic-link, Stripe Checkout optionnel, campagne, job YouTube, polling API, download R2 et feedback thumbs up.
+- Workflow GitHub Actions `Smoke E2E` ajouté sur push `main` et `workflow_dispatch` (gated par `SMOKE_ENABLED=true`).
+- Exécution live non lancée : Stripe/R2/LLM/worker/déploiement ne sont pas encore provisionnés.
 
 ---
 

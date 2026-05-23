@@ -1,0 +1,47 @@
+name: Smoke E2E
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    if: ${{ github.event_name == 'workflow_dispatch' || vars.SMOKE_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: apps/e2e
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: apps/e2e/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run smoke test
+        run: npm test
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+          E2E_YOUTUBE_URL: ${{ secrets.E2E_YOUTUBE_URL }}
+          E2E_SKIP_CHECKOUT: ${{ secrets.E2E_SKIP_CHECKOUT }}
+          E2E_MAGIC_LINK: ${{ secrets.E2E_MAGIC_LINK }}
+          MAILTRAP_API_TOKEN: ${{ secrets.MAILTRAP_API_TOKEN }}
+          MAILTRAP_ACCOUNT_ID: ${{ secrets.MAILTRAP_ACCOUNT_ID }}
+          MAILTRAP_INBOX_ID: ${{ secrets.MAILTRAP_INBOX_ID }}
