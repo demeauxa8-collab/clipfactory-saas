@@ -191,6 +191,8 @@ Notes :
 
 Idempotency: every event is recorded in `stripe_events(event_id PK)` before processing. Replay = no-op.
 
+Signature replay window: `apps/api/app/services/billing.py::construct_event()` uses `stripe.Webhook.construct_event(...)` without overriding the SDK tolerance, so Stripe's default 5-minute timestamp tolerance applies. This is acceptable for V1 because webhook payloads are only accepted over HTTPS and duplicate events are rejected by the `stripe_events.event_id` primary key before business logic runs.
+
 ---
 
 ## Error codes (stable)
