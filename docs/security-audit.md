@@ -8,8 +8,8 @@
 | Sévérité | Findings | À régler avant prod |
 | --- | ---: | --- |
 | **Critical** | 0 | — |
-| **High** | 3 | Oui, ASAP |
-| **Medium** | 5 | Oui, avant les 7 premiers payants |
+| **High** | 3 | Fixés le 2026-05-22 |
+| **Medium** | 5 | Fixés le 2026-05-23 |
 | **Low** | 6 | Quand t'as le temps |
 
 Le code est **globalement sain**. Pas de SQL injection (asyncpg fait du prepared statement partout), pas d'XSS (React échappe par défaut), pas d'exposure de service_role côté client, RLS Supabase activée partout. Trois zones méritent ton attention immédiate avant d'ouvrir au public : rate limiting, prompt injection LLM, CSP headers.
@@ -116,6 +116,8 @@ async headers() {
 
 Effort : 15 min, à fine-tuner avec ce que Supabase + Stripe injectent.
 
+**Statut 2026-05-23 : fixed.** `apps/web/next.config.ts` pose `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` et une CSP qui autorise seulement l'app, Supabase, Stripe, l'API ClipFactory, R2/media HTTPS et Cloudflare Turnstile.
+
 ---
 
 ### M2 — CORS permissif via env var sans guard
@@ -158,6 +160,8 @@ RuntimeError: Refusing to start: CORS_ALLOW_ORIGINS must be an explicit whitelis
 
 Effort : 0 (déjà OK).
 
+**Statut 2026-05-23 : fixed.** Documenté dans `docs/api-contract.md` : on garde la tolérance Stripe SDK par défaut (5 minutes) et l'idempotency `stripe_events.event_id` primary key rend les replays no-op.
+
 ---
 
 ### M4 — Pas de CAPTCHA sur signup
@@ -170,6 +174,8 @@ Effort : 0 (déjà OK).
 
 Effort : 30 min (Turnstile + verify).
 
+**Statut 2026-05-23 : fixed.** `/login` exécute Cloudflare Turnstile avant `signInWithOtp` et `signInWithOAuth`. L'API expose `POST /auth/turnstile/verify`, vérifie le token via `https://challenges.cloudflare.com/turnstile/v0/siteverify`, et refuse si `TURNSTILE_SECRET_KEY` manque. Les clés restent en placeholders dans `.env.example`.
+
 ---
 
 ### M5 — Logs structurés peuvent contenir des données sensibles
@@ -181,6 +187,8 @@ Effort : 30 min (Turnstile + verify).
 **Reco :** pas de log d'email plain text. Hasher en SHA256 si besoin de tracer. Faire un middleware FastAPI qui scrub les payload Stripe webhook avant log.
 
 Effort : 30 min.
+
+**Statut 2026-05-23 : fixed.** `apps/api/app/log_sanitize.py` et `apps/worker/app/log_sanitize.py` ajoutent un processor structlog qui remplace toute adresse email dans les valeurs loguées par `email_sha256:<hash>`.
 
 ---
 
@@ -233,16 +241,17 @@ Quand on aura un admin dashboard (T27), il faut activer la 2FA Supabase pour ton
 
 ## Checklist pre-prod (ordonné)
 
-1. [ ] **H1** : ajouter slowapi rate limiting
-2. [ ] **H2** : sanitize campaign inputs + délimiteurs prompt
-3. [ ] **H3** : pre-check redirect ou source-address yt-dlp
-4. [ ] **M1** : CSP headers Next.js
-5. [ ] **M2** : refuser CORS `*` en prod
-6. [ ] **M4** : Turnstile sur /login
-7. [ ] **M5** : scrub emails dans logs
-8. [ ] **L6** : activer 2FA Supabase owner
-9. [ ] **L5** : documenter procédure rotation JWT
-10. [ ] **L3** : check env vars au démarrage web
+1. [x] **H1** : ajouter slowapi rate limiting
+2. [x] **H2** : sanitize campaign inputs + délimiteurs prompt
+3. [x] **H3** : pre-check redirect ou source-address yt-dlp
+4. [x] **M1** : CSP headers Next.js
+5. [x] **M2** : refuser CORS `*` en prod
+6. [x] **M3** : documenter tolérance webhook Stripe + idempotency
+7. [x] **M4** : Turnstile sur /login
+8. [x] **M5** : scrub emails dans logs
+9. [ ] **L6** : activer 2FA Supabase owner
+10. [ ] **L5** : documenter procédure rotation JWT
+11. [ ] **L3** : check env vars au démarrage web
 
 Estimation totale : **~3-4h de travail** pour passer tous les High + Medium + L6.
 

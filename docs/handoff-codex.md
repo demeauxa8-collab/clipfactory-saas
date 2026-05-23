@@ -218,7 +218,7 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - [ ] **T30.** External services setup — Stripe + R2 + OpenAI + OpenRouter + Anthropic accounts
 - [ ] **T31.** Smoke test end-to-end (11 steps, see section 10)
 - [ ] **T32.** Production deploy (Cloudflare Pages + Hetzner) — see `docs/deploy.md`
-- [ ] **T33.** Address 5 Medium security findings before opening to public (`docs/security-audit.md`)
+- [x] **T33.** Address 5 Medium security findings before opening to public (`docs/security-audit.md`)
 
 ---
 
@@ -276,6 +276,14 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - Mises à jour : `docs/api-contract.md` (admin + public endpoints, error codes), `docs/db-schema.md` (migration 0004).
 - `apps/web/README.md` créé pour symétrie avec api + worker.
 
+### 2026-05-23 — Medium security fixes
+
+- **M1** : headers sécurité + CSP dans `apps/web/next.config.ts`.
+- **M2/M3** : guard CORS prod vérifié et tolérance webhook Stripe documentée.
+- **M4** : Cloudflare Turnstile ajouté sur `/login` avec endpoint API `POST /auth/turnstile/verify`.
+- **M5** : processor structlog API + worker pour hasher les emails dans les logs.
+- Nettoyage ruff de `apps/api/app/routers/admin.py` pour que le lint API repasse.
+
 ---
 
 ## 6. Services externes (état au 2026-05-23)
@@ -284,6 +292,7 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 | --- | --- | --- |
 | **Supabase EU** | ✓ projet `jsjaizcnjvghoduvyyea` ("clipfactory", org AX). Migrations 0001-0004 appliquées. | `.env` rempli (URL, anon, service_role, JWT secret, DATABASE_URL via pooler) |
 | **Cloudflare R2** | À créer | `TODO` dans les 3 `.env` |
+| **Cloudflare Turnstile** | À créer | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` côté web, `TURNSTILE_SECRET_KEY` côté API |
 | **Stripe FR** | À créer | `TODO` dans `.env` |
 | **OpenAI** | À créer | `TODO` |
 | **OpenRouter** | À créer | `TODO` |
@@ -305,6 +314,7 @@ NEXT_PUBLIC_SUPABASE_URL=https://jsjaizcnjvghoduvyyea.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...          # filled
 NEXT_PUBLIC_API_URL=http://localhost:8000   # https://api.clipfactory.app in prod
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_TODO
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=TODO
 NEXT_PUBLIC_SITE_URL=https://clipfactory.app   # used by sitemap, robots, JSON-LD, OG
 ```
 
@@ -343,6 +353,7 @@ ANTHROPIC_API_KEY=sk-ant-TODO
 # App
 WEB_BASE_URL=http://localhost:3000
 API_BASE_URL=http://localhost:8000
+TURNSTILE_SECRET_KEY=TODO
 ENV=dev                         # dev | prod (prod refuse CORS=*)
 CORS_ALLOW_ORIGINS=http://localhost:3000
 LOG_LEVEL=INFO
