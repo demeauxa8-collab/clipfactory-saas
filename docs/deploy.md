@@ -104,6 +104,45 @@ Supabase → **Authentication → URL Configuration** → add to the redirect al
 
 Without this, the magic-link callback returns "Invalid redirect" in prod.
 
+## Step 7.b — Google OAuth (sign-in with Google)
+
+The login page has a "Continue with Google" button. To activate it:
+
+### Google Cloud Console (~ 10 min)
+
+1. Open `https://console.cloud.google.com` and create a new project named "ClipFactory" (or reuse one).
+2. **APIs & Services → OAuth consent screen**:
+   - User Type: **External**
+   - App name: `ClipFactory`, support email: `hello@clipfactory.app`
+   - Authorised domain: `clipfactory.app`
+   - Scopes: `openid`, `email`, `profile`
+   - Publishing status: **In production** (otherwise only test users can sign in)
+3. **APIs & Services → Credentials → + Create credentials → OAuth client ID**:
+   - Type: **Web application**
+   - Name: `ClipFactory Web`
+   - Authorised JavaScript origins:
+     - `http://localhost:3000`
+     - `https://clipfactory.app`
+   - Authorised redirect URIs:
+     - `https://jsjaizcnjvghoduvyyea.supabase.co/auth/v1/callback`
+4. Copy the **Client ID** and **Client Secret**.
+
+### Supabase (~ 2 min)
+
+1. Open `https://supabase.com/dashboard/project/jsjaizcnjvghoduvyyea/auth/providers`.
+2. Find **Google** in the list → toggle **Enable**.
+3. Paste the Client ID and Client Secret from Google Cloud.
+4. Save. Done.
+
+### Verify
+
+Open `http://localhost:3000/login` (dev) → click "Continue with Google" → Google consent screen → redirected back to `/app`. Profile row is auto-created by the `handle_new_user` trigger; the email auto-flips `is_admin = true` for `demeauxa8@gmail.com`.
+
+Common pitfalls:
+- Forgot to add the production origin → button works locally but 400 in prod.
+- Forgot to add the Supabase callback URL on the Google side → "redirect_uri_mismatch" error.
+- OAuth consent screen left in "Testing" mode → only listed test users can sign in.
+
 ## Step 8 — Smoke test (11-step user flow)
 
 See `docs/handoff-codex.md` section "Smoke test". To validate the full flow before announcing the product to anyone, including yourself (founder is auto-admin, see migration 0004).
