@@ -4,14 +4,21 @@ import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { MarketingNav } from "@/components/marketing/nav";
 import { MarketingFooter } from "@/components/marketing/footer";
+import { PublicStats } from "@/components/marketing/public-stats";
+import {
+  OrganizationJsonLd,
+  SoftwareApplicationJsonLd,
+} from "@/components/marketing/json-ld";
 
 export default function HomePage() {
   return (
     <>
+      <OrganizationJsonLd />
+      <SoftwareApplicationJsonLd />
       <MarketingNav />
       <main className="flex-1">
         <Hero />
-        <SocialProofGap />
+        <PublicStats />
         <HowItWorks />
         <ScoreExplained />
         <Pricing />
@@ -46,7 +53,7 @@ function Hero() {
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-            <Link href="#how">
+            <Link href="/features">
               <Button size="lg" variant="secondary">See how it works</Button>
             </Link>
           </div>
@@ -54,18 +61,6 @@ function Hero() {
             No watermark. Cancel any time. EU hosted.
           </p>
         </div>
-      </Container>
-    </section>
-  );
-}
-
-function SocialProofGap() {
-  return (
-    <section className="border-b border-[var(--color-border)] bg-[var(--color-muted)]">
-      <Container className="py-10">
-        <p className="text-sm text-[var(--color-muted-foreground)]">
-          We are not a generic AI clipper. We do not promise &ldquo;10 viral clips from one video&rdquo;. We pick the clips that match the campaign you actually run.
-        </p>
       </Container>
     </section>
   );
@@ -98,10 +93,7 @@ function HowItWorks() {
         </p>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {steps.map((s, i) => (
-            <div
-              key={s.title}
-              className="rounded-lg border border-[var(--color-border)] p-6"
-            >
+            <div key={s.title} className="rounded-lg border border-[var(--color-border)] p-6">
               <div className="mb-4 flex items-center justify-between">
                 <s.icon className="h-5 w-5" />
                 <span className="text-xs text-[var(--color-muted-foreground)]">0{i + 1}</span>
@@ -202,6 +194,9 @@ function Pricing() {
             Cancel anytime. VAT included for EU customers.
           </p>
         </div>
+        <p className="mt-8 text-center text-sm text-[var(--color-muted-foreground)]">
+          Want the full breakdown? <Link href="/pricing" className="underline">See pricing details →</Link>
+        </p>
       </Container>
     </section>
   );

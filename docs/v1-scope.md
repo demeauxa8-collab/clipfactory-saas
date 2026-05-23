@@ -74,12 +74,12 @@ UI V1 doit juste permettre de tester le produit :
 | Plan unique | Starter 29€ / 300 credits / 30 min / 3 clips / 1 concurrent |
 | Billing | Stripe Checkout + webhook + credit grant idempotent |
 | Campagnes | Tables + form simple, attachée à chaque job |
-| Pipeline | Download yt-dlp + Whisper API + Claude texte + vision sur candidats + render FFmpeg + R2 |
-| Score expliqué | hook 35% + emotion 20% + visual 25% + campaign fit 15% + editing 5% |
-| Vision | Sur 2-3 frames par moment candidat, jamais full video |
+| Pipeline | Story-first (≥ 5 min) + simple (< 5 min), multi-segments montage, crossfade audio 150 ms, anti-hallucination verify |
+| Vision | Vision cheap globale (Qwen via OpenRouter) + vision deep top 5 arcs (Gemini via OpenRouter) |
+| Score expliqué | Pondération adaptée selon mode : story (payoff 25 / setup 20 / visual 20 / retention 15 / fit 10 / editing 10) ou simple (hook 35 / emotion 20 / visual 25 / fit 15 / editing 5) |
 | Mémoire campagne | Feedback good/bad stocké, pas encore d'apprentissage auto |
-| Logging coût/marge | Colonnes obligatoires sur jobs (estimations OK) |
-| Dashboard | Crédits, campagnes, jobs, clips téléchargeables |
+| Logging coût/marge | Colonnes obligatoires sur jobs (estimations OK), split video_map_cost_cents / deep_vision_cost_cents |
+| Dashboard | Crédits, campagnes, jobs, clips téléchargeables, badge MONTAGE sur clips multi-segments |
 
 ## V1 — OUT (V2)
 
@@ -105,6 +105,23 @@ UI V1 doit juste permettre de tester le produit :
 - Pas de secret commité. `.env.example` seulement.
 - À chaque étape finie : mettre à jour `handoff-codex.md`.
 - Ne pas partir sur "refactor parfait" — V1 qui tourne d'abord.
+
+---
+
+## Décisions techniques (statut au 2026-05-22)
+
+Tranchées :
+- ~~Choix providers LLM~~ → OpenRouter primary (DeepSeek V3.2 texte, Gemini 2.5 Flash vision deep, Qwen3-VL Flash vision cheap), Anthropic Haiku 4.5 en fallback.
+- ~~Stratégie fallback~~ → `ENABLE_FALLBACK=true` par défaut, switch automatique sur parse error / timeout / 5xx.
+- ~~Seuil routing pipeline simple vs story~~ → 5 min (`STORY_PIPELINE_THRESHOLD_SECONDS=300`).
+- ~~Format clips~~ → `segments jsonb` (liste ordonnée). Migration 0003.
+- ~~Anti-hallucination~~ → string match transcript_excerpt vs transcript réel, SequenceMatcher ratio ≥ 0.65 → drop arc complet.
+- ~~Crossfade entre segments~~ → audio uniquement 150 ms (`acrossfade`), cut sec image.
+
+À mesurer V1 (post-déploiement) :
+- Marge réelle LLM par job (estimée ~12 EUR/mois pour 7 users, à vérifier sur vrais coûts).
+- Taux de fallback réel (`jobs.fallback_used = true`) → si > 20 %, ajuster provider primary.
+- Quand activer `EVAL_SAMPLE_RATE > 0` pour benchmarker primary vs secondary.
 
 ---
 

@@ -1,15 +1,17 @@
+"""Simple segment selection for short videos (< story pipeline threshold).
+
+For long videos, the story arc path is used instead (see story_arcs.py).
+"""
+
 from __future__ import annotations
 
-import json
-import re
 from typing import Any
 
 import structlog
-from anthropic import AsyncAnthropic
 
-from ..models import TextCandidate
-from ..prompts import CANDIDATE_SYSTEM_PROMPT, candidate_user_prompt
-from ..settings import get_settings
+from ..models import ArcSegmentSpec, StoryArc
+from ..providers import LLMProvider, ProviderError
+from ..prompts import SIMPLE_SEGMENTS_SYSTEM_PROMPT, simple_segments_user_prompt
 
 log = structlog.get_logger()
 
@@ -17,82 +19,84 @@ log = structlog.get_logger()
 def _coerce_int(v: Any, default: int = 0) -> int:
     try:
         return max(0, min(100, round(float(v))))
-    except Exception:
+    except Exception:  # noqa: BLE001
         return default
 
 
 def _coerce_float(v: Any, default: float = 0.0) -> float:
     try:
         return float(v)
-    except Exception:
+    except Exception:  # noqa: BLE001
         return default
 
 
-def _extract_json_array(text: str) -> list[Any]:
-    text = text.strip()
-    # Strip optional ```json fences
-    text = re.sub(r"^```(?:json)?", "", text).strip()
-    text = re.sub(r"```$", "", text).strip()
-    start = text.find("[")
-    end = text.rfind("]")
-    if start == -1 or end == -1 or end < start:
-        return []
-    try:
-        return json.loads(text[start : end + 1])
-    except json.JSONDecodeError:
+def _parse_segments_as_arcs(payload: Any) -> list[StoryArc]:
+    """Adapt simple segment responses into single-segment StoryArc objects so the
+    downstream pipeline (verify, score, render) only deals with one shape."""
+    if isinstance(payload, dict):
+        items = payload.get("segments") or payload.get("items") or []
+    elif isinstance(payload, list):
+        items = payload
+    else:
         return []
 
-
-async def select_text_candidates(
-    *,
-    transcript_lines: str,
-    campaign: dict[str, Any],
-    target_clip_count: int,
-) -> tuple[list[TextCandidate], int]:
-    settings = get_settings()
-    client = AsyncAnthropic(api_key=settings.anthropic_api_key)
-
-    user_prompt = candidate_user_prompt(
-        transcript_text=transcript_lines,
-        campaign=campaign,
-        target_clip_count=target_clip_count,
-    )
-
-    msg = await client.messages.create(
-        model=settings.anthropic_text_model,
-        max_tokens=4096,
-        system=CANDIDATE_SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": user_prompt}],
-    )
-
-    raw = "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")
-    tokens_used = (msg.usage.input_tokens or 0) + (msg.usage.output_tokens or 0)
-    items = _extract_json_array(raw)
-
-    candidates: list[TextCandidate] = []
-    for it in items:
-        if not isinstance(it, dict):
+    arcs: list[StoryArc] = []
+    for raw in items:
+        if not isinstance(raw, dict):
             continue
-        start = _coerce_float(it.get("start"))
-        end = _coerce_float(it.get("end"))
-        if end - start < 5 or end - start > 90:
+        start = _coerce_float(raw.get("start"))
+        end = _coerce_float(raw.get("end"))
+        if end - start < 15 or end - start > 70:
             continue
-        candidates.append(
-            TextCandidate(
-                start=start,
-                end=end,
-                hook_score_text=_coerce_int(it.get("hook_score_text")),
-                emotion_score=_coerce_int(it.get("emotion_score")),
-                transcript_excerpt=str(it.get("transcript_excerpt", ""))[:280],
-                why=str(it.get("why", ""))[:280],
-                suggested_title=(
-                    str(it.get("suggested_title")) if it.get("suggested_title") else None
-                ),
+        hook_score = _coerce_int(raw.get("hook_score_text"))
+        emotion = _coerce_int(raw.get("emotion_score"))
+        arcs.append(
+            StoryArc(
+                title=str(raw.get("title", ""))[:120],
+                arc_type="continuous",
+                segments=[
+                    ArcSegmentSpec(
+                        role="single",
+                        start=start,
+                        end=end,
+                        transcript_excerpt=str(raw.get("transcript_excerpt", ""))[:300],
+                        why=str(raw.get("why", ""))[:280] or None,
+                    )
+                ],
+                viral_reason=str(raw.get("why", ""))[:280],
+                estimated_retention=max(hook_score, emotion),
+                continuity_risk="low",
                 suggested_hook=(
-                    str(it.get("suggested_hook")) if it.get("suggested_hook") else None
+                    str(raw.get("suggested_hook"))[:120] if raw.get("suggested_hook") else None
                 ),
             )
         )
+    return arcs
 
-    log.info("analyze.candidates", n=len(candidates), tokens=tokens_used)
-    return candidates, int(tokens_used)
+
+async def select_simple_segments(
+    *,
+    provider: LLMProvider,
+    model: str,
+    transcript_lines: str,
+    campaign: dict[str, Any],
+    target_clip_count: int,
+) -> tuple[list[StoryArc], int]:
+    """Returns (single-segment story arcs, tokens_used). Used for short videos."""
+    user = simple_segments_user_prompt(
+        transcript_lines=transcript_lines,
+        campaign=campaign,
+        target_clip_count=target_clip_count,
+    )
+    result = await provider.chat_json(
+        model=model,
+        system=SIMPLE_SEGMENTS_SYSTEM_PROMPT,
+        user=user,
+        max_tokens=3072,
+        temperature=0.3,
+    )
+    arcs = _parse_segments_as_arcs(result.payload)
+    if not arcs:
+        raise ProviderError("no usable segments in response", kind="empty")
+    log.info("analyze.simple_segments", n=len(arcs), tokens=result.tokens_total)
+    return arcs, result.tokens_total

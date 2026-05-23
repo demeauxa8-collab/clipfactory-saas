@@ -6,9 +6,25 @@ from contextlib import asynccontextmanager
 import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from starlette.requests import Request
+from starlette.responses import JSONResponse
 
 from .db import close_pool, init_pool
-from .routers import billing, campaigns, clips, credits, feedback, health, jobs, me
+from .rate_limit import limiter
+from .routers import (
+    admin,
+    billing,
+    campaigns,
+    clips,
+    credits,
+    feedback,
+    health,
+    jobs,
+    me,
+    public,
+)
 from .settings import get_settings
 
 
@@ -33,8 +49,24 @@ async def lifespan(app: FastAPI):
     await close_pool()
 
 
+def _assert_safe_cors(allowed: list[str], env: str) -> None:
+    if env == "prod" and ("*" in allowed or not allowed):
+        raise RuntimeError(
+            "Refusing to start: CORS_ALLOW_ORIGINS must be an explicit whitelist in prod."
+        )
+
+
+def _rate_limit_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse:
+    return JSONResponse(
+        status_code=429,
+        content={"detail": {"code": "rate_limit_exceeded", "message": str(exc.detail)}},
+    )
+
+
 def create_app() -> FastAPI:
     settings = get_settings()
+    _assert_safe_cors(settings.cors_origins_list, settings.env)
+
     app = FastAPI(
         title="ClipFactory API",
         version="0.1.0",
@@ -42,6 +74,11 @@ def create_app() -> FastAPI:
         docs_url="/docs" if settings.is_dev else None,
         redoc_url=None,
     )
+
+    # Rate limit must be wired before routers
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_handler)  # type: ignore[arg-type]
+    app.add_middleware(SlowAPIMiddleware)
 
     app.add_middleware(
         CORSMiddleware,
@@ -52,6 +89,7 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(health.router)
+    app.include_router(public.router)
     app.include_router(me.router)
     app.include_router(credits.router)
     app.include_router(campaigns.router)
@@ -59,6 +97,7 @@ def create_app() -> FastAPI:
     app.include_router(clips.router)
     app.include_router(feedback.router)
     app.include_router(billing.router)
+    app.include_router(admin.router)
 
     return app
 

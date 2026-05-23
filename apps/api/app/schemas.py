@@ -115,6 +115,16 @@ class JobOut(BaseModel):
 # =============================================================
 
 
+SegmentRole = Literal["setup", "transition", "payoff", "single"]
+
+
+class ClipSegment(BaseModel):
+    role: SegmentRole = "single"
+    start: float
+    end: float
+    transcript_excerpt: str = ""
+
+
 class ClipOut(BaseModel):
     id: str
     job_id: str
@@ -127,6 +137,8 @@ class ClipOut(BaseModel):
     start_seconds: float
     end_seconds: float
     duration_seconds: float
+    rendered_duration_seconds: float | None = None
+    segments: list[ClipSegment] = Field(default_factory=list)
     score_total: int | None = None
     score_breakdown: dict[str, int] | None = None
     width: int

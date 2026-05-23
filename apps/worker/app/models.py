@@ -1,7 +1,24 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Literal
+
+SegmentRole = Literal["setup", "transition", "payoff", "single"]
+ArcType = Literal[
+    "setup_payoff",
+    "promise_failure",
+    "before_after",
+    "challenge_result",
+    "question_revelation",
+    "phrase_visual_proof",
+    "decision_consequence",
+    "continuous",
+]
+
+
+# =============================================================
+# Transcript
+# =============================================================
 
 
 @dataclass
@@ -18,37 +35,113 @@ class Transcript:
     language: str | None = None
 
 
+# =============================================================
+# Video map (cheap global vision pass)
+# =============================================================
+
+
 @dataclass
-class TextCandidate:
+class VideoEvent:
+    id: str
     start: float
     end: float
-    hook_score_text: int  # 0-100
-    emotion_score: int    # 0-100
+    decor: str
+    people: str
+    objects: list[str]
+    action: str
+    transcript_summary: str
+    visual_importance: int       # 0-100
+    narrative_role: str          # "setup" | "payoff" | "neutral" | "transition"
+
+
+@dataclass
+class VideoMap:
+    summary: str
+    events: list[VideoEvent]
+
+
+# =============================================================
+# Story arcs (text reasoning on transcript + video map)
+# =============================================================
+
+
+@dataclass
+class ArcSegmentSpec:
+    role: SegmentRole
+    start: float
+    end: float
     transcript_excerpt: str
-    why: str
-    suggested_title: str | None = None
+    why: str | None = None
+
+
+@dataclass
+class StoryArc:
+    title: str
+    arc_type: ArcType
+    segments: list[ArcSegmentSpec]
+    viral_reason: str
+    estimated_retention: int       # 0-100
+    continuity_risk: str            # "low" | "medium" | "high"
     suggested_hook: str | None = None
+
+
+# =============================================================
+# Vision (deep, on top arcs only)
+# =============================================================
 
 
 @dataclass
 class VisionResult:
     decor: str
     person_visible: bool
-    energy: int           # 0-100
+    energy: int                 # 0-100
     action: str
     proof_objects: list[str]
     problems: list[str]
-    visual_score: int     # 0-100
+    visual_score: int           # 0-100
 
 
 @dataclass
-class ScoredClip:
-    candidate: TextCandidate
+class SegmentVision:
+    """Deep vision aggregated per segment of an arc."""
+
+    segment_idx: int
+    frames_used: int
     vision: VisionResult | None
-    campaign_fit: int     # 0-100
-    editing_difficulty: int  # 0-100
-    score_total: int      # 0-100
+    tokens_used: int = 0
+
+
+# =============================================================
+# Final scored montage (what we render)
+# =============================================================
+
+
+@dataclass
+class MontageSegment:
+    role: SegmentRole
+    start: float
+    end: float
+    transcript_excerpt: str = ""
+
+
+@dataclass
+class MontageCandidate:
+    title: str | None
+    hook: str | None
+    segments: list[MontageSegment]
+    rationale: str | None
+    score_total: int               # 0-100
     score_breakdown: dict[str, int]
+    visual_summary: str | None = None
+    transcript_excerpt: str | None = None
+    arc_type: ArcType | None = None
+    arc: StoryArc | None = None
+    vision_per_segment: list[SegmentVision] = field(default_factory=list)
+
+
+# =============================================================
+# Job context — what travels through the pipeline
+# =============================================================
 
 
 @dataclass
@@ -59,16 +152,30 @@ class JobContext:
     source_url: str
     target_clip_count: int
     workdir: str
+
     # Filled as the pipeline progresses
     source_path: str | None = None
     duration_seconds: int | None = None
     source_r2_key: str | None = None
     transcript: Transcript | None = None
-    candidates: list[TextCandidate] = field(default_factory=list)
-    scored: list[ScoredClip] = field(default_factory=list)
+    video_map: VideoMap | None = None
+    story_arcs: list[StoryArc] = field(default_factory=list)
+    montage_candidates: list[MontageCandidate] = field(default_factory=list)
+
     # Cost accounting
     transcription_cost_cents: int = 0
     analysis_tokens: int = 0
     vision_frames_count: int = 0
+    video_map_cost_cents: int = 0
+    deep_vision_cost_cents: int = 0
     render_seconds: int = 0
     storage_bytes: int = 0
+
+    # Provider tracking
+    primary_provider: str = ""
+    fallback_used: bool = False
+
+
+def is_long_video(duration_seconds: int | None, threshold_seconds: int = 300) -> bool:
+    """Pipeline router: ≥ 5 min → story-first, < 5 min → simple."""
+    return (duration_seconds or 0) >= threshold_seconds

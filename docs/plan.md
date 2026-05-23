@@ -27,28 +27,34 @@ Si choix entre "belle UI" et "pipeline fiable" : **toujours pipeline fiable**.
 | 6 | DB schema 0002 (campaigns + costs + vision) | ✓ | `db/migrations/0002_*.sql` |
 | 7 | FastAPI backend (campaigns + jobs + clips + billing) | ✓ | Import FastAPI OK, ruff OK |
 | 8 | Stripe Checkout + webhook + credit grant | ✓ | Checkout + webhook + idempotency DB, test réel Stripe restant |
-| 9 | Worker pipeline 17 étapes | ✓ | Code présent, import worker OK, ruff OK |
+| 9 | Worker pipeline 17 étapes (single-window) | ✓ | Remplacé par T18 (story-first) |
 | 10 | Web pages app (dashboard, campaigns, job, billing) | ✓ | Typecheck/build OK |
-| 11 | Smoke test end-to-end | ~ | nécessite Supabase/Redis/R2/Stripe/OpenAI/Anthropic réels |
+| 11 | Smoke test end-to-end | ~ | nécessite Supabase/Redis/R2/Stripe/OpenAI/OpenRouter/Anthropic réels |
 | 12 | Deploy runbook | en attente | Cloudflare Pages + Hetzner |
+| 18 | Pipeline story-first rewrite | ✓ | Voir `docs/pipeline.md` — deux chemins (simple < 5 min / story ≥ 5 min), provider OpenRouter + fallback Haiku, migration 0003 |
 
 ## External services à créer par Augustin
 
-Voir `docs/handoff-codex.md` section 6.
+Voir `docs/handoff-codex.md` section 6. Addition story-first : **créer un compte OpenRouter** (`https://openrouter.ai`) et provisionner une clé `OPENROUTER_API_KEY`. C'est devenu le provider primary pour texte + vision.
 
 ## Budget targets
+
+Estimation post-rewrite story-first (passage de Claude Haiku partout → mix DeepSeek/Gemini/Qwen via OpenRouter + Haiku en fallback uniquement).
 
 | Item | Cost/mo |
 | --- | ---: |
 | Hetzner CPX21 worker | ~7 EUR |
 | Supabase free + R2 small | ~5 EUR |
 | OpenAI Whisper API (7 users × 300 min) | ~7 EUR |
-| Anthropic Claude (analyse + vision) | ~20 EUR |
+| OpenRouter LLM mix (DeepSeek texte + Gemini deep vision + Qwen video map) | ~12 EUR |
+| Anthropic Haiku fallback (uniquement sur erreur primary) | ~1 EUR |
 | Stripe fees | ~6 EUR |
 | Domaine | ~1 EUR |
-| **Total infra** | **~46 EUR** |
+| **Total infra** | **~39 EUR** |
 | Revenue @ 7 × Starter | **203 EUR** |
-| Margin | **~155 EUR** |
+| Margin | **~164 EUR** |
+
+> Note : la marge LLM réelle reste à mesurer sur les premiers jobs prod. `EVAL_SAMPLE_RATE` permettra de comparer primary vs fallback sur un échantillon pour ajuster.
 
 ## État vérifié localement
 

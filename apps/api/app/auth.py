@@ -65,4 +65,23 @@ def verify_supabase_jwt(token: str) -> CurrentUser:
 
 async def current_user(request: Request) -> CurrentUser:
     token = _extract_bearer(request)
-    return verify_supabase_jwt(token)
+    user = verify_supabase_jwt(token)
+    # Stash for rate limiter key_func (per-user limits instead of per-IP).
+    request.state.user_id = user.user_id
+    return user
+
+
+async def admin_required(request: Request) -> CurrentUser:
+    """Same as current_user but also requires profiles.is_admin = true."""
+    from .db import get_pool
+
+    user = await current_user(request)
+    pool = get_pool()
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(
+            "select is_admin from profiles where user_id = $1",
+            user.user_id,
+        )
+    if row is None or not row["is_admin"]:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="admin_required")
+    return user

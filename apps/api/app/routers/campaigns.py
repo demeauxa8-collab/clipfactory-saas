@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Request, status
 
 from ..auth import CurrentUser, current_user
 from ..db import get_pool
+from ..rate_limit import LIMIT_CAMPAIGNS_CREATE, limiter
 from ..schemas import Campaign, CampaignCreate
 from ..services import campaigns as campaigns_svc
 
@@ -16,7 +17,9 @@ async def list_campaigns(user: CurrentUser = Depends(current_user)) -> list[Camp
 
 
 @router.post("", response_model=Campaign, status_code=status.HTTP_201_CREATED)
+@limiter.limit(LIMIT_CAMPAIGNS_CREATE)
 async def create_campaign(
+    request: Request,
     payload: CampaignCreate,
     user: CurrentUser = Depends(current_user),
 ) -> Campaign:

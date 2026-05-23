@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 
 from ..auth import CurrentUser, current_user
 from ..db import get_pool
+from ..rate_limit import LIMIT_FEEDBACK_CREATE, limiter
 from ..schemas import Feedback, FeedbackCreate
 
 router = APIRouter(tags=["feedback"])
@@ -12,7 +13,9 @@ router = APIRouter(tags=["feedback"])
     response_model=Feedback,
     status_code=status.HTTP_201_CREATED,
 )
+@limiter.limit(LIMIT_FEEDBACK_CREATE)
 async def post_clip_feedback(
+    request: Request,
     clip_id: str,
     payload: FeedbackCreate,
     user: CurrentUser = Depends(current_user),

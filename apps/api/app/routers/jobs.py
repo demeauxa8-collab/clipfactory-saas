@@ -1,14 +1,43 @@
 import json
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 
 from ..auth import CurrentUser, current_user
 from ..db import get_pool
-from ..schemas import ClipOut, JobCreate, JobOut, JobWithClips
+from ..rate_limit import LIMIT_JOBS_CREATE, limiter
+from ..schemas import ClipOut, ClipSegment, JobCreate, JobOut, JobWithClips
 from ..services import jobs as jobs_svc
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
+
+
+def _parse_segments(value: Any) -> list[ClipSegment]:
+    if value is None:
+        return []
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except json.JSONDecodeError:
+            return []
+    if not isinstance(value, list):
+        return []
+    out: list[ClipSegment] = []
+    for raw in value:
+        if not isinstance(raw, dict):
+            continue
+        try:
+            out.append(
+                ClipSegment(
+                    role=str(raw.get("role", "single")),  # type: ignore[arg-type]
+                    start=float(raw.get("start", 0.0)),
+                    end=float(raw.get("end", 0.0)),
+                    transcript_excerpt=str(raw.get("transcript_excerpt", "")),
+                )
+            )
+        except (TypeError, ValueError):
+            continue
+    return out
 
 
 def _json_object(value: Any) -> dict[str, int] | None:
@@ -38,7 +67,10 @@ async def list_jobs(user: CurrentUser = Depends(current_user)) -> list[JobOut]:
 
 
 @router.post("", response_model=JobOut, status_code=status.HTTP_201_CREATED)
-async def create_job(payload: JobCreate, user: CurrentUser = Depends(current_user)) -> JobOut:
+@limiter.limit(LIMIT_JOBS_CREATE)
+async def create_job(
+    request: Request, payload: JobCreate, user: CurrentUser = Depends(current_user)
+) -> JobOut:
     pool = get_pool()
     async with pool.acquire() as conn:
         try:
@@ -63,6 +95,7 @@ async def get_job(job_id: str, user: CurrentUser = Depends(current_user)) -> Job
             select id, job_id, idx, title, hook_text, rationale,
                    visual_summary, transcript_excerpt,
                    start_seconds, end_seconds, duration_seconds,
+                   rendered_duration_seconds, segments,
                    score_total, score_breakdown, width, height
               from clips
              where job_id = $1 and user_id = $2
@@ -85,6 +118,12 @@ async def get_job(job_id: str, user: CurrentUser = Depends(current_user)) -> Job
             start_seconds=float(r["start_seconds"]),
             end_seconds=float(r["end_seconds"]),
             duration_seconds=float(r["duration_seconds"]),
+            rendered_duration_seconds=(
+                float(r["rendered_duration_seconds"])
+                if r["rendered_duration_seconds"] is not None
+                else None
+            ),
+            segments=_parse_segments(r["segments"]),
             score_total=r["score_total"],
             score_breakdown=_json_object(r["score_breakdown"]),
             width=int(r["width"]),

@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 
 from ..auth import CurrentUser, current_user
 from ..db import get_pool
+from ..rate_limit import LIMIT_BILLING_CHECKOUT, LIMIT_STRIPE_WEBHOOK, limiter
 from ..schemas import CheckoutCreate, CheckoutResponse
 from ..services import billing as billing_svc
 
@@ -15,7 +16,9 @@ router = APIRouter(tags=["billing"])
 
 
 @router.post("/billing/checkout", response_model=CheckoutResponse)
+@limiter.limit(LIMIT_BILLING_CHECKOUT)
 async def create_checkout(
+    request: Request,
     payload: CheckoutCreate,
     user: CurrentUser = Depends(current_user),
 ) -> CheckoutResponse:
@@ -31,6 +34,7 @@ async def create_checkout(
 
 
 @router.post("/stripe/webhook", include_in_schema=False)
+@limiter.limit(LIMIT_STRIPE_WEBHOOK)
 async def stripe_webhook(request: Request) -> dict[str, bool]:
     signature = request.headers.get("stripe-signature")
     if not signature:

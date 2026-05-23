@@ -23,7 +23,7 @@ export default async function JobPage({ params }: { params: Promise<{ id: string
   const { data: clips } = await supabase
     .from("clips")
     .select(
-      "id, idx, title, hook_text, rationale, visual_summary, transcript_excerpt, start_seconds, end_seconds, duration_seconds, score_total, score_breakdown"
+      "id, idx, title, hook_text, rationale, visual_summary, transcript_excerpt, start_seconds, end_seconds, duration_seconds, rendered_duration_seconds, segments, score_total, score_breakdown"
     )
     .eq("job_id", id)
     .order("idx", { ascending: true });
@@ -69,6 +69,13 @@ export default async function JobPage({ params }: { params: Promise<{ id: string
   );
 }
 
+type Segment = {
+  role: "setup" | "transition" | "payoff" | "single";
+  start: number;
+  end: number;
+  transcript_excerpt?: string;
+};
+
 type ClipDTO = {
   id: string;
   idx: number;
@@ -80,18 +87,29 @@ type ClipDTO = {
   start_seconds: number;
   end_seconds: number;
   duration_seconds: number;
+  rendered_duration_seconds: number | null;
+  segments: Segment[] | null;
   score_total: number | null;
   score_breakdown: Record<string, number> | null;
 };
 
 function ClipCard({ clip }: { clip: ClipDTO }) {
   const breakdown = clip.score_breakdown ?? {};
+  const segments = clip.segments ?? [];
+  const isMontage = segments.length > 1;
+  const renderedDuration = clip.rendered_duration_seconds ?? clip.duration_seconds;
+
   return (
     <div className="rounded-lg border border-[var(--color-border)] p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">
-            Clip {clip.idx + 1} · {clip.duration_seconds.toFixed(1)}s
+            Clip {clip.idx + 1} · {renderedDuration.toFixed(1)}s
+            {isMontage && (
+              <span className="ml-2 rounded-sm bg-[var(--color-foreground)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--color-background)]">
+                MONTAGE · {segments.length} SEGMENTS
+              </span>
+            )}
           </p>
           <p className="mt-1 font-medium truncate">{clip.title ?? "Untitled"}</p>
           {clip.hook_text && (
@@ -100,6 +118,21 @@ function ClipCard({ clip }: { clip: ClipDTO }) {
         </div>
         <div className="text-3xl font-semibold tabular-nums">{clip.score_total ?? "—"}</div>
       </div>
+
+      {isMontage && (
+        <ol className="mt-3 flex flex-wrap gap-1.5 text-xs">
+          {segments.map((s, i) => (
+            <li
+              key={i}
+              className="rounded border border-[var(--color-border)] px-2 py-1 font-mono"
+              title={s.transcript_excerpt}
+            >
+              <span className="font-semibold uppercase">{s.role}</span>{" "}
+              {formatTimestamp(s.start)}–{formatTimestamp(s.end)}
+            </li>
+          ))}
+        </ol>
+      )}
 
       {clip.rationale && (
         <p className="mt-3 text-sm">
@@ -111,18 +144,26 @@ function ClipCard({ clip }: { clip: ClipDTO }) {
         <p className="mt-2 text-xs text-[var(--color-muted-foreground)]">{clip.visual_summary}</p>
       )}
 
-      <dl className="mt-4 grid grid-cols-5 gap-2 text-xs">
-        {(["hook", "emotion", "visual", "campaign_fit", "editing_difficulty"] as const).map((k) => (
-          <div key={k} className="rounded border border-[var(--color-border)] p-2 text-center">
-            <dt className="text-[var(--color-muted-foreground)]">{shortLabel(k)}</dt>
-            <dd className="mt-0.5 font-medium tabular-nums">{breakdown[k] ?? "—"}</dd>
-          </div>
-        ))}
-      </dl>
+      {Object.keys(breakdown).length > 0 && (
+        <dl className="mt-4 grid grid-cols-3 gap-2 text-xs sm:grid-cols-5">
+          {Object.entries(breakdown).map(([k, v]) => (
+            <div key={k} className="rounded border border-[var(--color-border)] p-2 text-center">
+              <dt className="text-[var(--color-muted-foreground)]">{shortLabel(k)}</dt>
+              <dd className="mt-0.5 font-medium tabular-nums">{v ?? "—"}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
 
       <ClipActions clipId={clip.id} />
     </div>
   );
+}
+
+function formatTimestamp(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
 function shortLabel(k: string): string {
@@ -136,9 +177,18 @@ function shortLabel(k: string): string {
     case "campaign_fit":
       return "Fit";
     case "editing_difficulty":
+    case "editing_continuity":
       return "Edit";
+    case "payoff_strength":
+      return "Payoff";
+    case "setup_clarity":
+      return "Setup";
+    case "visual_proof":
+      return "Vis";
+    case "retention":
+      return "Retn";
     default:
-      return k;
+      return k.length > 6 ? k.slice(0, 6) : k;
   }
 }
 
