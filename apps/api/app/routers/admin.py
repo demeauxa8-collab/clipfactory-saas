@@ -6,7 +6,7 @@ mutation here (admin actions like refund / ban are V2).
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
@@ -46,15 +46,30 @@ async def overview(user: CurrentUser = Depends(admin_required)) -> AdminOverview
                  from subscriptions s
                  join plan_definitions p on p.code = s.plan_code
                 where s.status in ('active', 'trialing')) as mrr_cents,
-              (select count(*)::int from subscriptions where status in ('active', 'trialing')) as active_subs,
+              (select count(*)::int
+                 from subscriptions
+                where status in ('active', 'trialing')) as active_subs,
               (select count(*)::int from profiles) as users_total,
-              (select count(*)::int from profiles where created_at >= now() - interval '30 days') as users_new_30d,
+              (select count(*)::int
+                 from profiles
+                where created_at >= now() - interval '30 days') as users_new_30d,
               (select count(*)::int from jobs) as jobs_total,
-              (select count(*)::int from jobs where status in ('queued', 'downloading', 'transcribing', 'analyzing', 'rendering')) as jobs_running,
-              (select count(*)::int from jobs where status = 'failed' and queued_at >= now() - interval '30 days') as jobs_failed_30d,
+              (select count(*)::int
+                 from jobs
+                where status in (
+                  'queued', 'downloading', 'transcribing', 'analyzing', 'rendering'
+                )) as jobs_running,
+              (select count(*)::int
+                 from jobs
+                where status = 'failed'
+                  and queued_at >= now() - interval '30 days') as jobs_failed_30d,
               (select count(*)::int from clips) as clips_generated,
-              (select count(*)::int from jobs where fallback_used and queued_at >= now() - interval '30 days') as fallback_used_30d,
-              (select coalesce(sum(delta), 0)::int from credit_ledger) as credits_outstanding
+              (select count(*)::int
+                 from jobs
+                where fallback_used
+                  and queued_at >= now() - interval '30 days') as fallback_used_30d,
+              (select coalesce(sum(delta), 0)::int
+                 from credit_ledger) as credits_outstanding
             """
         )
     return AdminOverview(
@@ -101,7 +116,10 @@ async def list_users(
             select
               p.user_id, p.email, p.full_name, p.is_admin, p.created_at,
               s.plan_code, s.status as sub_status,
-              coalesce((select sum(delta) from credit_ledger where user_id = p.user_id), 0)::int as credits_balance,
+              coalesce(
+                (select sum(delta) from credit_ledger where user_id = p.user_id),
+                0
+              )::int as credits_balance,
               (select count(*) from jobs where user_id = p.user_id)::int as jobs_total
             from profiles p
             left join lateral (
@@ -234,12 +252,19 @@ async def finance(
     user: CurrentUser = Depends(admin_required),
 ) -> list[FinanceMonth]:
     pool = get_pool()
-    cutoff = (datetime.now(timezone.utc) - timedelta(days=months * 31)).replace(day=1)
+    cutoff = (datetime.now(UTC) - timedelta(days=months * 31)).replace(day=1)
     async with pool.acquire() as conn:
         rows = await conn.fetch(
             """
             with months as (
-              select date_trunc('month', generate_series(date_trunc('month', $1::timestamptz), date_trunc('month', now()), interval '1 month')) as m
+              select date_trunc(
+                'month',
+                generate_series(
+                  date_trunc('month', $1::timestamptz),
+                  date_trunc('month', now()),
+                  interval '1 month'
+                )
+              ) as m
             ),
             costs as (
               select date_trunc('month', queued_at) as m,
@@ -258,7 +283,7 @@ async def finance(
                 group by 1
             ),
             revenue as (
-              -- Approximate MRR per month: snapshot count active subs on the 1st × plan price.
+              -- Approximate MRR per month: active subs on the 1st x plan price.
               select date_trunc('month', s.current_period_start) as m,
                      sum(p.price_eur_cents)::bigint as revenue_cents
                 from subscriptions s
