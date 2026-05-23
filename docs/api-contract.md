@@ -16,6 +16,7 @@ Toutes les réponses sont JSON. Erreurs métier renvoient `{ "detail": { "code":
 | --- | --- | --- | --- |
 | GET | `/health` | — | `{ "status": "ok" }` |
 | GET | `/public/stats` | — | `{ clips_generated, hours_processed, creators_active }` |
+| POST | `/auth/turnstile/verify` | `{ "token": str }` | `{ "ok": true }` |
 | POST | `/stripe/webhook` | Stripe event raw | `{ "received": true }` |
 
 ### Authenticated (Bearer Supabase JWT)
@@ -87,6 +88,19 @@ Non-admin users hitting `/admin/*` get HTTP 403 `{ detail: "admin_required" }`.
   "target_clip_count": 3
 }
 ```
+
+### TurnstileVerifyRequest
+
+```json
+{
+  "token": "cf-turnstile-response-token"
+}
+```
+
+Notes :
+- Used by `/login` before Supabase magic-link or Google OAuth.
+- The endpoint validates the token against Cloudflare Turnstile with `TURNSTILE_SECRET_KEY`.
+- If `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is missing client-side, local dev skips Turnstile.
 
 ### Job
 
@@ -202,6 +216,9 @@ Signature replay window: `apps/api/app/services/billing.py::construct_event()` u
 | `missing_authorization` | 401 | no Authorization header |
 | `invalid_token` | 401 | JWT invalid |
 | `token_expired` | 401 | JWT expired |
+| `turnstile_not_configured` | 503 | Turnstile secret missing on API |
+| `turnstile_unavailable` | 502 | Cloudflare verification endpoint unavailable |
+| `turnstile_failed` | 403 | Turnstile token invalid |
 | `no_active_subscription` | 422 | user has no active sub when creating a job |
 | `insufficient_credits` | 422 | balance <= 0 |
 | `clip_count_exceeded` | 422 | target_clip_count > plan max |

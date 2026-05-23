@@ -39,6 +39,7 @@ class Settings(BaseSettings):
     # App
     web_base_url: str = "http://localhost:3000"
     api_base_url: str = "http://localhost:8000"
+    turnstile_secret_key: str = ""
     env: Literal["dev", "prod"] = "dev"
     cors_allow_origins: str = "http://localhost:3000"
     log_level: str = "INFO"

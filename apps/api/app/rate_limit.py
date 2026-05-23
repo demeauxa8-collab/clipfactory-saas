@@ -27,3 +27,4 @@ LIMIT_CAMPAIGNS_CREATE = "30/hour"
 LIMIT_FEEDBACK_CREATE = "60/minute"
 LIMIT_BILLING_CHECKOUT = "5/hour"
 LIMIT_STRIPE_WEBHOOK = "120/minute"  # IP-based, generous for retries
+LIMIT_TURNSTILE_VERIFY = "30/minute"

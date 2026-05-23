@@ -15,6 +15,7 @@ from .db import close_pool, init_pool
 from .rate_limit import limiter
 from .routers import (
     admin,
+    auth,
     billing,
     campaigns,
     clips,
@@ -90,6 +91,7 @@ def create_app() -> FastAPI:
 
     app.include_router(health.router)
     app.include_router(public.router)
+    app.include_router(auth.router)
     app.include_router(me.router)
     app.include_router(credits.router)
     app.include_router(campaigns.router)

@@ -48,6 +48,19 @@ class MeResponse(BaseModel):
 
 
 # =============================================================
+# Auth abuse protection
+# =============================================================
+
+
+class TurnstileVerifyRequest(BaseModel):
+    token: str = Field(min_length=1, max_length=4096)
+
+
+class TurnstileVerifyResponse(BaseModel):
+    ok: bool
+
+
+# =============================================================
 # Campaigns
 # =============================================================
 

@@ -1,10 +1,35 @@
 "use client";
 
 import * as React from "react";
+import Script from "next/script";
 import { useSearchParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
+
+type TurnstileWidgetId = string;
+
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (
+        container: HTMLElement,
+        options: {
+          sitekey: string;
+          size: "invisible";
+          callback: (token: string) => void;
+          "error-callback": () => void;
+          "expired-callback": () => void;
+        }
+      ) => TurnstileWidgetId;
+      execute: (widgetId: TurnstileWidgetId) => void;
+      reset: (widgetId: TurnstileWidgetId) => void;
+    };
+  }
+}
 
 export function LoginForm({
   searchParams,
@@ -12,15 +37,23 @@ export function LoginForm({
   searchParams: Promise<{ next?: string; error?: string }>;
 }) {
   const [email, setEmail] = React.useState("");
-  const [status, setStatus] = React.useState<"idle" | "sending" | "sent" | "error">(
-    "idle"
-  );
-  const [googleStatus, setGoogleStatus] = React.useState<"idle" | "redirecting" | "error">(
-    "idle"
-  );
+  const [status, setStatus] = React.useState<
+    "idle" | "verifying" | "sending" | "sent" | "error"
+  >("idle");
+  const [googleStatus, setGoogleStatus] = React.useState<
+    "idle" | "verifying" | "redirecting" | "error"
+  >("idle");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [turnstileReady, setTurnstileReady] = React.useState(false);
+  const widgetRef = React.useRef<HTMLDivElement | null>(null);
+  const widgetIdRef = React.useRef<TurnstileWidgetId | null>(null);
+  const turnstilePromiseRef = React.useRef<{
+    resolve: (token: string) => void;
+    reject: (error: Error) => void;
+  } | null>(null);
   const params = useSearchParams();
   const initialError = params.get("error");
+  const turnstileEnabled = TURNSTILE_SITE_KEY !== "" && TURNSTILE_SITE_KEY !== "TODO";
 
   // Awaited searchParams support (Next.js 15 returns a Promise in some contexts)
   const [resolved, setResolved] = React.useState<{ next?: string; error?: string }>({});
@@ -39,10 +72,87 @@ export function LoginForm({
     return `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
   }
 
+  const renderTurnstile = React.useCallback(() => {
+    if (!turnstileEnabled || !turnstileReady || !widgetRef.current || widgetIdRef.current) {
+      return;
+    }
+    if (!window.turnstile) return;
+    widgetIdRef.current = window.turnstile.render(widgetRef.current, {
+      sitekey: TURNSTILE_SITE_KEY,
+      size: "invisible",
+      callback(token) {
+        turnstilePromiseRef.current?.resolve(token);
+        turnstilePromiseRef.current = null;
+      },
+      "error-callback"() {
+        turnstilePromiseRef.current?.reject(new Error("Turnstile verification failed"));
+        turnstilePromiseRef.current = null;
+      },
+      "expired-callback"() {
+        if (widgetIdRef.current) {
+          window.turnstile?.reset(widgetIdRef.current);
+        }
+      },
+    });
+  }, [turnstileEnabled, turnstileReady]);
+
+  React.useEffect(() => {
+    renderTurnstile();
+  }, [renderTurnstile]);
+
+  async function executeTurnstile(): Promise<string | null> {
+    if (!turnstileEnabled) return null;
+    renderTurnstile();
+    const widgetId = widgetIdRef.current;
+    if (!widgetId || !window.turnstile) {
+      throw new Error("Turnstile is not ready yet");
+    }
+
+    return await new Promise<string>((resolve, reject) => {
+      turnstilePromiseRef.current = { resolve, reject };
+      const timeout = window.setTimeout(() => {
+        if (turnstilePromiseRef.current) {
+          turnstilePromiseRef.current.reject(new Error("Turnstile timed out"));
+          turnstilePromiseRef.current = null;
+        }
+      }, 10_000);
+
+      const originalResolve = resolve;
+      turnstilePromiseRef.current.resolve = (token: string) => {
+        window.clearTimeout(timeout);
+        originalResolve(token);
+      };
+      const originalReject = reject;
+      turnstilePromiseRef.current.reject = (error: Error) => {
+        window.clearTimeout(timeout);
+        originalReject(error);
+      };
+      window.turnstile?.execute(widgetId);
+    });
+  }
+
+  async function verifyTurnstile() {
+    const token = await executeTurnstile();
+    if (!token) return;
+    const response = await fetch(`${API_URL}/auth/turnstile/verify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    });
+    if (widgetIdRef.current) {
+      window.turnstile?.reset(widgetIdRef.current);
+    }
+    if (!response.ok) {
+      throw new Error("Bot protection failed. Please try again.");
+    }
+  }
+
   async function handleGoogle() {
-    setGoogleStatus("redirecting");
+    setGoogleStatus("verifying");
     setErrorMessage(null);
     try {
+      await verifyTurnstile();
+      setGoogleStatus("redirecting");
       const supabase = createSupabaseBrowserClient();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
@@ -65,10 +175,12 @@ export function LoginForm({
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!email) return;
-    setStatus("sending");
+    setStatus("verifying");
     setErrorMessage(null);
 
     try {
+      await verifyTurnstile();
+      setStatus("sending");
       const supabase = createSupabaseBrowserClient();
       const { error } = await supabase.auth.signInWithOtp({
         email,
@@ -101,15 +213,31 @@ export function LoginForm({
 
   return (
     <div className="space-y-4">
+      {turnstileEnabled && (
+        <>
+          <Script
+            src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+            async
+            defer
+            onLoad={() => setTurnstileReady(true)}
+          />
+          <div ref={widgetRef} />
+        </>
+      )}
+
       <Button
         type="button"
         onClick={handleGoogle}
-        disabled={googleStatus === "redirecting"}
+        disabled={googleStatus === "verifying" || googleStatus === "redirecting"}
         variant="secondary"
         className="w-full"
       >
         <GoogleIcon className="h-4 w-4" />
-        {googleStatus === "redirecting" ? "Redirecting to Google…" : "Continue with Google"}
+        {googleStatus === "verifying"
+          ? "Checking browser…"
+          : googleStatus === "redirecting"
+            ? "Redirecting to Google…"
+            : "Continue with Google"}
       </Button>
 
       <div className="relative flex items-center" role="separator" aria-label="or">
@@ -132,8 +260,16 @@ export function LoginForm({
             disabled={status === "sending"}
           />
         </div>
-        <Button type="submit" className="w-full" disabled={status === "sending"}>
-          {status === "sending" ? "Sending…" : "Send sign-in link"}
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={status === "verifying" || status === "sending"}
+        >
+          {status === "verifying"
+            ? "Checking browser…"
+            : status === "sending"
+              ? "Sending…"
+              : "Send sign-in link"}
         </Button>
       </form>
 
