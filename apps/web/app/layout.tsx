@@ -13,16 +13,8 @@ export const metadata: Metadata = {
   authors: [{ name: SITE.founder }],
   creator: SITE.founder,
   publisher: SITE.name,
-  keywords: [
-    "AI clipping",
-    "vertical shorts",
-    "YouTube to Shorts",
-    "AI video editing",
-    "campaign clipping",
-    "short-form video",
-    "TikTok shorts",
-    "Reels generator",
-  ],
+  keywords: [...SITE.keywords],
+  category: "Software",
   alternates: {
     canonical: "/",
   },

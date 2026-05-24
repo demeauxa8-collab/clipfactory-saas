@@ -17,6 +17,16 @@
   --color-accent-foreground: #ffffff;
   --color-ring: #0a0a0a;
 
+  /* Brand accent — emerald, used on positive scores + key CTAs.
+     Stays minimal: never on body copy, never on backgrounds bigger than a chip. */
+  --color-brand: #059669;
+  --color-brand-soft: #d1fae5;
+  --color-brand-foreground: #ffffff;
+
+  /* Warning/danger accents for low scores or failed states */
+  --color-warn: #d97706;
+  --color-danger: #b91c1c;
+
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
@@ -32,6 +42,13 @@
     --color-accent: #fafafa;
     --color-accent-foreground: #0a0a0a;
     --color-ring: #fafafa;
+
+    --color-brand: #34d399;
+    --color-brand-soft: #064e3b;
+    --color-brand-foreground: #0a0a0a;
+
+    --color-warn: #f59e0b;
+    --color-danger: #ef4444;
   }
 }
 
@@ -55,4 +72,31 @@ body {
 ::selection {
   background: var(--color-foreground);
   color: var(--color-background);
+}
+
+/* Animated counter pulse (used on hero stats) */
+@keyframes brand-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.0); }
+  50% { box-shadow: 0 0 0 6px rgba(5, 150, 105, 0.08); }
+}
+.brand-pulse { animation: brand-pulse 2.4s ease-in-out infinite; }
+
+/* Subtle fade-in for hero mockup */
+@keyframes fade-up {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fade-up 0.6s ease-out both; }
+.fade-up-2 { animation: fade-up 0.6s ease-out 0.1s both; }
+.fade-up-3 { animation: fade-up 0.6s ease-out 0.2s both; }
+
+/* Score bar — used in the mockup clip preview */
+.score-bar {
+  background: linear-gradient(
+    90deg,
+    var(--color-brand) 0%,
+    var(--color-brand) var(--score, 80%),
+    var(--color-muted) var(--score, 80%),
+    var(--color-muted) 100%
+  );
 }
