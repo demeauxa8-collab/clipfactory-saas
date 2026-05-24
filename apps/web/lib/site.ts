@@ -38,7 +38,8 @@ export const SITE = {
 
 export const NAV_PRIMARY = [
   { href: "/features", label: "Features" },
+  { href: "/use-cases", label: "Use cases" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/faq", label: "FAQ" },
+  { href: "/vs/opusclip", label: "vs OpusClip" },
   { href: "/about", label: "About" },
 ] as const;

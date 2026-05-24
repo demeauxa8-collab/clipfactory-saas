@@ -6,7 +6,6 @@ import {
   Check,
   Eye,
   GitBranch,
-  ShieldCheck,
   Sparkles,
   Target,
 } from "lucide-react";
@@ -14,11 +13,16 @@ import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { MarketingNav } from "@/components/marketing/nav";
 import { MarketingFooter } from "@/components/marketing/footer";
-import { PublicStats } from "@/components/marketing/public-stats";
 import { ClipMockup } from "@/components/marketing/clip-mockup";
 import { PipelineDiagram } from "@/components/marketing/pipeline-diagram";
 import { BeforeAfter } from "@/components/marketing/before-after";
 import { ExampleArc } from "@/components/marketing/example-arc";
+import { TrustBar } from "@/components/marketing/trust-bar";
+import { StatStrip } from "@/components/marketing/stat-strip";
+import { UseCases } from "@/components/marketing/use-cases";
+import { ComparisonTable } from "@/components/marketing/comparison-table";
+import { Testimonials } from "@/components/marketing/testimonials";
+import { HeroGrid } from "@/components/marketing/hero-grid";
 import {
   FaqJsonLd,
   OrganizationJsonLd,
@@ -42,20 +46,24 @@ export const metadata: Metadata = {
 
 const HOME_FAQ: { q: string; a: string }[] = [
   {
-    q: "How is ClipFactory different from other AI clippers?",
-    a: "Most tools return 10 generic viral clips and a black-box score. ClipFactory reads your campaign brief, finds narrative arcs across the whole video (setup → payoff minutes apart), and explains each clip with five scores you can argue with.",
+    q: "How is ClipFactory different from OpusClip, Vizard or Submagic?",
+    a: "Most tools return 10 generic viral clips and a black-box virality number. ClipFactory reads your campaign brief, finds narrative arcs across the whole video (setup → payoff minutes apart), and explains each clip with five scores you can argue with — hook, emotion, visual proof, campaign fit, editing difficulty.",
   },
   {
     q: "Which sources are supported?",
-    a: "YouTube and Vimeo URLs at launch. Direct upload comes after the first paying users. We deliberately keep the input surface tight to ship a reliable pipeline.",
+    a: "YouTube and Vimeo URLs at launch. Direct upload comes after the first paying users — we deliberately keep the input surface tight to ship a reliable pipeline.",
   },
   {
     q: "How much does it cost?",
-    a: "29€/month for the Starter plan: 300 credits, up to 30 minutes per video, 3 clips per video. 1 credit = 1 minute of source. No watermark, EU hosted.",
+    a: "29€/month for the Starter plan: 300 credits, up to 30 minutes per video, 3 clips per video. 1 credit = 1 minute of source. No watermark, EU hosted, cancel anytime.",
   },
   {
     q: "Where is my data stored?",
     a: "Everything stays in EU regions: Supabase Frankfurt for the database, Cloudflare R2 EU for clips, Hetzner Germany for processing. Source videos are deleted after 14 days, clips after 60.",
+  },
+  {
+    q: "Is there a free trial?",
+    a: "Not at launch. The first paying customers get a personal onboarding call instead. Reach out at hello@clipfactory.app and we'll set you up.",
   },
 ];
 
@@ -68,12 +76,16 @@ export default function HomePage() {
       <MarketingNav />
       <main className="flex-1">
         <Hero />
-        <PublicStats />
+        <TrustBar />
         <Problem />
         <Solution />
         <ScoreExplained />
         <Example />
+        <StatStrip />
+        <UseCases />
         <Differentiator />
+        <ComparisonTable />
+        <Testimonials />
         <PricingTeaser />
         <Faq />
         <FinalCta />
@@ -84,24 +96,27 @@ export default function HomePage() {
 }
 
 /* ============================================================
-   Hero — narrative tagline + concrete clip mockup
+   Hero — narrative tagline + concrete clip mockup + bg grid
    ============================================================ */
 function Hero() {
   return (
-    <section className="border-b border-[var(--color-border)]">
-      <Container className="grid items-center gap-12 py-20 md:grid-cols-2 md:py-28">
+    <section className="relative overflow-hidden border-b border-[var(--color-border)]">
+      <HeroGrid />
+      <Container className="relative grid items-center gap-12 py-20 md:grid-cols-2 md:py-28">
         <div className="fade-up">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-muted)] px-3 py-1 text-xs text-[var(--color-muted-foreground)]">
-            <Sparkles className="h-3.5 w-3.5 text-[var(--color-brand)]" />
-            For creators &amp; agencies tired of random viral picks
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--color-brand)] bg-[var(--color-brand-soft)] px-3 py-1 text-xs font-medium text-[var(--color-brand)]">
+            <Sparkles className="h-3.5 w-3.5" />
+            New · Campaign-first AI clipping
           </div>
           <h1 className="text-4xl font-semibold tracking-tight md:text-6xl">
             Less random virals.
             <br />
-            <span className="text-[var(--color-brand)]">More clips that fit your campaign.</span>
+            <span className="text-[var(--color-brand)]">
+              More clips that fit your campaign.
+            </span>
           </h1>
           <p className="mt-6 max-w-xl text-lg text-[var(--color-muted-foreground)] md:text-xl">
-            ClipFactory reads your campaign brief, maps the whole video, finds narrative arcs across distant moments, and ships publish-ready vertical shorts — each one with a score you can argue with.
+            ClipFactory reads your brief, maps the whole video, finds narrative arcs across distant moments, and ships publish-ready vertical shorts — each one with a score you can argue with.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/login">
@@ -111,7 +126,9 @@ function Hero() {
               </Button>
             </Link>
             <Link href="#how-it-works">
-              <Button size="lg" variant="secondary">See how it works</Button>
+              <Button size="lg" variant="secondary">
+                See how it works
+              </Button>
             </Link>
           </div>
           <p className="mt-4 text-xs text-[var(--color-muted-foreground)]">
@@ -230,7 +247,7 @@ function Solution() {
           {steps.map((s) => (
             <article
               key={s.title}
-              className="rounded-lg border border-[var(--color-border)] p-6"
+              className="rounded-lg border border-[var(--color-border)] p-6 transition-colors hover:border-[var(--color-brand)]"
             >
               <s.icon className="h-5 w-5 text-[var(--color-brand)]" />
               <h3 className="mt-4 text-base font-medium">{s.title}</h3>
@@ -269,7 +286,6 @@ function ScoreExplained() {
             <p className="mt-4 text-[var(--color-muted-foreground)]">
               Every clip carries its full breakdown. If a clip lands an 87, you see exactly why — and where the remaining 13 points went. Disagree, and your feedback tunes the next pick.
             </p>
-
             <dl className="mt-8 space-y-4">
               {scores.map((s) => (
                 <div key={s.label} className="border-l-2 border-[var(--color-brand)] pl-4">
@@ -375,7 +391,7 @@ function PricingTeaser() {
           </p>
         </div>
 
-        <div className="mx-auto mt-12 max-w-md rounded-lg border-2 border-[var(--color-brand)] p-8">
+        <div className="mx-auto mt-12 max-w-md rounded-xl border-2 border-[var(--color-brand)] p-8 shadow-[0_0_0_8px_rgba(5,150,105,0.06)]">
           <p className="text-sm font-semibold uppercase tracking-wider text-[var(--color-brand)]">
             Starter
           </p>
@@ -395,14 +411,20 @@ function PricingTeaser() {
             ))}
           </ul>
           <Link href="/login" className="mt-8 block">
-            <Button size="lg" className="w-full">Start with Starter</Button>
+            <Button size="lg" className="w-full">
+              Start with Starter
+            </Button>
           </Link>
           <p className="mt-3 text-center text-xs text-[var(--color-muted-foreground)]">
             Cancel anytime · VAT included for EU customers
           </p>
         </div>
         <p className="mt-8 text-center text-sm text-[var(--color-muted-foreground)]">
-          See the full plan comparison on the <Link href="/pricing" className="underline">pricing page</Link>.
+          See the full plan comparison on the{" "}
+          <Link href="/pricing" className="underline">
+            pricing page
+          </Link>
+          .
         </p>
       </Container>
     </section>
@@ -433,7 +455,11 @@ function Faq() {
           ))}
         </dl>
         <p className="mt-8 text-sm text-[var(--color-muted-foreground)]">
-          More answers on the <Link href="/faq" className="underline">full FAQ</Link>.
+          More answers on the{" "}
+          <Link href="/faq" className="underline">
+            full FAQ
+          </Link>
+          .
         </p>
       </Container>
     </section>
@@ -445,13 +471,10 @@ function Faq() {
    ============================================================ */
 function FinalCta() {
   return (
-    <section>
-      <Container className="py-24 text-center">
-        <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-[var(--color-brand)] bg-[var(--color-brand-soft)] px-3 py-1 text-xs font-medium text-[var(--color-brand)]">
-          <ShieldCheck className="h-3.5 w-3.5" />
-          EU hosted · GDPR aware · no watermark
-        </div>
-        <h2 className="mt-6 text-3xl font-semibold tracking-tight md:text-5xl">
+    <section className="relative overflow-hidden">
+      <HeroGrid />
+      <Container className="relative py-24 text-center">
+        <h2 className="mx-auto max-w-3xl text-3xl font-semibold tracking-tight md:text-5xl">
           Try it on your next long-form.
         </h2>
         <p className="mx-auto mt-3 max-w-xl text-[var(--color-muted-foreground)]">
@@ -464,7 +487,7 @@ function FinalCta() {
           </Button>
         </Link>
         <p className="mt-4 text-xs text-[var(--color-muted-foreground)]">
-          29€/month · Cancel any time
+          29€/month · No watermark · Cancel anytime
         </p>
       </Container>
     </section>

@@ -1,42 +1,139 @@
 import Link from "next/link";
+import { Github, Mail, Twitter } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SITE } from "@/lib/site";
 
+const PRODUCT = [
+  { href: "/features", label: "Features" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/vs/opusclip", label: "vs OpusClip" },
+  { href: "/changelog", label: "Changelog" },
+];
+
+const USE_CASES = [
+  { href: "/use-cases/creators", label: "For creators" },
+  { href: "/use-cases/agencies", label: "For agencies" },
+  { href: "/faq", label: "FAQ" },
+];
+
+const COMPANY = [
+  { href: "/about", label: "About" },
+  { href: `mailto:${SITE.contactEmail}`, label: "Contact" },
+  { href: "/legal/terms", label: "Terms" },
+  { href: "/legal/privacy", label: "Privacy" },
+];
+
 export function MarketingFooter() {
   return (
-    <footer className="border-t border-[var(--color-border)] py-12 text-sm text-[var(--color-muted-foreground)]">
-      <Container className="grid gap-10 md:grid-cols-4">
-        <div className="md:col-span-2">
-          <Link href="/" className="flex items-center gap-2 font-semibold text-[var(--color-foreground)]">
-            <span className="inline-block h-4 w-4 rounded-sm bg-[var(--color-foreground)]" aria-hidden />
+    <footer className="border-t border-[var(--color-border)] bg-[var(--color-muted)]/40 py-16 text-sm text-[var(--color-muted-foreground)]">
+      <Container className="grid gap-12 md:grid-cols-12">
+        {/* Brand + tagline */}
+        <div className="md:col-span-4">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-base font-semibold text-[var(--color-foreground)]"
+          >
+            <span
+              className="inline-block h-5 w-5 rounded-sm bg-[var(--color-brand)]"
+              aria-hidden
+            />
             {SITE.name}
           </Link>
-          <p className="mt-3 max-w-sm">{SITE.shortDescription}</p>
-          <p className="mt-3 text-xs">EU hosted · Built for creators and agencies.</p>
+          <p className="mt-4 max-w-xs leading-relaxed">
+            Campaign-first AI clipping. Long videos in, vertical shorts out — each one matched to
+            the audience you actually talk to.
+          </p>
+          <div className="mt-6 flex items-center gap-3">
+            <a
+              href={`mailto:${SITE.contactEmail}`}
+              aria-label="Email"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+            >
+              <Mail className="h-4 w-4" />
+            </a>
+            <a
+              href="https://twitter.com/clipfactoryapp"
+              aria-label="Twitter"
+              rel="noreferrer"
+              target="_blank"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+            >
+              <Twitter className="h-4 w-4" />
+            </a>
+            <a
+              href="https://github.com/demeauxa8-collab/clipfactory-saas"
+              aria-label="GitHub"
+              rel="noreferrer"
+              target="_blank"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+            >
+              <Github className="h-4 w-4" />
+            </a>
+          </div>
         </div>
-        <div>
-          <h4 className="mb-3 text-xs font-medium uppercase tracking-wider text-[var(--color-foreground)]">Product</h4>
-          <ul className="space-y-2">
-            <li><Link href="/features" className="hover:text-[var(--color-foreground)]">Features</Link></li>
-            <li><Link href="/pricing" className="hover:text-[var(--color-foreground)]">Pricing</Link></li>
-            <li><Link href="/faq" className="hover:text-[var(--color-foreground)]">FAQ</Link></li>
-            <li><Link href="/changelog" className="hover:text-[var(--color-foreground)]">Changelog</Link></li>
-          </ul>
+
+        {/* Columns */}
+        <div className="md:col-span-2">
+          <FooterCol title="Product" items={PRODUCT} />
         </div>
-        <div>
-          <h4 className="mb-3 text-xs font-medium uppercase tracking-wider text-[var(--color-foreground)]">Company</h4>
-          <ul className="space-y-2">
-            <li><Link href="/about" className="hover:text-[var(--color-foreground)]">About</Link></li>
-            <li><a href={`mailto:${SITE.contactEmail}`} className="hover:text-[var(--color-foreground)]">Contact</a></li>
-            <li><Link href="/legal/terms" className="hover:text-[var(--color-foreground)]">Terms</Link></li>
-            <li><Link href="/legal/privacy" className="hover:text-[var(--color-foreground)]">Privacy</Link></li>
-          </ul>
+        <div className="md:col-span-2">
+          <FooterCol title="Use cases" items={USE_CASES} />
+        </div>
+        <div className="md:col-span-2">
+          <FooterCol title="Company" items={COMPANY} />
+        </div>
+
+        {/* Newsletter */}
+        <div className="md:col-span-2">
+          <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-foreground)]">
+            Updates
+          </h4>
+          <p className="text-xs leading-relaxed">
+            New features, lessons learned shipping a one-person SaaS. One email, never spam.
+          </p>
+          <a
+            href={`mailto:${SITE.contactEmail}?subject=Subscribe%20to%20updates`}
+            className="mt-4 inline-flex items-center justify-center rounded-md border border-[var(--color-brand)] bg-[var(--color-brand-soft)] px-3 py-2 text-xs font-medium text-[var(--color-brand)] transition-colors hover:bg-[var(--color-brand)] hover:text-[var(--color-brand-foreground)]"
+          >
+            Get the next post
+          </a>
         </div>
       </Container>
-      <Container className="mt-10 flex flex-col items-start justify-between gap-2 border-t border-[var(--color-border)] pt-6 text-xs md:flex-row">
-        <p>© {new Date().getFullYear()} {SITE.name}. All rights reserved.</p>
-        <p>Made with care in France.</p>
+
+      <Container className="mt-12 flex flex-col items-start justify-between gap-2 border-t border-[var(--color-border)] pt-6 text-xs md:flex-row">
+        <p>
+          © {new Date().getFullYear()} {SITE.name}. All rights reserved.
+        </p>
+        <p>Made with care in France · EU-hosted infrastructure</p>
       </Container>
     </footer>
+  );
+}
+
+function FooterCol({
+  title,
+  items,
+}: {
+  title: string;
+  items: readonly { href: string; label: string }[];
+}) {
+  return (
+    <>
+      <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-foreground)]">
+        {title}
+      </h4>
+      <ul className="space-y-2">
+        {items.map((it) => (
+          <li key={it.href}>
+            <Link
+              href={it.href as never}
+              className="hover:text-[var(--color-brand)]"
+            >
+              {it.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
