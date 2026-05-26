@@ -5,23 +5,23 @@ import { MarketingFooter } from "@/components/marketing/footer";
 import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/marketing/json-ld";
 
 export const metadata: Metadata = {
-  title: "FAQ",
-  description: "Common questions about ClipFactory: pricing, EU hosting, supported sources, GDPR, cancellation, watermarks.",
+  title: "AI clip maker FAQ — pricing, YouTube Shorts, Reels and TikToks",
+  description: "Common questions about ClipFactory: AI video clipping, pricing, YouTube and Vimeo support, EU hosting, GDPR, cancellation, watermarks and clip quality.",
   alternates: { canonical: "/faq" },
 };
 
 const FAQ: { q: string; a: string }[] = [
   {
     q: "How much does ClipFactory cost?",
-    a: "29€/month for Starter: 300 credits, up to 30 min per video, 3 clips per video. 1 credit = 1 minute of source. Bigger plans (Creator, Agency) ship after Starter is stable.",
+    a: "Starter costs 29€/month. It includes 300 video minutes, up to 30 minutes per video and 3 clips per video. 1 credit = 1 minute of source video.",
   },
   {
     q: "Where is my data hosted?",
-    a: "EU regions only. Database in Frankfurt (Supabase EU), object storage in Cloudflare R2 EU, workers in Falkenstein (Hetzner Germany). Source videos are deleted after 14 days, rendered clips kept 60 days.",
+    a: "ClipFactory is designed around EU hosting: database in Frankfurt, storage in Europe and video processing in Germany. Source videos are deleted after 14 days, rendered clips kept 60 days.",
   },
   {
     q: "Which video sources are supported?",
-    a: "YouTube and Vimeo at launch. Direct upload and other platforms come later. URLs are validated to prevent SSRF and other security issues.",
+    a: "YouTube and Vimeo at launch. Direct upload and other platforms come later.",
   },
   {
     q: "Do you add a watermark?",
@@ -29,15 +29,15 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Can I cancel any time?",
-    a: "Yes. One click in your billing page redirects you to Stripe to cancel. No friction modal cascade. Credits already granted remain usable until the period ends.",
+    a: "Yes. You can cancel from the billing page. Credits already granted remain usable until the period ends.",
   },
   {
     q: "What happens if a job fails?",
-    a: "Credits debited for that job are fully refunded automatically. The job stays visible in your dashboard with the error code so you can retry.",
+    a: "Credits used for that video are refunded automatically. The job stays visible in your dashboard so you can retry.",
   },
   {
     q: "How long do my clips stay available?",
-    a: "60 days for rendered clips, 14 days for source videos. You can download clips at any time within that window via a presigned URL.",
+    a: "Rendered clips stay available for 60 days. Source videos are deleted after 14 days. You can download clips during that window.",
   },
   {
     q: "Do you store my videos forever?",
@@ -53,7 +53,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "How fast is the processing?",
-    a: "A 30-minute video typically takes 5 to 10 minutes to fully process. We do not promise instant: transcription + LLM analysis + render takes real compute.",
+    a: "A 30-minute video typically takes 5 to 10 minutes to process. It is not instant because ClipFactory reads the transcript, checks the video and renders the final clips.",
   },
   {
     q: "Do you have an API?",
@@ -65,11 +65,11 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "What if the AI picks bad clips?",
-    a: "Every clip has a thumb-up / thumb-down feedback. Your feedback feeds the campaign memory and tunes future picks. We also drop any clip whose transcript excerpt doesn’t match the real transcript (anti-hallucination).",
+    a: "Every clip has a thumbs up or thumbs down. Your feedback helps future picks. ClipFactory also drops clips when the quote or moment cannot be verified in the source.",
   },
   {
     q: "Can I see what the AI is doing?",
-    a: "Yes. Each clip ships with a score breakdown (hook, emotion, visual, campaign fit, editing) and a visual summary (decor, action, problems detected). No mystery score.",
+    a: "Yes. Each clip includes a simple score, a reason, the selected timestamps and a short visual summary. No mystery score.",
   },
 ];
 
@@ -82,7 +82,9 @@ export default function FaqPage() {
       <main className="flex-1">
         <Container className="max-w-3xl py-20">
           <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">FAQ</p>
-          <h1 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">Common questions.</h1>
+          <h1 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">
+            Common questions about AI video clipping.
+          </h1>
 
           <dl className="mt-10 divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
             {FAQ.map((item) => (

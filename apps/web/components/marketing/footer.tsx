@@ -25,7 +25,7 @@ const COMPANY = [
 
 export function MarketingFooter() {
   return (
-    <footer className="border-t border-[var(--color-border)] bg-[var(--color-muted)]/40 py-16 text-sm text-[var(--color-muted-foreground)]">
+    <footer className="border-t border-[var(--color-border)] bg-[#050505] py-16 text-sm text-[var(--color-muted-foreground)]">
       <Container className="grid gap-12 md:grid-cols-12">
         {/* Brand + tagline */}
         <div className="md:col-span-4">
@@ -34,20 +34,22 @@ export function MarketingFooter() {
             className="flex items-center gap-2 text-base font-semibold text-[var(--color-foreground)]"
           >
             <span
-              className="inline-block h-5 w-5 rounded-sm bg-[var(--color-brand)]"
+              className="relative inline-flex h-5 w-5 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-muted)]"
               aria-hidden
-            />
+            >
+              <span className="h-2.5 w-1 rounded-sm bg-[var(--color-brand)]" />
+            </span>
             {SITE.name}
           </Link>
           <p className="mt-4 max-w-xs leading-relaxed">
-            Campaign-first AI clipping. Long videos in, vertical shorts out — each one matched to
-            the audience you actually talk to.
+            AI video clipping for creators, podcasts and agencies. Long videos in,
+            focused clip series out.
           </p>
           <div className="mt-6 flex items-center gap-3">
             <a
               href={`mailto:${SITE.contactEmail}`}
               aria-label="Email"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
             >
               <Mail className="h-4 w-4" />
             </a>
@@ -56,7 +58,7 @@ export function MarketingFooter() {
               aria-label="Twitter"
               rel="noreferrer"
               target="_blank"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
             >
               <Twitter className="h-4 w-4" />
             </a>
@@ -65,7 +67,7 @@ export function MarketingFooter() {
               aria-label="GitHub"
               rel="noreferrer"
               target="_blank"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
             >
               <Github className="h-4 w-4" />
             </a>
@@ -95,7 +97,7 @@ export function MarketingFooter() {
             href={`mailto:${SITE.contactEmail}?subject=Subscribe%20to%20updates`}
             className="mt-4 inline-flex items-center justify-center rounded-md border border-[var(--color-brand)] bg-[var(--color-brand-soft)] px-3 py-2 text-xs font-medium text-[var(--color-brand)] transition-colors hover:bg-[var(--color-brand)] hover:text-[var(--color-brand-foreground)]"
           >
-            Get the next post
+            Get product updates
           </a>
         </div>
       </Container>

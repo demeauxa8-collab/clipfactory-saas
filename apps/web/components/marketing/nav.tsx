@@ -5,16 +5,18 @@ import { NAV_PRIMARY, SITE } from "@/lib/site";
 
 export function MarketingNav() {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[var(--color-border)] bg-[var(--color-background)]/85 backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full border-b border-[var(--color-border)] bg-[var(--color-background)]/76 backdrop-blur-xl">
       <Container className="flex h-16 items-center justify-between">
         <Link
           href="/"
           className="flex items-center gap-2 font-semibold tracking-tight"
         >
           <span
-            className="inline-block h-6 w-6 rounded-md bg-[var(--color-brand)] shadow-[0_0_0_3px_rgba(5,150,105,0.12)]"
+            className="relative inline-flex h-5 w-5 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-muted)]"
             aria-hidden
-          />
+          >
+            <span className="h-2.5 w-1 rounded-sm bg-[var(--color-brand)] shadow-[0_0_18px_rgba(216,195,163,0.32)]" />
+          </span>
           <span className="text-base">{SITE.name}</span>
         </Link>
         <nav className="flex items-center gap-1">
@@ -22,7 +24,7 @@ export function MarketingNav() {
             <Link
               key={item.href}
               href={item.href as never}
-              className="hidden h-9 items-center rounded-md px-3 text-sm text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-muted)] hover:text-[var(--color-foreground)] md:inline-flex"
+              className="hidden h-9 items-center rounded-md px-3 text-sm text-[var(--color-muted-foreground)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[var(--color-muted)] hover:text-[var(--color-foreground)] md:inline-flex"
             >
               {item.label}
             </Link>

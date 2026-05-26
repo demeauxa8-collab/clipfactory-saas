@@ -8,9 +8,9 @@ import { MarketingFooter } from "@/components/marketing/footer";
 import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
 
 export const metadata: Metadata = {
-  title: "Use cases — who ClipFactory is built for",
+  title: "AI video clipping use cases — creators, podcasts and agencies",
   description:
-    "Solo creators turning long-forms into vertical shorts. Agencies serving multiple clients without losing taste. Pick the workflow that matches yours.",
+    "Use ClipFactory to turn long videos, podcasts, webinars and client footage into Shorts, Reels and TikToks with AI clipping, captions and no watermark.",
   alternates: { canonical: "/use-cases" },
 };
 
@@ -19,13 +19,13 @@ const CASES = [
     href: "/use-cases/creators",
     icon: Lightbulb,
     title: "For solo creators",
-    body: "Your long-forms deserve clips that match your voice. Story arcs, scored picks, no watermark — designed for the operator who ships every week.",
+    body: "Turn long YouTube videos, webinars and interviews into short vertical clips that match your voice. Captions included, no watermark.",
   },
   {
     href: "/use-cases/agencies",
     icon: Building2,
     title: "For agencies",
-    body: "Serve more clients without losing taste. Per-client briefs, defensible score breakdown, predictable billing — built for studios at scale.",
+    body: "Process client videos faster. Create one brief per client, get scored clips, and keep costs predictable with video-minute pricing.",
   },
 ] as const;
 
@@ -45,11 +45,11 @@ export default function UseCasesIndexPage() {
             Use cases
           </p>
           <h1 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">
-            Two workflows. One engine.
+            AI video clipping for creators and agencies.
           </h1>
           <p className="mt-4 max-w-2xl text-[var(--color-muted-foreground)] md:text-lg">
-            Pick the path that matches yours — same campaign-first selection, different
-            constraints.
+            Pick the workflow that matches you. ClipFactory helps turn long videos into
+            ready-to-post Shorts, Reels and TikToks.
           </p>
 
           <div className="mt-12 grid gap-6 md:grid-cols-2">
@@ -63,7 +63,7 @@ export default function UseCasesIndexPage() {
                 <h2 className="mt-6 text-2xl font-semibold tracking-tight">{c.title}</h2>
                 <p className="mt-3 flex-1 text-[var(--color-muted-foreground)]">{c.body}</p>
                 <span className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-[var(--color-brand)]">
-                  See the workflow
+                  See this use case
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </span>
               </Link>

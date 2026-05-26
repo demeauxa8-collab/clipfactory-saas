@@ -60,7 +60,7 @@ export function ClipActions({ clipId }: { clipId: string }) {
       >
         <ThumbsDown className="h-4 w-4" />
       </Button>
-      {error && <span className="text-xs text-red-600">{error}</span>}
+      {error && <span className="text-xs text-[var(--color-danger)]">{error}</span>}
     </div>
   );
 }

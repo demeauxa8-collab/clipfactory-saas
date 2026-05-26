@@ -1,11 +1,11 @@
 /**
- * The "Lamborghini" example — the most concrete way to explain story arcs.
+ * The "Lamborghini" example makes multi-part clips concrete.
  * Shown on the landing and on /features.
  */
 export function ExampleArc() {
   const segments = [
-    { time: "02:00", role: "Setup", text: "Il vient d'acheter sa Lamborghini." },
-    { time: "12:30", role: "Payoff", text: "Et la détruit en sortant du parking." },
+    { time: "02:00", role: "Setup", text: "He just bought a Lamborghini." },
+    { time: "12:30", role: "Payoff", text: "He crashes it leaving the parking lot." },
   ];
 
   return (
@@ -15,13 +15,12 @@ export function ExampleArc() {
           Example: a 25-minute vlog → one viral 40-second clip
         </h3>
         <span className="rounded bg-[var(--color-brand)] px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-brand-foreground)]">
-          Story arc
+          2-part clip
         </span>
       </div>
       <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">
-        Setup and payoff are 10 minutes apart in the source. ClipFactory finds
-        the connection, stitches both moments together with a clean audio
-        crossfade, and explains why this clip works.
+        The setup and payoff are 10 minutes apart in the source video. ClipFactory
+        finds the connection, combines both moments, and explains why this short works.
       </p>
 
       <ol className="mt-6 space-y-3">

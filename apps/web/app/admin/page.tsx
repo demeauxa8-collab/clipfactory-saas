@@ -27,7 +27,7 @@ export default async function AdminOverviewPage() {
     <Container className="py-10">
       <h1 className="text-2xl font-semibold tracking-tight">Overview</h1>
       {error && (
-        <div className="mt-4 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-900">
+        <div className="mt-4 rounded-md border border-[var(--color-danger)]/40 bg-[var(--color-muted)] p-3 text-sm text-[var(--color-foreground)]">
           Failed to load admin overview: <code>{error}</code>
         </div>
       )}
@@ -42,13 +42,13 @@ export default async function AdminOverviewPage() {
             <Card title="Credits outstanding" value={data.credits_outstanding.toString()} hint="all users sum" />
           </div>
 
-          <section className="mt-10 rounded-lg border border-[var(--color-border)] p-6">
+          <section className="pro-card mt-10 rounded-lg p-6">
             <h2 className="text-sm font-medium uppercase tracking-wider text-[var(--color-muted-foreground)]">Quick links</h2>
             <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-              <li><a href="/admin/users" className="underline">All users →</a></li>
-              <li><a href="/admin/jobs?status=failed" className="underline">Recent failed jobs →</a></li>
-              <li><a href="/admin/jobs?status=queued" className="underline">Jobs in queue →</a></li>
-              <li><a href="/admin/finance" className="underline">Monthly P&L →</a></li>
+              <li><a href="/admin/users" className="text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]">All users →</a></li>
+              <li><a href="/admin/jobs?status=failed" className="text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]">Recent failed jobs →</a></li>
+              <li><a href="/admin/jobs?status=queued" className="text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]">Jobs in queue →</a></li>
+              <li><a href="/admin/finance" className="text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]">Monthly P&L →</a></li>
             </ul>
           </section>
         </>
@@ -59,7 +59,7 @@ export default async function AdminOverviewPage() {
 
 function Card({ title, value, hint }: { title: string; value: string; hint: string }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] p-5">
+    <div className="pro-card rounded-lg p-5">
       <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">{title}</p>
       <p className="mt-2 text-3xl font-semibold tabular-nums">{value}</p>
       <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">{hint}</p>

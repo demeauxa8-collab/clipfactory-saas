@@ -1,7 +1,7 @@
 import { AnimatedCounter } from "./animated-counter";
 
 const STATS = [
-  { value: 5, suffix: " axes", label: "Scored components per clip" },
+  { value: 5, suffix: " checks", label: "Reasons behind each clip score" },
   { value: 14, suffix: "d", label: "Source retention before auto-delete" },
   { value: 100, suffix: "%", label: "EU-hosted infrastructure" },
   { value: 0, suffix: "%", label: "Revenue share on your clips" },

@@ -62,7 +62,7 @@ export function JobMonitor({
   );
 
   return (
-    <div className="mt-6 rounded-lg border border-[var(--color-border)] p-5">
+    <div className="pro-panel mt-6 rounded-lg p-5">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium">Pipeline</p>
         <p className="text-xs text-[var(--color-muted-foreground)]">
@@ -77,11 +77,11 @@ export function JobMonitor({
             <li
               key={s}
               className={
-                "rounded-md border px-2 py-1 " +
+                "rounded-full border px-2.5 py-1 transition-colors " +
                 (done
                   ? "border-[var(--color-foreground)] bg-[var(--color-foreground)] text-[var(--color-background)]"
                   : current
-                  ? "border-[var(--color-foreground)]"
+                  ? "border-[var(--color-brand)] text-[var(--color-foreground)]"
                   : "border-[var(--color-border)] text-[var(--color-muted-foreground)]")
               }
             >

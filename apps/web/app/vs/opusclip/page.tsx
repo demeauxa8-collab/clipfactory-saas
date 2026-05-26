@@ -13,23 +13,25 @@ import {
 } from "@/components/marketing/json-ld";
 
 export const metadata: Metadata = {
-  title: "ClipFactory vs OpusClip — campaign-first AI clipping",
+  title: "ClipFactory vs OpusClip — clip series, context and montage",
   description:
-    "Honest comparison: ClipFactory reads your campaign brief, finds story arcs across distant moments, and ships explained scores. OpusClip ranks loud transcript moments and returns one virality number. Same input, different rules.",
+    "Compare ClipFactory with OpusClip for turning long videos into a focused series of Shorts, Reels and TikToks. AI clipping with series goals, visual context, explained picks, montage and EU-first processing.",
   keywords: [
     "OpusClip alternative",
     "ClipFactory vs OpusClip",
     "best OpusClip alternative",
     "OpusClip vs Vizard",
     "AI clipping comparison",
+    "AI clip maker comparison",
+    "YouTube to Shorts AI",
     "campaign-first AI clipping",
     "OpusClip alternative EU",
   ],
   alternates: { canonical: "/vs/opusclip" },
   openGraph: {
-    title: "ClipFactory vs OpusClip — campaign-first AI clipping",
+    title: "ClipFactory vs OpusClip — AI clip maker for Shorts and Reels",
     description:
-      "Side-by-side: OpusClip ranks transcript moments, ClipFactory reads your brief and finds story arcs. Honest comparison, last updated May 2026.",
+      "Side-by-side positioning: basic AI clipping versus explained clip selection with visual context.",
     type: "article",
   },
 };
@@ -37,50 +39,50 @@ export const metadata: Metadata = {
 const FAQ = [
   {
     q: "Is ClipFactory a direct replacement for OpusClip?",
-    a: "For solo creators and agencies who clip long-form into vertical shorts, yes. The workflow is the same: paste a URL, get vertical clips with captions. The difference is upstream — we let you brief the campaign and we explain every score component.",
+    a: "For the core workflow, yes: paste a URL and get vertical clips. The difference is how clips are selected: ClipFactory uses your series goal, audience, the full video and what happens on screen, then explains each pick.",
   },
   {
-    q: "Why is ClipFactory more expensive at entry?",
-    a: "OpusClip starts at $19/mo with a watermark, ClipFactory starts at 29€/mo without one. We don't sell volume — we sell campaign-fit selection. If you want generic volume, OpusClip is fine.",
+    q: "Why choose ClipFactory instead of a basic AI clipper?",
+    a: "If you only want lots of generic clips, a basic tool may be enough. ClipFactory is for creators, podcasters and agencies who want a smaller series of clips that fit a clear objective.",
   },
   {
     q: "Does ClipFactory have AI B-roll, like OpusClip?",
-    a: "Not in V1. We deliberately focus on the selection problem first: getting the right windows of the source. B-roll, transitions and AI sound design come once selection is rock solid.",
+    a: "Not in V1. The first job is to find the right moments in the source video. B-roll, transitions and AI sound design can come later.",
   },
   {
-    q: "Can I import my OpusClip campaigns?",
-    a: "Not yet. Campaign briefs are written from scratch — it's a 2-minute form. Most users find the framing exercise valuable on its own.",
+    q: "Can I import my OpusClip projects?",
+    a: "Not yet. You create a simple brief from scratch. It takes about two minutes: audience, series goal, tone and topics to avoid.",
   },
   {
     q: "Where is the data stored?",
-    a: "ClipFactory is EU-hosted (Supabase Frankfurt, Cloudflare R2 EU, Hetzner Germany). OpusClip is US-hosted. If GDPR is a procurement constraint for you, that may matter.",
+    a: "ClipFactory is designed around EU hosting: database in Frankfurt, storage in Europe and video processing in Germany. If data location matters for client work, verify every vendor's current policy before buying.",
   },
 ];
 
 const ROWS = [
   {
-    cf: "Reads a campaign brief (audience, niche, tone, goal, avoid topics).",
-    op: "Ranks loud transcript moments. No campaign awareness.",
+    cf: "Uses your audience, series goal, tone and topics to avoid.",
+    op: "Often focused on fast clip volume first. Context varies by product and plan.",
   },
   {
-    cf: "Maps the whole video, then finds story arcs across distant moments — setup at minute 2, payoff at minute 12.",
-    op: "Picks single-window clips inside one segment of the source.",
+    cf: "Looks across the whole video, so it can connect a setup at minute 2 with a payoff at minute 12.",
+    op: "Most clipping tools are strongest on one continuous timestamp.",
   },
   {
-    cf: "Returns 5 score components per clip: hook, emotion, visual proof, campaign fit, editing difficulty — with reasons.",
-    op: "Returns one 'virality' number per clip.",
+    cf: "Explains the score: hook, emotion, visual proof, audience fit and editing difficulty.",
+    op: "Scoring is typically simpler and less tied to your audience.",
   },
   {
-    cf: "Runs a transcript anti-hallucination check before render. Hallucinated moments are dropped.",
-    op: "No published anti-hallucination step.",
+    cf: "Checks the quote and moment before rendering. Fake moments are dropped.",
+    op: "Check the current vendor docs if verification is important for your workflow.",
   },
   {
     cf: "EU-hosted (Frankfurt / Germany). Source deleted after 14 days, clips after 60.",
-    op: "US-hosted.",
+    op: "Data region and retention depend on vendor policy. Verify before using client footage.",
   },
   {
     cf: "No watermark on any plan.",
-    op: "Watermark on the free plan.",
+    op: "Watermark rules depend on the current plan and promotion.",
   },
 ];
 
@@ -100,15 +102,15 @@ export default function VsOpusClipPage() {
         <section className="border-b border-[var(--color-border)]">
           <Container className="max-w-5xl py-20">
             <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
-              Comparison · last updated May 2026
+              Comparison
             </p>
             <h1 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">
               ClipFactory vs OpusClip
             </h1>
             <p className="mt-4 max-w-2xl text-lg text-[var(--color-muted-foreground)]">
-              If OpusClip ranks loud moments and ships a virality number, ClipFactory reads your
-              campaign brief and ships clips with five explained scores. Same workflow, different
-              rules.
+              OpusClip made AI clipping popular. ClipFactory is built for creators who
+              want fewer random clips and a better series: clips that understand the
+              full video, the screen, and the objective.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/login">
@@ -124,7 +126,7 @@ export default function VsOpusClipPage() {
               </Link>
             </div>
             <p className="mt-3 text-xs text-[var(--color-muted-foreground)]">
-              No affiliation with OpusClip — comparison built from their public docs.
+              No affiliation with OpusClip. Always check each vendor&apos;s current docs before buying.
             </p>
           </Container>
         </section>
@@ -174,11 +176,12 @@ export default function VsOpusClipPage() {
                   What you ship
                 </p>
                 <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-                  Each clip explains itself.
+                  Each clip explains why it belongs.
                 </h2>
                 <p className="mt-4 text-[var(--color-muted-foreground)]">
-                  No mystery number. Five components, each with a reason. When you tell a client a
-                  clip didn&apos;t make it, you show the breakdown — not a vibe.
+                  No mystery number. Five components, each with a reason. When you tell
+                  a client why this clip fits the series and another one does not, you
+                  show the breakdown, not a vibe.
                 </p>
                 <Link href="/features" className="mt-6 inline-flex">
                   <Button variant="secondary">
@@ -234,8 +237,8 @@ export default function VsOpusClipPage() {
               Try it on the same video you&apos;d ship to OpusClip.
             </h2>
             <p className="mt-3 text-[var(--color-muted-foreground)]">
-              Same URL, same length. Different selection logic. Free to start, 29€/mo once you
-              like the picks.
+              Same URL, same long video. Different clip series. Free to start,
+              29€/mo once you like the picks.
             </p>
             <Link href="/login" className="mt-8 inline-flex">
               <Button size="lg">

@@ -57,12 +57,12 @@ export default async function AdminJobsPage({
       </div>
 
       {error && (
-        <div className="mt-4 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-900">{error}</div>
+        <div className="mt-4 rounded-md border border-[var(--color-danger)]/40 bg-[var(--color-muted)] p-3 text-sm text-[var(--color-foreground)]">{error}</div>
       )}
 
-      <div className="mt-6 overflow-x-auto rounded-lg border border-[var(--color-border)]">
+      <div className="pro-card mt-6 overflow-x-auto rounded-lg">
         <table className="w-full text-sm">
-          <thead className="bg-[var(--color-muted)] text-left text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">
+          <thead className="border-b border-[var(--color-border)] text-left text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">
             <tr>
               <th className="px-3 py-3">When</th>
               <th className="px-3 py-3">User</th>
@@ -76,7 +76,7 @@ export default async function AdminJobsPage({
           </thead>
           <tbody className="divide-y divide-[var(--color-border)]">
             {jobs.map((j) => (
-              <tr key={j.job_id}>
+              <tr key={j.job_id} className="transition-colors duration-200 hover:bg-white/[0.035]">
                 <td className="px-3 py-3 text-xs text-[var(--color-muted-foreground)]">
                   {new Date(j.queued_at).toLocaleString("en-GB")}
                 </td>
@@ -87,10 +87,10 @@ export default async function AdminJobsPage({
                     className={
                       "rounded-sm px-1.5 py-0.5 text-[10px] font-semibold uppercase " +
                       (j.status === "completed"
-                        ? "bg-green-200 text-green-900"
+                        ? "border border-[var(--color-border)] bg-[var(--color-foreground)] text-[var(--color-background)]"
                         : j.status === "failed"
-                        ? "bg-red-200 text-red-900"
-                        : "bg-[var(--color-muted)] text-[var(--color-foreground)]")
+                        ? "border border-[var(--color-danger)]/50 bg-[var(--color-muted)] text-[var(--color-danger)]"
+                        : "border border-[var(--color-border)] bg-[var(--color-muted)] text-[var(--color-foreground)]")
                     }
                   >
                     {j.status}
@@ -105,8 +105,8 @@ export default async function AdminJobsPage({
                   {j.total_cost_estimate_cents != null ? `${(j.total_cost_estimate_cents / 100).toFixed(2)}€` : "—"}
                 </td>
                 <td className="px-3 py-3 text-xs">
-                  {j.fallback_used && <span className="mr-2 text-amber-600">fallback</span>}
-                  {j.error_code && <span className="text-red-600">{j.error_code}</span>}
+                  {j.fallback_used && <span className="mr-2 text-[var(--color-brand)]">fallback</span>}
+                  {j.error_code && <span className="text-[var(--color-danger)]">{j.error_code}</span>}
                 </td>
               </tr>
             ))}

@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { SITE } from "@/lib/site";
 
 export const runtime = "edge";
-export const alt = `${SITE.name} — Campaign-first AI clipping`;
+export const alt = `${SITE.name} — AI clip maker for Shorts, Reels and TikToks`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -43,7 +43,7 @@ export default function OgImage() {
               textTransform: "uppercase",
             }}
           >
-            Campaign-first AI clipping
+            AI clip maker for long videos
           </div>
           <div
             style={{
@@ -53,9 +53,9 @@ export default function OgImage() {
               maxWidth: 1000,
             }}
           >
-            Less random virals.
+            Turn long videos into
             <br />
-            More clips that fit your campaign.
+            Shorts, Reels and TikToks.
           </div>
         </div>
 

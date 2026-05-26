@@ -9,9 +9,10 @@ export default function NewCampaignPage() {
       <div className="max-w-2xl">
         <h1 className="text-2xl font-semibold tracking-tight">New campaign</h1>
         <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">
-          Tell ClipFactory who you target and what tone you ship. Every job inside this campaign uses this brief.
+          Tell ClipFactory who the clips are for, what the series should achieve,
+          and what kind of moments to avoid. Every video in this campaign uses this brief.
         </p>
-        <div className="mt-8">
+        <div className="pro-panel mt-8 rounded-lg p-6">
           <NewCampaignForm />
         </div>
       </div>

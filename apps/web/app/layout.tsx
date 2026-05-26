@@ -1,11 +1,25 @@
 import type { Metadata, Viewport } from "next";
+import { Fraunces, Inter } from "next/font/google";
 import { SITE } from "@/lib/site";
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  weight: ["400", "500", "600", "700"],
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  weight: ["300", "400", "500", "600"],
+  style: ["normal", "italic"],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} — Campaign-first AI clipping`,
+    default: `${SITE.name} — AI clip maker for Shorts, Reels and TikToks`,
     template: `%s · ${SITE.name}`,
   },
   description: SITE.shortDescription,
@@ -23,7 +37,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: SITE.url,
     siteName: SITE.name,
-    title: `${SITE.name} — Campaign-first AI clipping`,
+    title: `${SITE.name} — AI clip maker for Shorts, Reels and TikToks`,
     description: SITE.longDescription,
     images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: SITE.name }],
   },
@@ -58,7 +72,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className="min-h-dvh flex flex-col">{children}</body>
+      <body className={`${inter.variable} ${fraunces.variable} min-h-dvh flex flex-col`}>
+        {children}
+      </body>
     </html>
   );
 }
