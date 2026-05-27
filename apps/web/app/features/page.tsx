@@ -19,18 +19,21 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Features — campaign-first AI clipping",
+  title: "AI clip maker features — clip series, montage and video context",
   description:
-    "Story arcs across the whole video, vision on candidates only, explained scores, anti-hallucination guard, EU hosting and predictable per-minute pricing.",
+    "How ClipFactory uses a clip series goal, full-video context, vision checks and multi-part montage to turn long videos into Shorts, Reels and TikToks with captions and simple scores.",
   keywords: [
     "AI clipping features",
+    "AI clip maker features",
+    "YouTube Shorts generator features",
+    "long video to shorts AI",
+    "AI montage tool",
+    "AI vision video clipping",
+    "context-aware AI clipper",
     "story arcs AI clipping",
-    "explained AI score",
-    "campaign clipping",
+    "explained AI clip score",
     "vertical shorts generator",
     "EU hosted AI",
-    "anti-hallucination AI",
-    "narrative AI clipper",
   ],
   alternates: { canonical: "/features" },
 };
@@ -38,61 +41,84 @@ export const metadata: Metadata = {
 const FEATURES = [
   {
     icon: Target,
-    title: "Campaign-first selection",
-    body: "Every job inherits your campaign brief — audience, niche, tone, goal, topics to avoid, example hooks. The clip-selection prompt reads that brief, so picks fit the audience you actually talk to, not random virality.",
+    title: "Clips picked for a clear series goal",
+    body: "Tell ClipFactory who you want to reach, your tone, what the clip series should achieve and what to avoid. The AI uses that brief before choosing clips.",
   },
   {
     icon: GitBranch,
-    title: "Story arcs across the whole video",
-    body: "On long videos (≥ 5 min), we build a compact map of the entire source, then detect narrative arcs that connect distant moments — setup at minute 2, payoff at minute 12. Multi-segment clips stitch up to 3 windows with a clean 150 ms audio crossfade.",
+    title: "Works across the whole video",
+    body: "Some good shorts need two moments: a setup early in the video and a payoff later. ClipFactory can connect those moments into one vertical edit.",
   },
   {
     icon: Eye,
-    title: "Vision where it actually pays off",
-    body: "Vision never runs on the full video — that's how generic tools blow budget. A cheap pass maps the source, then deep multimodal vision runs only on the top 5 candidate windows. Real visual context, controlled cost.",
+    title: "Checks what happens on screen",
+    body: "The AI does not rely only on the transcript. It checks faces, products, reactions, action and on-screen proof before scoring the best moments.",
   },
   {
     icon: Brain,
-    title: "A score you can argue with",
-    body: "Each clip ships with five explicit numbers: hook strength, emotion, visual proof, campaign fit, editing difficulty. No mystery score. You see exactly why we picked it, and your feedback tunes the next pick.",
+    title: "Simple score, clear reason",
+    body: "Each clip shows why it belongs in the series: hook, emotion, visual proof, audience fit and editing difficulty. No mystery number.",
   },
   {
     icon: ListChecks,
-    title: "Anti-hallucination guard",
-    body: "Before rendering, every transcript excerpt is string-matched against the real transcript (SequenceMatcher ratio ≥ 0.65). If the AI invented a moment that does not exist in the source, the clip is dropped. We'd rather ship 2 honest clips than 3 with a fake.",
+    title: "Checks before rendering",
+    body: "Before making the final video, ClipFactory checks that the quote and moment really exist in the source. If the AI invents a moment, it is dropped.",
   },
   {
     icon: Sparkles,
-    title: "Predictable, EU-first",
-    body: "1 minute of source = 1 credit. EU hosting (Supabase Frankfurt, Cloudflare R2 EU, Hetzner Germany), no watermark, 1080×1920 vertical, burned captions, cancel anytime. The boring parts done right.",
+    title: "Simple price, EU hosting",
+    body: "1 minute of source video = 1 credit. EU hosting, no watermark, vertical 1080×1920 clips, captions included, cancel anytime.",
   },
 ];
 
 const PIPELINE_DETAIL = [
   {
-    step: "1. Download &amp; transcribe",
-    body: "yt-dlp pulls the audio track only. Whisper API transcribes with word-level timestamps. We store the transcript, not the source file beyond 14 days.",
-    cost: "~0.006€ / min",
+    step: "1. Read the video",
+    body: "ClipFactory reads the audio and transcript so it knows what people say, when they say it and how the story develops.",
+    cost: "source minutes",
   },
   {
-    step: "2. Map the source",
-    body: "Cheap visual pass (Qwen3-VL Flash via OpenRouter) sampled every ~30 s + transcript chunked. Output: a compressed map the LLM can reason on.",
-    cost: "~0.01€ / 10 min source",
+    step: "2. Check the visuals",
+    body: "The AI samples the video to understand faces, action, products, text on screen and scene changes.",
+    cost: "controlled vision",
   },
   {
-    step: "3. Find story arcs",
-    body: "DeepSeek V3.2 reads the map + your campaign brief, returns 5 candidate windows with score components and rationale.",
-    cost: "~0.005€ / video",
+    step: "3. Build the clip series",
+    body: "ClipFactory looks for strong hooks, reactions, proof, before-and-after moments and clips that fit the series goal.",
+    cost: "AI selection",
   },
   {
-    step: "4. Deep vision on candidates",
-    body: "Gemini 2.5 Flash runs on the top 5 windows only — face presence, action, on-screen text. Adjusts scores with visual evidence.",
-    cost: "~0.02€ / candidate",
+    step: "4. Score the candidates",
+    body: "The best moments are scored for hook, emotion, visual proof, fit and editing difficulty.",
+    cost: "top moments only",
   },
   {
-    step: "5. Verify &amp; render",
-    body: "Anti-hallucination check, then FFmpeg crops to 1080×1920 and burns captions. Multi-segment clips get a 150 ms audio crossfade.",
-    cost: "Fixed — your VPS",
+    step: "5. Render the clips",
+    body: "The final clips are rendered vertically with captions and no watermark, ready for Shorts, Reels and TikTok.",
+    cost: "included",
+  },
+];
+
+const BETTER_PICK_DETAIL = [
+  {
+    icon: Brain,
+    title: "Context layer",
+    body: "ClipFactory builds a compact map of the full video: topics, timestamps, tension, setup, payoff and dead zones. Simple version: it watches enough of the video to know what a moment means.",
+  },
+  {
+    icon: Eye,
+    title: "Vision layer",
+    body: "The best candidate moments are checked visually: faces, products, on-screen text, reactions, movement and proof. The transcript is not allowed to make the decision alone.",
+  },
+  {
+    icon: GitBranch,
+    title: "Montage layer",
+    body: "When one timestamp is not enough, ClipFactory can build a multi-part clip: setup, proof, payoff. The goal is a short that feels edited, not sliced out of the source.",
+  },
+  {
+    icon: ListChecks,
+    title: "Safety layer",
+    body: "Before render, ClipFactory checks the selected transcript and timestamps against the source. If the AI invented a moment or the edit would not hold, the candidate is rejected.",
   },
 ];
 
@@ -114,11 +140,12 @@ export default function FeaturesPage() {
               Features
             </p>
             <h1 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">
-              Built for clipping that actually matches your campaign.
+              Turn one long video into a series of clips that make sense.
             </h1>
             <p className="mt-4 max-w-2xl text-[var(--color-muted-foreground)] md:text-lg">
-              Six engineering choices that separate ClipFactory from generic AI clippers. Listed
-              honestly, with the trade-offs.
+              Simple version: you give a goal, ClipFactory understands the video,
+              then returns clips that fit that goal. Technical version: it uses
+              full-video context, vision checks, multi-segment montage and an explained score.
             </p>
 
             <div className="mt-12 grid gap-6 md:grid-cols-2">
@@ -136,18 +163,52 @@ export default function FeaturesPage() {
           </Container>
         </section>
 
-        {/* Pipeline detail */}
+        {/* Why better */}
         <section className="border-b border-[var(--color-border)] bg-[var(--color-muted)]">
           <Container className="max-w-5xl py-20">
             <div className="max-w-2xl">
               <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
-                The pipeline, no black box
+                Why the picks are better
               </p>
               <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-                Each step, what it does, what it costs.
+                Context, vision and montage work together.
               </h2>
               <p className="mt-3 text-[var(--color-muted-foreground)]">
-                We publish per-step cost because we believe operators should know what they sell.
+                For a casual user, this simply means better clips. For a creator, agency or
+                technical buyer, these are the layers that make the selection different.
+              </p>
+            </div>
+
+            <div className="mt-10 grid gap-4 md:grid-cols-2">
+              {BETTER_PICK_DETAIL.map((item) => (
+                <article
+                  key={item.title}
+                  className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-6"
+                >
+                  <item.icon className="h-5 w-5 text-[var(--color-brand)]" />
+                  <h3 className="mt-4 text-lg font-medium">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--color-muted-foreground)]">
+                    {item.body}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </Container>
+        </section>
+
+        {/* Pipeline detail */}
+        <section className="border-b border-[var(--color-border)]">
+          <Container className="max-w-5xl py-20">
+            <div className="max-w-2xl">
+              <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
+                How it works
+              </p>
+              <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
+                From a long video to a planned clip series.
+              </h2>
+              <p className="mt-3 text-[var(--color-muted-foreground)]">
+                The product keeps the technical work hidden, but the logic is simple:
+                understand the video, choose moments that fit the series objective, then render the clips.
               </p>
             </div>
 
@@ -186,15 +247,14 @@ export default function FeaturesPage() {
             <div className="grid items-center gap-12 md:grid-cols-2">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
-                  Anatomy of a clip
+                  Clip score
                 </p>
                 <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-                  Five components. One number. Zero mystery.
+                  One score, five simple reasons.
                 </h2>
                 <p className="mt-4 text-[var(--color-muted-foreground)]">
-                  Every clip you see in the dashboard exposes its full breakdown. Hover a number,
-                  read the reason, decide whether to keep it. No more guessing why the AI loved
-                  that clip.
+                  Every clip shows its breakdown. You can see why the AI liked it,
+                  why it fits the series goal, then keep it, reject it, or improve the next batch.
                 </p>
                 <ul className="mt-6 space-y-2 text-sm">
                   <li>
@@ -210,8 +270,8 @@ export default function FeaturesPage() {
                     face on camera, action, on-screen text.
                   </li>
                   <li>
-                    <span className="font-mono text-[var(--color-brand)]">Campaign fit</span> —
-                    match with your brief.
+                    <span className="font-mono text-[var(--color-brand)]">Fit</span> —
+                    match with your audience and series goal.
                   </li>
                   <li>
                     <span className="font-mono text-[var(--color-brand)]">Editing</span> — how
@@ -245,10 +305,10 @@ export default function FeaturesPage() {
           <Container className="max-w-5xl py-20">
             <div className="max-w-2xl">
               <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
-                vs generic AI clippers
+                vs basic AI clippers
               </p>
               <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-                Same input. Different output.
+                Same video. Better clip series.
               </h2>
             </div>
             <div className="mt-10">
@@ -261,29 +321,29 @@ export default function FeaturesPage() {
         <section className="border-b border-[var(--color-border)]">
           <Container className="max-w-5xl py-20">
             <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
-              Honest about what we don&apos;t do yet
+              Honest limits
             </p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-              Things on the roadmap, not in V1.
+              Things coming later.
             </h2>
             <ul className="mt-8 grid gap-3 text-sm text-[var(--color-muted-foreground)] md:grid-cols-2">
               <li className="rounded-lg border border-[var(--color-border)] p-4">
-                Direct scheduling to TikTok / Reels / Shorts — manual download for V1.
+              Direct scheduling to TikTok, Reels and Shorts. For V1, download the clips manually.
               </li>
               <li className="rounded-lg border border-[var(--color-border)] p-4">
-                Public API — coming once the first paying customers stabilise.
+              Public API. Coming once the first paying customers are stable.
               </li>
               <li className="rounded-lg border border-[var(--color-border)] p-4">
                 Team workspaces — one user per account at launch.
               </li>
               <li className="rounded-lg border border-[var(--color-border)] p-4">
-                Face-tracking reframe — vertical crop is centred for now.
+              Face-tracking reframe. Vertical crop is centred for now.
               </li>
               <li className="rounded-lg border border-[var(--color-border)] p-4">
-                Direct upload — only YouTube / Vimeo URLs at launch.
+              Direct upload. Only YouTube and Vimeo URLs at launch.
               </li>
               <li className="rounded-lg border border-[var(--color-border)] p-4">
-                B-roll insertion / AI sound design — out of scope for V1.
+              B-roll insertion and AI sound design. Out of scope for V1.
               </li>
             </ul>
           </Container>
@@ -293,11 +353,11 @@ export default function FeaturesPage() {
         <section>
           <Container className="max-w-3xl py-20 text-center">
             <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
-              See it on your own footage.
+              Try it on your own video.
             </h2>
             <p className="mt-3 text-[var(--color-muted-foreground)]">
-              Connect your account, paste a URL, brief your campaign. First clips in under 10
-              minutes.
+              Connect your account, paste a URL, tell ClipFactory what you want, and
+              get your first AI clips.
             </p>
             <Link href="/login" className="mt-8 inline-flex">
               <Button size="lg">

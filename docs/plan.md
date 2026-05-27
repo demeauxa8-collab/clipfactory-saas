@@ -39,22 +39,24 @@ Voir `docs/handoff-codex.md` section 6. Addition story-first : **créer un compt
 
 ## Budget targets
 
-Estimation post-rewrite story-first (passage de Claude Haiku partout → mix DeepSeek/Gemini/Qwen via OpenRouter + Haiku en fallback uniquement).
+Source de vérité : `docs/unit-economics.md`.
+
+Résumé au 2026-05-24 :
 
 | Item | Cost/mo |
 | --- | ---: |
-| Hetzner CPX21 worker | ~7 EUR |
-| Supabase free + R2 small | ~5 EUR |
-| OpenAI Whisper API (7 users × 300 min) | ~7 EUR |
-| OpenRouter LLM mix (DeepSeek texte + Gemini deep vision + Qwen video map) | ~12 EUR |
-| Anthropic Haiku fallback (uniquement sur erreur primary) | ~1 EUR |
-| Stripe fees | ~6 EUR |
-| Domaine | ~1 EUR |
-| **Total infra** | **~39 EUR** |
-| Revenue @ 7 × Starter | **203 EUR** |
-| Margin | **~164 EUR** |
+| Hetzner CPX32 + backups | ~20 EUR TTC |
+| Supabase free + R2 small + domain | ~3 EUR |
+| OpenAI transcription (7 users × 300 min) | ~6 EUR |
+| OpenRouter LLM mix (DeepSeek text + Gemini/Qwen vision) | ~12 EUR base, ~35-45 EUR heavy-story |
+| Anthropic Haiku fallback | ~1 EUR base, ~5-8 EUR if provider fallback is elevated |
+| Revenue @ 7 × Starter, after VAT + Stripe | **~164 EUR** |
+| Margin @ 7, base case | **~120 EUR** |
+| Margin @ 7, conservative heavy-story | **~75-90 EUR** |
 
-> Note : la marge LLM réelle reste à mesurer sur les premiers jobs prod. `EVAL_SAMPLE_RATE` permettra de comparer primary vs fallback sur un échantillon pour ajuster.
+> Note : la marge LLM réelle reste à mesurer sur les premiers jobs prod.
+> `EVAL_SAMPLE_RATE` permettra de comparer primary vs fallback sur un échantillon
+> pour ajuster.
 
 ## État vérifié localement
 

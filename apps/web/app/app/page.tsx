@@ -45,7 +45,28 @@ export default async function AppHome() {
 
   return (
     <Container className="py-10">
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-[0.22em] text-[var(--color-muted-foreground)]">
+            Workspace
+          </p>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
+            Dashboard
+          </h1>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--color-muted-foreground)]">
+            Create a campaign, submit a long video, then review the generated clips,
+            scores and downloads in one place.
+          </p>
+        </div>
+        <Link href="/app/campaigns/new" className="inline-flex">
+          <Button>
+            <Plus className="h-4 w-4" />
+            New campaign
+          </Button>
+        </Link>
+      </div>
+
+      <div className="mt-8 grid gap-4 md:grid-cols-3">
         <StatCard label="Credits left" value={balance.toString()} hint="1 credit = 1 minute of source" />
         <StatCard label="Campaigns" value={(campaigns?.length ?? 0).toString()} hint="Active briefs" />
         <StatCard label="Jobs" value={(jobs?.length ?? 0).toString()} hint="Recent activity" />
@@ -62,7 +83,7 @@ export default async function AppHome() {
               </Button>
             </Link>
           </div>
-          <div className="mt-4 rounded-lg border border-[var(--color-border)]">
+          <div className="pro-card mt-4 overflow-hidden rounded-lg">
             {(campaigns?.length ?? 0) === 0 ? (
               <div className="p-6 text-sm text-[var(--color-muted-foreground)]">
                 No campaigns yet. Create one to start submitting videos.
@@ -70,7 +91,10 @@ export default async function AppHome() {
             ) : (
               <ul className="divide-y divide-[var(--color-border)]">
                 {(campaigns ?? []).map((c: CampaignRow) => (
-                  <li key={c.id} className="flex items-center justify-between p-4">
+                  <li
+                    key={c.id}
+                    className="flex items-center justify-between gap-4 p-4 transition-colors duration-200 hover:bg-white/[0.035]"
+                  >
                     <div>
                       <p className="font-medium">{c.name}</p>
                       <p className="text-xs text-[var(--color-muted-foreground)]">{c.audience || "no audience set"}</p>
@@ -91,7 +115,7 @@ export default async function AppHome() {
 
         <section>
           <h2 className="text-lg font-semibold">Recent jobs</h2>
-          <div className="mt-4 rounded-lg border border-[var(--color-border)]">
+          <div className="pro-card mt-4 overflow-hidden rounded-lg">
             {(jobs?.length ?? 0) === 0 ? (
               <div className="p-6 text-sm text-[var(--color-muted-foreground)]">
                 No jobs yet. Open a campaign and submit a video URL.
@@ -99,11 +123,15 @@ export default async function AppHome() {
             ) : (
               <ul className="divide-y divide-[var(--color-border)]">
                 {(jobs ?? []).map((j: JobRow) => (
-                  <li key={j.id} className="flex items-center justify-between p-4">
+                  <li
+                    key={j.id}
+                    className="flex items-center justify-between gap-4 p-4 transition-colors duration-200 hover:bg-white/[0.035]"
+                  >
                     <div className="min-w-0">
                       <p className="truncate text-sm">{j.source_url}</p>
                       <p className="mt-0.5 text-xs text-[var(--color-muted-foreground)]">
-                        {j.status} · {j.target_clip_count} clip(s)
+                        <span className="status-pill mr-2">{j.status}</span>
+                        {j.target_clip_count} clip(s)
                       </p>
                     </div>
                     <a
@@ -125,7 +153,7 @@ export default async function AppHome() {
 
 function StatCard({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] p-5">
+    <div className="pro-card rounded-lg p-5">
       <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">{label}</p>
       <p className="mt-2 text-3xl font-semibold tabular-nums">{value}</p>
       <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">{hint}</p>

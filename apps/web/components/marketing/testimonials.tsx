@@ -1,23 +1,20 @@
-import { Quote } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 
-const QUOTES = [
+const POINTS = [
   {
-    quote:
-      "I stopped exporting one giant clip per podcast and started shipping three campaign-fit ones. My audience finally sees the line through them.",
-    author: "Solo coach, productivity niche",
-    detail: "Beta user, May 2026",
+    title: "Easy to understand",
+    body:
+      "Every clip comes with a simple score and a short reason, so you know why it was selected.",
   },
   {
-    quote:
-      "The scored output is the part I didn't know I needed. When I tell a client a clip didn't make it, I show them the numbers.",
-    author: "Founder, French content agency",
-    detail: "Beta user, May 2026",
+    title: "Built for full videos",
+    body:
+      "ClipFactory can connect a setup and a payoff across the whole source video, not only cut one timestamp.",
   },
   {
-    quote:
-      "Story arcs are real. The Lambo example you put on the homepage? That's exactly what we found in two of my last vlogs.",
-    author: "YouTuber, vlogs &amp; deep-dives",
-    detail: "Beta user, May 2026",
+    title: "Visual checks included",
+    body:
+      "The product checks what happens on screen so the clip makes sense visually, not only in the transcript.",
   },
 ];
 
@@ -27,35 +24,29 @@ export function Testimonials() {
       <div className="mx-auto max-w-6xl px-6 py-20">
         <div className="max-w-2xl">
           <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
-            Early voices
+            Product proof
           </p>
           <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-            From the first creators who run the pipeline.
+            What the AI clip maker has to prove.
           </h2>
           <p className="mt-3 text-[var(--color-muted-foreground)]">
-            We launched in beta. These quotes come from the operators who tested it on their real
-            footage — names public on request.
+            No fake testimonials before launch. The page should explain the product in words
+            a creator or agency client can verify quickly.
           </p>
         </div>
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {QUOTES.map((q, i) => (
-            <figure
-              key={i}
+          {POINTS.map((p) => (
+            <article
+              key={p.title}
               className="flex flex-col rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-6"
             >
-              <Quote className="h-5 w-5 text-[var(--color-brand)]" aria-hidden="true" />
-              <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-[var(--color-foreground)]/95">
-                &ldquo;{q.quote}&rdquo;
-              </blockquote>
-              <figcaption className="mt-6 border-t border-[var(--color-border)] pt-4">
-                <p
-                  className="text-sm font-medium"
-                  dangerouslySetInnerHTML={{ __html: q.author }}
-                />
-                <p className="text-xs text-[var(--color-muted-foreground)]">{q.detail}</p>
-              </figcaption>
-            </figure>
+              <CheckCircle2 className="h-5 w-5 text-[var(--color-brand)]" aria-hidden="true" />
+              <h3 className="mt-4 text-lg font-medium">{p.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--color-muted-foreground)]">
+                {p.body}
+              </p>
+            </article>
           ))}
         </div>
       </div>

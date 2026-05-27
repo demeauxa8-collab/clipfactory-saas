@@ -15,24 +15,24 @@ import { ClipMockup } from "@/components/marketing/clip-mockup";
 import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
 
 export const metadata: Metadata = {
-  title: "AI clipping for agencies and content studios",
+  title: "AI video clipping for agencies and content studios",
   description:
-    "Serve more clients without losing taste. Per-client campaign briefs, defensible scored output for sign-off, predictable per-minute cost — built for studios who clip at scale.",
+    "Help clients turn long videos into Shorts, Reels and TikToks faster. AI video clipping with client briefs, simple scores, captions, no watermark and predictable video-minute pricing.",
   keywords: [
     "AI clipping for agencies",
     "content agency AI",
     "white-label clipping",
     "agency video editing AI",
     "EU agency AI",
-    "per-client campaign briefs",
+    "client video clipping",
   ],
   alternates: { canonical: "/use-cases/agencies" },
 };
 
 const PROBLEMS = [
   {
-    title: "Generic AI picks ten clips. Your client wants three good ones.",
-    body: "You spend hours sorting. Worse, you can&apos;t explain to the brand why a clip got picked.",
+    title: "Basic AI returns ten clips. Your client wants three good ones.",
+    body: "You still spend hours sorting. Worse, you cannot explain clearly why a clip got picked.",
   },
   {
     title: "Cost is unpredictable.",
@@ -47,13 +47,13 @@ const PROBLEMS = [
 const SOLUTIONS = [
   {
     icon: FileText,
-    title: "One campaign brief per client.",
-    body: "Audience, niche, tone, goal, avoid topics, example hooks. Every job inherits the brief — picks stay on-brand at scale.",
+    title: "One simple brief per client.",
+    body: "Audience, niche, tone, goal and topics to avoid. Every video uses that brief so picks stay on-brand.",
   },
   {
     icon: LineChart,
-    title: "Score breakdown you can defend.",
-    body: "Five components per clip. When a brand asks why this clip and not that one, you don&apos;t guess — you point.",
+    title: "Scores you can explain.",
+    body: "Every clip has a reason. When a brand asks why this clip and not that one, you have an answer.",
   },
   {
     icon: ShieldCheck,
@@ -82,12 +82,11 @@ export default function AgenciesUseCasePage() {
               For agencies &amp; content studios
             </div>
             <h1 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">
-              Serve more clients without losing taste.
+              Turn client videos into short clips faster.
             </h1>
             <p className="mt-4 max-w-2xl text-lg text-[var(--color-muted-foreground)]">
-              Per-client campaign briefs, defensible scored output for sign-off, predictable
-              per-minute cost. Built so a 4-person studio can serve 20 clients without becoming a
-              clip-sorting factory.
+              Create one brief per client, process long videos, and get vertical clips with
+              captions, scores and clear reasons. Built to protect agency margin.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="mailto:hello@clipfactory.app?subject=Agency%20pilot">
@@ -116,7 +115,7 @@ export default function AgenciesUseCasePage() {
                 The bottleneck
               </p>
               <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-                The clipping step kills your margin.
+                The clipping step can kill your margin.
               </h2>
             </div>
             <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -147,7 +146,7 @@ export default function AgenciesUseCasePage() {
                 Three things we changed
               </p>
               <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-                Designed for sign-off, not just selection.
+                Designed for client approval, not just clip output.
               </h2>
             </div>
             <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -177,11 +176,11 @@ export default function AgenciesUseCasePage() {
                   Brand-ready output
                 </p>
                 <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-                  Three clips. Three scored arguments.
+                  Three clips. Three clear reasons.
                 </h2>
                 <p className="mt-4 text-[var(--color-muted-foreground)]">
-                  Walk into the brand review with the breakdown on screen. Hook, emotion, visual
-                  proof, campaign fit, editing. No more taste fights.
+                  Walk into the brand review with the score on screen: hook, emotion, visual
+                  proof, fit and editing difficulty. Less subjective debate.
                 </p>
                 <Link href="mailto:hello@clipfactory.app?subject=Agency%20pilot" className="mt-6 inline-flex">
                   <Button>

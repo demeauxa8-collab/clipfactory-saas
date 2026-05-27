@@ -6,10 +6,10 @@
 export function PipelineDiagram() {
   const nodes = [
     { label: "Long video", sub: "YouTube / Vimeo" },
-    { label: "Transcript", sub: "Whisper" },
-    { label: "Story arcs", sub: "DeepSeek + Gemini" },
-    { label: "Verify", sub: "No hallucination" },
-    { label: "Vertical shorts", sub: "1080×1920 + captions" },
+    { label: "Transcript", sub: "What people say" },
+    { label: "Best moments", sub: "Hook + visuals" },
+    { label: "Check", sub: "Real moment" },
+    { label: "Vertical clips", sub: "1080×1920 + captions" },
   ];
 
   return (
@@ -83,7 +83,7 @@ export function PipelineDiagram() {
           );
         })}
 
-        {/* "Campaign brief" feeding the third box (story arcs) */}
+        {/* "Audience brief" feeding the best-moments box */}
         <g>
           <rect
             x={440}
@@ -103,7 +103,7 @@ export function PipelineDiagram() {
             fontWeight={600}
             fill="var(--color-brand)"
           >
-            Campaign brief
+            Audience brief
           </text>
           <line
             x1={510}

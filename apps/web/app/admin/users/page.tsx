@@ -26,13 +26,13 @@ export default async function AdminUsersPage() {
     <Container className="py-10">
       <h1 className="text-2xl font-semibold tracking-tight">Users ({users.length})</h1>
       {error && (
-        <div className="mt-4 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-900">
+        <div className="mt-4 rounded-md border border-[var(--color-danger)]/40 bg-[var(--color-muted)] p-3 text-sm text-[var(--color-foreground)]">
           {error}
         </div>
       )}
-      <div className="mt-6 overflow-x-auto rounded-lg border border-[var(--color-border)]">
+      <div className="pro-card mt-6 overflow-x-auto rounded-lg">
         <table className="w-full text-sm">
-          <thead className="bg-[var(--color-muted)] text-left text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">
+          <thead className="border-b border-[var(--color-border)] text-left text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">
             <tr>
               <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Plan</th>
@@ -45,7 +45,7 @@ export default async function AdminUsersPage() {
           </thead>
           <tbody className="divide-y divide-[var(--color-border)]">
             {users.map((u) => (
-              <tr key={u.user_id}>
+              <tr key={u.user_id} className="transition-colors duration-200 hover:bg-white/[0.035]">
                 <td className="px-4 py-3 font-mono">{u.email}</td>
                 <td className="px-4 py-3">{u.plan_code ?? "—"}</td>
                 <td className="px-4 py-3">{u.sub_status ?? "—"}</td>

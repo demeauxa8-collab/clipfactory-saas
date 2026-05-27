@@ -49,7 +49,7 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
         <Card title="Audience" value={campaign.audience || "—"} />
         <Card title="Niche" value={campaign.niche || "—"} />
         <Card title="Tone" value={campaign.tone || "—"} />
-        <Card title="Goal" value={campaign.goal || "—"} />
+        <Card title="Clip series goal" value={campaign.goal || "—"} />
         <Card title="Avoid" value={(campaign.avoid_topics || []).join(", ") || "—"} />
         <Card title="Hooks" value={(campaign.example_hooks || []).slice(0, 3).join(" / ") || "—"} />
       </div>
@@ -59,24 +59,28 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
         <p className="mt-1 text-sm text-[var(--color-muted-foreground)]">
           Paste a YouTube URL. Each job consumes 1 credit per minute of source.
         </p>
-        <div className="mt-4">
+        <div className="pro-panel mt-4 rounded-lg p-5">
           <SubmitJobForm campaignId={String(campaign.id)} />
         </div>
       </section>
 
       <section className="mt-10">
         <h2 className="text-lg font-semibold">Jobs in this campaign</h2>
-        <div className="mt-4 rounded-lg border border-[var(--color-border)]">
+        <div className="pro-card mt-4 overflow-hidden rounded-lg">
           {(jobs?.length ?? 0) === 0 ? (
             <p className="p-6 text-sm text-[var(--color-muted-foreground)]">No jobs yet.</p>
           ) : (
             <ul className="divide-y divide-[var(--color-border)]">
               {(jobs ?? []).map((j: JobRow) => (
-                <li key={j.id} className="flex items-center justify-between p-4">
+                <li
+                  key={j.id}
+                  className="flex items-center justify-between gap-4 p-4 transition-colors duration-200 hover:bg-white/[0.035]"
+                >
                   <div className="min-w-0">
                     <p className="truncate text-sm">{j.source_url}</p>
                     <p className="mt-0.5 text-xs text-[var(--color-muted-foreground)]">
-                      {j.status} · {new Date(j.queued_at).toLocaleString()}
+                      <span className="status-pill mr-2">{j.status}</span>
+                      {new Date(j.queued_at).toLocaleString()}
                     </p>
                   </div>
                   <a href={`/app/jobs/${j.id}`} className="text-sm text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]">
@@ -94,7 +98,7 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
 
 function Card({ title, value }: { title: string; value: string }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] p-4">
+    <div className="pro-card rounded-lg p-4">
       <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">{title}</p>
       <p className="mt-1 text-sm">{value}</p>
     </div>

@@ -11,10 +11,12 @@ import {
 } from "@/components/marketing/json-ld";
 
 export const metadata: Metadata = {
-  title: "Pricing — 29€/month, no watermark, EU hosted",
+  title: "AI video clipping pricing — 29€/month, no watermark",
   description:
-    "ClipFactory Starter plan: 29€ / month, 300 credits, 30 min per video, 3 clips per video. No watermark, cancel anytime, EU hosted. Creator and Agency tiers coming soon.",
+    "ClipFactory pricing starts at 29€ / month for 300 video minutes. Turn long videos into Shorts, Reels and TikToks with captions, no watermark, EU hosting and simple credits.",
   keywords: [
+    "AI video clipping pricing",
+    "AI clip maker pricing",
     "AI clipping pricing",
     "AI clipper price",
     "OpusClip alternative price",
@@ -29,11 +31,11 @@ export const metadata: Metadata = {
 const PRICING_FAQ = [
   {
     q: "What counts as a 'credit'?",
-    a: "1 credit = 1 minute of source video. Submit a 12-minute video and the worker deducts 12 credits at probe time. The number of clips returned does not change the cost.",
+    a: "1 credit = 1 minute of source video. A 12-minute video uses 12 credits, whether ClipFactory returns one clip or three clips.",
   },
   {
     q: "What if a job fails?",
-    a: "If the worker fails before producing clips, you get a full credit refund automatically. If it produces fewer clips than expected (anti-hallucination drop, source issue), you only pay for what was processed.",
+    a: "If ClipFactory cannot process the video, the credits are refunded. If a video is too broken to make good clips, we do not charge for fake output.",
   },
   {
     q: "Is there a free trial?",
@@ -45,7 +47,7 @@ const PRICING_FAQ = [
   },
   {
     q: "Where is my data stored?",
-    a: "Supabase Frankfurt for the database, Cloudflare R2 EU for clips, Hetzner Germany for processing. Source videos auto-delete after 14 days, rendered clips after 60.",
+    a: "ClipFactory is designed around EU hosting: database in Frankfurt, storage in Europe and video processing in Germany. Source videos auto-delete after 14 days, rendered clips after 60.",
   },
   {
     q: "Do you take a cut of my revenue?",
@@ -75,14 +77,14 @@ const PLANS: Plan[] = [
     highlighted: true,
     available: true,
     features: [
-      { label: "300 credits / month", included: true },
+      { label: "300 video minutes / month", included: true },
       { label: "Up to 30 min per video", included: true },
       { label: "3 clips per video", included: true },
       { label: "1 concurrent job", included: true },
       { label: "Vertical 1080×1920 + burned captions", included: true },
-      { label: "Full 5-axis score breakdown", included: true },
-      { label: "Story arcs (multi-segment clips)", included: true },
-      { label: "Campaign briefs", included: true },
+      { label: "Simple score for every clip", included: true },
+      { label: "Multi-part clips when the story needs it", included: true },
+      { label: "Audience brief", included: true },
       { label: "Good / bad feedback", included: true },
       { label: "API access", included: false },
       { label: "Priority support", included: false },
@@ -96,13 +98,13 @@ const PLANS: Plan[] = [
     ctaHref: "mailto:hello@clipfactory.app?subject=Creator%20plan%20waitlist",
     available: false,
     features: [
-      { label: "1 000 credits / month", included: true },
+      { label: "1 000 video minutes / month", included: true },
       { label: "Up to 60 min per video", included: true },
       { label: "5 clips per video", included: true },
       { label: "2 concurrent jobs", included: true },
-      { label: "Story arcs (multi-segment clips)", included: true },
-      { label: "Campaign memory across jobs", included: true },
-      { label: "Full 5-axis score breakdown", included: true },
+      { label: "Multi-part clips when the story needs it", included: true },
+      { label: "Saved audience briefs", included: true },
+      { label: "Simple score for every clip", included: true },
       { label: "Good / bad feedback", included: true },
       { label: "API access", included: false },
       { label: "Priority support", included: true },
@@ -116,13 +118,13 @@ const PLANS: Plan[] = [
     ctaHref: "mailto:hello@clipfactory.app?subject=Agency%20plan",
     available: false,
     features: [
-      { label: "3 000 credits / month", included: true },
+      { label: "3 000 video minutes / month", included: true },
       { label: "Up to 120 min per video", included: true },
       { label: "8 clips per video", included: true },
       { label: "3 concurrent jobs", included: true },
-      { label: "Story arcs (multi-segment clips)", included: true },
-      { label: "Campaign memory across jobs", included: true },
-      { label: "Full 5-axis score breakdown", included: true },
+      { label: "Multi-part clips when the story needs it", included: true },
+      { label: "Saved audience briefs", included: true },
+      { label: "Simple score for every clip", included: true },
       { label: "Good / bad feedback", included: true },
       { label: "API access (V2)", included: true },
       { label: "Priority support", included: true },
@@ -148,11 +150,11 @@ export default function PricingPage() {
               Pricing
             </p>
             <h1 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">
-              Pay only for the minutes you process.
+              Pricing for turning long videos into short clips.
             </h1>
             <p className="mt-4 max-w-2xl text-[var(--color-muted-foreground)] md:text-lg">
-              Predictable per-minute billing. No revenue share, no watermark, no surprise overage —
-              the price you see is the price you pay.
+              Simple monthly plans for AI video clipping. You pay for video minutes,
+              get vertical clips with captions, and keep the clips with no watermark.
             </p>
 
             <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -167,20 +169,19 @@ export default function PricingPage() {
         <section className="border-b border-[var(--color-border)] bg-[var(--color-muted)]">
           <Container className="max-w-4xl py-20">
             <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
-              How credits work
+              How video minutes work
             </p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-              1 credit = 1 minute of source. That&apos;s the whole rule.
+              1 credit = 1 minute of source video.
             </h2>
             <p className="mt-4 text-[var(--color-muted-foreground)]">
-              Charge happens at probe time, not at upload — so a failed download never burns
-              credits. If the pipeline drops clips at the anti-hallucination step, you are only
-              billed for the clips you actually get.
+              Upload or paste a 12-minute video and it uses 12 credits. The number of
+              clips does not change the price, so costs stay easy to understand.
             </p>
             <ul className="mt-8 grid gap-3 text-sm md:grid-cols-2">
               <li className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-4">
-                <span className="font-semibold">Vertical render included.</span>{" "}
-                1080×1920, burned captions, no watermark — on every plan.
+                <span className="font-semibold">Vertical clips included.</span>{" "}
+                1080×1920, captions, no watermark — on every plan.
               </li>
               <li className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-4">
                 <span className="font-semibold">Storage retention.</span> Source files deleted

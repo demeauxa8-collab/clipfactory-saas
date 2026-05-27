@@ -65,7 +65,7 @@ export function SubmitJobForm({ campaignId }: { campaignId: string }) {
       <Button type="submit" disabled={busy}>
         {busy ? "Submitting…" : "Submit"}
       </Button>
-      {error && <span className="text-sm text-red-600">{error}</span>}
+      {error && <span className="text-sm text-[var(--color-danger)]">{error}</span>}
     </form>
   );
 }

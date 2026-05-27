@@ -28,13 +28,13 @@ docs/
 | --- | --- |
 | Frontend | Next.js 15, TypeScript, Tailwind v4, shadcn/ui |
 | Backend API | FastAPI (Python 3.11+), asyncpg |
-| Worker pipeline | yt-dlp, OpenAI Whisper API, Anthropic Claude, FFmpeg |
+| Worker pipeline | yt-dlp, OpenAI transcription, OpenRouter primary, Anthropic fallback, FFmpeg |
 | DB + Auth | Supabase (Postgres + magic-link auth) |
 | Object storage | Cloudflare R2 (S3-compatible, free egress) |
 | Queue | Redis on the API VPS |
 | Billing | Stripe Checkout + webhooks |
-| Hosting | Web on Cloudflare Pages, API+Worker on Hetzner CPX21 |
-| LLM | Claude Haiku (analysis), OpenAI gpt-4o-mini-transcribe (audio) |
+| Hosting | Web on Cloudflare Pages, API+Worker on Hetzner CPX32 |
+| LLM | OpenRouter (DeepSeek + Gemini + Qwen), Anthropic Haiku fallback, OpenAI gpt-4o-mini-transcribe |
 
 ## Pricing — V1
 
@@ -57,7 +57,7 @@ Single plan to start, others enabled later.
 
 ## Out of scope for V1
 
-Vision scoring, scheduling, API access, MCP, campaign memory, brand templates, multi-clip variants, billing portal upgrades. All shipped in V2 once we have 5+ paying customers.
+Scheduling, API access, MCP, brand templates, advanced editor, face tracking, and billing portal upgrades. All shipped in V2 once we have 5+ paying customers.
 
 ## Status
 

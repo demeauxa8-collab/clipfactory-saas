@@ -17,9 +17,9 @@ import { ExampleArc } from "@/components/marketing/example-arc";
 import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
 
 export const metadata: Metadata = {
-  title: "AI clipping for solo creators and podcasters",
+  title: "AI clipping for creators and podcasters — turn episodes into Shorts",
   description:
-    "Turn your weekly long-forms into 3 vertical shorts that match your audience. Story arcs across the whole episode, scored picks, no watermark — built for solo operators who run real campaigns.",
+    "Turn long YouTube videos, podcasts, interviews and webinars into Shorts, Reels and TikToks with AI clipping, captions, simple scores and no watermark.",
   keywords: [
     "AI clipping for creators",
     "AI clipping for podcasters",
@@ -34,26 +34,26 @@ export const metadata: Metadata = {
 const STORY = [
   {
     icon: Timer,
-    title: "Monday: long-form drops",
-    body: "Your weekly podcast or vlog hits YouTube. 60 to 90 minutes of source — too much to clip by hand, too much for a tool that only looks at one window.",
+    title: "Monday: your long video goes live",
+    body: "Your podcast, interview or vlog is on YouTube. It is too long to clip by hand every week.",
   },
   {
     icon: ListChecks,
-    title: "Same Monday: you brief once",
-    body: "Two minutes. Audience, niche, tone, avoid topics, example hooks. You only do this once per campaign — every job reuses it.",
+    title: "Same Monday: you give a simple brief",
+    body: "Tell ClipFactory your audience, tone, goal and topics to avoid. It takes about two minutes.",
   },
   {
     icon: Sparkles,
-    title: "Tuesday morning: 3 clips, fully scored",
-    body: "Vertical 1080×1920, captions burned, story arcs stitched. Each clip explains itself with 5 numbers — you keep, refine or kill.",
+    title: "Tuesday morning: 3 clips to review",
+    body: "You get vertical clips with captions, timestamps, a score and a short reason for each pick.",
   },
 ];
 
 const WHY = [
-  "Solo operators do not have time to debate ten generic clips.",
+  "Solo creators do not have time to sort ten generic clips.",
   "Audiences smell a generic clip from a mile away.",
   "Your hook has more weight than your length — clipping is the new headline.",
-  "If you can&apos;t argue with the AI, you can&apos;t iterate.",
+  "If you cannot understand why the AI picked a clip, you cannot improve the next batch.",
 ];
 
 export default function CreatorsUseCasePage() {
@@ -76,12 +76,11 @@ export default function CreatorsUseCasePage() {
               For solo creators &amp; podcasters
             </div>
             <h1 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">
-              Your long-forms deserve clips that match your voice.
+              Turn long videos and podcasts into Shorts, Reels and TikToks.
             </h1>
             <p className="mt-4 max-w-2xl text-lg text-[var(--color-muted-foreground)]">
-              You spent 90 minutes building a real conversation. A generic clipper turns it into a
-              loud 30-second highlight. ClipFactory finds the story arcs and ships them with
-              scored explanations — built for the operator who ships every week.
+              Paste a YouTube or Vimeo link. ClipFactory finds strong moments, adds captions,
+              and explains why each short was selected.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/login">
@@ -128,7 +127,7 @@ export default function CreatorsUseCasePage() {
           <Container className="max-w-5xl py-20">
             <div className="max-w-2xl">
               <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
-                A clip you couldn&apos;t cut by hand
+                A clip most basic tools miss
               </p>
               <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
                 Setup at minute 2. Payoff at minute 12.
@@ -173,8 +172,8 @@ export default function CreatorsUseCasePage() {
                   A clip your audience recognises as yours.
                 </h2>
                 <p className="mt-4 text-[var(--color-muted-foreground)]">
-                  Vertical 1080×1920, burned captions, story arc stitched, no watermark. The fit
-                  score tells you whether it matches the line you&apos;re building.
+                  Vertical 1080×1920, captions included, no watermark. The score tells you
+                  whether the clip fits your audience and goal.
                 </p>
                 <Link href="/login" className="mt-6 inline-flex">
                   <Button>
@@ -205,10 +204,10 @@ export default function CreatorsUseCasePage() {
           <Container className="max-w-3xl py-20 text-center">
             <Mic className="mx-auto h-6 w-6 text-[var(--color-brand)]" />
             <h2 className="mt-4 text-3xl font-semibold tracking-tight md:text-4xl">
-              Built for the next episode.
+              Built for your next episode.
             </h2>
             <p className="mt-3 text-[var(--color-muted-foreground)]">
-              Drop your latest long-form, brief once, see what the engine finds.
+              Paste your latest long video, give a simple brief, and see what ClipFactory finds.
             </p>
             <Link href="/login" className="mt-8 inline-flex">
               <Button size="lg">

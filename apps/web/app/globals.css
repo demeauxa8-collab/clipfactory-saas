@@ -2,26 +2,31 @@
 
 @theme {
   --font-sans:
-    "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
+  --font-serif:
+    var(--font-fraunces), "Iowan Old Style", "Apple Garamond", Georgia, serif;
   --font-mono:
     ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
 
-  --color-background: #ffffff;
-  --color-foreground: #0a0a0a;
-  --color-muted: #f5f5f5;
-  --color-muted-foreground: #6b7280;
-  --color-border: #e5e7eb;
-  --color-accent: #0a0a0a;
-  --color-accent-foreground: #ffffff;
-  --color-ring: #0a0a0a;
+  --color-background: #050505;
+  --color-foreground: #f5f5f7;
+  --color-muted: #111113;
+  --color-muted-foreground: #a1a1a6;
+  --color-border: #2a2a2d;
+  --color-accent: #f5f5f7;
+  --color-accent-foreground: #050505;
+  --color-ring: #d8c3a3;
 
-  /* Brand accent — emerald, used on positive scores + key CTAs.
-     Stays minimal: never on body copy, never on backgrounds bigger than a chip. */
-  --color-brand: #059669;
-  --color-brand-soft: #d1fae5;
-  --color-brand-foreground: #ffffff;
+  /* Brand accent — quiet champagne, reserved for emphasis and product state. */
+  --color-brand: #d8c3a3;
+  --color-brand-soft: #191510;
+  --color-brand-foreground: #080706;
+  --color-vision: #d7d7dc;
+  --color-vision-soft: #151518;
+  --color-edit: #b6b6bd;
+  --color-edit-soft: #131315;
 
   /* Warning/danger accents for low scores or failed states */
   --color-warn: #d97706;
@@ -34,18 +39,22 @@
 
 @media (prefers-color-scheme: dark) {
   @theme {
-    --color-background: #0a0a0a;
-    --color-foreground: #fafafa;
-    --color-muted: #171717;
-    --color-muted-foreground: #a1a1aa;
-    --color-border: #262626;
-    --color-accent: #fafafa;
-    --color-accent-foreground: #0a0a0a;
-    --color-ring: #fafafa;
+    --color-background: #050505;
+    --color-foreground: #f5f5f7;
+    --color-muted: #111113;
+    --color-muted-foreground: #a1a1a6;
+    --color-border: #2a2a2d;
+    --color-accent: #f5f5f7;
+    --color-accent-foreground: #050505;
+    --color-ring: #d8c3a3;
 
-    --color-brand: #34d399;
-    --color-brand-soft: #064e3b;
-    --color-brand-foreground: #0a0a0a;
+    --color-brand: #d8c3a3;
+    --color-brand-soft: #191510;
+    --color-brand-foreground: #080706;
+    --color-vision: #d7d7dc;
+    --color-vision-soft: #151518;
+    --color-edit: #b6b6bd;
+    --color-edit-soft: #131315;
 
     --color-warn: #f59e0b;
     --color-danger: #ef4444;
@@ -63,10 +72,33 @@ html {
 }
 
 body {
-  background: var(--color-background);
+  background:
+    linear-gradient(180deg, rgba(245, 245, 247, 0.035), transparent 22rem),
+    repeating-linear-gradient(
+      90deg,
+      rgba(245, 245, 247, 0.012) 0,
+      rgba(245, 245, 247, 0.012) 1px,
+      transparent 1px,
+      transparent 96px
+    ),
+    var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans);
   font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+body::before {
+  background:
+    linear-gradient(90deg, transparent, rgba(216, 195, 163, 0.06), transparent),
+    linear-gradient(180deg, rgba(245, 245, 247, 0.035), transparent);
+  content: "";
+  height: 28rem;
+  left: 0;
+  pointer-events: none;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: -1;
 }
 
 ::selection {
@@ -76,12 +108,12 @@ body {
 
 /* Animated counter pulse (used on hero stats) */
 @keyframes brand-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.0); }
-  50% { box-shadow: 0 0 0 6px rgba(5, 150, 105, 0.08); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(216, 195, 163, 0.0); }
+  50% { box-shadow: 0 0 0 6px rgba(216, 195, 163, 0.14); }
 }
 .brand-pulse { animation: brand-pulse 2.4s ease-in-out infinite; }
 
-/* Subtle fade-in for hero mockup */
+/* Subtle motion language for the marketing pages */
 @keyframes fade-up {
   0% { opacity: 0; transform: translateY(8px); }
   100% { opacity: 1; transform: translateY(0); }
@@ -89,6 +121,187 @@ body {
 .fade-up { animation: fade-up 0.6s ease-out both; }
 .fade-up-2 { animation: fade-up 0.6s ease-out 0.1s both; }
 .fade-up-3 { animation: fade-up 0.6s ease-out 0.2s both; }
+
+@keyframes stage-float {
+  0%, 100% { transform: translateY(0) rotateX(0deg); }
+  50% { transform: translateY(-8px) rotateX(0.8deg); }
+}
+
+@keyframes scan-sweep {
+  0% { opacity: 0; transform: translateY(-120%); }
+  12% { opacity: 0.8; }
+  72% { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(520%); }
+}
+
+@keyframes playhead {
+  0%, 14% { left: 16%; }
+  34% { left: 34%; }
+  55% { left: 74%; }
+  82%, 100% { left: 92%; }
+}
+
+@keyframes meter-grow {
+  0% { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
+}
+
+@keyframes insight-rise {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes soft-sheen {
+  0% { transform: translateX(-32%); opacity: 0; }
+  28% { opacity: 0.8; }
+  70% { opacity: 0.5; }
+  100% { transform: translateX(42%); opacity: 0; }
+}
+
+@keyframes wave-drift {
+  0%, 100% { transform: translate3d(-1.5%, 0, 0) skewY(-1deg); }
+  50% { transform: translate3d(1.5%, -6px, 0) skewY(1deg); }
+}
+
+.stage-float {
+  animation: stage-float 8s ease-in-out infinite;
+  transform-origin: 50% 65%;
+}
+
+.scan-sweep {
+  animation: scan-sweep 4.6s ease-in-out infinite;
+}
+
+.timeline-playhead {
+  animation: playhead 6.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.score-fill {
+  animation: meter-grow 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: left center;
+}
+
+.insight-card {
+  animation: insight-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.soft-sheen::after {
+  animation: soft-sheen 7s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(246, 240, 229, 0.13),
+    transparent
+  );
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(-32%);
+}
+
+.liquid-hero {
+  background:
+    linear-gradient(180deg, rgba(245, 245, 247, 0.055), transparent 48%),
+    linear-gradient(120deg, rgba(216, 195, 163, 0.075), transparent 38%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(245, 245, 247, 0.026) 0,
+      rgba(245, 245, 247, 0.026) 1px,
+      transparent 1px,
+      transparent 116px
+    );
+}
+
+.liquid-hero::after {
+  animation: wave-drift 12s ease-in-out infinite;
+  background:
+    linear-gradient(180deg, rgba(245, 245, 247, 0.10), rgba(245, 245, 247, 0.012));
+  border: 1px solid rgba(245, 245, 247, 0.08);
+  border-radius: 48% 52% 0 0 / 100% 100% 0 0;
+  bottom: -22rem;
+  content: "";
+  height: 28rem;
+  left: -8%;
+  pointer-events: none;
+  position: absolute;
+  right: -8%;
+}
+
+.wave-band {
+  background:
+    linear-gradient(180deg, rgba(245, 245, 247, 0.06), rgba(245, 245, 247, 0.015)),
+    #0b0b0c;
+  border-bottom: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-border);
+  overflow: hidden;
+  position: relative;
+}
+
+.wave-band::before {
+  background: rgba(245, 245, 247, 0.035);
+  border: 1px solid rgba(245, 245, 247, 0.08);
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
+  content: "";
+  height: 16rem;
+  left: -8%;
+  position: absolute;
+  right: -8%;
+  top: -13rem;
+}
+
+.wave-band::after {
+  background: linear-gradient(90deg, transparent, rgba(216, 195, 163, 0.18), transparent);
+  content: "";
+  height: 1px;
+  left: 10%;
+  position: absolute;
+  right: 10%;
+  top: 50%;
+}
+
+.liquid-shell {
+  background:
+    linear-gradient(180deg, rgba(245, 245, 247, 0.08), rgba(245, 245, 247, 0.018)),
+    #0c0c0e;
+  border: 1px solid rgba(245, 245, 247, 0.11);
+  border-radius: clamp(1.75rem, 6vw, 4.5rem);
+  box-shadow: 0 40px 120px -80px rgba(245, 245, 247, 0.62);
+  overflow: hidden;
+  position: relative;
+}
+
+.liquid-shell::before {
+  background: linear-gradient(90deg, transparent, rgba(245, 245, 247, 0.10), transparent);
+  content: "";
+  height: 1px;
+  left: 8%;
+  position: absolute;
+  right: 8%;
+  top: 0;
+}
+
+.curve-card {
+  background:
+    linear-gradient(180deg, rgba(245, 245, 247, 0.065), rgba(245, 245, 247, 0.018)),
+    #09090a;
+  border: 1px solid var(--color-border);
+  border-radius: clamp(1.25rem, 4vw, 2.75rem);
+  min-height: 15rem;
+  position: relative;
+}
+
+.curve-card::after {
+  background: currentColor;
+  border-radius: 999px;
+  content: "";
+  height: 0.375rem;
+  left: 1.75rem;
+  opacity: 0.75;
+  position: absolute;
+  right: 1.75rem;
+  top: 1.5rem;
+}
 
 /* Score bar — used in the mockup clip preview */
 .score-bar {
@@ -99,4 +312,76 @@ body {
     var(--color-muted) var(--score, 80%),
     var(--color-muted) 100%
   );
+}
+
+.film-surface {
+  background:
+    linear-gradient(180deg, rgba(245, 245, 247, 0.045), rgba(245, 245, 247, 0.012)),
+    repeating-linear-gradient(
+      0deg,
+      rgba(245, 245, 247, 0.032) 0,
+      rgba(245, 245, 247, 0.032) 1px,
+      transparent 1px,
+      transparent 22px
+    ),
+    #0d0d0f;
+}
+
+.edit-grid {
+  background:
+    linear-gradient(90deg, rgba(216, 195, 163, 0.12), transparent 32%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(245, 245, 247, 0.055) 0,
+      rgba(245, 245, 247, 0.055) 1px,
+      transparent 1px,
+      transparent 56px
+    );
+}
+
+.frame-notch {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(245, 245, 247, 0.16) 0,
+      rgba(245, 245, 247, 0.16) 10px,
+      transparent 10px,
+      transparent 22px
+    );
+}
+
+.pro-panel {
+  background:
+    linear-gradient(180deg, rgba(245, 245, 247, 0.06), rgba(245, 245, 247, 0.018)),
+    var(--color-muted);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 24px 80px -56px rgba(245, 245, 247, 0.45);
+}
+
+.pro-card {
+  background:
+    linear-gradient(180deg, rgba(245, 245, 247, 0.045), rgba(245, 245, 247, 0.012)),
+    #0b0b0c;
+  border: 1px solid var(--color-border);
+}
+
+.status-pill {
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-muted-foreground);
+  display: inline-flex;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  padding: 0.25rem 0.625rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }

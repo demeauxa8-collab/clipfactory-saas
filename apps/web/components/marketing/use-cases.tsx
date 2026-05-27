@@ -5,36 +5,36 @@ const CASES = [
   {
     icon: Lightbulb,
     persona: "Solo creators",
-    title: "Build your library, week after week.",
-    body: "Drop a long-form, get 3 vertical shorts that match the audience you're growing — not the algorithm's favourite chaos.",
+    title: "Turn one long video into weekly clips.",
+    body: "Paste a long video and get 3 vertical clips for TikTok, Reels and Shorts. The picks match your audience, not just random viral moments.",
     bullets: [
-      "1 long-form → 3 campaign-fit clips",
-      "Your tone, your hooks, your goals",
-      "Honest score so you know what to post",
+      "1 long video -> 3 short clips",
+      "Your tone, hooks and goals",
+      "Simple score so you know what to post",
     ],
     href: "/use-cases/creators",
   },
   {
     icon: Mic,
     persona: "Coaches &amp; podcasters",
-    title: "Turn your hour-long episodes into proof.",
-    body: "Story arcs find the setup → payoff moments inside a 90-minute conversation. Each clip ships ready for TikTok, Reels and Shorts.",
+    title: "Cut strong moments from long episodes.",
+    body: "Find the best questions, reactions and before-and-after moments inside a 60 to 90 minute conversation. Each clip is ready for TikTok, Reels and Shorts.",
     bullets: [
-      "Multi-segment clips from distant moments",
-      "Captions burned in, no manual cleanup",
-      "Same picks across platforms — coherent voice",
+      "Multi-part clips when the story needs it",
+      "Captions included, no manual cleanup",
+      "Same message across every platform",
     ],
     href: "/use-cases/creators",
   },
   {
     icon: Building2,
     persona: "Agencies",
-    title: "Serve more clients without losing taste.",
-    body: "One campaign brief per client, one queue, scored output you can defend to the brand. No more debating which clip to ship.",
+    title: "Make client clips faster.",
+    body: "Create a simple brief for each client, process videos in a queue, and show why each clip was selected. Less debating, faster delivery.",
     bullets: [
-      "Per-client campaign briefs",
-      "Defensible score breakdown for sign-off",
-      "Predictable per-minute cost — easy to bill",
+      "One brief per client",
+      "Score and explanation for sign-off",
+      "Predictable video-minute cost",
     ],
     href: "/use-cases/agencies",
   },
@@ -46,13 +46,13 @@ export function UseCases() {
       <div className="mx-auto max-w-6xl px-6 py-20">
         <div className="max-w-2xl">
           <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
-            Built for these workflows
+            Use cases
           </p>
           <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-            Whoever you are, the brief is what matters.
+            AI video clipping for creators, podcasts and agencies.
           </h2>
           <p className="mt-3 text-[var(--color-muted-foreground)]">
-            Three workflows, one engine. Tell us who you talk to — the picks adapt.
+            Tell ClipFactory who you talk to. The clip selection changes for that audience.
           </p>
         </div>
 
@@ -84,7 +84,7 @@ export function UseCases() {
                 href={c.href as never}
                 className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-[var(--color-brand)] hover:underline"
               >
-                See the workflow
+                See this use case
                 <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </Link>
             </article>

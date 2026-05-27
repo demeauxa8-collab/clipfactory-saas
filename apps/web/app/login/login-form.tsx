@@ -274,7 +274,7 @@ export function LoginForm({
       </form>
 
       {(errorMessage || initialError) && (
-        <p className="text-sm text-red-600">{errorMessage ?? initialError}</p>
+        <p className="text-sm text-[var(--color-danger)]">{errorMessage ?? initialError}</p>
       )}
     </div>
   );

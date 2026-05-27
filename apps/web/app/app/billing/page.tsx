@@ -28,17 +28,17 @@ export default async function BillingPage({
         </p>
 
         {status === "success" && (
-          <div className="mt-4 rounded-md border border-green-300 bg-green-50 p-3 text-sm text-green-900">
+          <div className="mt-4 rounded-md border border-[var(--color-border)] bg-[var(--color-muted)] p-3 text-sm text-[var(--color-foreground)]">
             Payment successful. Credits should appear within a minute.
           </div>
         )}
         {status === "cancel" && (
-          <div className="mt-4 rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900">
+          <div className="mt-4 rounded-md border border-[var(--color-border)] bg-[var(--color-muted)] p-3 text-sm text-[var(--color-muted-foreground)]">
             Checkout canceled. You can resume any time.
           </div>
         )}
 
-        <div className="mt-8 rounded-lg border border-[var(--color-border)] p-6">
+        <div className="pro-panel mt-8 rounded-lg p-6">
           <div className="flex items-baseline justify-between">
             <div>
               <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">Plan</p>

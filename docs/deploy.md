@@ -12,7 +12,7 @@
 | OpenAI | Whisper transcription | todo |
 | OpenRouter | Primary LLM (DeepSeek + Gemini + Qwen) | todo |
 | Anthropic | Fallback LLM (Haiku) | todo |
-| Hetzner CPX21 (Falkenstein) | API + worker host | todo |
+| Hetzner CPX32 (Falkenstein) | API + worker host | todo |
 | Cloudflare Pages | Web frontend | todo |
 | Domain (`clipfactory.app` or alt) | Public URL | todo |
 
@@ -65,7 +65,16 @@ Top up each account with a starting credit balance (~ $10–20 each is enough fo
 
 ## Step 5 — Hetzner VPS (≈ 30 min)
 
-1. Provision a **CPX21** server in Falkenstein, OS Ubuntu 24.04, with the public SSH key.
+Use CPX32 for V1 production:
+
+- Location: Falkenstein `FSN1`
+- OS: Ubuntu 24.04 LTS
+- Specs: 4 vCPU, 8 GB RAM, 160 GB SSD
+- Backups: optional before first users, recommended once paid users are active
+
+CPX22/CPX21 can boot the stack but is tight for FFmpeg + worker temp files.
+
+1. Provision a **CPX32** server in Falkenstein, OS Ubuntu 24.04, with the public SSH key.
 2. SSH in, install: `apt update && apt install -y docker.io docker-compose-v2 ffmpeg yt-dlp redis caddy git`.
 3. Clone repo: `git clone https://github.com/demeauxa8-collab/clipfactory-saas.git && cd clipfactory-saas`.
 4. Create `apps/api/.env` and `apps/worker/.env` from the `.env.example` files. Fill **every** value from steps 2–4.
@@ -166,16 +175,14 @@ If a deploy breaks prod:
 
 ## Cost budget at 7 Starter customers
 
-| Item | Cost / mo |
+Source of truth: `docs/unit-economics.md`.
+
+The old CPX21 budget was optimistic and used gross revenue. The current model
+uses CPX32, VAT-included pricing, and Stripe France fees:
+
+| Scenario | Margin / mo after VAT + Stripe |
 | --- | ---: |
-| Hetzner CPX21 + 1.40€ backups | ~9€ |
-| Supabase free tier | 0€ |
-| Cloudflare R2 (~10 GB) | ~2€ |
-| OpenAI Whisper (~ 2100 min) | ~7€ |
-| OpenRouter (DeepSeek + Gemini + Qwen mix) | ~12€ |
-| Anthropic Haiku fallback (~5% jobs) | ~1€ |
-| Stripe fees (1.4% + 0.25€ × 7) | ~6€ |
-| Domain | ~1€ |
-| **Total infra** | **~38€** |
-| Revenue 7 × Starter | **203€** |
-| **Margin** | **~165€** |
+| Mixed usage, official providers | ~120€ |
+| Conservative heavy-story usage | ~75-90€ |
+
+Re-check real margins after the first 20 completed production jobs.

@@ -63,7 +63,12 @@ export function NewCampaignForm() {
       />
       <Field label="Niche" name="niche" placeholder="bootstrapped SaaS" maxLength={120} />
       <Field label="Tone" name="tone" placeholder="direct, no-fluff, slightly contrarian" maxLength={120} />
-      <Field label="Goal" name="goal" placeholder="Drive newsletter signups via shorts" maxLength={400} />
+      <Field
+        label="Clip series goal"
+        name="goal"
+        placeholder="Make 3 clips that push viewers to join the newsletter"
+        maxLength={400}
+      />
       <Field
         label="Avoid topics (comma-separated)"
         name="avoid_topics"
@@ -81,7 +86,7 @@ export function NewCampaignForm() {
         <Button type="submit" disabled={busy}>
           {busy ? "Creating…" : "Create campaign"}
         </Button>
-        {error && <span className="text-sm text-red-600">{error}</span>}
+        {error && <span className="text-sm text-[var(--color-danger)]">{error}</span>}
       </div>
     </form>
   );
@@ -104,7 +109,7 @@ function Field({
     <div className="space-y-1.5">
       <label htmlFor={name} className="text-sm font-medium">
         {label}
-        {required && <span className="text-red-600"> *</span>}
+        {required && <span className="text-[var(--color-brand)]"> *</span>}
       </label>
       <Input id={name} name={name} required={required} placeholder={placeholder} maxLength={maxLength} />
     </div>

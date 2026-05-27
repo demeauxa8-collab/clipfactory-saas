@@ -30,7 +30,7 @@ export function CheckoutButton({ hasActive }: { hasActive: boolean }) {
       <Button onClick={start} disabled={busy}>
         {busy ? "Opening Stripe…" : hasActive ? "Manage / renew" : "Start Starter"}
       </Button>
-      {error && <span className="text-sm text-red-600">{error}</span>}
+      {error && <span className="text-sm text-[var(--color-danger)]">{error}</span>}
     </div>
   );
 }

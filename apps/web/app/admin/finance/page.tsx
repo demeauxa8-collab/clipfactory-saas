@@ -29,12 +29,12 @@ export default async function AdminFinancePage() {
         Monthly P&amp;L estimate. Costs are derived from the worker&apos;s self-reported model — wire to real provider invoices in V2.
       </p>
       {error && (
-        <div className="mt-4 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-900">{error}</div>
+        <div className="mt-4 rounded-md border border-[var(--color-danger)]/40 bg-[var(--color-muted)] p-3 text-sm text-[var(--color-foreground)]">{error}</div>
       )}
 
-      <div className="mt-6 overflow-x-auto rounded-lg border border-[var(--color-border)]">
+      <div className="pro-card mt-6 overflow-x-auto rounded-lg">
         <table className="w-full text-sm">
-          <thead className="bg-[var(--color-muted)] text-left text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">
+          <thead className="border-b border-[var(--color-border)] text-left text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">
             <tr>
               <th className="px-3 py-3">Month</th>
               <th className="px-3 py-3 text-right">Revenue</th>
@@ -58,7 +58,7 @@ export default async function AdminFinancePage() {
                 m.text_analysis_cost_cents;
               const margin = m.revenue_cents - total;
               return (
-                <tr key={m.month}>
+                <tr key={m.month} className="transition-colors duration-200 hover:bg-white/[0.035]">
                   <td className="px-3 py-3 font-mono">{m.month}</td>
                   <td className="px-3 py-3 text-right tabular-nums">{(m.revenue_cents / 100).toFixed(2)}€</td>
                   <td className="px-3 py-3 text-right tabular-nums">{(m.transcription_cost_cents / 100).toFixed(2)}€</td>
@@ -66,7 +66,7 @@ export default async function AdminFinancePage() {
                   <td className="px-3 py-3 text-right tabular-nums">{(m.deep_vision_cost_cents / 100).toFixed(2)}€</td>
                   <td className="px-3 py-3 text-right tabular-nums">{(m.text_analysis_cost_cents / 100).toFixed(2)}€</td>
                   <td className="px-3 py-3 text-right tabular-nums">{(total / 100).toFixed(2)}€</td>
-                  <td className={"px-3 py-3 text-right font-medium tabular-nums " + (margin >= 0 ? "text-green-700" : "text-red-700")}>
+                  <td className={"px-3 py-3 text-right font-medium tabular-nums " + (margin >= 0 ? "text-[var(--color-foreground)]" : "text-[var(--color-danger)]")}>
                     {(margin / 100).toFixed(2)}€
                   </td>
                   <td className="px-3 py-3 text-right tabular-nums">{(m.storage_bytes / 1024 ** 3).toFixed(1)} GB</td>

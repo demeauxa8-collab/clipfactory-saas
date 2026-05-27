@@ -46,7 +46,7 @@ PARTAGE DU TRAVAIL :
 
 P0 — DÉPLOIEMENT VPS Hetzner (le plus impactant)
 
-Objectif : faire tourner l'API + worker + Redis sur un VPS Hetzner CPX21 à Falkenstein, derrière Caddy avec TLS auto pour api.clipfactory.app.
+Objectif : faire tourner l'API + worker + Redis sur un VPS Hetzner CPX32 à Falkenstein, derrière Caddy avec TLS auto pour api.clipfactory.app.
 
 Prérequis (Augustin te donnera quand prêt) :
 - IP du VPS + clé SSH
