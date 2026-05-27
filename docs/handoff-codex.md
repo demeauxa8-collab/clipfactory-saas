@@ -14,16 +14,15 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 **Différenciateur produit** :
 > Campaign-first. Chaque clip est sélectionné en fonction d'une **campagne** (audience, niche, ton, objectif). Sur vidéos ≥ 5 min, on détecte des **arcs narratifs multi-segments** (setup → payoff à 10 min d'écart). Chaque clip ship avec un **score expliqué** (hook, emotion, visual, fit campagne, editing).
 
-**État du code** : V1 fonctionnellement complète. Web marketing + dashboard polish poussés sur une branche de review. Backend/worker prêts côté code, mais la prod live reste bloquée par les comptes externes et le VPS API/worker.
+**État du code** : V1 fonctionnellement complète. Web marketing + dashboard polish mergés dans `main` et déployés sur Vercel. Backend/worker prêts côté code, mais la prod API/worker reste bloquée par les comptes externes et le VPS.
 
 **État Git/Vercel le plus récent (2026-05-27)** :
-- Branche en cours : `codex/marketing-dashboard-polish`
-- Commit web principal : `378da62 feat(web): polish marketing and dashboard preview`
-- PR draft : `https://github.com/demeauxa8-collab/clipfactory-saas/pull/1`
-- Preview Vercel : `https://clipfactory-saas-git-codex-mark-2ab3ac-demeauxa8-1591s-projects.vercel.app`
-- Dashboard preview sans login : `/preview/dashboard`
+- `main` contient le polish web via merge commit `1db5cdf`.
+- PR #1 mergée : `https://github.com/demeauxa8-collab/clipfactory-saas/pull/1`
+- Production Vercel : `https://clipfactory-saas.vercel.app`
+- Dashboard preview sans login : `https://clipfactory-saas.vercel.app/preview/dashboard`
 - Vercel project : `clipfactory-saas`, root directory `apps/web`, GitHub déjà connecté.
-- La protection SSO Vercel a été désactivée pour que les previews soient ouvrables sans login Vercel.
+- Domaines `clipfactory.app` et `www.clipfactory.app` ajoutés au projet Vercel, mais DNS pas encore configuré.
 
 **Source de vérité** :
 1. Ce fichier (`docs/handoff-codex.md`) → état d'avancement
@@ -227,19 +226,27 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - [x] **T29.** Doc consolidation pass — this rewrite, `docs/admin.md`, `docs/seo.md`, `docs/deploy.md`
 - [ ] **T30.** External services setup — Stripe + R2 + OpenAI + OpenRouter + Anthropic accounts
 - [~] **T31.** Smoke test end-to-end — harness Playwright ajouté, exécution live à faire quand les services externes sont prêts (voir section 10)
-- [ ] **T32.** Production deploy (Vercel web + Hetzner API/worker) — see `docs/deploy.md`
+- [~] **T32.** Production deploy (Vercel web + Hetzner API/worker) — see `docs/deploy.md`
+  - [x] Web Vercel production deployed from `main`: `https://clipfactory-saas.vercel.app`
+  - [ ] Custom DNS for `clipfactory.app`
+  - [ ] Hetzner API/worker deploy
 - [x] **T33.** Address 5 Medium security findings before opening to public (`docs/security-audit.md`)
 - [x] **T34.** Marketing + dashboard polish for review
   - [x] Apple-inspired graphite/ivory direction with cleaner product staging and wave/liquid motion.
   - [x] Marketing copy rewritten around clip series, whole-video context, multi-moment montage, and campaign goals.
   - [x] User dashboard + admin dashboard surfaces polished.
   - [x] No-auth visual review route added: `/preview/dashboard`.
-  - [x] Branch pushed + PR draft opened: `codex/marketing-dashboard-polish` → PR #1.
+  - [x] Branch pushed, PR #1 opened, cleaned against `main`, then merged.
 - [x] **T35.** Vercel project connected to GitHub
   - [x] Vercel project `clipfactory-saas` linked to repo `demeauxa8-collab/clipfactory-saas`.
   - [x] Root directory configured as `apps/web`.
-  - [x] Preview deployment ready and returning 200.
+  - [x] Production deployment ready and returning 200.
   - [x] SSO deployment protection disabled so Augustin/Claude can inspect previews directly.
+- [~] **T36.** Custom domain setup
+  - [x] Added `clipfactory.app` to Vercel project.
+  - [x] Added `www.clipfactory.app` to Vercel project.
+  - [ ] Configure DNS: `A clipfactory.app 76.76.21.21`.
+  - [ ] Configure DNS: `A www.clipfactory.app 76.76.21.21` or switch nameservers to `ns1.vercel-dns.com` / `ns2.vercel-dns.com`.
 
 ---
 
@@ -315,13 +322,21 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 ### 2026-05-27 — Marketing polish + Vercel handoff
 
 - Branche `codex/marketing-dashboard-polish` poussée avec commit `378da62`.
-- PR draft ouverte : `https://github.com/demeauxa8-collab/clipfactory-saas/pull/1`.
+- PR ouverte : `https://github.com/demeauxa8-collab/clipfactory-saas/pull/1`.
 - Textes marketing/SEO mis à jour pour expliquer simplement : clip series, contexte complet de la vidéo, montage de plusieurs moments, objectif de campagne.
 - DA web revue : palette graphite/ivory/champagne, hero plus premium, formes wave/liquid, animations CSS, product staging plus clair.
 - Dashboard user/admin polishé + route de review sans login : `https://clipfactory-saas-git-codex-mark-2ab3ac-demeauxa8-1591s-projects.vercel.app/preview/dashboard`.
 - Vercel `clipfactory-saas` connecté au repo GitHub, root `apps/web`, preview verte. La protection SSO Vercel a été désactivée pour éviter les 401 sur les previews.
 - Checks exécutés : `npm run typecheck`, `npm run build`, `curl -I /`, `curl -I /preview/dashboard`, check GitHub Vercel SUCCESS.
 - Important : la prod complète n'est pas encore lancée car API/worker/R2/Stripe/LLM/VPS restent à provisionner.
+
+### 2026-05-27 — Web production finalized
+
+- PR #1 nettoyée contre `main` après le revert des anciennes routes `/preview/{editorial,glass,brutalist}`.
+- PR #1 mergée dans `main` avec merge commit `1db5cdf`.
+- Production Vercel redéployée depuis `main` et vérifiée en 200 : `https://clipfactory-saas.vercel.app`.
+- `/preview/dashboard` vérifié en 200 sur production ; anciennes routes design preview vérifiées en 404.
+- Domaines `clipfactory.app` et `www.clipfactory.app` ajoutés au projet Vercel. DNS toujours à configurer chez le registrar/DNS provider.
 
 ---
 
@@ -330,8 +345,8 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 | Service | État | Crédentiels |
 | --- | --- | --- |
 | **Supabase EU** | ✓ projet `jsjaizcnjvghoduvyyea` ("clipfactory", org AX). Migrations 0001-0004 appliquées. | `.env` rempli (URL, anon, service_role, JWT secret, DATABASE_URL via pooler) |
-| **GitHub** | ✓ repo `demeauxa8-collab/clipfactory-saas` connecté à Vercel. PR #1 ouverte en draft. | `gh` connecté comme `demeauxa8-collab` |
-| **Vercel web** | ✓ projet `clipfactory-saas`, root `apps/web`, previews OK. | Env publics Supabase/API/Stripe/SITE configurés. `NEXT_PUBLIC_TURNSTILE_SITE_KEY` manque encore |
+| **GitHub** | ✓ repo `demeauxa8-collab/clipfactory-saas` connecté à Vercel. PR #1 mergée dans `main`. | `gh` connecté comme `demeauxa8-collab` |
+| **Vercel web** | ✓ projet `clipfactory-saas`, root `apps/web`, prod OK sur `https://clipfactory-saas.vercel.app`. | Env publics Supabase/API/Stripe/SITE configurés. `NEXT_PUBLIC_TURNSTILE_SITE_KEY` manque encore |
 | **Cloudflare R2** | À créer | `TODO` dans les 3 `.env` |
 | **Cloudflare Turnstile** | À créer | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` côté web, `TURNSTILE_SECRET_KEY` côté API |
 | **Stripe FR** | À créer | `TODO` dans `.env` |
@@ -339,7 +354,7 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 | **OpenRouter** | À créer | `TODO` |
 | **Anthropic** | À créer | `TODO` |
 | **Hetzner CPX32** | À provisionner | Falkenstein |
-| **Domain** | À acheter | `clipfactory.app` proposé |
+| **Domain** | Ajouté dans Vercel, DNS pas configuré | `clipfactory.app`, `www.clipfactory.app` |
 | **Cloudflare Pages** | Optionnel / plus tard | Vercel est le chemin web actuel |
 
 Étapes détaillées dans `docs/deploy.md`.
@@ -515,7 +530,8 @@ Aucun blocker code : tout compile (`npx tsc --noEmit` OK, ruff OK, imports Pytho
 - Cloudflare Turnstile site key + secret key
 
 **Bloqueurs de prod live** :
-- Web Vercel preview OK, mais ne pas considérer le SaaS "live" tant que l'API/worker ne tournent pas sur Hetzner.
+- Web Vercel prod OK, mais ne pas considérer le SaaS complet "live" tant que l'API/worker ne tournent pas sur Hetzner.
+- `clipfactory.app` ne résout pas encore : DNS à configurer (`A clipfactory.app 76.76.21.21`, `A www.clipfactory.app 76.76.21.21`) ou nameservers Vercel.
 - `NEXT_PUBLIC_API_URL` devra pointer vers `https://api.clipfactory.app` après P0 Hetzner + DNS.
 - Smoke E2E Playwright doit attendre Stripe/R2/LLM/API/worker réellement branchés.
 - Local worktree peut contenir des docs non commités autour des marges/VPS. Avant de coder, faire `git status` et ne pas écraser ces modifications.
