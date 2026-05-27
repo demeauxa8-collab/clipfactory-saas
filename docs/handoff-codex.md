@@ -1,9 +1,9 @@
 # Handoff Codex — ClipFactory SaaS V1
 
 > **Pour Codex (ou tout autre agent) qui reprend ce projet sans contexte.**
-> Tout ce qu'il faut savoir tient dans ce doc + les 7 autres docs cités ci-dessous.
+> Tout ce qu'il faut savoir tient dans ce doc + les docs cités ci-dessous.
 
-Dernière mise à jour : 2026-05-23. Auteurs : Augustin (founder), Claude Code, Codex.
+Dernière mise à jour : 2026-05-27. Auteurs : Augustin (founder), Claude Code, Codex.
 
 ---
 
@@ -14,7 +14,16 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 **Différenciateur produit** :
 > Campaign-first. Chaque clip est sélectionné en fonction d'une **campagne** (audience, niche, ton, objectif). Sur vidéos ≥ 5 min, on détecte des **arcs narratifs multi-segments** (setup → payoff à 10 min d'écart). Chaque clip ship avec un **score expliqué** (hook, emotion, visual, fit campagne, editing).
 
-**État du code** : V1 fonctionnellement complète, **tous tests imports OK, typecheck OK**. Reste à brancher les comptes externes (Stripe, R2, OpenAI, OpenRouter, Anthropic) puis à déployer.
+**État du code** : V1 fonctionnellement complète. Web marketing + dashboard polish poussés sur une branche de review. Backend/worker prêts côté code, mais la prod live reste bloquée par les comptes externes et le VPS API/worker.
+
+**État Git/Vercel le plus récent (2026-05-27)** :
+- Branche en cours : `codex/marketing-dashboard-polish`
+- Commit web principal : `378da62 feat(web): polish marketing and dashboard preview`
+- PR draft : `https://github.com/demeauxa8-collab/clipfactory-saas/pull/1`
+- Preview Vercel : `https://clipfactory-saas-git-codex-mark-2ab3ac-demeauxa8-1591s-projects.vercel.app`
+- Dashboard preview sans login : `/preview/dashboard`
+- Vercel project : `clipfactory-saas`, root directory `apps/web`, GitHub déjà connecté.
+- La protection SSO Vercel a été désactivée pour que les previews soient ouvrables sans login Vercel.
 
 **Source de vérité** :
 1. Ce fichier (`docs/handoff-codex.md`) → état d'avancement
@@ -27,6 +36,7 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 8. `docs/security-audit.md` → audit + 3 High fixés
 9. `docs/deploy.md` → runbook deploy step-by-step
 10. `docs/global-video-understanding.md` → fondations conceptuelles story-first
+11. `docs/unit-economics.md` → crédits, prix API, VPS, marge, seuils de décision
 
 ---
 
@@ -61,8 +71,8 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 
 | Couche | Choix | Notes |
 | --- | --- | --- |
-| Frontend | Next.js 15 App Router + TS strict + Tailwind v4 + shadcn-style components | Cloudflare Pages (fallback Vercel) |
-| Backend API | FastAPI 0.115 + asyncpg + pydantic-settings + slowapi | Hetzner CPX21 derrière Caddy |
+| Frontend | Next.js 15 App Router + TS strict + Tailwind v4 + shadcn-style components | Vercel connecté pour preview/prod web. Cloudflare Pages reste une option plus tard |
+| Backend API | FastAPI 0.115 + asyncpg + pydantic-settings + slowapi | Hetzner CPX32 derrière Caddy |
 | Worker | Python 3.11 + yt-dlp + FFmpeg + httpx + anthropic + openai + Pillow | Même VPS que l'API |
 | DB + Auth | Supabase Postgres 15 + magic-link OTP | Free tier au démarrage |
 | Storage | Cloudflare R2 (S3-compatible) | Bucket `clipfactory-clips` |
@@ -71,7 +81,7 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 | Transcription | OpenAI `gpt-4o-mini-transcribe` | 0.003 $/min |
 | LLM primary | OpenRouter (`deepseek/deepseek-chat-v3.2`, `google/gemini-2.5-flash`, `qwen/qwen3-vl-flash`) | Une seule clé |
 | LLM fallback | Anthropic `claude-haiku-4-5-20251001` | Auto sur erreur primary |
-| Deploy front | Cloudflare Pages | Adapter `@cloudflare/next-on-pages` |
+| Deploy front | Vercel | Projet `clipfactory-saas`, root `apps/web`, GitHub connecté |
 | Deploy back | Caddy + systemd ou docker-compose sur Hetzner | Au choix |
 
 **Versions outils** :
@@ -184,7 +194,7 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 
 ---
 
-## 4. État d'avancement (au 2026-05-23)
+## 4. État d'avancement (au 2026-05-27)
 
 **Légende :** `[x]` fait — `[~]` en cours — `[ ]` à faire.
 
@@ -217,8 +227,19 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - [x] **T29.** Doc consolidation pass — this rewrite, `docs/admin.md`, `docs/seo.md`, `docs/deploy.md`
 - [ ] **T30.** External services setup — Stripe + R2 + OpenAI + OpenRouter + Anthropic accounts
 - [~] **T31.** Smoke test end-to-end — harness Playwright ajouté, exécution live à faire quand les services externes sont prêts (voir section 10)
-- [ ] **T32.** Production deploy (Cloudflare Pages + Hetzner) — see `docs/deploy.md`
+- [ ] **T32.** Production deploy (Vercel web + Hetzner API/worker) — see `docs/deploy.md`
 - [x] **T33.** Address 5 Medium security findings before opening to public (`docs/security-audit.md`)
+- [x] **T34.** Marketing + dashboard polish for review
+  - [x] Apple-inspired graphite/ivory direction with cleaner product staging and wave/liquid motion.
+  - [x] Marketing copy rewritten around clip series, whole-video context, multi-moment montage, and campaign goals.
+  - [x] User dashboard + admin dashboard surfaces polished.
+  - [x] No-auth visual review route added: `/preview/dashboard`.
+  - [x] Branch pushed + PR draft opened: `codex/marketing-dashboard-polish` → PR #1.
+- [x] **T35.** Vercel project connected to GitHub
+  - [x] Vercel project `clipfactory-saas` linked to repo `demeauxa8-collab/clipfactory-saas`.
+  - [x] Root directory configured as `apps/web`.
+  - [x] Preview deployment ready and returning 200.
+  - [x] SSO deployment protection disabled so Augustin/Claude can inspect previews directly.
 
 ---
 
@@ -291,22 +312,35 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - Workflow GitHub Actions `Smoke E2E` ajouté sur push `main` et `workflow_dispatch` (gated par `SMOKE_ENABLED=true`).
 - Exécution live non lancée : Stripe/R2/LLM/worker/déploiement ne sont pas encore provisionnés.
 
+### 2026-05-27 — Marketing polish + Vercel handoff
+
+- Branche `codex/marketing-dashboard-polish` poussée avec commit `378da62`.
+- PR draft ouverte : `https://github.com/demeauxa8-collab/clipfactory-saas/pull/1`.
+- Textes marketing/SEO mis à jour pour expliquer simplement : clip series, contexte complet de la vidéo, montage de plusieurs moments, objectif de campagne.
+- DA web revue : palette graphite/ivory/champagne, hero plus premium, formes wave/liquid, animations CSS, product staging plus clair.
+- Dashboard user/admin polishé + route de review sans login : `https://clipfactory-saas-git-codex-mark-2ab3ac-demeauxa8-1591s-projects.vercel.app/preview/dashboard`.
+- Vercel `clipfactory-saas` connecté au repo GitHub, root `apps/web`, preview verte. La protection SSO Vercel a été désactivée pour éviter les 401 sur les previews.
+- Checks exécutés : `npm run typecheck`, `npm run build`, `curl -I /`, `curl -I /preview/dashboard`, check GitHub Vercel SUCCESS.
+- Important : la prod complète n'est pas encore lancée car API/worker/R2/Stripe/LLM/VPS restent à provisionner.
+
 ---
 
-## 6. Services externes (état au 2026-05-23)
+## 6. Services externes (état au 2026-05-27)
 
 | Service | État | Crédentiels |
 | --- | --- | --- |
 | **Supabase EU** | ✓ projet `jsjaizcnjvghoduvyyea` ("clipfactory", org AX). Migrations 0001-0004 appliquées. | `.env` rempli (URL, anon, service_role, JWT secret, DATABASE_URL via pooler) |
+| **GitHub** | ✓ repo `demeauxa8-collab/clipfactory-saas` connecté à Vercel. PR #1 ouverte en draft. | `gh` connecté comme `demeauxa8-collab` |
+| **Vercel web** | ✓ projet `clipfactory-saas`, root `apps/web`, previews OK. | Env publics Supabase/API/Stripe/SITE configurés. `NEXT_PUBLIC_TURNSTILE_SITE_KEY` manque encore |
 | **Cloudflare R2** | À créer | `TODO` dans les 3 `.env` |
 | **Cloudflare Turnstile** | À créer | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` côté web, `TURNSTILE_SECRET_KEY` côté API |
 | **Stripe FR** | À créer | `TODO` dans `.env` |
 | **OpenAI** | À créer | `TODO` |
 | **OpenRouter** | À créer | `TODO` |
 | **Anthropic** | À créer | `TODO` |
-| **Hetzner CPX21** | À provisionner | Falkenstein |
+| **Hetzner CPX32** | À provisionner | Falkenstein |
 | **Domain** | À acheter | `clipfactory.app` proposé |
-| **Cloudflare Pages** | À connecter | repo GitHub `demeauxa8-collab/clipfactory-saas` |
+| **Cloudflare Pages** | Optionnel / plus tard | Vercel est le chemin web actuel |
 
 Étapes détaillées dans `docs/deploy.md`.
 
@@ -406,6 +440,11 @@ COST_TEXT_CENTS_PER_1K_TOKENS=0.03
 
 **Aucun secret n'est commité.** Les trois `.env*` sont dans `.gitignore`. `.env.example` est commité avec des placeholders.
 
+**Vercel env au 2026-05-27** :
+- Présents : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SITE_URL`.
+- Manquant : `NEXT_PUBLIC_TURNSTILE_SITE_KEY`.
+- Ne jamais mettre de secret serveur dans Vercel web. Les clés service role, Stripe secret, R2 secret et LLM restent côté API/worker uniquement.
+
 ---
 
 ## 8. Conventions de code
@@ -472,7 +511,14 @@ Aucun blocker code : tout compile (`npx tsc --noEmit` OK, ruff OK, imports Pytho
 - Clé OpenRouter
 - Clé Anthropic
 - Domaine
-- VPS Hetzner CPX21
+- VPS Hetzner CPX32
+- Cloudflare Turnstile site key + secret key
+
+**Bloqueurs de prod live** :
+- Web Vercel preview OK, mais ne pas considérer le SaaS "live" tant que l'API/worker ne tournent pas sur Hetzner.
+- `NEXT_PUBLIC_API_URL` devra pointer vers `https://api.clipfactory.app` après P0 Hetzner + DNS.
+- Smoke E2E Playwright doit attendre Stripe/R2/LLM/API/worker réellement branchés.
+- Local worktree peut contenir des docs non commités autour des marges/VPS. Avant de coder, faire `git status` et ne pas écraser ces modifications.
 
 **Questions ouvertes (à arbitrer plus tard)** :
 - Domain final → `clipfactory.app` proposé
