@@ -6,7 +6,7 @@ Campaign-first AI clipping engine for creators and agencies.
 
 ## Goal
 
-Reach 200 EUR MRR with ~7 paying Starter customers (29 EUR/month each).
+Reach 2000 EUR MRR  (29 EUR/month each).
 
 ## Monorepo layout
 
