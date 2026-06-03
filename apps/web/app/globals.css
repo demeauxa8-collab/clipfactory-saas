@@ -1,98 +1,95 @@
 @import "tailwindcss";
 
 @theme {
+  /* San Francisco first (renders natively on Apple devices — the real Apple
+     type), Inter as the cross-platform fallback. No serif display anymore. */
   --font-sans:
-    var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--font-inter),
     "Helvetica Neue", Arial, sans-serif;
+  /* Headings reuse this variable (page.tsx sets style={serif}). Pointing it at
+     SF Display turns every former-Fraunces heading into clean Apple sans. */
   --font-serif:
-    var(--font-fraunces), "Iowan Old Style", "Apple Garamond", Georgia, serif;
+    -apple-system, BlinkMacSystemFont, "SF Pro Display", var(--font-inter),
+    "Helvetica Neue", Arial, sans-serif;
   --font-mono:
     ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
 
-  --color-background: #050505;
+  /* Apple-clean dark: refined near-black base, true greys, white text. No tints. */
+  --color-background: #0b0b0d;
   --color-foreground: #f5f5f7;
-  --color-muted: #111113;
+  --color-muted: #161618;
   --color-muted-foreground: #a1a1a6;
-  --color-border: #2a2a2d;
-  --color-accent: #f5f5f7;
-  --color-accent-foreground: #050505;
-  --color-ring: #d8c3a3;
+  --color-border: rgba(255, 255, 255, 0.09);
+  --color-accent: #0a84ff;
+  --color-accent-foreground: #ffffff;
+  --color-ring: #0a84ff;
 
-  /* Brand accent — quiet champagne, reserved for emphasis and product state. */
-  --color-brand: #d8c3a3;
-  --color-brand-soft: #191510;
-  --color-brand-foreground: #080706;
-  --color-vision: #d7d7dc;
-  --color-vision-soft: #151518;
-  --color-edit: #b6b6bd;
-  --color-edit-soft: #131315;
+  /* Single accent — Apple system blue. One accent locked page-wide. */
+  --color-brand: #0a84ff;
+  --color-brand-soft: #0a2a4a;
+  --color-brand-foreground: #ffffff;
+  /* Secondary "channels" desaturated to neutral silver/grey so the page stays
+     monochrome + one accent (Color Consistency Lock). */
+  --color-vision: #c7c7cc;
+  --color-vision-soft: #1a1a1c;
+  --color-edit: #8e8e93;
+  --color-edit-soft: #161618;
 
-  /* Warning/danger accents for low scores or failed states */
-  --color-warn: #d97706;
-  --color-danger: #b91c1c;
+  --color-warn: #f59e0b;
+  --color-danger: #ef4444;
 
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
+  /* One soft radius scale, concentric nesting.
+     inputs 8px · inner cards 20px · panels 32px · badges 14px · pills full */
+  --radius-sm: 0.5rem;     /* 8px  — inputs */
+  --radius-md: 0.875rem;   /* 14px — small score badges */
+  --radius-lg: 1.25rem;    /* 20px — inner cards */
+  --radius-xl: 2rem;       /* 32px — outer panels */
+
+  /* Soft, wide, low-opacity, tinted elevation — Apple ambient shadow, never a glow. */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px -12px rgba(0, 0, 0, 0.7);
+  --shadow-lg: 0 18px 60px rgba(0, 0, 0, 0.42);
 }
 
-@media (prefers-color-scheme: dark) {
-  @theme {
-    --color-background: #050505;
-    --color-foreground: #f5f5f7;
-    --color-muted: #111113;
-    --color-muted-foreground: #a1a1a6;
-    --color-border: #2a2a2d;
-    --color-accent: #f5f5f7;
-    --color-accent-foreground: #050505;
-    --color-ring: #d8c3a3;
-
-    --color-brand: #d8c3a3;
-    --color-brand-soft: #191510;
-    --color-brand-foreground: #080706;
-    --color-vision: #d7d7dc;
-    --color-vision-soft: #151518;
-    --color-edit: #b6b6bd;
-    --color-edit-soft: #131315;
-
-    --color-warn: #f59e0b;
-    --color-danger: #ef4444;
-  }
-}
+/* The marketing surface is a single, deliberate dark theme — like Apple's Pro
+   product pages. Many product-mockup components are tuned for a dark canvas
+   (white text, white/10 fills), so the page locks to dark for correctness. */
 
 * {
   border-color: var(--color-border);
 }
 
 html {
+  color-scheme: dark;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+/* Apple display type: tight tracking, never the airy default. */
+h1, h2, h3 {
+  letter-spacing: -0.022em;
 }
 
 body {
-  background:
-    linear-gradient(180deg, rgba(245, 245, 247, 0.035), transparent 22rem),
-    repeating-linear-gradient(
-      90deg,
-      rgba(245, 245, 247, 0.012) 0,
-      rgba(245, 245, 247, 0.012) 1px,
-      transparent 1px,
-      transparent 96px
-    ),
-    var(--color-background);
+  background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans);
   font-feature-settings: "rlig" 1, "calt" 1;
+  letter-spacing: -0.01em;
 }
 
+/* A single, very soft top highlight for depth — neutral, not a coloured glow. */
 body::before {
-  background:
-    linear-gradient(90deg, transparent, rgba(216, 195, 163, 0.06), transparent),
-    linear-gradient(180deg, rgba(245, 245, 247, 0.035), transparent);
+  background: radial-gradient(
+    60rem 22rem at 50% -6rem,
+    color-mix(in srgb, var(--color-foreground) 6%, transparent),
+    transparent 70%
+  );
   content: "";
-  height: 28rem;
+  height: 26rem;
   left: 0;
   pointer-events: none;
   position: fixed;
@@ -106,91 +103,69 @@ body::before {
   color: var(--color-background);
 }
 
-/* Animated counter pulse (used on hero stats) */
+/* ── Motion language ──────────────────────────────────────────────── */
 @keyframes brand-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(216, 195, 163, 0.0); }
-  50% { box-shadow: 0 0 0 6px rgba(216, 195, 163, 0.14); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(10, 132, 255, 0); }
+  50% { box-shadow: 0 0 0 6px rgba(10, 132, 255, 0.12); }
 }
 .brand-pulse { animation: brand-pulse 2.4s ease-in-out infinite; }
 
-/* Subtle motion language for the marketing pages */
 @keyframes fade-up {
-  0% { opacity: 0; transform: translateY(8px); }
+  0% { opacity: 0; transform: translateY(10px); }
   100% { opacity: 1; transform: translateY(0); }
 }
-.fade-up { animation: fade-up 0.6s ease-out both; }
-.fade-up-2 { animation: fade-up 0.6s ease-out 0.1s both; }
-.fade-up-3 { animation: fade-up 0.6s ease-out 0.2s both; }
+.fade-up { animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.fade-up-2 { animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both; }
+.fade-up-3 { animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both; }
 
 @keyframes stage-float {
-  0%, 100% { transform: translateY(0) rotateX(0deg); }
-  50% { transform: translateY(-8px) rotateX(0.8deg); }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
-
 @keyframes scan-sweep {
   0% { opacity: 0; transform: translateY(-120%); }
-  12% { opacity: 0.8; }
-  72% { opacity: 0.8; }
+  12% { opacity: 0.7; }
+  72% { opacity: 0.7; }
   100% { opacity: 0; transform: translateY(520%); }
 }
-
 @keyframes playhead {
   0%, 14% { left: 16%; }
   34% { left: 34%; }
   55% { left: 74%; }
   82%, 100% { left: 92%; }
 }
-
 @keyframes meter-grow {
   0% { transform: scaleX(0); }
   100% { transform: scaleX(1); }
 }
-
 @keyframes insight-rise {
   0% { opacity: 0; transform: translateY(10px); }
   100% { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes soft-sheen {
-  0% { transform: translateX(-32%); opacity: 0; }
-  28% { opacity: 0.8; }
-  70% { opacity: 0.5; }
-  100% { transform: translateX(42%); opacity: 0; }
-}
-
-@keyframes wave-drift {
-  0%, 100% { transform: translate3d(-1.5%, 0, 0) skewY(-1deg); }
-  50% { transform: translate3d(1.5%, -6px, 0) skewY(1deg); }
-}
-
 .stage-float {
-  animation: stage-float 8s ease-in-out infinite;
+  animation: stage-float 9s ease-in-out infinite;
   transform-origin: 50% 65%;
 }
-
-.scan-sweep {
-  animation: scan-sweep 4.6s ease-in-out infinite;
-}
-
+.scan-sweep { animation: scan-sweep 5s ease-in-out infinite; }
 .timeline-playhead {
   animation: playhead 6.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
-
 .score-fill {
   animation: meter-grow 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
   transform-origin: left center;
 }
-
 .insight-card {
   animation: insight-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* Sheen kept but neutral and barely-there (no champagne). */
 .soft-sheen::after {
-  animation: soft-sheen 7s ease-in-out infinite;
+  animation: soft-sheen 8s ease-in-out infinite;
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(246, 240, 229, 0.13),
+    color-mix(in srgb, var(--color-foreground) 8%, transparent),
     transparent
   );
   content: "";
@@ -199,170 +174,108 @@ body::before {
   position: absolute;
   transform: translateX(-32%);
 }
+@keyframes soft-sheen {
+  0% { transform: translateX(-32%); opacity: 0; }
+  28% { opacity: 0.6; }
+  70% { opacity: 0.3; }
+  100% { transform: translateX(42%); opacity: 0; }
+}
+
+/* ── Surfaces — all cleaned to flat Apple panels, decorative pseudo-
+      elements switched off so no waves / curves / champagne lines remain. ── */
 
 .liquid-hero {
-  background:
-    linear-gradient(180deg, rgba(245, 245, 247, 0.055), transparent 48%),
-    linear-gradient(120deg, rgba(216, 195, 163, 0.075), transparent 38%),
-    repeating-linear-gradient(
-      90deg,
-      rgba(245, 245, 247, 0.026) 0,
-      rgba(245, 245, 247, 0.026) 1px,
-      transparent 1px,
-      transparent 116px
-    );
+  background: radial-gradient(
+    70rem 32rem at 50% -8rem,
+    color-mix(in srgb, var(--color-accent) 10%, transparent),
+    transparent 60%
+  );
 }
-
-.liquid-hero::after {
-  animation: wave-drift 12s ease-in-out infinite;
-  background:
-    linear-gradient(180deg, rgba(245, 245, 247, 0.10), rgba(245, 245, 247, 0.012));
-  border: 1px solid rgba(245, 245, 247, 0.08);
-  border-radius: 48% 52% 0 0 / 100% 100% 0 0;
-  bottom: -22rem;
-  content: "";
-  height: 28rem;
-  left: -8%;
-  pointer-events: none;
-  position: absolute;
-  right: -8%;
-}
+.liquid-hero::after { content: none; }
 
 .wave-band {
-  background:
-    linear-gradient(180deg, rgba(245, 245, 247, 0.06), rgba(245, 245, 247, 0.015)),
-    #0b0b0c;
+  background: var(--color-muted);
   border-bottom: 1px solid var(--color-border);
   border-top: 1px solid var(--color-border);
-  overflow: hidden;
   position: relative;
 }
-
-.wave-band::before {
-  background: rgba(245, 245, 247, 0.035);
-  border: 1px solid rgba(245, 245, 247, 0.08);
-  border-radius: 0 0 50% 50% / 0 0 100% 100%;
-  content: "";
-  height: 16rem;
-  left: -8%;
-  position: absolute;
-  right: -8%;
-  top: -13rem;
-}
-
-.wave-band::after {
-  background: linear-gradient(90deg, transparent, rgba(216, 195, 163, 0.18), transparent);
-  content: "";
-  height: 1px;
-  left: 10%;
-  position: absolute;
-  right: 10%;
-  top: 50%;
-}
+.wave-band::before { content: none; }
+.wave-band::after { content: none; }
 
 .liquid-shell {
-  background:
-    linear-gradient(180deg, rgba(245, 245, 247, 0.08), rgba(245, 245, 247, 0.018)),
-    #0c0c0e;
-  border: 1px solid rgba(245, 245, 247, 0.11);
-  border-radius: clamp(1.75rem, 6vw, 4.5rem);
-  box-shadow: 0 40px 120px -80px rgba(245, 245, 247, 0.62);
+  background: var(--color-muted);
+  border: 1px solid var(--color-border);
+  border-radius: clamp(1.75rem, 3vw, 2rem);
+  box-shadow:
+    var(--shadow-lg),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
   overflow: hidden;
   position: relative;
 }
-
-.liquid-shell::before {
-  background: linear-gradient(90deg, transparent, rgba(245, 245, 247, 0.10), transparent);
-  content: "";
-  height: 1px;
-  left: 8%;
-  position: absolute;
-  right: 8%;
-  top: 0;
-}
+.liquid-shell::before { content: none; }
 
 .curve-card {
-  background:
-    linear-gradient(180deg, rgba(245, 245, 247, 0.065), rgba(245, 245, 247, 0.018)),
-    #09090a;
+  background: var(--color-muted);
   border: 1px solid var(--color-border);
-  border-radius: clamp(1.25rem, 4vw, 2.75rem);
+  border-radius: clamp(1.125rem, 2vw, 1.25rem);
   min-height: 15rem;
   position: relative;
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
 }
+.curve-card::after { content: none; }
+.curve-card:hover { box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.7); }
 
-.curve-card::after {
-  background: currentColor;
-  border-radius: 999px;
-  content: "";
-  height: 0.375rem;
-  left: 1.75rem;
-  opacity: 0.75;
-  position: absolute;
-  right: 1.75rem;
-  top: 1.5rem;
-}
-
-/* Score bar — used in the mockup clip preview */
 .score-bar {
   background: linear-gradient(
     90deg,
     var(--color-brand) 0%,
     var(--color-brand) var(--score, 80%),
-    var(--color-muted) var(--score, 80%),
-    var(--color-muted) 100%
+    transparent var(--score, 80%),
+    transparent 100%
   );
 }
 
 .film-surface {
-  background:
-    linear-gradient(180deg, rgba(245, 245, 247, 0.045), rgba(245, 245, 247, 0.012)),
-    repeating-linear-gradient(
-      0deg,
-      rgba(245, 245, 247, 0.032) 0,
-      rgba(245, 245, 247, 0.032) 1px,
-      transparent 1px,
-      transparent 22px
-    ),
-    #0d0d0f;
+  background: var(--color-muted);
 }
 
 .edit-grid {
   background:
-    linear-gradient(90deg, rgba(216, 195, 163, 0.12), transparent 32%),
     repeating-linear-gradient(
       90deg,
-      rgba(245, 245, 247, 0.055) 0,
-      rgba(245, 245, 247, 0.055) 1px,
+      color-mix(in srgb, var(--color-foreground) 5%, transparent) 0,
+      color-mix(in srgb, var(--color-foreground) 5%, transparent) 1px,
       transparent 1px,
       transparent 56px
     );
 }
 
 .frame-notch {
-  background:
-    repeating-linear-gradient(
-      90deg,
-      rgba(245, 245, 247, 0.16) 0,
-      rgba(245, 245, 247, 0.16) 10px,
-      transparent 10px,
-      transparent 22px
-    );
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-foreground) 12%, transparent) 0,
+    color-mix(in srgb, var(--color-foreground) 12%, transparent) 10px,
+    transparent 10px,
+    transparent 22px
+  );
 }
 
 .pro-panel {
-  background:
-    linear-gradient(180deg, rgba(245, 245, 247, 0.06), rgba(245, 245, 247, 0.018)),
-    var(--color-muted);
+  background: var(--color-muted);
   border: 1px solid var(--color-border);
-  box-shadow: 0 24px 80px -56px rgba(245, 245, 247, 0.45);
+  border-radius: clamp(1.75rem, 3vw, 2rem);
+  box-shadow:
+    var(--shadow-lg),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .pro-card {
-  background:
-    linear-gradient(180deg, rgba(245, 245, 247, 0.045), rgba(245, 245, 247, 0.012)),
-    #0b0b0c;
+  background: var(--color-muted);
   border: 1px solid var(--color-border);
+  border-radius: clamp(1.125rem, 2vw, 1.25rem);
 }
 
 .status-pill {
@@ -376,12 +289,12 @@ body::before {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
   }
 }

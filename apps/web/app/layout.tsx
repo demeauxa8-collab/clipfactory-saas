@@ -1,19 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
+// Inter is the cross-platform fallback behind San Francisco (set in globals.css).
+// The former Fraunces serif display is dropped — clean SF sans only, Apple-style.
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   weight: ["400", "500", "600", "700"],
-});
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-fraunces",
-  weight: ["300", "400", "500", "600"],
-  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -72,7 +67,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${fraunces.variable} min-h-dvh flex flex-col`}>
+      <body className={`${inter.variable} min-h-dvh flex flex-col`}>
         {children}
       </body>
     </html>

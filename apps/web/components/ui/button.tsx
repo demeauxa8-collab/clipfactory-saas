@@ -3,23 +3,23 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-ring)] disabled:pointer-events-none disabled:opacity-50 disabled:hover:translate-y-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)] disabled:pointer-events-none disabled:opacity-50 disabled:hover:translate-y-0",
   {
     variants: {
       variant: {
         primary:
-          "bg-[var(--color-accent)] text-[var(--color-accent-foreground)] hover:opacity-90",
+          "bg-[var(--color-accent)] text-[var(--color-accent-foreground)] shadow-[0_1px_2px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.18)] hover:brightness-110",
         secondary:
-          "bg-[var(--color-muted)] text-[var(--color-foreground)] hover:bg-[var(--color-muted)]/80 border border-[var(--color-border)]",
+          "border border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-foreground)_6%,transparent)] text-[var(--color-foreground)] hover:bg-[color-mix(in_srgb,var(--color-foreground)_10%,transparent)]",
         ghost:
           "text-[var(--color-foreground)] hover:bg-[var(--color-muted)]",
         link:
-          "text-[var(--color-foreground)] underline-offset-4 hover:underline",
+          "text-[var(--color-accent)] underline-offset-4 hover:underline",
       },
       size: {
-        sm: "h-8 px-3 text-xs",
-        md: "h-10 px-4",
-        lg: "h-12 px-6 text-base",
+        sm: "h-9 px-4 text-sm",
+        md: "h-11 px-5 text-sm",
+        lg: "h-13 px-7 text-base",
       },
     },
     defaultVariants: {

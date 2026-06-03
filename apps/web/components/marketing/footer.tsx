@@ -25,7 +25,7 @@ const COMPANY = [
 
 export function MarketingFooter() {
   return (
-    <footer className="border-t border-[var(--color-border)] bg-[#050505] py-16 text-sm text-[var(--color-muted-foreground)]">
+    <footer className="border-t border-[var(--color-border)] bg-[#08080a] py-20 text-sm text-[var(--color-muted-foreground)]">
       <Container className="grid gap-12 md:grid-cols-12">
         {/* Brand + tagline */}
         <div className="md:col-span-4">
@@ -34,10 +34,10 @@ export function MarketingFooter() {
             className="flex items-center gap-2 text-base font-semibold text-[var(--color-foreground)]"
           >
             <span
-              className="relative inline-flex h-5 w-5 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-muted)]"
+              className="relative inline-flex h-5 w-5 items-center justify-center rounded-[0.5rem] border border-[var(--color-border)] bg-[var(--color-muted)]"
               aria-hidden
             >
-              <span className="h-2.5 w-1 rounded-sm bg-[var(--color-brand)]" />
+              <span className="h-2.5 w-1 rounded-full bg-[var(--color-brand)]" />
             </span>
             {SITE.name}
           </Link>
@@ -49,7 +49,7 @@ export function MarketingFooter() {
             <a
               href={`mailto:${SITE.contactEmail}`}
               aria-label="Email"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-[0.875rem] border border-[var(--color-border)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
             >
               <Mail className="h-4 w-4" />
             </a>
@@ -58,7 +58,7 @@ export function MarketingFooter() {
               aria-label="Twitter"
               rel="noreferrer"
               target="_blank"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-[0.875rem] border border-[var(--color-border)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
             >
               <Twitter className="h-4 w-4" />
             </a>
@@ -67,7 +67,7 @@ export function MarketingFooter() {
               aria-label="GitHub"
               rel="noreferrer"
               target="_blank"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-[0.875rem] border border-[var(--color-border)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
             >
               <Github className="h-4 w-4" />
             </a>
@@ -95,7 +95,7 @@ export function MarketingFooter() {
           </p>
           <a
             href={`mailto:${SITE.contactEmail}?subject=Subscribe%20to%20updates`}
-            className="mt-4 inline-flex items-center justify-center rounded-md border border-[var(--color-brand)] bg-[var(--color-brand-soft)] px-3 py-2 text-xs font-medium text-[var(--color-brand)] transition-colors hover:bg-[var(--color-brand)] hover:text-[var(--color-brand-foreground)]"
+            className="mt-4 inline-flex items-center justify-center rounded-full border border-[var(--color-brand)] bg-[var(--color-brand-soft)] px-4 py-2 text-xs font-medium text-[var(--color-brand)] transition-colors hover:bg-[var(--color-brand)] hover:text-[var(--color-brand-foreground)]"
           >
             Get product updates
           </a>

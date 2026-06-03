@@ -36,7 +36,7 @@ export function BeforeAfter() {
         <article
           key={it.label}
           className={
-            "rounded-xl border p-6 " +
+            "rounded-[1.25rem] border p-7 " +
             (it.tone === "brand"
               ? "border-[var(--color-brand)] bg-[var(--color-brand-soft)]/30"
               : "border-[var(--color-border)] bg-[var(--color-muted)]")

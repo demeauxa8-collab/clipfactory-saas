@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Plus } from "lucide-react";
+import { ArrowRight, Clock3, Film, Plus, Target, Wallet } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -22,6 +22,8 @@ type JobRow = {
   queued_at: string;
 };
 
+const RUNNING = new Set(["queued", "downloading", "transcribing", "analyzing", "rendering"]);
+
 export default async function AppHome() {
   const supabase = await createSupabaseServerClient();
   const [{ data: campaigns }, { data: jobs }, { data: ledger }] = await Promise.all([
@@ -42,9 +44,15 @@ export default async function AppHome() {
     (acc, row) => acc + (typeof row.delta === "number" ? row.delta : 0),
     0
   );
+  const jobList = (jobs ?? []) as JobRow[];
+  const runningCount = jobList.filter((j) => RUNNING.has(j.status)).length;
+  const clipsReady = jobList
+    .filter((j) => j.status === "completed")
+    .reduce((acc, j) => acc + (j.target_clip_count || 0), 0);
 
   return (
     <Container className="py-10">
+      {/* Header */}
       <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.22em] text-[var(--color-muted-foreground)]">
@@ -66,16 +74,22 @@ export default async function AppHome() {
         </Link>
       </div>
 
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
-        <StatCard label="Credits left" value={balance.toString()} hint="1 credit = 1 minute of source" />
-        <StatCard label="Campaigns" value={(campaigns?.length ?? 0).toString()} hint="Active briefs" />
-        <StatCard label="Jobs" value={(jobs?.length ?? 0).toString()} hint="Recent activity" />
+      {/* Metrics */}
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Metric icon={Wallet} label="Credits left" value={balance.toString()} hint="1 credit = 1 minute of source" />
+        <Metric icon={Target} label="Campaigns" value={(campaigns?.length ?? 0).toString()} hint="Active briefs" />
+        <Metric icon={Clock3} label="Jobs running" value={runningCount.toString()} hint={`${jobList.length} recent`} />
+        <Metric icon={Film} label="Clips ready" value={clipsReady.toString()} hint="No watermark" />
       </div>
 
-      <div className="mt-10 grid gap-8 md:grid-cols-2">
-        <section>
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Campaigns</h2>
+      {/* Work area */}
+      <div className="mt-10 grid gap-6 lg:grid-cols-2">
+        <section className="liquid-shell p-5 md:p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.22em] text-[var(--color-brand)]">Series goals</p>
+              <h2 className="mt-1.5 text-lg font-semibold tracking-tight">Campaigns</h2>
+            </div>
             <Link href="/app/campaigns/new">
               <Button size="sm">
                 <Plus className="h-4 w-4" />
@@ -83,80 +97,113 @@ export default async function AppHome() {
               </Button>
             </Link>
           </div>
-          <div className="pro-card mt-4 overflow-hidden rounded-lg">
-            {(campaigns?.length ?? 0) === 0 ? (
-              <div className="p-6 text-sm text-[var(--color-muted-foreground)]">
-                No campaigns yet. Create one to start submitting videos.
-              </div>
-            ) : (
-              <ul className="divide-y divide-[var(--color-border)]">
-                {(campaigns ?? []).map((c: CampaignRow) => (
-                  <li
-                    key={c.id}
-                    className="flex items-center justify-between gap-4 p-4 transition-colors duration-200 hover:bg-white/[0.035]"
+          {(campaigns?.length ?? 0) === 0 ? (
+            <div className="rounded-[1.25rem] border border-dashed border-[var(--color-border)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+              No campaigns yet. Create one to start submitting videos.
+            </div>
+          ) : (
+            <div className="divide-y divide-[var(--color-border)]">
+              {(campaigns ?? []).map((c: CampaignRow) => (
+                <div
+                  key={c.id}
+                  className="flex items-center justify-between gap-4 py-3.5 first:pt-0"
+                >
+                  <div className="min-w-0">
+                    <p className="font-medium">{c.name}</p>
+                    <p className="text-xs text-[var(--color-muted-foreground)]">{c.audience || "no audience set"}</p>
+                  </div>
+                  <Link
+                    href={{ pathname: "/app/campaigns/[id]", query: {}, hash: "" } as never}
+                    as={`/app/campaigns/${c.id}` as never}
+                    className="inline-flex items-center gap-1 text-sm text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--color-foreground)]"
                   >
-                    <div>
-                      <p className="font-medium">{c.name}</p>
-                      <p className="text-xs text-[var(--color-muted-foreground)]">{c.audience || "no audience set"}</p>
-                    </div>
-                    <Link
-                      href={{ pathname: "/app/campaigns/[id]", query: {}, hash: "" } as never}
-                      as={`/app/campaigns/${c.id}` as never}
-                      className="text-sm text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
-                    >
-                      Open <ArrowRight className="inline h-3.5 w-3.5" />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+                    Open <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
-        <section>
-          <h2 className="text-lg font-semibold">Recent jobs</h2>
-          <div className="pro-card mt-4 overflow-hidden rounded-lg">
-            {(jobs?.length ?? 0) === 0 ? (
-              <div className="p-6 text-sm text-[var(--color-muted-foreground)]">
-                No jobs yet. Open a campaign and submit a video URL.
-              </div>
-            ) : (
-              <ul className="divide-y divide-[var(--color-border)]">
-                {(jobs ?? []).map((j: JobRow) => (
-                  <li
-                    key={j.id}
-                    className="flex items-center justify-between gap-4 p-4 transition-colors duration-200 hover:bg-white/[0.035]"
-                  >
-                    <div className="min-w-0">
-                      <p className="truncate text-sm">{j.source_url}</p>
-                      <p className="mt-0.5 text-xs text-[var(--color-muted-foreground)]">
-                        <span className="status-pill mr-2">{j.status}</span>
-                        {j.target_clip_count} clip(s)
-                      </p>
-                    </div>
+        <section className="liquid-shell p-5 md:p-6">
+          <div className="mb-4">
+            <p className="text-xs uppercase tracking-[0.22em] text-[var(--color-brand)]">Pipeline</p>
+            <h2 className="mt-1.5 text-lg font-semibold tracking-tight">Recent jobs</h2>
+          </div>
+          {(jobList.length ?? 0) === 0 ? (
+            <div className="rounded-[1.25rem] border border-dashed border-[var(--color-border)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+              No jobs yet. Open a campaign and submit a video URL.
+            </div>
+          ) : (
+            <div className="divide-y divide-[var(--color-border)]">
+              {jobList.map((j) => (
+                <div
+                  key={j.id}
+                  className="flex items-center justify-between gap-4 py-3.5 first:pt-0"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm">{j.source_url}</p>
+                    <p className="mt-0.5 text-xs text-[var(--color-muted-foreground)]">
+                      {j.target_clip_count} clip(s)
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-3">
+                    <StatusPill status={j.status} />
                     <a
                       href={`/app/jobs/${j.id}`}
-                      className="text-sm text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
+                      className="inline-flex items-center gap-1 text-sm text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--color-foreground)]"
                     >
-                      Open <ArrowRight className="inline h-3.5 w-3.5" />
+                      Open <ArrowRight className="h-3.5 w-3.5" />
                     </a>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       </div>
     </Container>
   );
 }
 
-function StatCard({ label, value, hint }: { label: string; value: string; hint: string }) {
+function Metric({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: string;
+  hint: string;
+}) {
   return (
-    <div className="pro-card rounded-lg p-5">
-      <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">{label}</p>
-      <p className="mt-2 text-3xl font-semibold tabular-nums">{value}</p>
+    <div className="rounded-[1.25rem] border border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-foreground)_3%,var(--color-background))] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">{label}</p>
+        <Icon className="h-4 w-4 text-[var(--color-brand)]" />
+      </div>
+      <p className="mt-3 text-3xl font-semibold tabular-nums">{value}</p>
       <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">{hint}</p>
     </div>
+  );
+}
+
+function StatusPill({ status }: { status: string }) {
+  const tone = status === "completed"
+    ? "text-[var(--color-brand)] border-[color-mix(in_srgb,var(--color-brand)_45%,transparent)]"
+    : status === "failed" || status === "canceled"
+    ? "text-[var(--color-danger)] border-[color-mix(in_srgb,var(--color-danger)_45%,transparent)]"
+    : "text-[var(--color-foreground)] border-[var(--color-border)]";
+  const dot = status === "completed"
+    ? "var(--color-brand)"
+    : status === "failed" || status === "canceled"
+    ? "var(--color-danger)"
+    : "var(--color-muted-foreground)";
+  return (
+    <span className={"inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs " + tone}>
+      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: dot }} />
+      {status}
+    </span>
   );
 }
