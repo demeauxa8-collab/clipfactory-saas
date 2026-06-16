@@ -126,6 +126,7 @@ def _arc_to_montage_segments(arc: StoryArc) -> list[MontageSegment]:
             start=s.start,
             end=s.end,
             transcript_excerpt=s.transcript_excerpt,
+            why=s.why,
         )
         for s in arc.segments
     ]

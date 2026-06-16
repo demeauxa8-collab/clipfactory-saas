@@ -122,6 +122,7 @@ class MontageSegment:
     start: float
     end: float
     transcript_excerpt: str = ""
+    why: str | None = None
 
 
 @dataclass

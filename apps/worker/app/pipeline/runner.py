@@ -32,11 +32,13 @@ from ..providers import (
 from ..settings import get_settings
 from ..storage import upload_file
 from .analyze import select_simple_segments
+from .boundaries import snap_arc_segments
 from .captions import write_ass_for_montage
 from .ffmpeg import (
     FFmpegError,
     probe_duration_seconds,
     render_montage_clip,
+    validate_rendered_clip,
     yt_dlp_download,
 )
 from .score import rank_and_pick, score_arc
@@ -360,6 +362,7 @@ def _segments_to_jsonb(candidate: MontageCandidate) -> str:
                 "start": round(s.start, 3),
                 "end": round(s.end, 3),
                 "transcript_excerpt": s.transcript_excerpt,
+                "why": s.why,
             }
             for s in candidate.segments
         ]
@@ -497,7 +500,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
         if story_mode:
             arcs = await _run_story_path(ctx=ctx, primary=primary, fallback=fallback, pool=pool)
         else:
-            arcs = await _run_simple_path(ctx=ctx, primary=primary, fallback=fallback)
+            arcs = await _run_simple_path(ctx=ctx, primary=primary, fallback=fallback, pool=pool)
 
         if not arcs:
             raise PipelineFailure(
@@ -546,9 +549,10 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
             await _set_status(conn, job_id, "rendering", current_step="render")
 
         render_start = time.monotonic()
-        for idx, cand in enumerate(ctx.montage_candidates):
-            out_clip = os.path.join(workdir, f"clip_{idx}.mp4")
-            ass_path = os.path.join(workdir, f"clip_{idx}.ass")
+        clips_saved = 0
+        for candidate_idx, cand in enumerate(ctx.montage_candidates):
+            out_clip = os.path.join(workdir, f"clip_{candidate_idx}.mp4")
+            ass_path = os.path.join(workdir, f"clip_{candidate_idx}.ass")
             has_captions = write_ass_for_montage(
                 transcript=ctx.transcript,
                 segments=cand.segments,
@@ -562,7 +566,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                     source=ctx.source_path or "",
                     segments=seg_tuples,
                     out_path=out_clip,
-                    workdir=os.path.join(workdir, f"render_{idx}"),
+                    workdir=os.path.join(workdir, f"render_{candidate_idx}"),
                     subtitles_path=ass_path if has_captions else None,
                 )
             except FFmpegError:
@@ -571,11 +575,28 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                     source=ctx.source_path or "",
                     segments=seg_tuples,
                     out_path=out_clip,
-                    workdir=os.path.join(workdir, f"render_{idx}"),
+                    workdir=os.path.join(workdir, f"render_{candidate_idx}"),
                     subtitles_path=None,
                 )
 
-            clip_key = f"clips/{user_id}/{job_id}/{idx}.mp4"
+            qc = await validate_rendered_clip(
+                path=out_clip,
+                expected_duration_seconds=rendered_dur,
+            )
+            if not qc.ok:
+                log_ctx.warning(
+                    "pipeline.render_qc_failed",
+                    candidate_idx=candidate_idx,
+                    problems=qc.problems,
+                    duration=qc.duration_seconds,
+                    expected=qc.expected_duration_seconds,
+                    mean_volume_db=qc.mean_volume_db,
+                    mid_frame_luma=qc.mid_frame_luma,
+                )
+                continue
+
+            clip_idx = clips_saved
+            clip_key = f"clips/{user_id}/{job_id}/{clip_idx}.mp4"
             bytes_uploaded = upload_file(out_clip, clip_key)
             ctx.storage_bytes += bytes_uploaded
 
@@ -600,7 +621,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                     """,
                     job_id,
                     user_id,
-                    idx,
+                    clip_idx,
                     cand.title,
                     cand.hook,
                     cand.rationale,
@@ -615,8 +636,15 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                     clip_key,
                     bytes_uploaded,
                 )
+            clips_saved += 1
 
         ctx.render_seconds = int(time.monotonic() - render_start)
+        if clips_saved == 0:
+            raise PipelineFailure(
+                "render_qc_failed",
+                "render_qc",
+                "No rendered clip passed quality control.",
+            )
 
         # Step 17 — finalize
         async with pool.acquire() as conn:
@@ -676,7 +704,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                 )
         log_ctx.info(
             "pipeline.completed",
-            clips=len(ctx.montage_candidates),
+            clips=clips_saved,
             mode="story" if story_mode else "simple",
             cost_cents=int(total_cost_cents),
         )
@@ -773,8 +801,17 @@ async def _run_story_path(
         await _set_status(conn, ctx.job_id, "analyzing", current_step="verify_arcs")
     kept, dropped = verify_arcs(ctx.transcript, arcs)
     log.info("pipeline.verify", kept=len(kept), dropped=dropped)
-    ctx.story_arcs = kept
-    return kept
+    async with pool.acquire() as conn:
+        await _set_status(conn, ctx.job_id, "analyzing", current_step="snap_segments")
+    snapped, snap_report = snap_arc_segments(kept, ctx.transcript.words)
+    log.info(
+        "pipeline.snap_segments",
+        arcs=snap_report.arcs_seen,
+        segments=snap_report.segments_seen,
+        changed=snap_report.segments_changed,
+    )
+    ctx.story_arcs = snapped
+    return snapped
 
 
 async def _run_simple_path(
@@ -782,6 +819,7 @@ async def _run_simple_path(
     ctx: JobContext,
     primary: LLMProvider,
     fallback: LLMProvider | None,
+    pool: asyncpg.Pool,
 ) -> list[StoryArc]:
     settings = get_settings()
     assert ctx.transcript is not None
@@ -806,8 +844,17 @@ async def _run_simple_path(
     # Verify (same path as story)
     kept, dropped = verify_arcs(ctx.transcript, arcs)
     log.info("pipeline.verify_simple", kept=len(kept), dropped=dropped)
-    ctx.story_arcs = kept
-    return kept
+    async with pool.acquire() as conn:
+        await _set_status(conn, ctx.job_id, "analyzing", current_step="snap_segments")
+    snapped, snap_report = snap_arc_segments(kept, ctx.transcript.words)
+    log.info(
+        "pipeline.snap_segments_simple",
+        arcs=snap_report.arcs_seen,
+        segments=snap_report.segments_seen,
+        changed=snap_report.segments_changed,
+    )
+    ctx.story_arcs = snapped
+    return snapped
 
 
 def _video_map_json(ctx: JobContext) -> str | None:
