@@ -1,9 +1,16 @@
-"""ASS captions with multi-segment retiming.
+"""ASS captions with multi-segment retiming and karaoke word highlighting.
 
 For a single-segment clip, captions are simply word-timed against the source.
 For a multi-segment montage, each word's source timestamp is recomputed on the
 final timeline (offset by the cumulative duration of previous segments, minus
 the crossfade overlaps).
+
+Captions are rendered "karaoke" style: a chunk of ~5 words stays on screen and
+the word currently being spoken is highlighted in an accent colour with a slight
+size punch. We emit one Dialogue event per word (each holding until the next word
+starts) instead of the classic ASS ``\\k`` fill, because per-word colour overrides
+let us highlight a single active word rather than progressively colouring every
+already-spoken word. Word timings are already computed, so this adds no cost.
 """
 
 from __future__ import annotations
@@ -51,6 +58,41 @@ ASS_HEADER = "\n".join(
 )
 
 
+# Active-word highlight colour as ASS BBGGRR (inline \c overrides take 6 hex
+# digits + a trailing '&'). This is a vivid yellow (RGB 255,229,0) which reads
+# well over the white outline on most footage.
+HIGHLIGHT_BGR = "00E5FF"
+# Size punch applied to the active word (percent of the style font size).
+HIGHLIGHT_SCALE_PERCENT = 112
+
+
+def _sanitize_word(word: str) -> str:
+    """Strip the braces ASS uses for override blocks so transcript text can't
+    break the tag stream."""
+    return word.strip().replace("{", "(").replace("}", ")")
+
+
+def _render_karaoke_chunk(words: list[str], active_idx: int) -> str:
+    """Render a chunk with the word at ``active_idx`` highlighted.
+
+    The active word gets an accent colour and a small scale punch; ``\\r`` resets
+    back to the Default style for the rest of the line.
+    """
+    parts: list[str] = []
+    for idx, raw in enumerate(words):
+        word = _sanitize_word(raw)
+        if not word:
+            continue
+        if idx == active_idx:
+            parts.append(
+                f"{{\\c&H{HIGHLIGHT_BGR}&\\fscx{HIGHLIGHT_SCALE_PERCENT}"
+                f"\\fscy{HIGHLIGHT_SCALE_PERCENT}}}{word}{{\\r}}"
+            )
+        else:
+            parts.append(word)
+    return " ".join(parts)
+
+
 def _retimed_words_for_montage(
     *,
     transcript: Transcript,
@@ -89,11 +131,14 @@ def write_ass_for_montage(
     out_path: str,
     audio_crossfade_seconds: float = 0.15,
     chunk_words: int = 5,
+    karaoke: bool = True,
 ) -> bool:
     """Generate an ASS file for a multi-segment montage.
 
     For a single-segment list this behaves exactly like the old single-window
-    writer (same chunking, no offset).
+    writer (same chunking, no offset). With ``karaoke=True`` (default) the chunk
+    stays on screen while the active word is highlighted word-by-word; with
+    ``karaoke=False`` each chunk is a single static line.
     """
     timed = _retimed_words_for_montage(
         transcript=transcript,
@@ -108,17 +153,39 @@ def write_ass_for_montage(
         group = timed[i : i + chunk_words]
         if not group:
             continue
-        start_rel = group[0][0]
-        end_rel = group[-1][1]
-        if end_rel <= start_rel:
+        chunk_start = group[0][0]
+        chunk_end = group[-1][1]
+        if chunk_end <= chunk_start:
             continue
-        text = " ".join(g[2].strip() for g in group).strip()
-        if not text:
+        chunk_words_text = [g[2] for g in group]
+
+        if not karaoke:
+            text = _render_karaoke_chunk(chunk_words_text, active_idx=-1)
+            if not text:
+                continue
+            lines.append(
+                f"Dialogue: 0,{_format_ass_time(chunk_start)},"
+                f"{_format_ass_time(chunk_end)},Default,,0,0,0,,{text}"
+            )
             continue
-        text = text.replace("{", "(").replace("}", ")")
-        lines.append(
-            f"Dialogue: 0,{_format_ass_time(start_rel)},{_format_ass_time(end_rel)},Default,,0,0,0,,{text}"
-        )
+
+        # One event per word: each highlights its word and holds until the next
+        # word starts (the last holds to the chunk end). The union covers the
+        # whole chunk with no gap or flicker.
+        for j, (word_start, word_end, _word) in enumerate(group):
+            ev_start = word_start
+            ev_end = group[j + 1][0] if j + 1 < len(group) else chunk_end
+            if ev_end <= ev_start:
+                ev_end = word_end
+            if ev_end <= ev_start:
+                continue
+            text = _render_karaoke_chunk(chunk_words_text, active_idx=j)
+            if not text:
+                continue
+            lines.append(
+                f"Dialogue: 0,{_format_ass_time(ev_start)},"
+                f"{_format_ass_time(ev_end)},Default,,0,0,0,,{text}"
+            )
 
     if not lines:
         return False
