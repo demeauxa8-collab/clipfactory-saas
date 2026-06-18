@@ -38,7 +38,7 @@ export default async function AdminFinancePage() {
             <tr>
               <th className="px-3 py-3">Month</th>
               <th className="px-3 py-3 text-right">Revenue</th>
-              <th className="px-3 py-3 text-right">Whisper</th>
+              <th className="px-3 py-3 text-right">Transcription</th>
               <th className="px-3 py-3 text-right">Video map</th>
               <th className="px-3 py-3 text-right">Deep vision</th>
               <th className="px-3 py-3 text-right">Text LLM</th>

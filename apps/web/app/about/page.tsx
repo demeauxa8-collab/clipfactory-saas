@@ -38,7 +38,7 @@ const PROMISES = [
   },
   {
     title: "EU by default.",
-    body: "Supabase Frankfurt, Cloudflare R2 EU, Hetzner Germany. No transfer to the US.",
+    body: "Supabase Frankfurt, Cloudflare R2 EU, EU-based compute. No transfer to the US.",
   },
   {
     title: "Cancel in one click.",
