@@ -3,7 +3,7 @@
 > **Pour Codex (ou tout autre agent) qui reprend ce projet sans contexte.**
 > Tout ce qu'il faut savoir tient dans ce doc + les docs cités ci-dessous.
 
-Dernière mise à jour : 2026-05-27. Auteurs : Augustin (founder), Claude Code, Codex.
+Dernière mise à jour : 2026-06-18. Auteurs : Augustin (founder), Claude Code, Codex.
 
 ---
 
@@ -14,7 +14,7 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 **Différenciateur produit** :
 > Campaign-first. Chaque clip est sélectionné en fonction d'une **campagne** (audience, niche, ton, objectif). Sur vidéos ≥ 5 min, on détecte des **arcs narratifs multi-segments** (setup → payoff à 10 min d'écart). Chaque clip ship avec un **score expliqué** (hook, emotion, visual, fit campagne, editing).
 
-**État du code** : V1 fonctionnellement complète. Web marketing + dashboard polish mergés dans `main` et déployés sur Vercel. Backend/worker prêts côté code, mais la prod API/worker reste bloquée par les comptes externes et le VPS.
+**État du code** : V1 fonctionnellement complète. Web marketing + dashboard polish mergés dans `main` et déployés sur Vercel. Worker enrichi (snapping des bords, loudnorm, gate QC, sous-titres karaoké, persist `why`) mergé dans `main`. Backend/worker prêts côté code, mais la prod API/worker reste bloquée par les comptes externes et l'hébergement (control plane VPS + worker Mac Studio — voir `docs/infrastructure.md`).
 
 **État Git/Vercel le plus récent (2026-05-27)** :
 - `main` contient le polish web via merge commit `1db5cdf`.
@@ -36,6 +36,8 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 9. `docs/deploy.md` → runbook deploy step-by-step
 10. `docs/global-video-understanding.md` → fondations conceptuelles story-first
 11. `docs/unit-economics.md` → crédits, prix API, VPS, marge, seuils de décision
+12. `docs/infrastructure.md` → **archi infra adoptée** : control plane VPS (OVH/Scaleway) + worker Mac Studio (pull)
+13. `docs/pipeline-improvements.md` → roadmap qualité worker (briques 1-5 livrées, 6-11 à faire)
 
 ---
 
@@ -56,6 +58,7 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 | Anti-hallucination | `verify_arcs` : string match transcript excerpt vs transcript réel (SequenceMatcher ≥ 0.65), drop si ratio insuffisant | LLMs inventent parfois |
 | Crossfade audio | 150 ms entre segments (`acrossfade`) | Cut sec sonne amateur |
 | Storage | Cloudflare R2 EU (egress gratuit) | Critique pour le download de clips |
+| Hébergement | Control plane sur petit VPS UE (OVH/Scaleway) + worker sur **Mac Studio** (modèle pull) | Fiabilité 24/7 (API/DB/Stripe) + calcul lourd sur machine possédée. Hetzner abandonné (KYC). Voir `docs/infrastructure.md` |
 | DB + Auth | Supabase EU (Frankfurt) | Postgres + magic-link gratuits |
 | Billing | Stripe Checkout + webhooks | Pas de Stripe Elements V1 |
 | Rate limiting | slowapi sur les endpoints write (`10/min` jobs, `30/h` campaigns, `60/min` feedback, `5/h` checkout) | Anti-abus |
@@ -71,8 +74,8 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 | Couche | Choix | Notes |
 | --- | --- | --- |
 | Frontend | Next.js 15 App Router + TS strict + Tailwind v4 + shadcn-style components | Vercel connecté pour preview/prod web. Cloudflare Pages reste une option plus tard |
-| Backend API | FastAPI 0.115 + asyncpg + pydantic-settings + slowapi | Hetzner CPX32 derrière Caddy |
-| Worker | Python 3.11 + yt-dlp + FFmpeg + httpx + anthropic + openai + Pillow | Même VPS que l'API |
+| Backend API | FastAPI 0.115 + asyncpg + pydantic-settings + slowapi | Control plane : petit VPS UE (OVH/Scaleway) derrière Caddy |
+| Worker | Python 3.11 + yt-dlp + FFmpeg + httpx + anthropic + openai + Pillow | Mac Studio (modèle pull : va chercher les jobs dans le Redis du VPS) |
 | DB + Auth | Supabase Postgres 15 + magic-link OTP | Free tier au démarrage |
 | Storage | Cloudflare R2 (S3-compatible) | Bucket `clipfactory-clips` |
 | Queue | Redis (sur VPS) | Simple `BLPOP` |
@@ -81,7 +84,7 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 | LLM primary | OpenRouter (`deepseek/deepseek-chat-v3.2`, `google/gemini-2.5-flash`, `qwen/qwen3-vl-flash`) | Une seule clé |
 | LLM fallback | Anthropic `claude-haiku-4-5-20251001` | Auto sur erreur primary |
 | Deploy front | Vercel | Projet `clipfactory-saas`, root `apps/web`, GitHub connecté |
-| Deploy back | Caddy + systemd ou docker-compose sur Hetzner | Au choix |
+| Deploy back | API : Caddy + systemd sur VPS OVH/Scaleway. Worker : Mac Studio (launchd, pull) | Voir `docs/infrastructure.md` + `docs/deploy.md` |
 
 **Versions outils** :
 - Node 24.x (nvm), npm 11.x. Pas de pnpm.
@@ -164,14 +167,15 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 │           └── pipeline/
 │               ├── runner.py        Orchestrator, simple vs story routing, SSRF-safe URL check
 │               ├── ffmpeg.py        probe / scene detect / extract_frame / render_montage_clip
-│               ├── transcribe.py    OpenAI Whisper
+│               ├── transcribe.py    OpenAI gpt-4o-mini-transcribe (API)
 │               ├── video_map.py     scene detect + frame sampling + cheap vision chunked
 │               ├── story_arcs.py    arcs detection via text LLM
 │               ├── verify.py        anti-hallucination string match
 │               ├── analyze.py       simple segment selection (chemin court < 5 min)
 │               ├── vision.py        deep_vision_for_arc (top 5 arcs only)
 │               ├── score.py         ARC_WEIGHTS + score_arc + rank_and_pick
-│               └── captions.py      ASS retiming for multi-segment montages
+│               ├── boundaries.py    snap_segment / snap_arc_segments (cale les bords sur les silences)
+│               └── captions.py      ASS retiming + sous-titres karaoké (mot actif surligné)
 ├── db/migrations/
 │   ├── 0001_init.sql                base (profiles, subs, credits, jobs, clips, stripe_events)
 │   ├── 0002_campaigns_costs_vision.sql  campaigns + feedback + cost columns
@@ -226,10 +230,10 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - [x] **T29.** Doc consolidation pass — this rewrite, `docs/admin.md`, `docs/seo.md`, `docs/deploy.md`
 - [ ] **T30.** External services setup — Stripe + R2 + OpenAI + OpenRouter + Anthropic accounts
 - [~] **T31.** Smoke test end-to-end — harness Playwright ajouté, exécution live à faire quand les services externes sont prêts (voir section 10)
-- [~] **T32.** Production deploy (Vercel web + Hetzner API/worker) — see `docs/deploy.md`
+- [~] **T32.** Production deploy (Vercel web + VPS control plane + worker Mac Studio) — see `docs/deploy.md` + `docs/infrastructure.md`
   - [x] Web Vercel production deployed from `main`: `https://clipfactory-saas.vercel.app`
   - [ ] Custom DNS for `clipfactory.app`
-  - [ ] Hetzner API/worker deploy
+  - [ ] Control plane VPS (OVH/Scaleway) deploy + worker Mac Studio (pull) deploy
 - [x] **T33.** Address 5 Medium security findings before opening to public (`docs/security-audit.md`)
 - [x] **T34.** Marketing + dashboard polish for review
   - [x] Apple-inspired graphite/ivory direction with cleaner product staging and wave/liquid motion.
@@ -247,6 +251,8 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
   - [x] Added `www.clipfactory.app` to Vercel project.
   - [ ] Configure DNS: `A clipfactory.app 76.76.21.21`.
   - [ ] Configure DNS: `A www.clipfactory.app 76.76.21.21` or switch nameservers to `ns1.vercel-dns.com` / `ns2.vercel-dns.com`.
+- [x] **T37.** Décision archi infra : control plane VPS (OVH/Scaleway) + worker Mac Studio (pull), `docs/infrastructure.md`, adopté 2026-06. Remplace l'option Hetzner (abandonnée pour KYC).
+- [x] **T38.** Améliorations qualité worker mergées dans `main` : snapping des bords (`boundaries.py`), loudnorm -14 LUFS, gate QC post-rendu, sous-titres karaoké, persist `why` par segment (+ tests `test_boundaries.py` / `test_captions.py`). Roadmap restante : `docs/pipeline-improvements.md` (briques 6-11).
 
 ---
 
@@ -338,6 +344,24 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - `/preview/dashboard` vérifié en 200 sur production ; anciennes routes design preview vérifiées en 404.
 - Domaines `clipfactory.app` et `www.clipfactory.app` ajoutés au projet Vercel. DNS toujours à configurer chez le registrar/DNS provider.
 
+### 2026-06-13 — Décision architecture infra (Mac Studio + VPS)
+
+- Archi adoptée : **control plane** sur petit VPS UE (OVH VPS-2 / Scaleway DEV1-M) + **worker** sur Mac Studio M2 Ultra (modèle pull, zéro port ouvert côté Mac). Doc dédiée `docs/infrastructure.md`.
+- **Hetzner abandonné** (KYC durci : pièce d'identité + selfie). OVH/Scaleway demandent en général juste une carte.
+- Phase actuelle = tout sur le Mac + Cloudflare Tunnel, pas de VPS. Déclencheur du split VPS = 1er client payant.
+- PR #2 (doc infra) mergée dans `main`.
+- Transcription clarifiée : **API OpenAI `gpt-4o-mini-transcribe`** (clé API), pas de Whisper local.
+
+### 2026-06-16 — Améliorations qualité worker mergées
+
+- Merge `draft/parallel-workers` dans `main` : snapping des bords (`pipeline/boundaries.py`), loudnorm -14 LUFS, gate QC post-rendu (rejet clip muet/cassé/hors durée), sous-titres karaoké (mot actif), persist `why` par segment. Tests `test_boundaries.py` + `test_captions.py` (6/6 OK).
+- Roadmap restante : `docs/pipeline-improvements.md` (briques 6-11 : recadrage face-aware, énergie audio, dédup arcs, trim silences, variantes méta, thumbnail).
+
+### 2026-06-18 — Reconciliation documentaire
+
+- Tous les docs alignés sur les décisions les plus récentes : archi Mac/VPS (remplace Hetzner partout), transcription = API OpenAI `gpt-4o-mini-transcribe`, vision deep = **Gemini 2.5 Flash** (Claude Haiku = fallback uniquement), briques qualité worker marquées livrées.
+- Docs touchés : handoff, deploy, unit-economics, pipeline, plan, codex-brief, global-video-understanding, admin, security-audit, pipeline-improvements.
+
 ---
 
 ## 6. Services externes (état au 2026-05-27)
@@ -353,7 +377,8 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 | **OpenAI** | À créer | `TODO` |
 | **OpenRouter** | À créer | `TODO` |
 | **Anthropic** | À créer | `TODO` |
-| **Hetzner CPX32** | À provisionner | Falkenstein |
+| **VPS control plane** (OVH/Scaleway) | À provisionner | API + Redis + Caddy ; UE (GDPR). Hetzner abandonné (KYC) |
+| **Worker Mac Studio** | Machine possédée | Transcription + render, modèle pull (va chercher les jobs dans le Redis du VPS) |
 | **Domain** | Ajouté dans Vercel, DNS pas configuré | `clipfactory.app`, `www.clipfactory.app` |
 | **Cloudflare Pages** | Optionnel / plus tard | Vercel est le chemin web actuel |
 
@@ -526,13 +551,13 @@ Aucun blocker code : tout compile (`npx tsc --noEmit` OK, ruff OK, imports Pytho
 - Clé OpenRouter
 - Clé Anthropic
 - Domaine
-- VPS Hetzner CPX32
+- Petit VPS OVH/Scaleway (control plane) — Hetzner abandonné (KYC)
 - Cloudflare Turnstile site key + secret key
 
 **Bloqueurs de prod live** :
-- Web Vercel prod OK, mais ne pas considérer le SaaS complet "live" tant que l'API/worker ne tournent pas sur Hetzner.
+- Web Vercel prod OK, mais ne pas considérer le SaaS complet "live" tant que l'API (VPS) + worker (Mac Studio) ne tournent pas.
 - `clipfactory.app` ne résout pas encore : DNS à configurer (`A clipfactory.app 76.76.21.21`, `A www.clipfactory.app 76.76.21.21`) ou nameservers Vercel.
-- `NEXT_PUBLIC_API_URL` devra pointer vers `https://api.clipfactory.app` après P0 Hetzner + DNS.
+- `NEXT_PUBLIC_API_URL` devra pointer vers `https://api.clipfactory.app` après le déploiement du VPS control plane + DNS.
 - Smoke E2E Playwright doit attendre Stripe/R2/LLM/API/worker réellement branchés.
 - Local worktree peut contenir des docs non commités autour des marges/VPS. Avant de coder, faire `git status` et ne pas écraser ces modifications.
 

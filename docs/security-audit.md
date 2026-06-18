@@ -122,7 +122,7 @@ Effort : 15 min, à fine-tuner avec ce que Supabase + Stripe injectent.
 
 ### M2 — CORS permissif via env var sans guard
 
-**Surface :** `apps/api/app/settings.py::cors_allow_origins` peut être set à `*` par env var. En prod, si quelqu'un push `CORS_ALLOW_ORIGINS=*` à Hetzner par erreur, n'importe quel site peut hit l'API avec les cookies du user.
+**Surface :** `apps/api/app/settings.py::cors_allow_origins` peut être set à `*` par env var. En prod, si quelqu'un push `CORS_ALLOW_ORIGINS=*` sur le VPS par erreur, n'importe quel site peut hit l'API avec les cookies du user.
 
 **Impact :** CSRF amplifié (mais Supabase JWT en Bearer header, pas en cookie → l'attaque est moins facile).
 
@@ -180,7 +180,7 @@ Effort : 30 min (Turnstile + verify).
 
 ### M5 — Logs structurés peuvent contenir des données sensibles
 
-**Surface :** `structlog` logue en JSON. Si on log `user.email` ou `request.body`, ça finit dans Hetzner logs / Cloudflare logs.
+**Surface :** `structlog` logue en JSON. Si on log `user.email` ou `request.body`, ça finit dans les logs du VPS / Cloudflare logs.
 
 **Impact :** RGPD (logs = données perso, période de rétention obligatoire).
 

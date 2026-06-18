@@ -1,30 +1,34 @@
 # Unit economics — credits, VPS, APIs, margins
 
-Last updated: 2026-05-24.
+Last updated: 2026-06-18 (infra section updated for the Mac Studio + VPS architecture).
+
+> **Infra update 2026-06:** the architecture changed — the **worker (FFmpeg + render) now runs on the Mac Studio** (owned hardware), and only a **small control-plane VPS** (OVH VPS-2 ~€8.49 HT / Scaleway DEV1-M) hosts the API + Redis. The Hetzner CPX32 figures below (~€16-20) are **superseded** by this small VPS (~€10-12 TTC) + Mac electricity (~€3); margin improves accordingly. The API cost model (transcription/vision/text) below stays valid as-is. See `docs/infrastructure.md`.
 
 This doc is the financial source of truth for V1 pricing until real production
 usage replaces the estimates.
 
 ## Executive decision
 
-ClipFactory is profitable at the V1 target of 7 Starter customers, even with the
-larger CPX32 VPS.
+ClipFactory is profitable at the V1 target of 7 Starter customers. With the worker
+on the owned Mac Studio and only a small VPS control plane, fixed infra is even
+lower than the old Hetzner plan.
 
 The old margin docs used gross revenue (`7 x 29 EUR = 203 EUR`) and an outdated
 CPX21 VPS. The realistic view is stricter:
 
 - Pricing page says VAT is included for EU customers.
 - Stripe charges on the VAT-included amount.
-- The MVP VPS should be CPX32, not CPX21, because FFmpeg + worker temp files
-  need more RAM headroom.
+- The control plane VPS only runs the API + Redis (small: OVH VPS-2 / Scaleway
+  DEV1-M). FFmpeg + worker temp files run on the Mac Studio, so the VPS does not
+  need big RAM headroom.
 - API costs must be measured per completed job, not guessed once.
 
 Bottom line:
 
 | Scenario at 7 Starter customers | Monthly margin after VAT + Stripe |
 | --- | ---: |
-| Mixed usage, official providers | ~120 EUR |
-| Conservative heavy-story usage | ~75-90 EUR |
+| Mixed usage, official providers | ~128 EUR |
+| Conservative heavy-story usage | ~80-93 EUR |
 | Gross old-style view, before VAT | ~155-160 EUR |
 
 If margin goes negative, the fix is not grey-market API keys. The fix is to
@@ -106,8 +110,8 @@ Use this for the first public MVP:
 
 | Item | Cash cost / month | Notes |
 | --- | ---: | --- |
-| Hetzner CPX32 | ~16.79 EUR TTC | 4 vCPU, 8 GB RAM, 160 GB, no backups |
-| Hetzner CPX32 + backups | ~20.15 EUR TTC | Recommended once first users are active |
+| VPS control plane (OVH VPS-2 / Scaleway DEV1-M) | ~10-12 EUR TTC | 2-3 vCPU / 4 GB — API + Redis only |
+| Worker Mac Studio (owned) | ~3 EUR | electricity only, no rental cost |
 | Domain | ~1 EUR | annual cost averaged monthly |
 | Supabase | 0 EUR | free tier at MVP scale |
 | Cloudflare Pages | 0 EUR | free tier at MVP scale |
@@ -117,13 +121,13 @@ Use this for the first public MVP:
 Fixed cost target with backups:
 
 ```text
-VPS + R2 + domain = ~23 EUR / month
-With small monitoring buffer = ~28 EUR / month
+VPS control plane + Mac electricity + R2 + domain = ~17 EUR / month
+With small monitoring buffer = ~22 EUR / month
 ```
 
-Do not start lower than CPX32 unless cash is extremely tight. CPX22/CPX21 can
-boot the stack, but FFmpeg renders plus downloaded source videos can make 4 GB
-RAM uncomfortable.
+The control plane VPS stays small because the heavy work (FFmpeg renders +
+downloaded source videos) happens on the Mac Studio, not the VPS. A 2-3 vCPU /
+4 GB OVH/Scaleway instance is plenty for the API + Redis.
 
 ## Variable API costs
 
@@ -210,14 +214,15 @@ Net revenue after VAT + Stripe:
 
 | Cost | Monthly estimate |
 | --- | ---: |
-| CPX32 + backups | 20.15 EUR |
+| VPS control plane (OVH/Scaleway) | 11.00 EUR |
+| Worker Mac Studio (electricity) | 3.00 EUR |
 | R2 | 2.00 EUR |
 | Domain | 1.00 EUR |
 | OpenAI transcription: 2,100 min x 0.003 | 6.30 EUR |
 | OpenRouter text + vision mix | 12.00 EUR |
 | Anthropic fallback, ~5% | 1.00 EUR |
-| **Total** | **42.45 EUR** |
-| **Net margin after VAT + Stripe** | **121.91 EUR** |
+| **Total** | **36.30 EUR** |
+| **Net margin after VAT + Stripe** | **128.06 EUR** |
 
 ### Conservative heavy-story case
 
@@ -226,21 +231,22 @@ Assume all customers use the full 300 credits and mostly submit videos over
 
 | Cost | Monthly estimate |
 | --- | ---: |
-| CPX32 + backups | 20.15 EUR |
+| VPS control plane (OVH/Scaleway) | 11.00 EUR |
+| Worker Mac Studio (electricity) | 3.00 EUR |
 | R2 + storage buffer | 5.00 EUR |
 | Domain + monitoring | 6.00 EUR |
 | OpenAI transcription | 6.30 EUR |
 | OpenRouter heavy vision/text | 35.00-45.00 EUR |
 | Anthropic fallback, elevated | 5.00-8.00 EUR |
-| **Total** | **77-90 EUR** |
-| **Net margin after VAT + Stripe** | **74-87 EUR** |
+| **Total** | **71-84 EUR** |
+| **Net margin after VAT + Stripe** | **80-93 EUR** |
 
 ### Break-even
 
-With base costs around 42-45 EUR/month:
+With base costs around 36-40 EUR/month:
 
 ```text
-45 EUR / 23.48 EUR net per Starter = 1.9 customers
+38 EUR / 23.48 EUR net per Starter = 1.6 customers
 ```
 
 So the business breaks even around 2 Starter customers in a base case, and
@@ -252,10 +258,10 @@ At 7 Starter customers:
 
 ```text
 Net after VAT + Stripe:       164.36 EUR
-Fixed costs before APIs:     ~23.15 EUR
+Fixed costs before APIs:     ~17.00 EUR
 Credits sold:                  2,100
-Budget left for APIs:         141.21 EUR
-Max API cost per credit:        0.067 EUR
+Budget left for APIs:         147.36 EUR
+Max API cost per credit:        0.070 EUR
 ```
 
 A useful rule:
@@ -263,7 +269,7 @@ A useful rule:
 ```text
 If average API cost stays below 0.03 EUR per source minute, Starter is healthy.
 If it rises above 0.05 EUR per source minute, reduce vision or raise price.
-If it hits 0.067 EUR per source minute, 7 Starter users are near break-even.
+If it hits 0.070 EUR per source minute, 7 Starter users are near break-even.
 ```
 
 ## What to measure from day one
@@ -362,7 +368,7 @@ story-first pipeline.
 
 ## Immediate corrections to keep before launch
 
-1. Keep CPX32 as the default VPS in deploy docs.
+1. Use a small OVH/Scaleway VPS as the control plane; the worker runs on the Mac Studio (see `docs/infrastructure.md`). Hetzner is dropped (hardened KYC).
 2. Verify OpenRouter model IDs before prod:
    - replace `deepseek/deepseek-chat-v3.2` if invalid,
    - replace `qwen/qwen3-vl-flash` if invalid.
@@ -377,8 +383,9 @@ story-first pipeline.
 
 ## Sources checked
 
-- Hetzner price adjustment, CPX32 Germany/Finland: <https://docs.hetzner.com/general/infrastructure-and-availability/price-adjustment/>
-- Hetzner Regular Performance specs / backups: <https://www.hetzner.com/cloud/regular-performance>
+- OVHcloud VPS pricing: <https://www.ovhcloud.com/en/vps/>
+- Scaleway Cost-Optimized Instances pricing: <https://www.scaleway.com/en/pricing/>
+- Infra architecture decision: `docs/infrastructure.md`
 - Stripe France pricing: <https://stripe.com/en-fr/pricing>
 - Cloudflare R2 pricing: <https://developers.cloudflare.com/r2/pricing/>
 - OpenAI GPT-4o mini Transcribe model pricing: <https://developers.openai.com/api/docs/models/gpt-4o-mini-transcribe>

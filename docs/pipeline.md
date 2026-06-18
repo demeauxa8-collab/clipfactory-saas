@@ -75,9 +75,9 @@ queued
 | 4 | check_plan + initial_debit | si dur > plan.max → fail. Débit upfront du `credits_estimated`. |
 | 5 | upload_source | clé `sources/{user_id}/{job_id}.mp4` (best-effort) |
 | 6 | transcribe | OpenAI `gpt-4o-mini-transcribe` (verbose_json + word timestamps) |
-| 7 | select_segments | Claude Haiku : retourne 5-8 segments candidats `{start, end, hook, emotion, transcript_excerpt, why, suggested_title, suggested_hook}` |
+| 7 | select_segments | OpenRouter DeepSeek (fallback Claude Haiku) : retourne 5-8 segments candidats `{start, end, hook, emotion, transcript_excerpt, why, suggested_title, suggested_hook}` |
 | 8 | verify_segments | string match transcript_excerpt vs transcript réel (fuzzy ratio ≥ 0.7 sur la fenêtre). Drop hallucinations. |
-| 9 | extract_frames + deep_vision | 2-3 frames par segment restant, Claude vision JSON `{decor, person_visible, energy, action, proof_objects, problems, visual_score}` |
+| 9 | extract_frames + deep_vision | 2-3 frames par segment restant, Gemini 2.5 Flash vision (fallback Haiku) JSON `{decor, person_visible, energy, action, proof_objects, problems, visual_score}` |
 | 10 | score_and_pick | poids `hook 35% + emotion 20% + visual 25% + campaign_fit 15% + editing 5%`. Garde top `target_clip_count`. |
 | 11 | render | FFmpeg vertical 1080x1920, 1 segment = pas de concat |
 | 12 | captions + upload + save + finalize | ASS burn-in, R2 upload, insert clips, debit final, cost log |
@@ -96,9 +96,9 @@ queued
 | 6 | transcribe | idem |
 | 7 | **scene_detection + frame_sampling** | FFmpeg `select='gt(scene,0.4)'` + sampling régulier. Cap selon durée : `<10min→80`, `10-30→150`, `>30→220` frames |
 | 8 | **build_video_map** | OpenRouter Qwen3-VL Flash, prompt = `VIDEO_MAP_SYSTEM_PROMPT` + frames + transcript résumé. Sortie : `{video_summary, events[]}` 20-40 events avec `{id, start, end, decor, people, objects, action, transcript_summary, visual_importance, narrative_role}` |
-| 9 | **detect_story_arcs** | Claude Haiku texte sur video_map + transcript_lines + campaign. Sortie : 10-15 arcs `{title, arc_type, segments[], viral_reason, estimated_retention, continuity_risk}` |
+| 9 | **detect_story_arcs** | OpenRouter DeepSeek (fallback Claude Haiku) texte sur video_map + transcript_lines + campaign. Sortie : 10-15 arcs `{title, arc_type, segments[], viral_reason, estimated_retention, continuity_risk}` |
 | 10 | **verify_arcs** | Pour chaque arc, pour chaque segment : checker que les mots du transcript dans `[start, end]` existent vraiment. Sinon drop l'arc entier. |
-| 11 | **deep_vision** sur top 5 | Top 5 arcs par `estimated_retention`. Pour chaque segment d'un arc top 5 : extract 4-6 frames (début, milieu, fin, +1-2 si > 15s). Claude vision : confirm decor/action/proof. Retourne `visual_score` agrégé par arc. |
+| 11 | **deep_vision** sur top 5 | Top 5 arcs par `estimated_retention`. Pour chaque segment d'un arc top 5 : extract 4-6 frames (début, milieu, fin, +1-2 si > 15s). Gemini 2.5 Flash vision (fallback Haiku) : confirm decor/action/proof. Retourne `visual_score` agrégé par arc. |
 | 12 | **score_and_pick_arcs** | poids `payoff_strength 25% + setup_clarity 20% + visual_proof 20% + retention 15% + campaign_fit 10% + editing_continuity 10%`. Top `target_clip_count`. |
 | 13 | render_montage | Pour chaque arc retenu, FFmpeg : extract chaque segment, concat avec crossfade audio 150ms (`afade` + `acrossfade`), vertical 1080x1920, h264 |
 | 14 | retime_captions | Mots du transcript dans la fenêtre source → recalculés sur la timeline finale (offset cumulatif des segments précédents). ASS burn-in. |
@@ -152,6 +152,20 @@ V1 : crossfade audio uniquement, pas de fondu visuel (cut sec image). Suffit pou
 
 ---
 
+## Améliorations qualité du rendu (implémentées 2026-06)
+
+Livré sur `main` (merge `draft/parallel-workers`). Roadmap complète : `docs/pipeline-improvements.md`. Aucune de ces briques n'ajoute de coût LLM/vision (elles réutilisent les word timestamps et la deep vision déjà calculés).
+
+| Brique | Où (code) | Effet |
+| --- | --- | --- |
+| Snapping des bords de segment | `pipeline/boundaries.py` (`snap_arc_segments`), appelé après `verify_arcs` (`current_step = snap_segments`, les 2 chemins) | cale `start`/`end` sur silence / fin de phrase via word timestamps → plus de coupe en plein mot |
+| Loudnorm -14 LUFS | `pipeline/ffmpeg.py` (`loudnorm=I=-14:TP=-1.5:LRA=11`) | volume constant entre clips |
+| Gate QC post-rendu | `runner.py` (`render_qc_failed`) + `ffmpeg.py` (`volumedetect`) | rejette un clip muet / cassé / hors tolérance de durée avant l'upload |
+| Sous-titres karaoké | `pipeline/captions.py` (1 event par mot, override couleur `\c` + scale) | mot prononcé surligné en temps réel |
+| Persist `why` par segment | `runner.py` (`_segments_to_jsonb`) + `score.py` | la justification LLM de chaque segment est stockée (explicabilité) |
+
+Encore en roadmap (non implémenté) : recadrage face-aware, courbe d'énergie audio, dédup/diversité des arcs (MMR), trim des silences, variantes de titre/hook, thumbnail. Voir `docs/pipeline-improvements.md`.
+
 ## Scoring (étape 10 simple / 12 story)
 
 **Single-window** :
@@ -180,7 +194,7 @@ Colonnes dans `jobs` (déjà créées en migration 0002 + ajouts 0003) :
 | `duration_seconds` | étape 3 |
 | `credits_charged` | étape finalize |
 | `transcription_cost_cents` | étape 6 (durée × tarif) |
-| `analysis_tokens` | somme tokens Claude (arcs + deep vision) |
+| `analysis_tokens` | somme tokens LLM (arcs + deep vision) |
 | `vision_frames_count` | total frames envoyées en vision (cheap + deep) |
 | `video_map_cost_cents` | nouveau (étape 8 story) |
 | `deep_vision_cost_cents` | nouveau (étape 11 story) |

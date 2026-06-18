@@ -12,8 +12,8 @@ Reach 2000 EUR MRR  (29 EUR/month each).
 
 ```
 apps/
-  web/      Next.js 15 — landing + dashboard (Cloudflare Pages)
-  api/      FastAPI — auth, jobs, billing webhooks (VPS Hetzner)
+  web/      Next.js 15 — landing + dashboard (Vercel)
+  api/      FastAPI — auth, jobs, billing webhooks (VPS control plane)
   worker/   Python pipeline — download / transcribe / analyze / render
 packages/
   shared/   Shared types and constants
@@ -31,9 +31,9 @@ docs/
 | Worker pipeline | yt-dlp, OpenAI transcription, OpenRouter primary, Anthropic fallback, FFmpeg |
 | DB + Auth | Supabase (Postgres + magic-link auth) |
 | Object storage | Cloudflare R2 (S3-compatible, free egress) |
-| Queue | Redis on the API VPS |
+| Queue | Redis on the control plane VPS |
 | Billing | Stripe Checkout + webhooks |
-| Hosting | Web on Cloudflare Pages, API+Worker on Hetzner CPX32 |
+| Hosting | Web on Vercel, API on VPS control plane (OVH/Scaleway), worker on Mac Studio (pull) |
 | LLM | OpenRouter (DeepSeek + Gemini + Qwen), Anthropic Haiku fallback, OpenAI gpt-4o-mini-transcribe |
 
 ## Pricing — V1

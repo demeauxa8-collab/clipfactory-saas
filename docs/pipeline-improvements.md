@@ -2,6 +2,8 @@
 
 > Document de travail (2026-06-16). Ce n'est **pas** encore la source de vérité d'exécution (`docs/pipeline.md` reste la spec en vigueur). Ce doc liste les briques à ajouter à la pipeline pour améliorer (a) la **qualité du clip rendu** et (b) la **compréhension de la vidéo / l'explicabilité des choix**. Chaque brique est ancrée sur un fichier réel du worker.
 
+> **Statut au 2026-06-18 — partiellement livré.** Les briques **1 (snapping des bords), 2 (loudnorm -14 LUFS), 3 (gate QC), 4 (persist `why`), 5 (sous-titres karaoké)** sont **implémentées et mergées dans `main`** (merge `draft/parallel-workers`, avec tests). Restent en roadmap : **6 (recadrage face-aware), 7 (énergie audio), 8 (dédup/diversité arcs), 9 (trim silences), 10 (variantes méta), 11 (thumbnail)**. Récap côté exécution : `docs/pipeline.md` § « Améliorations qualité du rendu ».
+
 ---
 
 ## Pourquoi ce doc

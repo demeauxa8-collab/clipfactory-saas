@@ -18,7 +18,7 @@
 | `/admin` | Overview cards: MRR, active subs, users total/new30d, jobs running/failed30d, clips lifetime, fallback usage, credits outstanding. |
 | `/admin/users` | All users with plan, sub status, credit balance, job count, join date, admin flag. Paginated `?limit=&offset=`. |
 | `/admin/jobs` | All jobs with filter `?status=`. Shows user email, source URL, status badge, current step, duration, credits charged, cost €, fallback flag, error code. |
-| `/admin/finance` | Monthly P&L: revenue minus broken-down costs (Whisper, video map, deep vision, text LLM), gross margin, storage usage, completed/failed counts. |
+| `/admin/finance` | Monthly P&L: revenue minus broken-down costs (transcription, video map, deep vision, text LLM), gross margin, storage usage, completed/failed counts. |
 
 ## Gating layers
 

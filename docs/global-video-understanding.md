@@ -2,7 +2,9 @@
 
 > Objectif : permettre a ClipFactory de trouver des clips qui racontent une vraie histoire, meme quand le setup et le payoff sont eloignes dans la video.
 
-Document de travail pour Codex / Claude. Ce n'est pas encore la source de verite V1 : `docs/pipeline.md` reste la pipeline actuelle. Ce doc decrit la prochaine evolution a implementer.
+Document de fondation conceptuelle. La pipeline story-first décrite ici est désormais **implémentée** — `docs/pipeline.md` est la spec d'exécution à jour.
+
+> **Décisions modèles finales (à jour) :** vision globale (cheap) = `qwen/qwen3-vl-flash`, vision deep/arc = **`google/gemini-2.5-flash`** (OpenRouter), texte = `deepseek/deepseek-chat-v3.2`, fallback = Claude Haiku 4.5 (sur erreur primary uniquement). Les mentions « Claude Haiku » pour la vision plus bas dans ce doc sont des **pistes initiales** remplacées par Gemini — gardées pour l'historique.
 
 ---
 
@@ -310,8 +312,8 @@ ENABLE_STORY_ARCS=false
 ENABLE_MULTI_SEGMENT_RENDER=false
 VISION_GLOBAL_PROVIDER=qwen
 VISION_GLOBAL_MODEL=qwen3-vl-flash
-VISION_ARC_PROVIDER=anthropic
-VISION_ARC_MODEL=claude-haiku-4-5-20251001
+VISION_ARC_PROVIDER=openrouter
+VISION_ARC_MODEL=google/gemini-2.5-flash   # decision finale (Claude Haiku = fallback uniquement)
 MAX_GLOBAL_VISION_FRAMES=150
 MAX_STORY_ARCS=15
 MAX_TOP_ARCS_FOR_DEEP_VISION=5

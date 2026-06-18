@@ -16,7 +16,7 @@ System binaries required on the host:
 
 ```bash
 brew install ffmpeg yt-dlp   # macOS dev
-# or apt install ffmpeg yt-dlp on Hetzner
+# or apt install ffmpeg yt-dlp on a Linux host
 ```
 
 ## Run
@@ -29,8 +29,9 @@ The worker connects to:
 - Postgres (`DATABASE_URL`)
 - Redis (`REDIS_URL`)
 - Cloudflare R2 (`R2_*`)
-- OpenAI Whisper API
-- Anthropic Claude (text + vision)
+- OpenAI gpt-4o-mini-transcribe API (transcription)
+- OpenRouter (DeepSeek text + Gemini/Qwen vision) — primary
+- Anthropic Claude Haiku — fallback
 
 It then `BLPOP`s the queue key `clipfactory:jobs:queue` and runs `run_job` for each entry.
 

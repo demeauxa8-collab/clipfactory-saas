@@ -9,10 +9,11 @@
 | Supabase EU (Frankfurt) | DB + Auth | ✓ done — project ref `jsjaizcnjvghoduvyyea` |
 | Cloudflare R2 | Object storage | todo |
 | Stripe FR | Billing | todo |
-| OpenAI | Whisper transcription | todo |
+| OpenAI | Transcription (gpt-4o-mini-transcribe, API) | todo |
 | OpenRouter | Primary LLM (DeepSeek + Gemini + Qwen) | todo |
 | Anthropic | Fallback LLM (Haiku) | todo |
-| Hetzner CPX32 (Falkenstein) | API + worker host | todo |
+| VPS UE (OVH VPS-2 / Scaleway DEV1-M) | API + Redis control plane | todo |
+| Mac Studio (worker) | Transcription + render (modèle pull) | machine possédée |
 | Cloudflare Pages | Web frontend | todo |
 | Domain (`clipfactory.app` or alt) | Public URL | todo |
 
@@ -63,33 +64,39 @@ Verify with `select count(*) from information_schema.tables where table_schema =
 
 Top up each account with a starting credit balance (~ $10–20 each is enough for the first weeks).
 
-## Step 5 — Hetzner VPS (≈ 30 min)
+## Step 5 — Control plane VPS + worker Mac Studio (≈ 45 min)
 
-Use CPX32 for V1 production:
+> Architecture: see `docs/infrastructure.md`. The **control plane** (API + Redis + Caddy) lives on a small EU VPS that must answer 24/7. The **worker** (transcription + render) runs on the **Mac Studio** in a *pull* model: it connects out to the VPS to take jobs — nothing connects to the Mac. No Hetzner (hardened KYC); use OVH or Scaleway.
 
-- Location: Falkenstein `FSN1`
-- OS: Ubuntu 24.04 LTS
-- Specs: 4 vCPU, 8 GB RAM, 160 GB SSD
-- Backups: optional before first users, recommended once paid users are active
+### 5.A — VPS control plane (OVH VPS-2 or Scaleway DEV1-M)
 
-CPX22/CPX21 can boot the stack but is tight for FFmpeg + worker temp files.
+Target: 2-3 vCPU / 4 GB, EU (GDPR), Ubuntu 24.04.
 
-1. Provision a **CPX32** server in Falkenstein, OS Ubuntu 24.04, with the public SSH key.
-2. SSH in, install: `apt update && apt install -y docker.io docker-compose-v2 ffmpeg yt-dlp redis caddy git`.
-3. Clone repo: `git clone https://github.com/demeauxa8-collab/clipfactory-saas.git && cd clipfactory-saas`.
-4. Create `apps/api/.env` and `apps/worker/.env` from the `.env.example` files. Fill **every** value from steps 2–4.
-5. Caddy config (`/etc/caddy/Caddyfile`):
+1. Provision the VPS (OVH VPS-2 ~€8.49/mo HT, or Scaleway DEV1-M), Ubuntu 24.04, public SSH key.
+2. SSH in, install only what the control plane needs (NOT ffmpeg/yt-dlp — the Mac renders):
+   `apt update && apt install -y python3-venv redis-server caddy git`.
+3. Clone repo, create `apps/api/.env` from `.env.example`, fill **every** value (DB, R2, Stripe, LLM keys…).
+4. **Secure Redis** — it will be reached by the Mac from outside. Either:
+   - Redis with `requirepass` + TLS, OR
+   - a **Tailscale / Cloudflare Tunnel** between the Mac and the VPS, with Redis bound to the private interface only. Never expose Redis bare on the internet.
+5. API venv + systemd: `python3 -m venv /opt/clipfactory-api/.venv && /opt/clipfactory-api/.venv/bin/pip install -e apps/api[dev]`; unit `clipfactory-api.service` → `uvicorn app.main:app --host 127.0.0.1 --port 8000`.
+6. Caddy (`/etc/caddy/Caddyfile`):
    ```
    api.clipfactory.app {
      reverse_proxy localhost:8000
    }
    ```
-6. Run API + worker. Two options:
-   - **Bare metal (V1)**:
-     - `python3 -m venv /opt/clipfactory-api/.venv && source /opt/clipfactory-api/.venv/bin/activate && pip install -e apps/api[dev]`
-     - Systemd units `clipfactory-api.service` and `clipfactory-worker.service` running `uvicorn app.main:app --host 127.0.0.1 --port 8000` and `python -m app.main` respectively.
-   - **Docker (V2)**: docker-compose with services `api`, `worker`, `redis` sharing a network.
-7. Reload Caddy, test `curl https://api.clipfactory.app/health` → `{"status":"ok"}`.
+7. `systemctl enable --now caddy redis-server clipfactory-api`, then test `curl https://api.clipfactory.app/health` → `{"status":"ok"}`.
+
+### 5.B — Worker on the Mac Studio (pull model)
+
+1. Install tooling: `brew install python@3.11 ffmpeg yt-dlp`.
+2. Clone repo, create `apps/worker/.env` from `.env.example`. **Important**: `REDIS_URL` points to the **secured Redis endpoint of the VPS** (not `localhost`). Fill DB (Supabase) / R2 / OpenAI / OpenRouter / Anthropic.
+3. Venv + install: `python3.11 -m venv .venv && .venv/bin/pip install -e apps/worker[dev]`.
+4. Run the worker as a permanent service via **launchd** (a `com.clipfactory.worker` LaunchAgent that runs `python -m app.main` and auto-restarts). Quick test: `python -m app.main` inside tmux.
+5. Verify: the worker `BLPOP`s the VPS Redis and processes jobs. No inbound port on the Mac's network.
+
+> BUILD/TEST phase (before first paying customer): you can run everything on the Mac (API included) behind a **Cloudflare Tunnel**, with no VPS at all. The 5.A/5.B split activates at the first paying customer. See `docs/infrastructure.md` §6.
 
 ## Step 6 — Cloudflare Pages (≈ 15 min)
 
@@ -158,7 +165,7 @@ See `docs/handoff-codex.md` section "Smoke test". To validate the full flow befo
 
 ## Step 9 — Monitoring (minimum viable)
 
-- Hetzner: enable backup snapshots (€1.40/mo).
+- VPS: enable provider backups (OVH/Scaleway snapshot).
 - Uptime Robot or Better Uptime: ping `https://api.clipfactory.app/health` every 5 min.
 - Stripe dashboard email alerts on payment failures.
 - Supabase dashboard → Settings → Database → enable connection pool alerts.
@@ -177,8 +184,8 @@ If a deploy breaks prod:
 
 Source of truth: `docs/unit-economics.md`.
 
-The old CPX21 budget was optimistic and used gross revenue. The current model
-uses CPX32, VAT-included pricing, and Stripe France fees:
+The current model uses a small OVH/Scaleway control plane VPS (the worker runs on
+the owned Mac Studio), VAT-included pricing, and Stripe France fees:
 
 | Scenario | Margin / mo after VAT + Stripe |
 | --- | ---: |

@@ -30,7 +30,7 @@ Si choix entre "belle UI" et "pipeline fiable" : **toujours pipeline fiable**.
 | 9 | Worker pipeline 17 étapes (single-window) | ✓ | Remplacé par T18 (story-first) |
 | 10 | Web pages app (dashboard, campaigns, job, billing) | ✓ | Typecheck/build OK |
 | 11 | Smoke test end-to-end | ~ | nécessite Supabase/Redis/R2/Stripe/OpenAI/OpenRouter/Anthropic réels |
-| 12 | Deploy runbook | en attente | Cloudflare Pages + Hetzner |
+| 12 | Deploy runbook | en attente | Vercel (web, fait) + VPS control plane OVH/Scaleway + worker Mac Studio — voir `docs/infrastructure.md` |
 | 18 | Pipeline story-first rewrite | ✓ | Voir `docs/pipeline.md` — deux chemins (simple < 5 min / story ≥ 5 min), provider OpenRouter + fallback Haiku, migration 0003 |
 
 ## External services à créer par Augustin
@@ -45,7 +45,8 @@ Résumé au 2026-05-24 :
 
 | Item | Cost/mo |
 | --- | ---: |
-| Hetzner CPX32 + backups | ~20 EUR TTC |
+| VPS control plane (OVH/Scaleway) | ~10-12 EUR TTC |
+| Worker sur Mac Studio (machine possédée) | ~3 EUR électricité |
 | Supabase free + R2 small + domain | ~3 EUR |
 | OpenAI transcription (7 users × 300 min) | ~6 EUR |
 | OpenRouter LLM mix (DeepSeek text + Gemini/Qwen vision) | ~12 EUR base, ~35-45 EUR heavy-story |

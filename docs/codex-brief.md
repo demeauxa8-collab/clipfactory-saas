@@ -39,33 +39,39 @@ CONTRAINTES HARD (ne JAMAIS enfreindre) :
 
 PARTAGE DU TRAVAIL :
 - Claude pilote en live (Chrome MCP pour Supabase / Vercel deploy, code review, décisions strategy).
-- Augustin crée les comptes externes (Stripe, R2, OpenAI, OpenRouter, Anthropic, Hetzner, domaine, Google Cloud).
+- Augustin crée les comptes externes (Stripe, R2, OpenAI, OpenRouter, Anthropic, VPS OVH/Scaleway, domaine, Google Cloud).
 - Toi (Codex), tu prends les tâches longues en autonomie listées ci-dessous, dans l'ordre.
 
 ═══════════════════════════════════════════════════════════════════
 
-P0 — DÉPLOIEMENT VPS Hetzner (le plus impactant)
+P0 — DÉPLOIEMENT : control plane VPS + worker Mac Studio (le plus impactant)
 
-Objectif : faire tourner l'API + worker + Redis sur un VPS Hetzner CPX32 à Falkenstein, derrière Caddy avec TLS auto pour api.clipfactory.app.
+Objectif : déployer l'architecture control plane / worker (voir docs/infrastructure.md) :
+- CONTROL PLANE sur un petit VPS UE (OVH VPS-2 ou Scaleway DEV1-M) : API FastAPI + Redis (queue) + Caddy/TLS pour api.clipfactory.app.
+- WORKER sur le Mac Studio (transcription via API OpenAI + ffmpeg render + captions), en modèle pull : il va chercher les jobs dans le Redis du VPS, aucun port ouvert côté Mac.
 
 Prérequis (Augustin te donnera quand prêt) :
 - IP du VPS + clé SSH
 - Domain `clipfactory.app` (ou alternative) pointé chez Cloudflare DNS
 - Les vraies valeurs pour STRIPE_*, R2_*, OPENAI_API_KEY, OPENROUTER_API_KEY, ANTHROPIC_API_KEY
 
-Travail à faire (suivre docs/deploy.md step 5) :
-1. SSH dans le VPS, apt install : docker.io, docker-compose-v2, ffmpeg, yt-dlp, redis-server, caddy, git
-2. Clone repo, créer apps/api/.env et apps/worker/.env à partir des .env.example, remplir toutes les valeurs
-3. Provisionner Python venv pour api et worker
-4. Écrire deux unités systemd : clipfactory-api.service et clipfactory-worker.service
-   - api : `uvicorn app.main:app --host 127.0.0.1 --port 8000` dans /opt/clipfactory-api/.venv
-   - worker : `python -m app.main` dans /opt/clipfactory-worker/.venv
-5. Caddyfile : reverse proxy api.clipfactory.app → localhost:8000, TLS automatique
-6. systemctl enable + start, vérifier `curl https://api.clipfactory.app/health` = {"status":"ok"}
-7. Tester la connexion DB depuis le serveur : `psql $DATABASE_URL -c 'select count(*) from jobs'`
-8. Documenter la procédure dans docs/deploy.md (sections "Step 5 bare metal" / "Step 5 docker"), avec les chemins systemd réels utilisés.
+Travail à faire (suivre docs/deploy.md step 5, réécrit pour le split) :
 
-Livrable : push une branche `deploy/hetzner-setup` avec :
+A. VPS (control plane) :
+1. SSH dans le VPS, apt install : redis-server, caddy, git, python3-venv (PAS besoin de ffmpeg/yt-dlp ici — c'est le Mac qui rend).
+2. Clone repo, créer apps/api/.env à partir de .env.example, remplir toutes les valeurs.
+3. Venv Python pour l'API + unité systemd clipfactory-api.service (`uvicorn app.main:app --host 127.0.0.1 --port 8000`).
+4. Caddyfile : reverse proxy api.clipfactory.app → localhost:8000, TLS automatique.
+5. SÉCURISER Redis : mot de passe + TLS, ou Tailscale / Cloudflare Tunnel entre Mac et VPS. Ne JAMAIS exposer Redis nu sur internet.
+6. systemctl enable + start, vérifier `curl https://api.clipfactory.app/health` = {"status":"ok"}.
+
+B. Mac Studio (worker) :
+7. Installer python3.11, ffmpeg, yt-dlp.
+8. Créer apps/worker/.env : `REDIS_URL` pointe vers l'endpoint Redis sécurisé du VPS (pas localhost). Remplir DB (Supabase) / R2 / OpenAI / OpenRouter / Anthropic.
+9. Lancer le worker en service permanent (launchd ou tmux), modèle pull (BLPOP).
+10. Documenter la procédure réelle (VPS + Mac) dans docs/deploy.md step 5, avec les chemins systemd / launchd utilisés.
+
+Livrable : push une branche `deploy/control-plane-setup` avec :
 - Un dossier infra/ contenant les unités systemd, le Caddyfile, et un script bootstrap.sh idempotent
 - docs/deploy.md mis à jour avec la procédure exacte
 - docs/handoff-codex.md section 4 : cocher T32 + ajouter entrée datée au journal section 5
@@ -134,7 +140,7 @@ Objectif : être alerté si l'API tombe ou si le worker crash ou si plus de 5 jo
 2. Sentry (free tier OK) — créer 2 projets : clipfactory-api (Python), clipfactory-web (Next.js).
    - apps/api : pip install sentry-sdk[fastapi], init dans main.py avec dsn depuis env SENTRY_DSN_API.
    - apps/web : npm install @sentry/nextjs, configurer instrumentation.ts.
-3. Cron alert jobs failed : créer un cron Hetzner qui exécute toutes les heures :
+3. Cron alert jobs failed : créer un cron sur le VPS qui exécute toutes les heures :
    `psql $DATABASE_URL -tc "select count(*) from jobs where status='failed' and queued_at > now() - interval '1 hour';"`
    et si > 5, envoie un email via Resend ou un curl à un webhook Slack.
 
