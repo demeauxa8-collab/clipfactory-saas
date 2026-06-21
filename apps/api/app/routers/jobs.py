@@ -1,5 +1,6 @@
 import json
 from typing import Any
+from urllib.parse import urlparse
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 
@@ -7,9 +8,17 @@ from ..auth import CurrentUser, current_user
 from ..db import get_pool
 from ..rate_limit import LIMIT_JOBS_CREATE, limiter
 from ..schemas import ClipOut, ClipSegment, JobCreate, JobOut, JobWithClips
+from ..services import analytics
 from ..services import jobs as jobs_svc
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
+
+
+def _url_host(url: str) -> str:
+    try:
+        return urlparse(url).hostname or "unknown"
+    except ValueError:
+        return "unknown"
 
 
 def _parse_segments(value: Any) -> list[ClipSegment]:
@@ -74,12 +83,27 @@ async def create_job(
     pool = get_pool()
     async with pool.acquire() as conn:
         try:
-            return await jobs_svc.create_job(conn, user_id=user.user_id, payload=payload)
+            job = await jobs_svc.create_job(conn, user_id=user.user_id, payload=payload)
         except jobs_svc.JobError as exc:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail={"code": exc.code, "message": exc.message},
             ) from exc
+    analytics.fire_and_forget(
+        analytics.track_with_pool(
+            pool,
+            event_name="job_created",
+            source="api",
+            user_id=user.user_id,
+            properties={
+                "job_id": job.id,
+                "campaign_id": job.campaign_id,
+                "target_clip_count": job.target_clip_count,
+                "source_host": _url_host(str(payload.source_url)),
+            },
+        )
+    )
+    return job
 
 
 @router.get("/{job_id}", response_model=JobWithClips)

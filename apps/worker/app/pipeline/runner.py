@@ -25,6 +25,7 @@ import asyncpg
 import httpx
 import structlog
 
+from .. import analytics
 from ..models import JobContext, MontageCandidate, StoryArc, is_long_video
 from ..providers import (
     AnthropicProvider,
@@ -426,6 +427,20 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
     primary, fallback = _provider_pair()
     ctx.primary_provider = primary.name
 
+    analytics.fire_and_forget(
+        analytics.track(
+            pool,
+            event_name="job_started",
+            user_id=user_id,
+            properties={
+                "job_id": job_id,
+                "campaign_id": str(job_row["campaign_id"]) if job_row["campaign_id"] else None,
+                "target_clip_count": ctx.target_clip_count,
+                "primary_provider": ctx.primary_provider,
+            },
+        )
+    )
+
     try:
         # Step 1 — validate
         async with pool.acquire() as conn:
@@ -708,6 +723,23 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
             mode="story" if story_mode else "simple",
             cost_cents=int(total_cost_cents),
         )
+        analytics.fire_and_forget(
+            analytics.track(
+                pool,
+                event_name="job_completed",
+                user_id=user_id,
+                properties={
+                    "job_id": job_id,
+                    "clips": int(clips_saved),
+                    "mode": "story" if story_mode else "simple",
+                    "duration_seconds": ctx.duration_seconds,
+                    "cost_cents": int(total_cost_cents),
+                    "credits_charged": int(final_debit),
+                    "fallback_used": bool(ctx.fallback_used),
+                    "primary_provider": ctx.primary_provider,
+                },
+            )
+        )
 
     except PipelineFailure as exc:
         log_ctx.error("pipeline.failed", step=exc.step, code=exc.code, err=exc.message)
@@ -720,6 +752,14 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
             message=exc.message,
             refund_credits=estimated_credits,
         )
+        analytics.fire_and_forget(
+            analytics.track(
+                pool,
+                event_name="job_failed",
+                user_id=user_id,
+                properties={"job_id": job_id, "code": exc.code, "step": exc.step},
+            )
+        )
     except Exception as exc:
         log_ctx.exception("pipeline.crashed", err=str(exc))
         await _mark_failed(
@@ -730,6 +770,14 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
             step="unknown",
             message=str(exc)[:500],
             refund_credits=estimated_credits,
+        )
+        analytics.fire_and_forget(
+            analytics.track(
+                pool,
+                event_name="job_failed",
+                user_id=user_id,
+                properties={"job_id": job_id, "code": "internal_error", "step": "unknown"},
+            )
         )
     finally:
         shutil.rmtree(workdir, ignore_errors=True)

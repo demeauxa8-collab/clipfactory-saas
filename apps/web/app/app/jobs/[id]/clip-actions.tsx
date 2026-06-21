@@ -4,6 +4,7 @@ import * as React from "react";
 import { Download, ThumbsDown, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { apiFetch, ApiError } from "@/lib/api";
+import { track } from "@/lib/analytics";
 
 type DownloadResp = { url: string; expires_in_seconds: number };
 
@@ -15,6 +16,7 @@ export function ClipActions({ clipId }: { clipId: string }) {
   async function handleDownload() {
     setBusy("download");
     setError(null);
+    void track("clip_download_clicked", { clip_id: clipId });
     try {
       const r = await apiFetch<DownloadResp>(`/clips/${clipId}/download`);
       window.open(r.url, "_blank", "noopener,noreferrer");
@@ -28,6 +30,7 @@ export function ClipActions({ clipId }: { clipId: string }) {
   async function handleFeedback(kind: "good" | "bad") {
     setBusy(kind);
     setError(null);
+    void track("clip_feedback_clicked", { clip_id: clipId, kind });
     try {
       await apiFetch(`/clips/${clipId}/feedback`, { method: "POST", json: { kind } });
       setFeedback(kind);

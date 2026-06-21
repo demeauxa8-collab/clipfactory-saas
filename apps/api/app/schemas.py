@@ -197,3 +197,21 @@ class CheckoutCreate(BaseModel):
 
 class CheckoutResponse(BaseModel):
     checkout_url: str
+
+
+# =============================================================
+# Analytics
+# =============================================================
+
+
+class EventIn(BaseModel):
+    event: str = Field(min_length=1, max_length=120)
+    properties: dict[str, object] = Field(default_factory=dict)
+    path: str | None = Field(default=None, max_length=2048)
+    referrer: str | None = Field(default=None, max_length=2048)
+    session_id: str | None = Field(default=None, max_length=120)
+    anon_id: str | None = Field(default=None, max_length=120)
+
+
+class EventAck(BaseModel):
+    ok: bool = True

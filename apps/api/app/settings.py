@@ -44,6 +44,10 @@ class Settings(BaseSettings):
     cors_allow_origins: str = "http://localhost:3000"
     log_level: str = "INFO"
 
+    # Analytics — first-party always on; PostHog mirror optional (empty key = off)
+    posthog_api_key: str = ""
+    posthog_host: str = "https://eu.posthog.com"
+
     @property
     def cors_origins_list(self) -> list[str]:
         return [origin.strip() for origin in self.cors_allow_origins.split(",") if origin.strip()]

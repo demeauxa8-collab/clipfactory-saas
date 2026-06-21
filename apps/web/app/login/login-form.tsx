@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { track } from "@/lib/analytics";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
@@ -150,6 +151,7 @@ export function LoginForm({
   async function handleGoogle() {
     setGoogleStatus("verifying");
     setErrorMessage(null);
+    void track("login_attempt", { method: "google" });
     try {
       await verifyTurnstile();
       setGoogleStatus("redirecting");
@@ -177,6 +179,7 @@ export function LoginForm({
     if (!email) return;
     setStatus("verifying");
     setErrorMessage(null);
+    void track("login_attempt", { method: "magic_link" });
 
     try {
       await verifyTurnstile();

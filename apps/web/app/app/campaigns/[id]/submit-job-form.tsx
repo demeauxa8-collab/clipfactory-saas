@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { apiFetch, ApiError } from "@/lib/api";
+import { track } from "@/lib/analytics";
 
 type Job = { id: string };
 
@@ -25,6 +26,10 @@ export function SubmitJobForm({ campaignId }: { campaignId: string }) {
       target_clip_count: Number(data.get("target_clip_count") ?? 3),
     };
 
+    void track("job_submit_clicked", {
+      campaign_id: campaignId,
+      target_clip_count: payload.target_clip_count,
+    });
     try {
       const job = await apiFetch<Job>("/jobs", { method: "POST", json: payload });
       router.push(`/app/jobs/${job.id}`);

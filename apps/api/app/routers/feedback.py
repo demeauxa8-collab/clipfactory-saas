@@ -4,6 +4,7 @@ from ..auth import CurrentUser, current_user
 from ..db import get_pool
 from ..rate_limit import LIMIT_FEEDBACK_CREATE, limiter
 from ..schemas import Feedback, FeedbackCreate
+from ..services import analytics
 
 router = APIRouter(tags=["feedback"])
 
@@ -48,6 +49,20 @@ async def post_clip_feedback(
             payload.kind,
             payload.note,
         )
+
+    analytics.fire_and_forget(
+        analytics.track_with_pool(
+            pool,
+            event_name="clip_feedback",
+            source="api",
+            user_id=user.user_id,
+            properties={
+                "clip_id": clip_id,
+                "kind": payload.kind,
+                "has_note": bool(payload.note),
+            },
+        )
+    )
 
     return Feedback(
         id=str(row["id"]),

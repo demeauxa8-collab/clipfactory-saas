@@ -28,3 +28,4 @@ LIMIT_FEEDBACK_CREATE = "60/minute"
 LIMIT_BILLING_CHECKOUT = "5/hour"
 LIMIT_STRIPE_WEBHOOK = "120/minute"  # IP-based, generous for retries
 LIMIT_TURNSTILE_VERIFY = "30/minute"
+LIMIT_EVENTS = "300/minute"  # client analytics is high-volume by design

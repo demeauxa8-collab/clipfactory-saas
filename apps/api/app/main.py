@@ -11,7 +11,7 @@ from slowapi.middleware import SlowAPIMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
-from .db import close_pool, init_pool
+from .db import close_pool, get_pool, init_pool
 from .log_sanitize import scrub_email_values
 from .rate_limit import limiter
 from .routers import (
@@ -21,13 +21,18 @@ from .routers import (
     campaigns,
     clips,
     credits,
+    events,
     feedback,
     health,
     jobs,
     me,
     public,
 )
+from .services import analytics
 from .settings import get_settings
+
+# Paths we never record as analytics (noise / infra).
+_SKIP_PREFIXES = ("/health", "/docs", "/openapi", "/redoc")
 
 
 def _configure_logging(level: str) -> None:
@@ -66,6 +71,31 @@ def _rate_limit_handler(request: Request, exc: RateLimitExceeded) -> JSONRespons
     )
 
 
+def _record_api_request(request: Request, status_code: int) -> None:
+    """Schedule an analytics event for one API call. Best-effort, non-blocking."""
+    if request.method == "OPTIONS":
+        return
+    path = request.url.path
+    if path == "/events" or path.startswith(_SKIP_PREFIXES):
+        return
+    route = request.scope.get("route")
+    route_template = getattr(route, "path", path)
+    analytics.fire_and_forget(
+        analytics.track_with_pool(
+            get_pool(),
+            event_name="api_request",
+            source="api",
+            user_id=getattr(request.state, "user_id", None),
+            properties={
+                "method": request.method,
+                "route": route_template,
+                "status": status_code,
+            },
+            path=path,
+        )
+    )
+
+
 def create_app() -> FastAPI:
     settings = get_settings()
     _assert_safe_cors(settings.cors_origins_list, settings.env)
@@ -101,7 +131,19 @@ def create_app() -> FastAPI:
     app.include_router(clips.router)
     app.include_router(feedback.router)
     app.include_router(billing.router)
+    app.include_router(events.router)
     app.include_router(admin.router)
+
+    # Auto-track every API call (route template + status). Runs after the route so
+    # request.state.user_id (stashed by the auth dep) is available for attribution.
+    @app.middleware("http")
+    async def track_requests(request: Request, call_next):  # type: ignore[no-untyped-def]
+        response = await call_next(request)
+        try:
+            _record_api_request(request, response.status_code)
+        except Exception:
+            pass
+        return response
 
     return app
 

@@ -8,6 +8,7 @@ from ..auth import CurrentUser, current_user
 from ..db import get_pool
 from ..rate_limit import LIMIT_BILLING_CHECKOUT, LIMIT_STRIPE_WEBHOOK, limiter
 from ..schemas import CheckoutCreate, CheckoutResponse
+from ..services import analytics
 from ..services import billing as billing_svc
 
 log = structlog.get_logger()
@@ -30,6 +31,15 @@ async def create_checkout(
             email=user.email,
             plan_code=payload.plan_code,
         )
+    analytics.fire_and_forget(
+        analytics.track_with_pool(
+            pool,
+            event_name="checkout_started",
+            source="api",
+            user_id=user.user_id,
+            properties={"plan_code": payload.plan_code},
+        )
+    )
     return CheckoutResponse(checkout_url=url)
 
 
@@ -73,4 +83,12 @@ async def stripe_webhook(request: Request) -> dict[str, bool]:
                 event["id"],
             )
 
+    analytics.fire_and_forget(
+        analytics.track_with_pool(
+            get_pool(),
+            event_name="billing_webhook",
+            source="api",
+            properties={"type": event["type"]},
+        )
+    )
     return {"received": True}

@@ -4,6 +4,7 @@ from ..auth import CurrentUser, current_user
 from ..db import get_pool
 from ..rate_limit import LIMIT_CAMPAIGNS_CREATE, limiter
 from ..schemas import Campaign, CampaignCreate
+from ..services import analytics
 from ..services import campaigns as campaigns_svc
 
 router = APIRouter(prefix="/campaigns", tags=["campaigns"])
@@ -25,4 +26,22 @@ async def create_campaign(
 ) -> Campaign:
     pool = get_pool()
     async with pool.acquire() as conn:
-        return await campaigns_svc.create_campaign(conn, user_id=user.user_id, payload=payload)
+        campaign = await campaigns_svc.create_campaign(
+            conn, user_id=user.user_id, payload=payload
+        )
+    analytics.fire_and_forget(
+        analytics.track_with_pool(
+            pool,
+            event_name="campaign_created",
+            source="api",
+            user_id=user.user_id,
+            properties={
+                "campaign_id": campaign.id,
+                "niche": campaign.niche,
+                "tone": campaign.tone,
+                "has_avoid_topics": bool(campaign.avoid_topics),
+                "has_example_hooks": bool(campaign.example_hooks),
+            },
+        )
+    )
+    return campaign

@@ -63,6 +63,10 @@ class Settings(BaseSettings):
     env: Literal["dev", "prod"] = "dev"
     log_level: str = "INFO"
 
+    # Analytics — first-party always on; PostHog mirror optional (empty key = off)
+    posthog_api_key: str = ""
+    posthog_host: str = "https://eu.posthog.com"
+
     # ---------------- Cost model (cents) ----------------
 
     cost_transcribe_cents_per_min: float = 0.3

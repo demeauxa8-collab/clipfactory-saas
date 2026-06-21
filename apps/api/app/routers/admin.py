@@ -322,3 +322,46 @@ async def finance(
         )
         for r in rows
     ]
+
+
+# =============================================================
+# Analytics — event volume rollup from analytics_events
+# =============================================================
+
+
+class AnalyticsEventStat(BaseModel):
+    event_name: str
+    source: str
+    events: int
+    users: int
+
+
+@router.get("/analytics", response_model=list[AnalyticsEventStat])
+async def analytics_rollup(
+    days: int = Query(default=14, ge=1, le=90),
+    user: CurrentUser = Depends(admin_required),
+) -> list[AnalyticsEventStat]:
+    pool = get_pool()
+    async with pool.acquire() as conn:
+        rows = await conn.fetch(
+            """
+            select event_name, source,
+                   count(*)::bigint as events,
+                   count(distinct user_id)::bigint as users
+              from analytics_events
+             where created_at >= now() - make_interval(days => $1)
+             group by event_name, source
+             order by events desc
+             limit 200
+            """,
+            days,
+        )
+    return [
+        AnalyticsEventStat(
+            event_name=r["event_name"],
+            source=r["source"],
+            events=int(r["events"]),
+            users=int(r["users"]),
+        )
+        for r in rows
+    ]

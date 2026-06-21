@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { apiFetch, ApiError } from "@/lib/api";
+import { track } from "@/lib/analytics";
 
 type CheckoutResp = { checkout_url: string };
 
@@ -13,6 +14,7 @@ export function CheckoutButton({ hasActive }: { hasActive: boolean }) {
   async function start() {
     setBusy(true);
     setError(null);
+    void track("upgrade_clicked", { has_active: hasActive });
     try {
       const r = await apiFetch<CheckoutResp>("/billing/checkout", {
         method: "POST",

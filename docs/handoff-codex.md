@@ -369,6 +369,20 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - **Consolidation GitHub** : tout le travail réuni sur `main` en histoire linéaire (`6c50951` docs reconcile + `f46b83f` web labels + lint), puis branches `claude/eloquent-cori-fns46a` et `claude/admiring-hawking-hlqa75` supprimées. **Une seule branche subsiste : `main`.**
 - Reste hors périmètre code (Augustin) : comptes API externes + hébergement (control plane VPS OVH/Scaleway + worker Mac Studio) + DNS. Voir sections 6 et 11.
 
+### 2026-06-21 — Tracking / analytics (first-party + PostHog)
+
+- Système de tracking complet ajouté. Détail + taxonomie d'events : `docs/analytics.md`.
+- **First-party** (marche sans aucune clé) : table `analytics_events` (migration `0005`), source de vérité dans notre Supabase. RLS : insert/select own, vue `analytics_daily` pour l'admin.
+- **Couverture "tout"** :
+  - API : middleware qui log **chaque requête** (`api_request` : method/route/status) + events métier (`job_created`, `campaign_created`, `checkout_started`, `billing_webhook`, `clip_download`, `clip_feedback`).
+  - Worker : events de pipeline (`job_started`, `job_completed`, `job_failed`).
+  - Web : pageviews auto + clics clés (`login_attempt`, `upgrade_clicked`, `job_submit_clicked`, `clip_download_clicked`, `clip_feedback_clicked`).
+- **PostHog** branché en option (autocapture + session replay) : actif dès qu'une clé est posée. Clés : `NEXT_PUBLIC_POSTHOG_KEY` (web), `POSTHOG_API_KEY` (api + worker). `.env.example` mis à jour partout.
+- Garanties : analytics best-effort (ne casse jamais une requête/un job), non-bloquant (fire-and-forget, hors transaction), pas de PII brute stockée (user_id seulement).
+- CSP `next.config.ts` élargie pour autoriser `*.posthog.com` / `*.i.posthog.com` (script-src + connect-src).
+- Lecture : `GET /admin/analytics?days=N` (admin), vue `analytics_daily`, ou PostHog.
+- **À activer** : (1) appliquer `0005` sur Supabase ; (2) optionnel, créer le projet PostHog EU + poser les clés. Vérifs : ruff api+worker OK, pytest 6/6, web typecheck+build OK.
+
 ---
 
 ## 6. Services externes (état au 2026-05-27)
