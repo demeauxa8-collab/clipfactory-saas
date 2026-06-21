@@ -8,11 +8,12 @@ boundaries before vision and render.
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+from itertools import pairwise
 
 from ..models import ArcSegmentSpec, StoryArc, TranscriptWord
 
 STRONG_PUNCTUATION = (".", "!", "?")
-TRAILING_QUOTES = "\"')]}»”’"
+TRAILING_QUOTES = "\"')]}»”’"  # noqa: RUF001 (curly quotes are intentional data)
 
 
 @dataclass(frozen=True)
@@ -36,7 +37,7 @@ def _start_boundaries(
     if not words:
         return []
     out = [max(0.0, words[0].start)]
-    for prev, cur in zip(words, words[1:]):
+    for prev, cur in pairwise(words):
         gap = cur.start - prev.end
         if gap >= silence_threshold_seconds or _ends_sentence(prev.word):
             out.append(max(0.0, cur.start))

@@ -61,9 +61,9 @@ Résumé au 2026-05-24 :
 
 ## État vérifié localement
 
-Dernière vérification : 2026-05-21.
+Dernière vérification : 2026-06-21.
 
-- Web : `npm run typecheck` OK, `npm run build` OK.
-- API : `ruff check app` OK, `python -m compileall -q app` OK, import FastAPI OK.
-- Worker : `ruff check app` OK, `python -m compileall -q app` OK, import pipeline OK.
-- Pas encore validé : job complet avec vrais services externes et vraie vidéo.
+- Web : `npm run typecheck` OK, `npm run build` OK (toutes les routes prerender/SSR OK).
+- API : `ruff check app` OK, `python -m compileall -q app` OK.
+- Worker : `ruff check app` OK (40 findings nettoyés, voir journal 2026-06-21), `python -m compileall -q app` OK, `pytest` OK (6 tests captions + boundaries).
+- Pas encore validé : job complet avec vrais services externes et vraie vidéo (bloqué par API keys + VPS, hors périmètre code).

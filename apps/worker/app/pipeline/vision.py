@@ -12,9 +12,9 @@ from typing import Any
 import structlog
 
 from ..models import ArcSegmentSpec, SegmentVision, StoryArc, VisionResult
+from ..prompts import DEEP_VISION_SYSTEM_PROMPT, deep_vision_user_prompt
 from ..providers import LLMProvider, ProviderError
 from ..providers.base import ImageInput
-from ..prompts import DEEP_VISION_SYSTEM_PROMPT, deep_vision_user_prompt
 from .ffmpeg import FFmpegError, extract_frame
 
 log = structlog.get_logger()
@@ -23,7 +23,7 @@ log = structlog.get_logger()
 def _coerce_int(v: Any, default: int = 0) -> int:
     try:
         return max(0, min(100, round(float(v))))
-    except Exception:  # noqa: BLE001
+    except Exception:
         return default
 
 
@@ -155,7 +155,7 @@ def aggregate_visual_score(per_segment: list[SegmentVision]) -> int | None:
     scores = [sv.vision.visual_score for sv in per_segment if sv.vision is not None]
     if not scores:
         return None
-    return int(round(sum(scores) / len(scores)))
+    return round(sum(scores) / len(scores))
 
 
 def aggregate_visual_summary(per_segment: list[SegmentVision]) -> str | None:

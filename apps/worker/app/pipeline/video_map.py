@@ -6,10 +6,9 @@ from pathlib import Path
 import structlog
 
 from ..models import Transcript, VideoEvent, VideoMap
+from ..prompts import VIDEO_MAP_SYSTEM_PROMPT, video_map_user_prompt
 from ..providers import LLMProvider, ProviderError
 from ..providers.base import ImageInput
-from ..prompts import VIDEO_MAP_SYSTEM_PROMPT, video_map_user_prompt
-from ..settings import get_settings
 from .ffmpeg import FFmpegError, detect_scene_changes, extract_frame
 
 log = structlog.get_logger()
@@ -213,7 +212,9 @@ async def _call_video_map(
                     objects=[str(x) for x in (raw.get("objects") or []) if x],
                     action=str(raw.get("action", "")),
                     transcript_summary=str(raw.get("transcript_summary", ""))[:300],
-                    visual_importance=max(0, min(100, int(round(float(raw.get("visual_importance", 0)))))),
+                    visual_importance=max(
+                        0, min(100, round(float(raw.get("visual_importance", 0))))
+                    ),
                     narrative_role=str(raw.get("narrative_role", "neutral")),
                 )
             )

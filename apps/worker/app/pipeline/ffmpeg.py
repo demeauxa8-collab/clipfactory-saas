@@ -389,7 +389,7 @@ async def render_montage_clip(
             )
             prev = out_label
 
-    filter_parts = [v_chain] + a_steps
+    filter_parts = [v_chain, *a_steps]
     audio_map = "[aout]"
     if a_steps:
         filter_parts.append(f"[aout]{LOUDNORM_FILTER}[anorm]")

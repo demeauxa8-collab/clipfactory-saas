@@ -8,7 +8,6 @@ import json
 import re
 from typing import Any
 
-
 _FENCE_OPEN = re.compile(r"^```(?:json|JSON)?\s*", re.MULTILINE)
 _FENCE_CLOSE = re.compile(r"```\s*$", re.MULTILINE)
 

@@ -11,18 +11,21 @@ ran.
 
 from __future__ import annotations
 
+import ipaddress
 import json
 import math
 import os
 import shutil
+import socket
 import time
 from pathlib import Path
 from urllib.parse import urlparse
 
 import asyncpg
+import httpx
 import structlog
 
-from ..models import JobContext, MontageCandidate, StoryArc, Transcript, is_long_video
+from ..models import JobContext, MontageCandidate, StoryArc, is_long_video
 from ..providers import (
     AnthropicProvider,
     LLMProvider,
@@ -80,11 +83,6 @@ class PipelineFailure(RuntimeError):
 # =============================================================
 
 
-import ipaddress
-import socket
-
-import httpx
-
 _REDIRECT_MAX_HOPS = 4
 _REDIRECT_TIMEOUT = 5.0
 
@@ -118,7 +116,7 @@ def _host_resolves_to_private_ip(hostname: str) -> bool:
 async def _validate_url(url: str) -> None:
     try:
         parsed = urlparse(url)
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         raise PipelineFailure("invalid_url", "validate_url", "URL parse failed") from exc
     if parsed.scheme not in {"http", "https"}:
         raise PipelineFailure("invalid_url", "validate_url", "URL must be http or https")
@@ -317,7 +315,9 @@ async def _settle_credits(
 
 def _provider_pair() -> tuple[LLMProvider, LLMProvider | None]:
     settings = get_settings()
-    primary: LLMProvider = OpenRouterProvider() if settings.openrouter_api_key else AnthropicProvider()
+    primary: LLMProvider = (
+        OpenRouterProvider() if settings.openrouter_api_key else AnthropicProvider()
+    )
     fallback: LLMProvider | None = None
     if settings.enable_fallback and settings.anthropic_api_key and primary.name != "anthropic":
         fallback = AnthropicProvider()
@@ -469,13 +469,15 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
         # Step 5 — initial debit
         async with pool.acquire() as conn:
             async with conn.transaction():
-                await _initial_debit(conn, job_id=job_id, user_id=user_id, estimated=estimated_credits)
+                await _initial_debit(
+                    conn, job_id=job_id, user_id=user_id, estimated=estimated_credits
+                )
 
         # Step 6 — upload source (best-effort)
         try:
             ctx.source_r2_key = f"sources/{user_id}/{job_id}.mp4"
             ctx.storage_bytes += upload_file(ctx.source_path, ctx.source_r2_key)
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             log_ctx.warning("pipeline.source_upload_failed", err=str(exc))
             ctx.source_r2_key = None
 
@@ -520,7 +522,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                     primary, fallback,
                     settings.primary_vision_deep_model,
                     settings.fallback_vision_model,
-                    lambda p, m: deep_vision_for_arc(
+                    lambda p, m, arc=arc, idx=idx: deep_vision_for_arc(
                         provider=p,
                         model=m,
                         source_path=ctx.source_path or "",
@@ -534,8 +536,8 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                 per_seg, frames, tokens = [], 0, 0
             ctx.vision_frames_count += frames
             ctx.analysis_tokens += tokens
-            ctx.deep_vision_cost_cents += int(
-                round(frames * settings.cost_vision_deep_cents_per_frame)
+            ctx.deep_vision_cost_cents += round(
+                frames * settings.cost_vision_deep_cents_per_frame
             )
             candidate = score_arc(arc=arc, per_segment_vision=per_seg, campaign=ctx.campaign)
             candidate.vision_per_segment = per_seg
@@ -660,11 +662,9 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                     (ctx.transcription_cost_cents or 0)
                     + (ctx.video_map_cost_cents or 0)
                     + (ctx.deep_vision_cost_cents or 0)
-                    + int(
-                        round(
-                            (ctx.analysis_tokens / 1000.0)
-                            * settings.cost_text_cents_per_1k_tokens
-                        )
+                    + round(
+                        (ctx.analysis_tokens / 1000.0)
+                        * settings.cost_text_cents_per_1k_tokens
                     )
                 )
                 await conn.execute(
@@ -720,7 +720,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
             message=exc.message,
             refund_credits=estimated_credits,
         )
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         log_ctx.exception("pipeline.crashed", err=str(exc))
         await _mark_failed(
             pool,
@@ -770,7 +770,7 @@ async def _run_story_path(
     ctx.video_map = video_map
     ctx.vision_frames_count += frames_used
     ctx.analysis_tokens += tokens
-    ctx.video_map_cost_cents += int(round(frames_used * settings.cost_vision_cheap_cents_per_frame))
+    ctx.video_map_cost_cents += round(frames_used * settings.cost_vision_cheap_cents_per_frame)
     if used_provider.name != primary.name:
         ctx.fallback_used = True
 

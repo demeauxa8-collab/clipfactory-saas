@@ -6,8 +6,8 @@ from typing import Any
 import structlog
 
 from ..models import ArcSegmentSpec, StoryArc, VideoMap
-from ..providers import LLMProvider, ProviderError
 from ..prompts import STORY_ARC_SYSTEM_PROMPT, story_arc_user_prompt
+from ..providers import LLMProvider, ProviderError
 
 log = structlog.get_logger()
 
@@ -39,14 +39,14 @@ def _video_map_to_json(video_map: VideoMap) -> str:
 def _coerce_int(v: Any, default: int = 0) -> int:
     try:
         return max(0, min(100, round(float(v))))
-    except Exception:  # noqa: BLE001
+    except Exception:
         return default
 
 
 def _coerce_float(v: Any, default: float = 0.0) -> float:
     try:
         return float(v)
-    except Exception:  # noqa: BLE001
+    except Exception:
         return default
 
 

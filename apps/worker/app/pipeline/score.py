@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Any
 
 from ..models import (
-    ArcSegmentSpec,
     MontageCandidate,
     MontageSegment,
     SegmentVision,
@@ -93,8 +92,8 @@ def _setup_clarity(arc: StoryArc, per_segment_vision: list[SegmentVision]) -> in
     first_seg = arc.segments[0] if arc.segments else None
     if first_seg and first_seg.transcript_excerpt:
         # Excerpt length is a proxy for clarity: too short → unclear, too long → bloated
-        l = len(first_seg.transcript_excerpt)
-        if 40 <= l <= 200:
+        excerpt_len = len(first_seg.transcript_excerpt)
+        if 40 <= excerpt_len <= 200:
             base += 15
         if arc.suggested_hook:
             base += 10
@@ -112,7 +111,7 @@ def _visual_proof(per_segment_vision: list[SegmentVision]) -> int | None:
     # Worst segment dominates — if any segment looks bad, the whole clip suffers
     avg = sum(scores) / len(scores)
     worst = min(scores)
-    return int(round(0.6 * avg + 0.4 * worst))
+    return round(0.6 * avg + 0.4 * worst)
 
 
 def _retention(arc: StoryArc) -> int:
@@ -182,7 +181,9 @@ def score_arc(
         else:
             visual_summary = "vision unavailable"
 
-    transcript_excerpt = " | ".join(s.transcript_excerpt for s in arc.segments if s.transcript_excerpt)
+    transcript_excerpt = " | ".join(
+        s.transcript_excerpt for s in arc.segments if s.transcript_excerpt
+    )
 
     return MontageCandidate(
         title=arc.title or None,

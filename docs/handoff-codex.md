@@ -3,7 +3,7 @@
 > **Pour Codex (ou tout autre agent) qui reprend ce projet sans contexte.**
 > Tout ce qu'il faut savoir tient dans ce doc + les docs cités ci-dessous.
 
-Dernière mise à jour : 2026-06-18. Auteurs : Augustin (founder), Claude Code, Codex.
+Dernière mise à jour : 2026-06-21. Auteurs : Augustin (founder), Claude Code, Codex.
 
 ---
 
@@ -361,6 +361,13 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 
 - Tous les docs alignés sur les décisions les plus récentes : archi Mac/VPS (remplace Hetzner partout), transcription = API OpenAI `gpt-4o-mini-transcribe`, vision deep = **Gemini 2.5 Flash** (Claude Haiku = fallback uniquement), briques qualité worker marquées livrées.
 - Docs touchés : handoff, deploy, unit-economics, pipeline, plan, codex-brief, global-video-understanding, admin, security-audit, pipeline-improvements.
+
+### 2026-06-21 — Lint cleanup + consolidation des branches
+
+- Re-vérif complète du code (dernière vérif datait du 2026-05-21) : web `typecheck` + `build` OK, API + worker `ruff` OK, `compileall` OK, worker `pytest` 6/6.
+- Worker : `ruff check app` passait de 40 findings → **0**, sans changement de comportement : E402 imports `ipaddress`/`socket`/`httpx` remontés en tête de `runner.py` ; B023 closure deep-vision bind `arc=arc, idx=idx` ; RUF046 `int(round(float))` → `round(...)` ; F401 imports morts retirés ; RUF100 `# noqa` morts retirés ; `zip(...)` → `itertools.pairwise` ; `[v_chain] + a_steps` → unpacking ; `l` → `excerpt_len` ; lignes > 100 wrappées ; per-file-ignore E501 sur `prompts.py`.
+- **Consolidation GitHub** : tout le travail réuni sur `main` en histoire linéaire (`6c50951` docs reconcile + `f46b83f` web labels + lint), puis branches `claude/eloquent-cori-fns46a` et `claude/admiring-hawking-hlqa75` supprimées. **Une seule branche subsiste : `main`.**
+- Reste hors périmètre code (Augustin) : comptes API externes + hébergement (control plane VPS OVH/Scaleway + worker Mac Studio) + DNS. Voir sections 6 et 11.
 
 ---
 

@@ -10,8 +10,8 @@ from typing import Any
 import structlog
 
 from ..models import ArcSegmentSpec, StoryArc
-from ..providers import LLMProvider, ProviderError
 from ..prompts import SIMPLE_SEGMENTS_SYSTEM_PROMPT, simple_segments_user_prompt
+from ..providers import LLMProvider, ProviderError
 
 log = structlog.get_logger()
 
@@ -19,14 +19,14 @@ log = structlog.get_logger()
 def _coerce_int(v: Any, default: int = 0) -> int:
     try:
         return max(0, min(100, round(float(v))))
-    except Exception:  # noqa: BLE001
+    except Exception:
         return default
 
 
 def _coerce_float(v: Any, default: float = 0.0) -> float:
     try:
         return float(v)
-    except Exception:  # noqa: BLE001
+    except Exception:
         return default
 
 
