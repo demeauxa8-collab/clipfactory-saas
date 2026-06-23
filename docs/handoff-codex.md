@@ -383,6 +383,13 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - Lecture : `GET /admin/analytics?days=N` (admin), vue `analytics_daily`, ou PostHog.
 - **À activer** : (1) appliquer `0005` sur Supabase ; (2) optionnel, créer le projet PostHog EU + poser les clés. Vérifs : ruff api+worker OK, pytest 6/6, web typecheck+build OK.
 
+### 2026-06-23 — Migration 0005 appliquée + dashboard refait
+
+- **Migration `0005` appliquée sur Supabase** (projet `jsjaizcnjvghoduvyyea`, `analytics_events` + RLS + vue `analytics_daily`). Le tracking first-party stocke désormais réellement.
+- **Dashboard user (`/app`) refait** : plus détaillé + plus soigné. Carte crédits avec barre d'usage (balance / crédits du plan), chip plan + date de renouvellement, metrics réels (clips générés depuis la table `clips`, jobs complétés + taux de succès, minutes traitées, jobs en cours), barre de répartition des statuts, campagnes avec compteur de jobs, jobs avec temps relatif, et un feed "Recent activity" alimenté par `analytics_events`.
+- **Page admin `/admin/analytics`** ajoutée (volume d'events par type/source, barres, split par source, fenêtres 7/14/30 j) + entrée dans la nav admin et lien depuis l'overview.
+- Pas de nouveau composant lourd, tout sur les tokens existants (liquid-shell, curve-card, accent unique). Vérifs : web typecheck OK, build OK (30 routes).
+
 ---
 
 ## 6. Services externes (état au 2026-05-27)

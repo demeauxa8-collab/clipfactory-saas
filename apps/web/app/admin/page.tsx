@@ -48,6 +48,7 @@ export default async function AdminOverviewPage() {
               <li><a href="/admin/users" className="text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]">All users →</a></li>
               <li><a href="/admin/jobs?status=failed" className="text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]">Recent failed jobs →</a></li>
               <li><a href="/admin/jobs?status=queued" className="text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]">Jobs in queue →</a></li>
+              <li><a href="/admin/analytics" className="text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]">Product analytics →</a></li>
               <li><a href="/admin/finance" className="text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]">Monthly P&L →</a></li>
             </ul>
           </section>
