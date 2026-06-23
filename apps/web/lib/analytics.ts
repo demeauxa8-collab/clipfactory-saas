@@ -57,7 +57,7 @@ export async function track(event: string, properties: Props = {}): Promise<void
     /* ignore */
   }
 
-  // 2) First-party sink — only when authenticated (the endpoint requires a JWT).
+  // 2) First-party sink: only when authenticated (the endpoint requires a JWT).
   try {
     const token = await sessionToken();
     if (!token) return;

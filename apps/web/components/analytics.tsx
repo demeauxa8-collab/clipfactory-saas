@@ -35,7 +35,7 @@ export function Analytics() {
     };
   }, []);
 
-  // SPA pageviews — App Router client navigation does not reload the page.
+  // SPA pageviews: App Router client navigation does not reload the page.
   React.useEffect(() => {
     if (!pathname) return;
     void track("pageview", { path: pathname });

@@ -135,10 +135,7 @@ export default async function AppHome() {
       {/* ── Header ─────────────────────────────────────────────── */}
       <div className="fade-up flex flex-col justify-between gap-5 md:flex-row md:items-end">
         <div>
-          <p className="text-xs font-medium uppercase tracking-[0.22em] text-[var(--color-muted-foreground)]">
-            Workspace
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight md:text-[2.5rem]">Dashboard</h1>
+          <h1 className="text-3xl font-semibold tracking-tight md:text-[2.5rem]">Dashboard</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--color-muted-foreground)]">
             Create a campaign, submit a long video, then review the generated clips, scores and
             downloads in one place.
@@ -159,9 +156,7 @@ export default async function AppHome() {
       <div className="fade-up-2 mt-8 grid gap-4 lg:grid-cols-3">
         <div className="liquid-shell relative overflow-hidden p-6 lg:row-span-1">
           <div className="flex items-center justify-between">
-            <p className="text-xs uppercase tracking-[0.22em] text-[var(--color-muted-foreground)]">
-              Credits
-            </p>
+            <p className="text-[0.8125rem] text-[var(--color-muted-foreground)]">Credits</p>
             <Wallet className="h-4 w-4 text-[var(--color-brand)]" />
           </div>
           <div className="mt-3 flex items-baseline gap-2">
@@ -208,7 +203,7 @@ export default async function AppHome() {
       <div className="fade-up-3 mt-10 grid gap-6 lg:grid-cols-2">
         {/* Campaigns */}
         <section className="liquid-shell p-5 md:p-6">
-          <SectionHead eyebrow="Series goals" title="Campaigns" icon={Target}>
+          <SectionHead title="Campaigns" icon={Target}>
             <Link href="/app/campaigns/new">
               <Button size="sm">
                 <Plus className="h-4 w-4" />
@@ -251,7 +246,7 @@ export default async function AppHome() {
 
         {/* Recent jobs */}
         <section className="liquid-shell p-5 md:p-6">
-          <SectionHead eyebrow="Pipeline" title="Recent jobs" icon={Clapperboard} />
+          <SectionHead title="Recent jobs" icon={Clapperboard} />
           {jobList.length > 0 && (
             <StatusBar completed={completed.length} running={running.length} failed={failed.length} />
           )}
@@ -284,7 +279,7 @@ export default async function AppHome() {
 
       {/* ── Activity feed ──────────────────────────────────────── */}
       <section className="fade-up-3 liquid-shell mt-6 p-5 md:p-6">
-        <SectionHead eyebrow="Live" title="Recent activity" icon={Sparkles} />
+        <SectionHead title="Activity" icon={Sparkles} />
         {activity.length === 0 ? (
           <EmptyState>Activity from your account will show up here as you use ClipFactory.</EmptyState>
         ) : (
@@ -364,7 +359,7 @@ function Metric({
   return (
     <div className="group rounded-[1.25rem] border border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-foreground)_3%,var(--color-background))] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[color-mix(in_srgb,var(--color-foreground)_18%,transparent)]">
       <div className="flex items-center justify-between gap-4">
-        <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">{label}</p>
+        <p className="text-[0.8125rem] text-[var(--color-muted-foreground)]">{label}</p>
         <span className={pulse ? "brand-pulse rounded-full" : ""}>
           <Icon className={"h-4 w-4 " + (accent ? "text-[var(--color-brand)]" : "text-[var(--color-muted-foreground)] group-hover:text-[var(--color-brand)] transition-colors")} />
         </span>
@@ -376,26 +371,21 @@ function Metric({
 }
 
 function SectionHead({
-  eyebrow,
   title,
   icon: Icon,
   children,
 }: {
-  eyebrow: string;
   title: string;
   icon: React.ComponentType<{ className?: string }>;
   children?: React.ReactNode;
 }) {
   return (
-    <div className="mb-3 flex items-center justify-between gap-4">
+    <div className="mb-4 flex items-center justify-between gap-4">
       <div className="flex items-center gap-2.5">
         <span className="flex h-8 w-8 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] text-[var(--color-brand)]">
           <Icon className="h-4 w-4" />
         </span>
-        <div>
-          <p className="text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-brand)]">{eyebrow}</p>
-          <h2 className="text-lg font-semibold leading-tight tracking-tight">{title}</h2>
-        </div>
+        <h2 className="text-lg font-semibold leading-tight tracking-tight">{title}</h2>
       </div>
       {children}
     </div>
