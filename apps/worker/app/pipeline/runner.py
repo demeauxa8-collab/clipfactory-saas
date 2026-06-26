@@ -11,6 +11,7 @@ ran.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import math
 import os
@@ -29,6 +30,7 @@ from ..providers import (
     OpenRouterProvider,
     ProviderError,
 )
+from ..render_gate import set_render_semaphore
 from ..settings import get_settings
 from ..storage import upload_file
 from .analyze import select_simple_segments
@@ -266,10 +268,18 @@ async def _initial_debit(
 ) -> None:
     if estimated <= 0:
         return
+    # Idempotent: a reaper requeue re-runs run_job from zero, but the initial
+    # debit must land exactly once per job. The matching reaper/_mark_failed
+    # refund then nets it back to zero on terminal failure. (settle_credits only
+    # runs on success, so no job_debit row exists yet on a requeue.)
     await conn.execute(
         """
         insert into credit_ledger (user_id, delta, reason, job_id, note)
-        values ($1, $2, 'job_debit', $3, $4)
+        select $1, $2, 'job_debit', $3, $4
+         where not exists (
+               select 1 from credit_ledger
+                where job_id = $3 and reason = 'job_debit'
+         )
         """,
         user_id,
         -int(estimated),
@@ -371,10 +381,20 @@ def _segments_to_jsonb(candidate: MontageCandidate) -> str:
 # =============================================================
 
 
-async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
+async def run_job(
+    pool: asyncpg.Pool,
+    job_id: str,
+    *,
+    render_sem: asyncio.Semaphore | None = None,
+) -> None:
     settings = get_settings()
     log_ctx = log.bind(job_id=job_id)
     log_ctx.info("pipeline.start")
+
+    # Bind the machine-wide render brake to this job's task context. When the
+    # parallel supervisor passes a semaphore, every ffmpeg render in this task
+    # acquires it; when None (tests / sequential runs) the gate is a no-op.
+    set_render_semaphore(render_sem)
 
     # --- Load job + campaign + plan
     async with pool.acquire() as conn:
@@ -424,6 +444,14 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
     ctx.primary_provider = primary.name
 
     try:
+        # Step 0 — idempotent reset. A reaper requeue re-runs the job from zero,
+        # so drop any clips from a prior attempt before the render loop re-inserts
+        # them (the clips table has unique(job_id, idx)). R2/local objects are
+        # overwritten by key on re-upload; a re-run producing fewer clips can
+        # orphan tail keys — acceptable for now (TODO: prune stale clip objects).
+        async with pool.acquire() as conn:
+            await conn.execute("delete from clips where job_id = $1", job_id)
+
         # Step 1 — validate
         async with pool.acquire() as conn:
             await _set_status(conn, job_id, "downloading", current_step="validate_url")

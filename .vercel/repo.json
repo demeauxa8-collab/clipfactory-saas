@@ -1,0 +1,11 @@
+{
+  "remoteName": "origin",
+  "projects": [
+    {
+      "id": "prj_vYB0eqRzdMemio88Ebc4ojyXdl7e",
+      "name": "clipfactory-saas",
+      "directory": "apps/web",
+      "orgId": "team_HKzAe9GRcPiEUYMaRmO2ZAkM"
+    }
+  ]
+}

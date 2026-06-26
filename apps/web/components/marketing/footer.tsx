@@ -47,7 +47,7 @@ export function MarketingFooter() {
             <a
               href={`mailto:${SITE.contactEmail}`}
               aria-label="Email"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xs transition-all hover:-translate-y-px hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] hover:shadow-sm"
             >
               <Mail className="h-4 w-4" />
             </a>
@@ -56,7 +56,7 @@ export function MarketingFooter() {
               aria-label="Twitter"
               rel="noreferrer"
               target="_blank"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xs transition-all hover:-translate-y-px hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] hover:shadow-sm"
             >
               <Twitter className="h-4 w-4" />
             </a>
@@ -65,7 +65,7 @@ export function MarketingFooter() {
               aria-label="GitHub"
               rel="noreferrer"
               target="_blank"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xs transition-all hover:-translate-y-px hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] hover:shadow-sm"
             >
               <Github className="h-4 w-4" />
             </a>

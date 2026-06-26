@@ -11,12 +11,21 @@ class Settings(BaseSettings):
     database_url: str
     redis_url: str = "redis://localhost:6379/0"
 
-    # R2
-    r2_account_id: str
-    r2_access_key_id: str
-    r2_secret_access_key: str
+    # Storage backend
+    # - "r2" (default, prod): upload clips to Cloudflare R2
+    # - "local" (dev): copy clips to STORAGE_LOCAL_DIR — lets us validate the
+    #   pipeline end-to-end without provisioning R2. The web download link
+    #   won't work in this mode; open the files directly from the local dir.
+    storage_backend: Literal["r2", "local"] = "r2"
+    storage_local_dir: str = "/tmp/clipfactory-clips"
+
+    # R2 — required only when storage_backend == "r2". Left as empty strings
+    # in local-validation mode so the worker boots without Cloudflare creds.
+    r2_account_id: str = ""
+    r2_access_key_id: str = ""
+    r2_secret_access_key: str = ""
     r2_bucket_clips: str = "clipfactory-clips"
-    r2_endpoint_url: str
+    r2_endpoint_url: str = ""
 
     # ---------------- Providers ----------------
 
@@ -45,9 +54,20 @@ class Settings(BaseSettings):
 
     # ---------------- Worker ----------------
 
-    worker_concurrency: int = 1
+    # Parallel fleet (see docs/architecture/parallel-workers.md).
+    # worker_slots  — pipelines in flight per machine (mostly I/O-bound waiting).
+    # render_slots  — concurrent ffmpeg renders per machine (the OOM brake).
+    # The lease/heartbeat trio drives the reaper: a job silent for
+    # job_lease_seconds is requeued (or failed + refunded after max_attempts).
+    worker_slots: int = 6
+    render_slots: int = 2
+    heartbeat_interval_seconds: float = 20.0
+    job_lease_seconds: int = 180
+    reaper_interval_seconds: int = 60
+    max_attempts: int = 3
+
     worker_tmp_dir: str = "/tmp/clipfactory"
-    worker_poll_interval: int = 2
+    worker_poll_interval: int = 2  # seconds between claim sweeps when the queue is empty
     ffmpeg_bin: str = "ffmpeg"
     ffprobe_bin: str = "ffprobe"
     yt_dlp_bin: str = "yt-dlp"

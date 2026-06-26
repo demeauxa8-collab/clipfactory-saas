@@ -2,7 +2,7 @@
 
 > **Scope** : voir `docs/v1-scope.md`. **Pipeline** : voir `docs/pipeline.md`. **API** : voir `docs/api-contract.md`.
 
-Target: 200 EUR MRR via 7 Starter customers @ 29 EUR.
+Target: 2000 EUR MRR via ~69 Starter customers @ 29 EUR.
 
 ## Priorité absolue
 

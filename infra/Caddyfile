@@ -1,0 +1,64 @@
+# ClipFactory API + worker host — Caddy reverse proxy
+#
+# Auto-TLS via Let's Encrypt. The API listens on 127.0.0.1:8000 so it is not
+# reachable directly from the public internet — Caddy is the only ingress.
+#
+# Drop this file at /etc/caddy/Caddyfile on the Hetzner VPS, then:
+#   sudo systemctl reload caddy
+
+{
+	# Email used by Let's Encrypt for renewal notices. Override before deploy.
+	email hello@clipfactory.app
+}
+
+api.clipfactory.app {
+	encode zstd gzip
+
+	# Hard-block private-IP exfiltration via Host header tricks
+	@blocked_hosts {
+		not host api.clipfactory.app
+	}
+	respond @blocked_hosts 421
+
+	# Trust Cloudflare/Hetzner LB chain only if you front Caddy with one.
+	# For direct-internet Caddy (current setup) leave the default.
+
+	header {
+		# Lock down what the browser will accept from this origin
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "interest-cohort=()"
+		# Server header leak
+		-Server
+	}
+
+	# Stripe webhooks need a generous body size for retried events.
+	# Everything else stays small.
+	request_body {
+		max_size 2MB
+	}
+
+	reverse_proxy 127.0.0.1:8000 {
+		# Pass real client IP so slowapi can rate-limit on it.
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+		# Fail fast if the API is down rather than holding the connection.
+		transport http {
+			dial_timeout 5s
+			response_header_timeout 30s
+		}
+	}
+
+	log {
+		output file /var/log/caddy/clipfactory.log {
+			roll_size 50mb
+			roll_keep 10
+		}
+		format json
+		# Skip noisy health checks
+		level INFO
+	}
+}

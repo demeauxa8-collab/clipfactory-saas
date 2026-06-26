@@ -104,14 +104,14 @@ function Hero() {
       <HeroGrid />
       <Container className="relative grid items-center gap-12 py-20 md:grid-cols-2 md:py-28">
         <div className="fade-up">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--color-brand)] bg-[var(--color-brand-soft)] px-3 py-1 text-xs font-medium text-[var(--color-brand)]">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--color-brand)] bg-[var(--color-brand-soft)] px-3 py-1 text-xs font-medium text-[var(--color-brand)] shadow-[0_1px_2px_rgba(5,150,105,0.14)]">
             <Sparkles className="h-3.5 w-3.5" />
             New · Campaign-first AI clipping
           </div>
           <h1 className="text-4xl font-semibold tracking-tight md:text-6xl">
             Less random virals.
             <br />
-            <span className="text-[var(--color-brand)]">
+            <span className="text-gradient-brand">
               More clips that fit your campaign.
             </span>
           </h1>
@@ -185,7 +185,7 @@ function Problem() {
           {pains.map((p) => (
             <article
               key={p.title}
-              className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-6"
+              className="card-premium rounded-lg p-6"
             >
               <h3 className="text-lg font-medium">{p.title}</h3>
               <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">{p.body}</p>
@@ -247,9 +247,9 @@ function Solution() {
           {steps.map((s) => (
             <article
               key={s.title}
-              className="rounded-lg border border-[var(--color-border)] p-6 transition-colors hover:border-[var(--color-brand)]"
+              className="card-premium group rounded-lg p-6"
             >
-              <s.icon className="h-5 w-5 text-[var(--color-brand)]" />
+              <s.icon className="h-5 w-5 text-[var(--color-brand)] transition-transform duration-300 group-hover:scale-110" />
               <h3 className="mt-4 text-base font-medium">{s.title}</h3>
               <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">{s.body}</p>
             </article>
@@ -391,7 +391,7 @@ function PricingTeaser() {
           </p>
         </div>
 
-        <div className="mx-auto mt-12 max-w-md rounded-xl border-2 border-[var(--color-brand)] p-8 shadow-[0_0_0_8px_rgba(5,150,105,0.06)]">
+        <div className="ring-gradient mx-auto mt-12 max-w-md rounded-xl p-8 shadow-float">
           <p className="text-sm font-semibold uppercase tracking-wider text-[var(--color-brand)]">
             Starter
           </p>

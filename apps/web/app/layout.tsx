@@ -1,6 +1,21 @@
 import type { Metadata, Viewport } from "next";
+import { Geist, Inter } from "next/font/google";
 import { SITE } from "@/lib/site";
 import "./globals.css";
+
+// Body: Inter (neutral, legible — the existing brand voice).
+// Display: Geist (premium sans-display for headlines), wired to --font-display.
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+const geistDisplay = Geist({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["500", "600", "700"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
@@ -57,7 +72,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${geistDisplay.variable}`}>
       <body className="min-h-dvh flex flex-col">{children}</body>
     </html>
   );

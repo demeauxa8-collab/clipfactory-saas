@@ -1,0 +1,32 @@
+[Unit]
+Description=ClipFactory worker (yt-dlp + FFmpeg + LLM pipeline)
+After=network-online.target redis-server.service
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=clipfactory
+Group=clipfactory
+WorkingDirectory=/opt/clipfactory/clipfactory-saas/apps/worker
+EnvironmentFile=/opt/clipfactory/clipfactory-saas/apps/worker/.env
+ExecStart=/opt/clipfactory/venv-worker/bin/python -m app.main
+Restart=always
+RestartSec=3
+KillSignal=SIGINT
+TimeoutStopSec=30
+
+# The worker needs to write to its own tmp dir for FFmpeg/yt-dlp intermediates.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log/clipfactory /tmp/clipfactory
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+RestrictNamespaces=true
+RestrictSUIDSGID=true
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

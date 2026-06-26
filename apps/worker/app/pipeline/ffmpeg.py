@@ -6,6 +6,7 @@ import os
 import re
 from pathlib import Path
 
+from ..render_gate import render_gated
 from ..settings import get_settings
 
 
@@ -184,6 +185,7 @@ async def _render_single_segment_intermediate(
         raise FFmpegError(f"segment render failed: {err.strip()}")
 
 
+@render_gated
 async def render_montage_clip(
     *,
     source: str,

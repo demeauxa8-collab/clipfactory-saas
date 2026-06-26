@@ -1,0 +1,33 @@
+[Unit]
+Description=ClipFactory API (FastAPI / uvicorn)
+After=network-online.target redis-server.service
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=clipfactory
+Group=clipfactory
+WorkingDirectory=/opt/clipfactory/clipfactory-saas/apps/api
+EnvironmentFile=/opt/clipfactory/clipfactory-saas/apps/api/.env
+ExecStart=/opt/clipfactory/venv-api/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --proxy-headers --forwarded-allow-ips=127.0.0.1
+Restart=always
+RestartSec=3
+KillSignal=SIGINT
+TimeoutStopSec=20
+
+# Hardening — keep what makes sense for a Python service that needs FS write
+# for logs but no privileged operations.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log/clipfactory
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+RestrictNamespaces=true
+RestrictSUIDSGID=true
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

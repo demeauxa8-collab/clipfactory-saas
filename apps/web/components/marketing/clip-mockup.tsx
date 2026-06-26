@@ -34,7 +34,7 @@ export function ClipMockup({
   return (
     <div
       className={cn(
-        "rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-5 shadow-sm",
+        "rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-float",
         className
       )}
     >

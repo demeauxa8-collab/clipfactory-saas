@@ -6,7 +6,6 @@ import structlog
 from ..schemas import JobCreate, JobOut
 from . import campaigns as campaigns_svc
 from . import credits as credits_svc
-from . import queue as queue_svc
 
 log = structlog.get_logger()
 
@@ -136,7 +135,9 @@ async def create_job(
             estimated,
         )
 
-    await queue_svc.enqueue_job(str(row["id"]))
+    # Postgres IS the queue: the committed row (status='queued') is picked up by
+    # a worker's atomic claim loop. The concurrency check above stays for fast
+    # UX feedback; the claim re-checks it authoritatively under an advisory lock.
     return _row_to_job_out(row)
 
 

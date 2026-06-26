@@ -85,7 +85,7 @@ UI V1 doit juste permettre de tester le produit :
 
 | Domaine | Raison |
 | --- | --- |
-| Scheduling TikTok / Reels / Shorts | Workflow complet pas critique pour 200€ MRR |
+| Scheduling TikTok / Reels / Shorts | Workflow complet pas critique pour 2000€ MRR |
 | API publique | Vend après preuve de traction |
 | MCP / agents | V2 après API publique |
 | Team workspace | V2 |

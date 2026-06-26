@@ -2,24 +2,31 @@
 
 @theme {
   --font-sans:
-    "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+    var(--font-inter), "Inter", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono:
     ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
 
+  /* ── Neutral palette — refined, slightly cool. Pure white stays the page,
+        but greys carry a faint blue cast so surfaces read intentional, not flat. */
   --color-background: #ffffff;
-  --color-foreground: #0a0a0a;
-  --color-muted: #f5f5f5;
-  --color-muted-foreground: #6b7280;
-  --color-border: #e5e7eb;
-  --color-accent: #0a0a0a;
+  --color-foreground: #0b0d12;
+  --color-muted: #f6f7f9;
+  --color-muted-foreground: #5b6473;
+  --color-border: #e7e9ee;
+  --color-accent: #0b0d12;
   --color-accent-foreground: #ffffff;
-  --color-ring: #0a0a0a;
+  --color-ring: #0b0d12;
+
+  /* Elevated surfaces — a panel that should float above the page. */
+  --color-surface: #ffffff;
+  --color-surface-2: #fbfcfd;
 
   /* Brand accent — emerald, used on positive scores + key CTAs.
      Stays minimal: never on body copy, never on backgrounds bigger than a chip. */
   --color-brand: #059669;
+  --color-brand-2: #0d9488;
   --color-brand-soft: #d1fae5;
   --color-brand-foreground: #ffffff;
 
@@ -30,25 +37,53 @@
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+
+  /* ── Premium shadow system — layered, low-opacity, cool-tinted.
+        Reads as soft ambient occlusion rather than a hard drop shadow. */
+  --shadow-xs: 0 1px 2px rgba(11, 13, 18, 0.04);
+  --shadow-sm: 0 1px 2px rgba(11, 13, 18, 0.05), 0 1px 1px rgba(11, 13, 18, 0.03);
+  --shadow-md:
+    0 2px 4px rgba(11, 13, 18, 0.04), 0 6px 16px -4px rgba(11, 13, 18, 0.08);
+  --shadow-lg:
+    0 1px 2px rgba(11, 13, 18, 0.04), 0 12px 28px -8px rgba(11, 13, 18, 0.12);
+  --shadow-xl:
+    0 2px 4px rgba(11, 13, 18, 0.04), 0 24px 48px -12px rgba(11, 13, 18, 0.16);
+  --shadow-brand: 0 8px 24px -8px rgba(5, 150, 105, 0.35);
 }
 
 @media (prefers-color-scheme: dark) {
   @theme {
-    --color-background: #0a0a0a;
-    --color-foreground: #fafafa;
-    --color-muted: #171717;
-    --color-muted-foreground: #a1a1aa;
-    --color-border: #262626;
-    --color-accent: #fafafa;
-    --color-accent-foreground: #0a0a0a;
-    --color-ring: #fafafa;
+    --color-background: #07090d;
+    --color-foreground: #f3f5f7;
+    --color-muted: #11141a;
+    --color-muted-foreground: #9aa3b2;
+    --color-border: #1e232c;
+    --color-accent: #f3f5f7;
+    --color-accent-foreground: #07090d;
+    --color-ring: #f3f5f7;
+
+    --color-surface: #0c0f15;
+    --color-surface-2: #11141b;
 
     --color-brand: #34d399;
-    --color-brand-soft: #064e3b;
-    --color-brand-foreground: #0a0a0a;
+    --color-brand-2: #2dd4bf;
+    --color-brand-soft: #053a30;
+    --color-brand-foreground: #04130d;
 
     --color-warn: #f59e0b;
     --color-danger: #ef4444;
+
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 1px rgba(0, 0, 0, 0.3);
+    --shadow-md:
+      0 2px 4px rgba(0, 0, 0, 0.4), 0 6px 16px -4px rgba(0, 0, 0, 0.55);
+    --shadow-lg:
+      0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 28px -8px rgba(0, 0, 0, 0.6);
+    --shadow-xl:
+      0 2px 4px rgba(0, 0, 0, 0.45), 0 24px 48px -12px rgba(0, 0, 0, 0.7);
+    --shadow-brand: 0 8px 28px -8px rgba(52, 211, 153, 0.4);
   }
 }
 
@@ -60,19 +95,130 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans);
-  font-feature-settings: "rlig" 1, "calt" 1;
+  font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1, "cv11" 1;
+  letter-spacing: -0.011em;
+}
+
+/* Display headings — premium sans-display face (Geist via next/font), tighter
+   tracking for the editorial feel. Falls back to the body sans if unset. */
+h1, h2, h3 {
+  font-family: var(--font-display, var(--font-sans));
+  letter-spacing: -0.025em;
 }
 
 ::selection {
-  background: var(--color-foreground);
-  color: var(--color-background);
+  background: var(--color-brand);
+  color: var(--color-brand-foreground);
 }
+
+/* ── Premium primitives ─────────────────────────────────────────────── */
+
+/* Frosted glass surface — used on the sticky nav and floating chips.
+   Section 5 of the skill: go beyond blur — add an inner highlight edge for
+   physical refraction, and degrade to a solid fill under reduced-transparency. */
+.glass {
+  background: color-mix(in srgb, var(--color-background) 72%, transparent);
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  box-shadow: inset 0 1px 0 0 color-mix(in srgb, var(--color-foreground) 6%, transparent);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: var(--color-background);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* A card that floats: hairline border, layered shadow, lifts on hover. */
+.card-premium {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  transition:
+    box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s ease;
+}
+.card-premium:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--color-border) 40%, var(--color-foreground));
+}
+
+/* Gradient hairline ring — a premium way to highlight the key card. */
+.ring-gradient {
+  position: relative;
+  background: var(--color-surface);
+}
+.ring-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(
+    140deg,
+    var(--color-brand) 0%,
+    var(--color-brand-2) 45%,
+    color-mix(in srgb, var(--color-border) 60%, transparent) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Brand text gradient — restrained, only on a key accent phrase. */
+.text-gradient-brand {
+  background: linear-gradient(
+    100deg,
+    var(--color-brand) 0%,
+    var(--color-brand-2) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Primary CTA — subtle vertical sheen + inset top highlight + ambient brand glow. */
+.btn-sheen {
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-accent) 88%, white) 0%,
+    var(--color-accent) 100%
+  );
+  box-shadow:
+    var(--shadow-md),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+  transition:
+    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+.btn-sheen:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    var(--shadow-lg),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.16);
+}
+.btn-sheen:active {
+  transform: translateY(0);
+}
+
+/* Elevation utilities mapped to the shadow tokens. */
+.shadow-soft { box-shadow: var(--shadow-md); }
+.shadow-float { box-shadow: var(--shadow-lg); }
+.shadow-pop { box-shadow: var(--shadow-xl); }
 
 /* Animated counter pulse (used on hero stats) */
 @keyframes brand-pulse {
@@ -89,6 +235,18 @@ body {
 .fade-up { animation: fade-up 0.6s ease-out both; }
 .fade-up-2 { animation: fade-up 0.6s ease-out 0.1s both; }
 .fade-up-3 { animation: fade-up 0.6s ease-out 0.2s both; }
+
+/* Slow aurora drift for the hero glow — barely perceptible, adds life. */
+@keyframes aurora-drift {
+  0%, 100% { transform: translate3d(-2%, 0, 0) scale(1); opacity: 0.85; }
+  50% { transform: translate3d(2%, -3%, 0) scale(1.08); opacity: 1; }
+}
+.aurora { animation: aurora-drift 14s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora, .brand-pulse { animation: none; }
+  html { scroll-behavior: auto; }
+}
 
 /* Score bar — used in the mockup clip preview */
 .score-bar {

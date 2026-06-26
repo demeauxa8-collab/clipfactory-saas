@@ -3,14 +3,14 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-ring)] disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)] active:translate-y-0 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         primary:
-          "bg-[var(--color-accent)] text-[var(--color-accent-foreground)] hover:opacity-90",
+          "btn-sheen bg-[var(--color-accent)] text-[var(--color-accent-foreground)]",
         secondary:
-          "bg-[var(--color-muted)] text-[var(--color-foreground)] hover:bg-[var(--color-muted)]/80 border border-[var(--color-border)]",
+          "border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)] shadow-xs hover:-translate-y-px hover:shadow-sm hover:border-[color-mix(in_srgb,var(--color-border)_40%,var(--color-foreground))]",
         ghost:
           "text-[var(--color-foreground)] hover:bg-[var(--color-muted)]",
         link:

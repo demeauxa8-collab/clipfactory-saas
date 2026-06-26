@@ -1,21 +1,20 @@
 from __future__ import annotations
 
 import asyncio
-import json
 import logging
+import os
 import signal
+import socket
+import uuid
 
-import redis.asyncio as redis_async
 import structlog
 
 from .db import close_pool, get_pool, init_pool
 from .log_sanitize import scrub_email_values
-from .pipeline.runner import run_job
+from .parallel.supervisor import Supervisor
 from .settings import get_settings
 
 log = structlog.get_logger()
-
-JOBS_QUEUE_KEY = "clipfactory:jobs:queue"
 
 
 def _configure_logging(level: str) -> None:
@@ -31,55 +30,39 @@ def _configure_logging(level: str) -> None:
     )
 
 
-async def _worker_loop(stop_event: asyncio.Event) -> None:
-    settings = get_settings()
-    pool = get_pool()
-    client = redis_async.from_url(settings.redis_url, decode_responses=True)
-    log.info("worker.ready", concurrency=settings.worker_concurrency)
-
-    while not stop_event.is_set():
-        try:
-            result = await client.blpop(JOBS_QUEUE_KEY, timeout=settings.worker_poll_interval)
-        except Exception as exc:
-            log.warning("worker.queue.error", err=str(exc))
-            await asyncio.sleep(2)
-            continue
-        if result is None:
-            continue
-        _, raw = result
-        try:
-            payload = json.loads(raw)
-            job_id = payload["job_id"]
-        except (ValueError, KeyError) as exc:
-            log.warning("worker.bad_payload", raw=raw, err=str(exc))
-            continue
-
-        try:
-            await run_job(pool, job_id)
-        except Exception as exc:
-            log.exception("worker.run_job.crash", job_id=job_id, err=str(exc))
+def _worker_id() -> str:
+    """Stable-ish per-process id for claim ownership and reaper logs."""
+    return f"{socket.gethostname()}:{os.getpid()}:{uuid.uuid4().hex[:8]}"
 
 
 async def main() -> None:
     settings = get_settings()
     _configure_logging(settings.log_level)
     await init_pool()
+    pool = get_pool()
 
-    stop_event = asyncio.Event()
-
-    def _handle_signal(*_args: object) -> None:
-        log.info("worker.signal", action="stopping")
-        stop_event.set()
+    supervisor = Supervisor(
+        pool,
+        worker_id=_worker_id(),
+        worker_slots=settings.worker_slots,
+        render_slots=settings.render_slots,
+        poll_interval_seconds=settings.worker_poll_interval,
+        heartbeat_interval_seconds=settings.heartbeat_interval_seconds,
+        reaper_interval_seconds=settings.reaper_interval_seconds,
+        job_lease_seconds=settings.job_lease_seconds,
+        max_attempts=settings.max_attempts,
+    )
 
     loop = asyncio.get_running_loop()
     for sig in (signal.SIGINT, signal.SIGTERM):
         try:
-            loop.add_signal_handler(sig, _handle_signal)
+            loop.add_signal_handler(sig, supervisor.request_stop)
         except NotImplementedError:
             pass
 
+    log.info("worker.ready", slots=settings.worker_slots, render_slots=settings.render_slots)
     try:
-        await _worker_loop(stop_event)
+        await supervisor.run()
     finally:
         await close_pool()
 

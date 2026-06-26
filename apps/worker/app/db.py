@@ -15,13 +15,18 @@ async def init_pool() -> asyncpg.Pool:
     if _pool is not None:
         return _pool
     settings = get_settings()
+    # Each in-flight job can hold a connection (claim, status writes, heartbeat),
+    # plus the reaper, plus claim-loop headroom → keep max_size ≥ slots + 2.
+    # NB: stay under the Supabase pooler's per-role connection cap when scaling
+    # slots or adding machines.
+    max_size = max(4, settings.worker_slots + 2)
     _pool = await asyncpg.create_pool(
         dsn=settings.database_url,
         min_size=1,
-        max_size=4,
+        max_size=max_size,
         command_timeout=30,
     )
-    log.info("worker.db.pool.ready")
+    log.info("worker.db.pool.ready", max_size=max_size)
     return _pool
 
 

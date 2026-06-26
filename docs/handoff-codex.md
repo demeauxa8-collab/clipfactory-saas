@@ -9,7 +9,7 @@ Dernière mise à jour : 2026-05-23. Auteurs : Augustin (founder), Claude Code, 
 
 ## 0. TL;DR — 60 secondes
 
-ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **clips verticaux courts** scorés et expliqués. Cible business : **200 € MRR** avec **7 clients Starter à 29 €/mo**.
+ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **clips verticaux courts** scorés et expliqués. Cible business : **2000 € MRR** avec **~69 clients Starter à 29 €/mo**.
 
 **Différenciateur produit** :
 > Campaign-first. Chaque clip est sélectionné en fonction d'une **campagne** (audience, niche, ton, objectif). Sur vidéos ≥ 5 min, on détecte des **arcs narratifs multi-segments** (setup → payoff à 10 min d'écart). Chaque clip ship avec un **score expliqué** (hook, emotion, visual, fit campagne, editing).
@@ -53,7 +53,7 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 | Sanitisation LLM | `apps/worker/app/safety.py` + délimiteurs BEGIN/END BRIEF dans les prompts | Anti prompt-injection |
 | SSRF | HEAD pre-check + private-IP block dans `_validate_url` | Bloque les redirects vers métadonnées cloud |
 | Admin | `profiles.is_admin` + dep `admin_required` + layout server check | Triple gate sur `/admin/*` |
-| Scheduling / API publique / MCP / team / brand templates / face tracking | **V2** | Pas critique pour 200 € MRR |
+| Scheduling / API publique / MCP / team / brand templates / face tracking | **V2** | Pas critique pour 2000 € MRR |
 
 ---
 
