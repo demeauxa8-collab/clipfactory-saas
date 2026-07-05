@@ -81,6 +81,30 @@ class OpenRouterProvider(LLMProvider):
         usage = data.get("usage") or {}
         return int(usage.get("prompt_tokens") or 0), int(usage.get("completion_tokens") or 0)
 
+    async def _post_and_extract(
+        self, body: dict[str, Any], model: str, label: str, attempts: int = 3
+    ) -> LLMCallResult:
+        """POST then JSON-parse, retrying when the model returns non-JSON.
+
+        Some OpenRouter models intermittently ignore ``response_format`` and
+        answer with prose/empty content; a fresh sample almost always parses.
+        """
+        last_exc: Exception | None = None
+        for _ in range(attempts):
+            try:
+                data = await self._post_chat(body)
+                text = self._extract_text(data)
+                tin, tout = self._extract_usage(data)
+                payload = extract_json(text)
+                return LLMCallResult(payload=payload, tokens_in=tin, tokens_out=tout, model=model)
+            except (ProviderError, ValueError) as exc:
+                # Retry on transient network errors and non-JSON responses alike.
+                last_exc = exc
+                continue
+        if isinstance(last_exc, ProviderError):
+            raise last_exc
+        raise ProviderError(f"{label} failed after {attempts} tries: {last_exc}", kind="parse")
+
     # ----- public API -----
 
     async def chat_json(
@@ -96,20 +120,16 @@ class OpenRouterProvider(LLMProvider):
             "model": model,
             "max_tokens": max_tokens,
             "temperature": temperature,
+            # Disable model "thinking": reasoning tokens otherwise eat the
+            # max_tokens budget and truncate the JSON (e.g. Gemini 2.5 Flash).
+            "reasoning": {"max_tokens": 0},
             "response_format": {"type": "json_object"},
             "messages": [
                 {"role": "system", "content": system},
                 {"role": "user", "content": user},
             ],
         }
-        data = await self._post_chat(body)
-        text = self._extract_text(data)
-        tin, tout = self._extract_usage(data)
-        try:
-            payload = extract_json(text)
-        except ValueError as exc:
-            raise ProviderError(f"parse failed: {exc}", kind="parse") from exc
-        return LLMCallResult(payload=payload, tokens_in=tin, tokens_out=tout, model=model)
+        return await self._post_and_extract(body, model, "parse")
 
     async def vision_json(
         self,
@@ -146,11 +166,4 @@ class OpenRouterProvider(LLMProvider):
                 {"role": "user", "content": content},
             ],
         }
-        data = await self._post_chat(body)
-        text = self._extract_text(data)
-        tin, tout = self._extract_usage(data)
-        try:
-            payload = extract_json(text)
-        except ValueError as exc:
-            raise ProviderError(f"vision parse failed: {exc}", kind="parse") from exc
-        return LLMCallResult(payload=payload, tokens_in=tin, tokens_out=tout, model=model)
+        return await self._post_and_extract(body, model, "vision parse")
