@@ -20,6 +20,10 @@ async def init_pool() -> asyncpg.Pool:
         min_size=1,
         max_size=4,
         command_timeout=30,
+        # Supabase's transaction-mode pooler (pgbouncer, :6543) does not support
+        # prepared statements — disable asyncpg's statement cache to avoid
+        # "prepared statement already exists" crashes.
+        statement_cache_size=0,
     )
     log.info("worker.db.pool.ready")
     return _pool
