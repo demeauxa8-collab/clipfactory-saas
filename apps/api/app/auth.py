@@ -1,11 +1,28 @@
 from __future__ import annotations
 
+import ssl
 from dataclasses import dataclass
+from functools import lru_cache
 
+import certifi
 import jwt
 from fastapi import HTTPException, Request, status
+from jwt import PyJWKClient
 
 from .settings import get_settings
+
+
+@lru_cache(maxsize=1)
+def _jwk_client() -> PyJWKClient:
+    """JWKS client for Supabase asymmetric (ES256/RS256) access tokens.
+
+    Uses certifi's CA bundle explicitly because the macOS system Python does not
+    trust the default store, which makes urllib fail with CERTIFICATE_VERIFY_FAILED.
+    """
+    settings = get_settings()
+    jwks_url = f"{settings.supabase_url.rstrip('/')}/auth/v1/.well-known/jwks.json"
+    ssl_context = ssl.create_default_context(cafile=certifi.where())
+    return PyJWKClient(jwks_url, ssl_context=ssl_context)
 
 
 @dataclass(frozen=True)
@@ -34,17 +51,32 @@ def _extract_bearer(request: Request) -> str:
 def verify_supabase_jwt(token: str) -> CurrentUser:
     settings = get_settings()
     try:
-        payload = jwt.decode(
-            token,
-            settings.supabase_jwt_secret,
-            algorithms=["HS256"],
-            audience="authenticated",
-        )
+        alg = jwt.get_unverified_header(token).get("alg", "HS256")
+    except jwt.InvalidTokenError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid_token"
+        ) from exc
+
+    try:
+        if alg.upper().startswith(("ES", "RS", "PS")):
+            # Supabase asymmetric signing keys (current default): verify via JWKS.
+            signing_key = _jwk_client().get_signing_key_from_jwt(token).key
+            payload = jwt.decode(
+                token, signing_key, algorithms=[alg], audience="authenticated"
+            )
+        else:
+            # Legacy shared-secret HS256 tokens.
+            payload = jwt.decode(
+                token,
+                settings.supabase_jwt_secret,
+                algorithms=["HS256"],
+                audience="authenticated",
+            )
     except jwt.ExpiredSignatureError as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="token_expired"
         ) from exc
-    except jwt.InvalidTokenError as exc:
+    except Exception as exc:  # bad signature, JWKS lookup failure, unknown kid…
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid_token"
         ) from exc
