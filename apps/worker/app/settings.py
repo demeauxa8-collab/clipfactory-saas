@@ -11,6 +11,11 @@ class Settings(BaseSettings):
     database_url: str
     redis_url: str = "redis://localhost:6379/0"
 
+    # Storage backend: "r2" (prod) uploads to Cloudflare R2; "local" (dev)
+    # copies clips into storage_local_dir so the pipeline runs without R2 creds.
+    storage_backend: Literal["r2", "local"] = "r2"
+    storage_local_dir: str = "/tmp/clipfactory-clips"
+
     # R2
     r2_account_id: str
     r2_access_key_id: str
@@ -51,6 +56,9 @@ class Settings(BaseSettings):
     ffmpeg_bin: str = "ffmpeg"
     ffprobe_bin: str = "ffprobe"
     yt_dlp_bin: str = "yt-dlp"
+    # Optional browser to pull YouTube cookies from (e.g. "chrome") — helps dodge
+    # 403 bot-blocks when downloading. Empty disables the flag.
+    yt_dlp_cookies_from_browser: str = ""
 
     # ---------------- Pipeline routing ----------------
 
