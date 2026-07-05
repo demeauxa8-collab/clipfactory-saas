@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import asyncio
+import os
+import tempfile
+
 import structlog
 from openai import AsyncOpenAI
 
@@ -9,23 +13,46 @@ from ..settings import get_settings
 log = structlog.get_logger()
 
 
+async def _extract_audio(src_path: str, ffmpeg_bin: str) -> str:
+    """Downmix to a compact 16 kHz mono MP3.
+
+    OpenAI's transcription endpoint caps uploads at 25 MB. Sending the raw video
+    blows past that on ~10 min clips, so we strip the video track and compress
+    the audio (a 30 min plan-cap clip lands around ~14 MB at 64 kbps).
+    """
+    fd, out_path = tempfile.mkstemp(suffix=".mp3", prefix="cf_audio_")
+    os.close(fd)
+    proc = await asyncio.create_subprocess_exec(
+        ffmpeg_bin, "-y", "-i", src_path,
+        "-vn", "-ac", "1", "-ar", "16000", "-b:a", "64k",
+        out_path,
+        stdout=asyncio.subprocess.DEVNULL,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    _, stderr = await proc.communicate()
+    if proc.returncode != 0:
+        raise RuntimeError(f"ffmpeg audio extract failed: {stderr.decode()[-400:]}")
+    return out_path
+
+
 async def transcribe(audio_or_video_path: str) -> Transcript:
     settings = get_settings()
     client = AsyncOpenAI(api_key=settings.openai_api_key)
 
-    def _open():
-        return open(audio_or_video_path, "rb")
-
-    # The transcribe endpoint accepts the video file directly; OpenAI extracts
-    # audio server-side. For long videos we might need to chunk — V1 keeps it
-    # simple and relies on the 30 min plan cap.
-    with _open() as fh:
-        resp = await client.audio.transcriptions.create(
-            file=fh,
-            model=settings.openai_transcribe_model,
-            response_format="verbose_json",
-            timestamp_granularities=["word"],
-        )
+    audio_path = await _extract_audio(audio_or_video_path, settings.ffmpeg_bin)
+    try:
+        with open(audio_path, "rb") as fh:
+            resp = await client.audio.transcriptions.create(
+                file=fh,
+                model=settings.openai_transcribe_model,
+                response_format="verbose_json",
+                timestamp_granularities=["word"],
+            )
+    finally:
+        try:
+            os.remove(audio_path)
+        except OSError:
+            pass
 
     text = getattr(resp, "text", "") or ""
     words: list[TranscriptWord] = []
