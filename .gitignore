@@ -18,3 +18,7 @@ build/
 *.log
 clips/
 temp/
+
+# redis dump
+dump.rdb
+*.rdb
