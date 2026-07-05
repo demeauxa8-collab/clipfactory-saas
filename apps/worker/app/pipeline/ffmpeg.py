@@ -240,10 +240,17 @@ async def yt_dlp_download(url: str, out_dir: str) -> str:
         "-f", "bv*[height<=720][ext=mp4]+ba[ext=m4a]/b[height<=720]/best[ext=mp4]/best",
         "--merge-output-format", "mp4",
         "--no-playlist",
+        # YouTube gates media behind a JS "n challenge": needs a JS runtime (deno)
+        # plus the EJS solver script, and browser cookies to dodge 403 bot-blocks.
+        "--remote-components", "ejs:github",
+        "--retries", "5",
+        "--fragment-retries", "10",
         "--quiet", "--no-warnings",
         "-o", out_template,
-        url,
     ]
+    if settings.yt_dlp_cookies_from_browser:
+        cmd += ["--cookies-from-browser", settings.yt_dlp_cookies_from_browser]
+    cmd.append(url)
     code, _, err = await _run(cmd)
     if code != 0:
         raise FFmpegError(f"yt-dlp failed: {err.strip()[-2000:]}")
@@ -257,6 +264,24 @@ async def yt_dlp_download(url: str, out_dir: str) -> str:
 # ---------------- render: single-window ----------------
 
 
+def _vertical_fit_blur_vf(subtitles_path: str | None = None) -> str:
+    """Fit the whole (usually 16:9) frame into 1080x1920 over a blurred fill of
+    itself, so screen recordings, chats and slides stay readable instead of being
+    centre-cropped into an unreadable strip. Optional caption burn-in comes last.
+    """
+    graph = (
+        "split=2[bg][fg];"
+        "[bg]scale=1080:1920:force_original_aspect_ratio=increase,"
+        "crop=1080:1920,boxblur=20:2[bgb];"
+        "[fg]scale=1080:1920:force_original_aspect_ratio=decrease[fgf];"
+        "[bgb][fgf]overlay=(W-w)/2:(H-h)/2,setsar=1"
+    )
+    if subtitles_path:
+        sub_esc = subtitles_path.replace(":", "\\:").replace("'", "\\'")
+        graph += f",subtitles='{sub_esc}'"
+    return graph
+
+
 async def render_vertical_clip(
     *,
     source: str,
@@ -267,10 +292,6 @@ async def render_vertical_clip(
 ) -> None:
     settings = get_settings()
     duration = max(0.1, end - start)
-    vf_chain = ["scale=-2:1920", "crop=1080:1920", "setsar=1"]
-    if subtitles_path:
-        sub_esc = subtitles_path.replace(":", "\\:").replace("'", "\\'")
-        vf_chain.append(f"subtitles='{sub_esc}'")
 
     cmd = [
         settings.ffmpeg_bin,
@@ -278,7 +299,7 @@ async def render_vertical_clip(
         "-ss", f"{start:.3f}",
         "-i", source,
         "-t", f"{duration:.3f}",
-        "-vf", ",".join(vf_chain),
+        "-vf", _vertical_fit_blur_vf(subtitles_path),
         "-af", LOUDNORM_FILTER,
         "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
         "-pix_fmt", "yuv420p",
@@ -311,7 +332,7 @@ async def _render_single_segment_intermediate(
         "-ss", f"{start:.3f}",
         "-i", source,
         "-t", f"{duration:.3f}",
-        "-vf", "scale=-2:1920,crop=1080:1920,setsar=1",
+        "-vf", _vertical_fit_blur_vf(),
         "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
         "-pix_fmt", "yuv420p",
         "-profile:v", "main", "-level", "4.1",
