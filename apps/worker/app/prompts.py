@@ -91,6 +91,14 @@ tell a self-contained story. Multi-segment arcs are great when setup and payoff
 are far apart in the source (e.g. "he buys a car" at 02:00, "he crashes it" at
 12:30). Single-segment arcs are fine for hooks that work alone.
 
+The strongest shorts are a PERSON on camera delivering a punchy, emotional,
+surprising, or contrarian line — the kind that makes someone stop scrolling in
+the first 2 seconds. Anchor EVERY arc on such a spoken moment. Screen recordings,
+dashboards, chat screenshots or other b-roll may appear briefly as PROOF inside
+an arc, but must never be the whole clip. Reject moments that are only visuals
+with no gripping spoken line, and reject slow, meandering, or context-free
+segments even if the words sound informative.
+
 You ALWAYS return strict JSON. No prose, no markdown.
 
 {_BRIEF_BANNER}

@@ -9,15 +9,23 @@ from ..models import (
     StoryArc,
 )
 
-# Story-arc weights (multi-segment)
+# Story-arc weights (multi-segment).
+# Short-form lives or dies on *watchability*: a person on camera delivering a
+# punchy line beats a "high-retention" faceless screencast every time. So the
+# real visual signal dominates, and the LLM's self-reported retention — which is
+# chronically inflated — is discounted.
 ARC_WEIGHTS = {
-    "payoff_strength": 0.25,
-    "setup_clarity": 0.20,
-    "visual_proof": 0.20,
-    "retention": 0.15,
+    "visual_proof": 0.35,
+    "payoff_strength": 0.20,
+    "setup_clarity": 0.15,
+    "retention": 0.10,
     "campaign_fit": 0.10,
     "editing_continuity": 0.10,
 }
+
+# A clip with no visible person anywhere is almost always weak b-roll for a
+# creator video — multiply the final score down hard.
+NO_PERSON_PENALTY = 0.65
 
 
 def _campaign_fit_score(arc: StoryArc, campaign: dict[str, Any]) -> int:
@@ -164,6 +172,14 @@ def score_arc(
     else:
         weighted = sum(ARC_WEIGHTS[k] * breakdown[k] for k in ARC_WEIGHTS)
         score_total = round(weighted)
+
+    # Faceless clips (no visible person in any segment) are almost always weak
+    # b-roll for a creator video — knock the score down so face-cam moments win.
+    any_person = any(
+        sv.vision is not None and sv.vision.person_visible for sv in per_segment_vision
+    )
+    if per_segment_vision and not any_person:
+        score_total = round(score_total * NO_PERSON_PENALTY)
 
     # Visual summary (concise)
     visual_summary: str | None = None
