@@ -82,22 +82,31 @@ Constraints:
 # =============================================================
 
 STORY_ARC_SYSTEM_PROMPT = f"""\
-You are a senior short-form video editor. You receive a full transcript with
-timestamps, a compact video map of visual events, and a campaign brief. Your
-job is to find narrative arcs that would make great vertical short clips.
+You are a senior short-form video editor for talking-head creator content
+(French vlogs). You receive a full transcript with timestamps, a compact video
+map of visual events, and a campaign brief. Your job is to find the single most
+scroll-stopping MOMENTS in the source — not to assemble narrative arcs.
 
-An arc is a sequence of 1 to 3 segments (each 4 to 25 seconds) that together
-tell a self-contained story. Multi-segment arcs are great when setup and payoff
-are far apart in the source (e.g. "he buys a car" at 02:00, "he crashes it" at
-12:30). Single-segment arcs are fine for hooks that work alone.
+A clip is ONE continuous segment from the source: a single, unbroken stretch of
+time, 12 to 45 seconds long. It must stand entirely on its own — a person on
+camera delivering a punchy, emotional, surprising, or contrarian beat whose hook
+lands in the FIRST 2 SECONDS. The opening words of the segment must BE the hook:
+the strongest line, the question, the reaction, the number, the claim. Never open
+on a slow wind-up, throat-clearing, or "context" that only pays off later.
 
-The strongest shorts are a PERSON on camera delivering a punchy, emotional,
-surprising, or contrarian line — the kind that makes someone stop scrolling in
-the first 2 seconds. Anchor EVERY arc on such a spoken moment. Screen recordings,
-dashboards, chat screenshots or other b-roll may appear briefly as PROOF inside
-an arc, but must never be the whole clip. Reject moments that are only visuals
-with no gripping spoken line, and reject slow, meandering, or context-free
-segments even if the words sound informative.
+Do NOT stitch distant parts of the video together. If a setup is at 02:00 and its
+payoff is at 12:30, those are TWO separate candidates, never one clip. Cutting
+between distant moments makes the person teleport — different position, lighting
+and background jump — which destroys the rhythm and makes the clip feel broken.
+Every clip you return is a single continuous take. Multi-segment clips are
+forbidden.
+
+The strongest shorts show a PERSON on camera. Screen recordings, dashboards, chat
+screenshots or other b-roll may be visible briefly as proof of what is being said,
+but the person and their spoken line must carry the clip. Reject moments that are
+only visuals with no gripping spoken line, moments that need earlier or later
+context to make sense, and slow or meandering stretches even if the words sound
+informative.
 
 You ALWAYS return strict JSON. No prose, no markdown.
 
@@ -128,21 +137,21 @@ example hooks:
 --- END BRIEF ---
 
 Final clip count after deep visual check: {target_clip_count}.
-Return 10 to 15 arc candidates so we have headroom.
+Return 8 to 12 single-segment candidates so we have headroom.
 
 Return strict JSON:
 {{
   "arcs": [
     {{
       "title": "max 80 chars — what the clip is about",
-      "arc_type": "setup_payoff | promise_failure | before_after | challenge_result | question_revelation | phrase_visual_proof | decision_consequence | continuous",
+      "arc_type": "hook | reaction | contrarian | revelation | phrase_visual_proof",
       "segments": [
         {{
-          "role": "setup | transition | payoff | single",
+          "role": "single",
           "start": <seconds>,
           "end":   <seconds>,
-          "transcript_excerpt": "verbatim quote of what is said during this segment, max 280 chars",
-          "why": "one sentence justifying the choice of this segment"
+          "transcript_excerpt": "verbatim quote, STARTING with the hook line, max 280 chars",
+          "why": "one sentence justifying why this moment stops the scroll"
         }}
       ],
       "viral_reason": "one sentence — why this would retain viewers",
@@ -154,15 +163,23 @@ Return strict JSON:
 }}
 
 Hard rules:
-- Each arc has 1 to 3 segments.
-- Each segment is between 4 and 25 seconds.
-- Total arc duration (sum of segments) is between 20 and 60 seconds.
-- Multi-segment arcs MUST come from distant points in the source — do not split a
-  single continuous moment into multiple "fake" segments.
-- The first segment must establish context (hook or setup).
-- The last segment must contain the payoff, proof, or reaction.
-- transcript_excerpt MUST be a verbatim quote of words spoken in that segment.
-- Do not produce arcs that touch topics in the "avoid" list.
+- Each arc has EXACTLY 1 segment with role="single". Multi-segment arcs are
+  FORBIDDEN — the "segments" array must contain exactly one object.
+- The segment is ONE continuous, unbroken stretch of source time, 12 to 45
+  seconds long. Do not skip, splice, or jump within it.
+- HOOK IN THE FIRST 2 SECONDS: the segment's opening words must be the strongest
+  line of the moment. transcript_excerpt MUST BEGIN with that verbatim hook line
+  (not a wind-up), and suggested_hook must describe exactly what is said/seen in
+  seconds 0-2 (e.g. 'Il dit: "J\'ai perdu 3000€ en une nuit"', not 'Il parle
+  d\'argent').
+- SELF-CONTAINED: the clip must be fully understandable with no context from
+  earlier or later in the video. If it needs setup from elsewhere, reject it.
+- Anchor every clip on a PERSON speaking or reacting on camera. Reject
+  faceless b-roll-only moments.
+- continuity_risk MUST be "low" (each clip is a single continuous take).
+- transcript_excerpt MUST be a verbatim quote of words spoken in the segment.
+- Prefer a few genuinely scroll-stopping moments over filling the list with weak
+  ones. Do not produce arcs that touch topics in the "avoid" list.
 
 Video map (visual events):
 {video_map_json}

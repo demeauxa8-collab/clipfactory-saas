@@ -9,23 +9,25 @@ from ..models import (
     StoryArc,
 )
 
-# Story-arc weights (multi-segment).
-# Short-form lives or dies on *watchability*: a person on camera delivering a
-# punchy line beats a "high-retention" faceless screencast every time. So the
-# real visual signal dominates, and the LLM's self-reported retention — which is
-# chronically inflated — is discounted.
+# Clip weights. Short-form lives or dies on *watchability* + a hook that lands in
+# the first 2 seconds. Real visual quality and hook strength dominate; the LLM's
+# self-reported retention (chronically inflated) is discounted to near-zero.
 ARC_WEIGHTS = {
-    "visual_proof": 0.35,
-    "payoff_strength": 0.20,
-    "setup_clarity": 0.15,
-    "retention": 0.10,
-    "campaign_fit": 0.10,
-    "editing_continuity": 0.10,
+    "visual_proof": 0.32,
+    "hook_strength": 0.25,
+    "payoff_strength": 0.15,
+    "editing_continuity": 0.15,
+    "campaign_fit": 0.08,
+    "retention": 0.05,
 }
 
 # A clip with no visible person anywhere is almost always weak b-roll for a
 # creator video — multiply the final score down hard.
-NO_PERSON_PENALTY = 0.65
+NO_PERSON_PENALTY = 0.55
+
+# Clips are single-segment by policy. If the LLM disobeys and returns 2-3
+# segments, crush the score so a stitched (teleporting) clip never wins.
+MULTI_SEGMENT_MULTIPLIER = 0.6
 
 
 def _campaign_fit_score(arc: StoryArc, campaign: dict[str, Any]) -> int:
@@ -58,19 +60,19 @@ def _editing_continuity_score(arc: StoryArc, per_segment_vision: list[SegmentVis
     high-risk transitions claimed by the LLM."""
     base = 100
     if arc.continuity_risk == "high":
-        base -= 25
+        base -= 35
     elif arc.continuity_risk == "medium":
-        base -= 10
+        base -= 15
 
-    # Multi-segment: small base penalty (concat is always slightly harder than a single cut)
+    # Multi-segment clips teleport between distant moments — heavily penalised.
     if len(arc.segments) > 1:
-        base -= 5 * (len(arc.segments) - 1)
+        base -= 40 * (len(arc.segments) - 1)
 
     for sv in per_segment_vision:
         if sv.vision is None:
             continue
         if "no face" in sv.vision.problems:
-            base -= 8
+            base -= 12
         if "dark" in sv.vision.problems:
             base -= 5
         if "unreadable slide" in sv.vision.problems:
@@ -82,8 +84,6 @@ def _editing_continuity_score(arc: StoryArc, per_segment_vision: list[SegmentVis
 def _payoff_strength(arc: StoryArc, per_segment_vision: list[SegmentVision]) -> int:
     """Strength of the last segment's payoff. Uses LLM signals + last-segment vision."""
     base = arc.estimated_retention or 60
-    if arc.arc_type in {"setup_payoff", "promise_failure", "before_after", "decision_consequence"}:
-        base += 10
     if per_segment_vision:
         last = per_segment_vision[-1].vision
         if last is not None:
@@ -94,21 +94,37 @@ def _payoff_strength(arc: StoryArc, per_segment_vision: list[SegmentVision]) -> 
     return max(0, min(100, base))
 
 
-def _setup_clarity(arc: StoryArc, per_segment_vision: list[SegmentVision]) -> int:
-    """How clearly the first segment frames what the clip is about."""
-    base = 60
-    first_seg = arc.segments[0] if arc.segments else None
-    if first_seg and first_seg.transcript_excerpt:
-        # Excerpt length is a proxy for clarity: too short → unclear, too long → bloated
-        excerpt_len = len(first_seg.transcript_excerpt)
-        if 40 <= excerpt_len <= 200:
+_HOOK_KEYWORDS = (
+    "jamais", "incroyable", "fou", "choqu", "impossible", "€", "euros",
+    "personne", "tout le monde", "arnaque", "secret",
+)
+
+
+def _hook_strength(arc: StoryArc, per_segment_vision: list[SegmentVision]) -> int:
+    """How hard the first 2 seconds grab the viewer: tight, punchy, face on camera."""
+    first = arc.segments[0] if arc.segments else None
+    if first is None:
+        return 40
+    base = 45
+    dur = max(0.0, first.end - first.start)
+    if dur <= 30:  # tight, fast-hitting hook
+        base += 10
+    ex = first.transcript_excerpt or ""
+    if 30 <= len(ex) <= 180:  # meaty but not bloated
+        base += 15
+    low = ex.lower()
+    if ("?" in ex) or any(w in low for w in _HOOK_KEYWORDS):
+        base += 10
+    if per_segment_vision and per_segment_vision[0].vision is not None:
+        v = per_segment_vision[0].vision
+        if v.person_visible:
             base += 15
-        if arc.suggested_hook:
+        if v.energy >= 70:
             base += 10
-    if per_segment_vision:
-        first_v = per_segment_vision[0].vision
-        if first_v is not None and first_v.person_visible:
-            base += 8
+        elif v.energy >= 55:
+            base += 5
+    if arc.suggested_hook and len(arc.suggested_hook) >= 15:
+        base += 5
     return max(0, min(100, base))
 
 
@@ -148,13 +164,13 @@ def score_arc(
     visual = _visual_proof(per_segment_vision)
     campaign_fit = _campaign_fit_score(arc, campaign)
     payoff = _payoff_strength(arc, per_segment_vision)
-    setup = _setup_clarity(arc, per_segment_vision)
+    hook = _hook_strength(arc, per_segment_vision)
     editing = _editing_continuity_score(arc, per_segment_vision)
     retention = _retention(arc)
 
     breakdown: dict[str, int] = {
         "payoff_strength": payoff,
-        "setup_clarity": setup,
+        "hook_strength": hook,
         "campaign_fit": campaign_fit,
         "editing_continuity": editing,
         "retention": retention,
@@ -180,6 +196,11 @@ def score_arc(
     )
     if per_segment_vision and not any_person:
         score_total = round(score_total * NO_PERSON_PENALTY)
+
+    # Single-segment is policy; crush any stitched clip that slipped through.
+    if len(arc.segments) > 1:
+        score_total = round(score_total * MULTI_SEGMENT_MULTIPLIER)
+    score_total = max(0, min(100, score_total))
 
     # Visual summary (concise)
     visual_summary: str | None = None

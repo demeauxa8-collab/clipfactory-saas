@@ -415,6 +415,11 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
     workdir = os.path.join(settings.worker_tmp_dir, job_id)
     Path(workdir).mkdir(parents=True, exist_ok=True)
 
+    # Idempotent re-runs: clear any clips from a previous attempt so re-processing
+    # this job never hits the (job_id, idx) unique constraint.
+    async with pool.acquire() as conn:
+        await conn.execute("delete from clips where job_id = $1", job_id)
+
     ctx = JobContext(
         job_id=job_id,
         user_id=user_id,

@@ -123,7 +123,7 @@ async def select_story_arcs(
         model=model,
         system=STORY_ARC_SYSTEM_PROMPT,
         user=user,
-        max_tokens=4096,
+        max_tokens=8192,
         temperature=0.3,
     )
     arcs = _parse_arcs(result.payload)

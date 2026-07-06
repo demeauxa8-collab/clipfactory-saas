@@ -37,7 +37,9 @@ async def _extract_audio(src_path: str, ffmpeg_bin: str) -> str:
 
 async def transcribe(audio_or_video_path: str) -> Transcript:
     settings = get_settings()
-    client = AsyncOpenAI(api_key=settings.openai_api_key)
+    # Generous timeout + retries: whisper-1 on a ~30 min clip can be slow, and a
+    # single transient timeout should not fail the whole job.
+    client = AsyncOpenAI(api_key=settings.openai_api_key, timeout=180.0, max_retries=3)
 
     audio_path = await _extract_audio(audio_or_video_path, settings.ffmpeg_bin)
     try:

@@ -82,7 +82,7 @@ class OpenRouterProvider(LLMProvider):
         return int(usage.get("prompt_tokens") or 0), int(usage.get("completion_tokens") or 0)
 
     async def _post_and_extract(
-        self, body: dict[str, Any], model: str, label: str, attempts: int = 3
+        self, body: dict[str, Any], model: str, label: str, attempts: int = 5
     ) -> LLMCallResult:
         """POST then JSON-parse, retrying when the model returns non-JSON.
 
@@ -160,6 +160,10 @@ class OpenRouterProvider(LLMProvider):
             "model": model,
             "max_tokens": max_tokens,
             "temperature": temperature,
+            # Disable "thinking" here too: on vision calls Gemini's reasoning
+            # tokens otherwise consume the whole max_tokens budget and truncate
+            # the JSON to a few characters.
+            "reasoning": {"max_tokens": 0},
             "response_format": {"type": "json_object"},
             "messages": [
                 {"role": "system", "content": system},

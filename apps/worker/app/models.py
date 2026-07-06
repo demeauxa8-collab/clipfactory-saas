@@ -5,12 +5,18 @@ from typing import Any, Literal
 
 SegmentRole = Literal["setup", "transition", "payoff", "single"]
 ArcType = Literal[
+    # Single-segment moment types (current policy)
+    "hook",
+    "reaction",
+    "contrarian",
+    "revelation",
+    "phrase_visual_proof",
+    # Legacy multi-segment types (kept for backward compat / defensive parsing)
     "setup_payoff",
     "promise_failure",
     "before_after",
     "challenge_result",
     "question_revelation",
-    "phrase_visual_proof",
     "decision_consequence",
     "continuous",
 ]
