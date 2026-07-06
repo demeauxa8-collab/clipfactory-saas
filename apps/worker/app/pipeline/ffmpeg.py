@@ -111,6 +111,39 @@ async def detect_scene_changes(path: str, threshold: float = 0.4) -> list[float]
     return timestamps
 
 
+_BLACK_RE = re.compile(r"black_start:(-?\d+(?:\.\d+)?)\s+black_end:(-?\d+(?:\.\d+)?)")
+
+
+async def detect_black_intervals(
+    source: str,
+    start: float,
+    *,
+    window_seconds: float = 1.5,
+    min_black_seconds: float = 0.1,
+    pix_threshold: float = 0.10,
+) -> list[tuple[float, float]]:
+    """Detect black (near-fully dark) intervals in [start, start+window] of the
+    source. Returns (black_start, black_end) offsets RELATIVE to `start` — the
+    input-seek resets output timestamps so 0.0 is the window start. Used to catch
+    clips that open on a black frame. Best-effort: any ffmpeg error yields []."""
+    settings = get_settings()
+    code, _, err = await _run(
+        [
+            settings.ffmpeg_bin,
+            "-hide_banner", "-nostats",
+            "-ss", f"{max(0.0, start):.3f}",
+            "-t", f"{max(0.1, window_seconds):.3f}",
+            "-i", source,
+            "-vf", f"blackdetect=d={min_black_seconds}:pix_th={pix_threshold}",
+            "-an",
+            "-f", "null", "-",
+        ]
+    )
+    if code != 0:
+        return []
+    return [(float(m.group(1)), float(m.group(2))) for m in _BLACK_RE.finditer(err)]
+
+
 # ---------------- frame extraction ----------------
 
 
@@ -282,6 +315,45 @@ def _vertical_fit_blur_vf(subtitles_path: str | None = None) -> str:
     return graph
 
 
+def _vertical_face_crop_vf(center_x: float, subtitles_path: str | None = None) -> str:
+    """Crop a full-height 9:16 window centred on the main speaker's face, then
+    scale to 1080x1920. Unlike the fit+blur builder this fills the frame edge to
+    edge (no letterbox), so a talking head reads at full size instead of a thin
+    strip. Reserve this for talking-head shots; keep fit+blur for screens/slides.
+
+    `center_x` (0..1) is the average horizontal face position. The window width
+    is 9:16 of the source height, and its x is clamped so it never leaves the
+    frame. Expressions use iw/ih so it stays resolution-independent. Optional
+    caption burn-in comes last (same escaping as `_vertical_fit_blur_vf`).
+    """
+    cx = max(0.0, min(1.0, center_x))
+    # w = even 9:16 slice of the full height; x centres on the face (cx*iw) minus
+    # half the window, clamped to [0, iw-ow]. In crop's x expr, `ow` is the crop
+    # output width and `iw` the source width; commas inside min/max must be
+    # escaped so the filtergraph parser keeps this as one filter.
+    crop = (
+        "crop=floor(ih*9/16/2)*2:ih:"
+        f"max(0\\,min(iw-ow\\,{cx:.4f}*iw-ow/2)):0"
+    )
+    graph = f"{crop},scale=1080:1920,setsar=1"
+    if subtitles_path:
+        sub_esc = subtitles_path.replace(":", "\\:").replace("'", "\\'")
+        graph += f",subtitles='{sub_esc}'"
+    return graph
+
+
+def _framing_vf(
+    framing: tuple[str, float] | None, subtitles_path: str | None = None
+) -> str:
+    """Pick the vertical filter chain. `framing` is ('face_crop', center_x) or
+    ('fit_blur', _)/None. Default = fit+blur (current behaviour), so nothing
+    changes until the caller opts into face-crop.
+    """
+    if framing is not None and framing[0] == "face_crop":
+        return _vertical_face_crop_vf(framing[1], subtitles_path)
+    return _vertical_fit_blur_vf(subtitles_path)
+
+
 async def render_vertical_clip(
     *,
     source: str,
@@ -289,6 +361,7 @@ async def render_vertical_clip(
     end: float,
     out_path: str,
     subtitles_path: str | None = None,
+    framing: tuple[str, float] | None = None,
 ) -> None:
     settings = get_settings()
     duration = max(0.1, end - start)
@@ -299,7 +372,7 @@ async def render_vertical_clip(
         "-ss", f"{start:.3f}",
         "-i", source,
         "-t", f"{duration:.3f}",
-        "-vf", _vertical_fit_blur_vf(subtitles_path),
+        "-vf", _framing_vf(framing, subtitles_path),
         "-af", LOUDNORM_FILTER,
         "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
         "-pix_fmt", "yuv420p",
@@ -322,6 +395,7 @@ async def _render_single_segment_intermediate(
     start: float,
     end: float,
     out_path: str,
+    framing: tuple[str, float] | None = None,
 ) -> None:
     """Render a single segment as a temporary file. Used as input to the concat."""
     settings = get_settings()
@@ -332,7 +406,7 @@ async def _render_single_segment_intermediate(
         "-ss", f"{start:.3f}",
         "-i", source,
         "-t", f"{duration:.3f}",
-        "-vf", _vertical_fit_blur_vf(),
+        "-vf", _framing_vf(framing),
         "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
         "-pix_fmt", "yuv420p",
         "-profile:v", "main", "-level", "4.1",
@@ -353,6 +427,7 @@ async def render_montage_clip(
     workdir: str,
     subtitles_path: str | None = None,
     audio_crossfade_seconds: float = 0.15,
+    framing: tuple[str, float] | None = None,
 ) -> float:
     """Render a multi-segment vertical clip from a horizontal source.
 
@@ -371,7 +446,8 @@ async def render_montage_clip(
         # Single segment — use the simpler renderer
         s, e = segments[0]
         await render_vertical_clip(
-            source=source, start=s, end=e, out_path=out_path, subtitles_path=subtitles_path
+            source=source, start=s, end=e, out_path=out_path,
+            subtitles_path=subtitles_path, framing=framing,
         )
         return max(0.1, e - s)
 
@@ -381,7 +457,7 @@ async def render_montage_clip(
     for idx, (s, e) in enumerate(segments):
         seg_path = os.path.join(workdir, f"_seg_{idx:02d}.mp4")
         await _render_single_segment_intermediate(
-            source=source, start=s, end=e, out_path=seg_path
+            source=source, start=s, end=e, out_path=seg_path, framing=framing
         )
         intermediate_paths.append(seg_path)
         seg_durations.append(max(0.1, e - s))

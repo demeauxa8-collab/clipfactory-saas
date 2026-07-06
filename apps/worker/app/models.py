@@ -105,6 +105,8 @@ class VisionResult:
     proof_objects: list[str]
     problems: list[str]
     visual_score: int           # 0-100
+    face_center_x: float | None = None   # 0=left .. 1=right, None if no face
+    burned_captions: bool = False        # source already has captions burned in
 
 
 @dataclass

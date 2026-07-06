@@ -5,12 +5,16 @@ For a multi-segment montage, each word's source timestamp is recomputed on the
 final timeline (offset by the cumulative duration of previous segments, minus
 the crossfade overlaps).
 
-Captions are rendered "karaoke" style: a chunk of ~5 words stays on screen and
+Captions are rendered "karaoke" style: a tight 2-3 word chunk stays on screen and
 the word currently being spoken is highlighted in an accent colour with a slight
 size punch. We emit one Dialogue event per word (each holding until the next word
 starts) instead of the classic ASS ``\\k`` fill, because per-word colour overrides
 let us highlight a single active word rather than progressively colouring every
 already-spoken word. Word timings are already computed, so this adds no cost.
+
+Text is shown all-caps and the highlight only lands on content words (French
+stop-words and very short tokens are never accented), so the caption never fights
+the creator's own burned-in subtitles.
 """
 
 from __future__ import annotations
@@ -34,36 +38,83 @@ ASS_STYLE_FORMAT = (
     "ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, "
     "MarginL, MarginR, MarginV, Encoding"
 )
-ASS_DEFAULT_STYLE = (
-    "Style: Default,Inter,72,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,"
-    "1,0,0,0,100,100,0,0,1,4,2,2,80,80,200,1"
-)
-ASS_HEADER = "\n".join(
-    [
-        "[Script Info]",
-        "ScriptType: v4.00+",
-        "PlayResX: 1080",
-        "PlayResY: 1920",
-        "WrapStyle: 2",
-        "ScaledBorderAndShadow: yes",
-        "",
-        "[V4+ Styles]",
-        ASS_STYLE_FORMAT,
-        ASS_DEFAULT_STYLE,
-        "",
-        "[Events]",
-        "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text",
-        "",
-    ]
-)
+# Full-screen framing means captions sit ON the video (not in a dead blur
+# band): bigger font (110), thicker outline (6) and a bottom margin that keeps
+# the baseline around ~80% of the 1920 px height. Fit-blur clips keep the 16:9
+# band in the middle (sharp zone ends ~y=1264), so their captions use a larger
+# margin to sit right under the video instead of floating in the blur.
+FACE_CROP_MARGIN_V = 400
+FIT_BLUR_MARGIN_V = 620
+
+
+def _ass_header(margin_v: int) -> str:
+    style = (
+        "Style: Default,Inter,110,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,"
+        f"1,0,0,0,100,100,0,0,1,6,2,2,80,80,{margin_v},1"
+    )
+    return "\n".join(
+        [
+            "[Script Info]",
+            "ScriptType: v4.00+",
+            "PlayResX: 1080",
+            "PlayResY: 1920",
+            "WrapStyle: 2",
+            "ScaledBorderAndShadow: yes",
+            "",
+            "[V4+ Styles]",
+            ASS_STYLE_FORMAT,
+            style,
+            "",
+            "[Events]",
+            "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text",
+            "",
+        ]
+    )
+
+
+# Kept for callers/tests that reference the default header.
+ASS_HEADER = _ass_header(FACE_CROP_MARGIN_V)
 
 
 # Active-word highlight colour as ASS BBGGRR (inline \c overrides take 6 hex
-# digits + a trailing '&'). This is a vivid yellow (RGB 255,229,0) which reads
-# well over the white outline on most footage.
-HIGHLIGHT_BGR = "00E5FF"
+# digits + a trailing '&'). A punchy green (#00E676 -> BGR 76E600) that is
+# clearly ours, so it never gets mistaken for a creator's own yellow subtitles.
+HIGHLIGHT_BGR = "76E600"
 # Size punch applied to the active word (percent of the style font size).
 HIGHLIGHT_SCALE_PERCENT = 112
+
+# Early caption cut when the silence between two words reaches this (seconds).
+PAUSE_CUT_SECONDS = 0.3
+
+# French function words we never highlight (articles, pronouns, short
+# prepositions, auxiliaries). Elided forms use the typographic apostrophe.
+_APOS = "’"  # noqa: RUF001 (typographic apostrophe is intentional data)
+FRENCH_STOPWORDS = frozenset(
+    {
+        "le", "la", "les", "un", "une", "de", "des", "du", "et", "ou", "à",
+        "au", "aux", "en", "y", "ce", "ça", "se", "ne", "que", "qui", "je",
+        "tu", "il", "on", "me", "te", "mais", "donc", "or", "ni", "car", "si",
+        "est", "es", "a", "ai", "as",
+        "vous", "nous", "elle", "ils", "elles", "lui", "leur", "leurs",
+        "mon", "ma", "mes", "ton", "ta", "tes", "son", "sa", "ses",
+        "nos", "vos", "cet", "cette", "ces", "dont", "quoi",
+        "même", "alors", "aussi", "bien", "très", "plus", "moins", "comme",
+        "tout", "tous", "toute", "toutes", "quand", "dans", "pour", "avec",
+        "sans", "sous", "sur", "par", "pas",
+        "l" + _APOS, "d" + _APOS, "c" + _APOS, "s" + _APOS, "n" + _APOS,
+        "qu" + _APOS, "j" + _APOS, "m" + _APOS, "t" + _APOS,
+    }
+)
+
+
+def _is_highlightable(word: str) -> bool:
+    """Content words only: skip stop-words and tokens of 2 chars or fewer."""
+    w = word.strip().lower()
+    if _APOS in w:
+        # Merged elisions (j'ai, l'objectif): judge the head word alone,
+        # the elided prefix is always a function word.
+        w = w.rsplit(_APOS, 1)[-1]
+    return len(w) > 2 and w not in FRENCH_STOPWORDS
 
 
 def _sanitize_word(word: str) -> str:
@@ -72,25 +123,77 @@ def _sanitize_word(word: str) -> str:
     return word.strip().replace("{", "(").replace("}", ")")
 
 
-def _render_karaoke_chunk(words: list[str], active_idx: int) -> str:
-    """Render a chunk with the word at ``active_idx`` highlighted.
+# Horizontal fit: at font 110, ~15 uppercase Inter chars fill the ~90% safe
+# area of a 1080 px frame. Longer lines wrap on \N; a line that still exceeds
+# the budget (single very long word) shrinks the whole event's font instead of
+# bleeding off both edges.
+MAX_LINE_CHARS = 15
+BASE_FONT_SIZE = 110
+MIN_FONT_SIZE = 64
 
-    The active word gets an accent colour and a small scale punch; ``\\r`` resets
-    back to the Default style for the rest of the line.
+
+def _layout_lines(displays: list[str]) -> list[list[int]]:
+    """Greedy word-wrap by character count; returns lines of display indices."""
+    lines: list[list[int]] = []
+    current: list[int] = []
+    length = 0
+    for idx, word in enumerate(displays):
+        candidate = len(word) if not current else length + 1 + len(word)
+        if current and candidate > MAX_LINE_CHARS:
+            lines.append(current)
+            current = [idx]
+            length = len(word)
+        else:
+            current.append(idx)
+            length = candidate
+    if current:
+        lines.append(current)
+    return lines
+
+
+def _render_karaoke_chunk(words: list[str], active_idx: int) -> str:
+    """Render an all-caps chunk with the word at ``active_idx`` highlighted.
+
+    The active word gets an accent colour and a small scale punch. Stop-words
+    and very short tokens are shown plain even when active. The highlight is
+    closed with explicit overrides (not ``\\r``, which would also cancel the
+    ``\\fs`` shrink applied to over-long lines).
     """
-    parts: list[str] = []
+    entries: list[tuple[int, str, str]] = []
     for idx, raw in enumerate(words):
         word = _sanitize_word(raw)
         if not word:
             continue
-        if idx == active_idx:
-            parts.append(
-                f"{{\\c&H{HIGHLIGHT_BGR}&\\fscx{HIGHLIGHT_SCALE_PERCENT}"
-                f"\\fscy{HIGHLIGHT_SCALE_PERCENT}}}{word}{{\\r}}"
-            )
-        else:
-            parts.append(word)
-    return " ".join(parts)
+        # .upper() keeps accents (é->É) and the U+2019 apostrophe intact.
+        entries.append((idx, word, word.upper()))
+    if not entries:
+        return ""
+
+    displays = [display for _, _, display in entries]
+    lines = _layout_lines(displays)
+    longest = max(
+        sum(len(displays[i]) for i in line) + len(line) - 1 for line in lines
+    )
+    prefix = ""
+    if longest > MAX_LINE_CHARS:
+        shrunk = max(MIN_FONT_SIZE, BASE_FONT_SIZE * MAX_LINE_CHARS // longest)
+        prefix = f"{{\\fs{shrunk}}}"
+
+    line_texts: list[str] = []
+    for line in lines:
+        parts: list[str] = []
+        for i in line:
+            orig_idx, word, display = entries[i]
+            if orig_idx == active_idx and _is_highlightable(word):
+                parts.append(
+                    f"{{\\c&H{HIGHLIGHT_BGR}&\\fscx{HIGHLIGHT_SCALE_PERCENT}"
+                    f"\\fscy{HIGHLIGHT_SCALE_PERCENT}}}{display}"
+                    "{\\c&HFFFFFF&\\fscx100\\fscy100}"
+                )
+            else:
+                parts.append(display)
+        line_texts.append(" ".join(parts))
+    return prefix + "\\N".join(line_texts)
 
 
 def _retimed_words_for_montage(
@@ -124,14 +227,66 @@ def _retimed_words_for_montage(
     return out
 
 
+def _split_run(
+    run: list[tuple[float, float, str]], max_size: int
+) -> list[list[tuple[float, float, str]]]:
+    """Split one pause-free run into balanced groups of ``max_size`` words max.
+
+    Balancing avoids a stranded 1-word tail (e.g. 4 words -> [2, 2], not [3, 1]):
+    a single-word group only ever comes out of a run that is itself one word,
+    i.e. one already isolated by pauses on both sides.
+    """
+    max_size = max(1, max_size)
+    if len(run) <= max_size:
+        return [run]
+    groups: list[list[tuple[float, float, str]]] = []
+    i, total = 0, len(run)
+    while i < total:
+        remaining = total - i
+        if remaining == max_size + 1:
+            size = max(1, remaining - 2)  # leave a clean 2-word tail instead of 1
+        elif remaining <= max_size:
+            size = remaining
+        else:
+            size = max_size
+        groups.append(run[i : i + size])
+        i += size
+    return groups
+
+
+def _group_timed(
+    timed: list[tuple[float, float, str]], chunk_words: int
+) -> list[list[tuple[float, float, str]]]:
+    """Group word-timed tokens into caption chunks of ``chunk_words`` max.
+
+    Chunks break early on a >= ``PAUSE_CUT_SECONDS`` silence between words; within
+    a pause-free run words are packed and balanced to avoid orphan 1-word chunks.
+    """
+    runs: list[list[tuple[float, float, str]]] = []
+    run: list[tuple[float, float, str]] = []
+    for item in timed:
+        if run and (item[0] - run[-1][1]) >= PAUSE_CUT_SECONDS:
+            runs.append(run)
+            run = []
+        run.append(item)
+    if run:
+        runs.append(run)
+
+    groups: list[list[tuple[float, float, str]]] = []
+    for r in runs:
+        groups.extend(_split_run(r, chunk_words))
+    return groups
+
+
 def write_ass_for_montage(
     *,
     transcript: Transcript,
     segments: list[MontageSegment],
     out_path: str,
     audio_crossfade_seconds: float = 0.15,
-    chunk_words: int = 5,
+    chunk_words: int = 3,
     karaoke: bool = True,
+    margin_v: int = FACE_CROP_MARGIN_V,
 ) -> bool:
     """Generate an ASS file for a multi-segment montage.
 
@@ -149,8 +304,7 @@ def write_ass_for_montage(
         return False
 
     lines: list[str] = []
-    for i in range(0, len(timed), chunk_words):
-        group = timed[i : i + chunk_words]
+    for group in _group_timed(timed, chunk_words):
         if not group:
             continue
         chunk_start = group[0][0]
@@ -190,7 +344,9 @@ def write_ass_for_montage(
     if not lines:
         return False
 
-    Path(out_path).write_text(ASS_HEADER + "\n".join(lines) + "\n", encoding="utf-8")
+    Path(out_path).write_text(
+        _ass_header(margin_v) + "\n".join(lines) + "\n", encoding="utf-8"
+    )
     return True
 
 
@@ -201,7 +357,7 @@ def write_ass_for_window(
     window_start: float,
     window_end: float,
     out_path: str,
-    chunk_words: int = 5,
+    chunk_words: int = 3,
 ) -> bool:
     segments = [MontageSegment(role="single", start=window_start, end=window_end)]
     return write_ass_for_montage(

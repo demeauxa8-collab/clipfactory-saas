@@ -37,9 +37,10 @@ from ..settings import get_settings
 from ..storage import upload_file
 from .analyze import select_simple_segments
 from .boundaries import snap_arc_segments
-from .captions import write_ass_for_montage
+from .captions import FACE_CROP_MARGIN_V, FIT_BLUR_MARGIN_V, write_ass_for_montage
 from .ffmpeg import (
     FFmpegError,
+    detect_black_intervals,
     probe_duration_seconds,
     render_montage_clip,
     validate_rendered_clip,
@@ -47,7 +48,11 @@ from .ffmpeg import (
 )
 from .score import rank_and_pick, score_arc
 from .story_arcs import select_story_arcs
-from .transcribe import transcribe, transcript_to_timestamped_lines
+from .transcribe import (
+    transcribe,
+    transcript_to_timestamped_lines,
+    words_in_window,
+)
 from .verify import verify_arcs
 from .video_map import build_video_map
 from .vision import deep_vision_for_arc
@@ -370,6 +375,124 @@ def _segments_to_jsonb(candidate: MontageCandidate) -> str:
     )
 
 
+# --- Render-time decisions from deep vision --------------------------------
+
+# Clips open on the first segment; single-segment by policy, so the first
+# segment's vision drives framing and caption decisions for the whole clip.
+_BLACK_GUARD_WINDOW_SECONDS = 1.5
+_BLACK_GUARD_PREROLL_SECONDS = 0.12
+_EXCERPT_MAX_CHARS = 280
+
+
+def _first_segment_vision(cand: MontageCandidate):
+    per_seg = cand.vision_per_segment
+    return per_seg[0].vision if per_seg else None
+
+
+def _face_time_ratio(ctx: JobContext, start: float, end: float) -> float | None:
+    """Fraction of [start, end] covered by video-map events that are NOT screen
+    recordings (decor "desktop"). None when the map has no overlap to judge."""
+    if ctx.video_map is None or not ctx.video_map.events or end <= start:
+        return None
+    covered = 0.0
+    non_desktop = 0.0
+    for evt in ctx.video_map.events:
+        overlap = min(end, evt.end) - max(start, evt.start)
+        if overlap <= 0:
+            continue
+        covered += overlap
+        if evt.decor != "desktop":
+            non_desktop += overlap
+    if covered <= 0:
+        return None
+    return non_desktop / covered
+
+
+def _framing_for_candidate(ctx: JobContext, cand: MontageCandidate) -> tuple[str, float]:
+    """Pick the vertical framing from the first segment's deep vision, backed by
+    the cheap video map when the deep vision is screen-flagged or missing.
+
+    Talking heads read best face-cropped edge-to-edge; screen-dominant clips
+    keep the fit+blur letterbox so dashboards stay readable. A brief screen
+    insert must not flip a mostly-face clip to fit_blur, so a screen-flagged
+    vision is overruled when the map says the window is mostly non-desktop.
+    `x or 0.5` would swallow a legitimate 0.0 (face hard-left), so the centre
+    is taken with an explicit None-check.
+    """
+    vision = _first_segment_vision(cand)
+    seg = cand.segments[0] if cand.segments else None
+    ratio = _face_time_ratio(ctx, seg.start, seg.end) if seg else None
+    if vision is not None and vision.person_visible:
+        center = vision.face_center_x if vision.face_center_x is not None else 0.5
+        if vision.decor != "desktop screen" and "unreadable slide" not in vision.problems:
+            return ("face_crop", center)
+        if ratio is not None and ratio >= 0.6:
+            return ("face_crop", center)
+    elif ratio is not None and ratio >= 0.75:
+        # Deep vision missing/unparsed but the map is confident it's a person.
+        return ("face_crop", 0.5)
+    return ("fit_blur", 0.5)
+
+
+def _rebuild_excerpts(ctx: JobContext, cand: MontageCandidate) -> None:
+    """Rewrite each segment excerpt (and the candidate excerpt) from the words
+    actually inside the final window, so the DB describes what we render, not the
+    LLM's promise. Runs AFTER snapping and the black-open guard. Mutates in place.
+    """
+    if ctx.transcript is None:
+        return
+    parts: list[str] = []
+    for seg in cand.segments:
+        words = words_in_window(ctx.transcript, seg.start, seg.end)
+        text = " ".join(w.word for w in words).strip()
+        seg.transcript_excerpt = text
+        if text:
+            parts.append(text)
+    cand.transcript_excerpt = (" ".join(parts).strip()[:_EXCERPT_MAX_CHARS]) or None
+
+
+async def _guard_black_open(
+    *,
+    ctx: JobContext,
+    cand: MontageCandidate,
+    candidate_idx: int,
+    log_ctx,
+) -> None:
+    """Kill clips that open on a black frame (the judges measured one opening on
+    0.833 s of black). Detect black over the first 1.5 s of the clip; if it covers
+    the very start, advance the start past the black and re-align to the next
+    spoken word (minus a small pre-roll). Mutates the first segment in place.
+    """
+    if ctx.transcript is None or not ctx.source_path or not cand.segments:
+        return
+    seg = cand.segments[0]
+    intervals = await detect_black_intervals(
+        ctx.source_path, seg.start, window_seconds=_BLACK_GUARD_WINDOW_SECONDS
+    )
+    # Only an interval that covers the very start means the clip opens on black.
+    opening = next(((bs, be) for bs, be in intervals if bs <= 0.05 and be > bs), None)
+    if opening is None:
+        return
+    black_end = seg.start + opening[1]
+    new_start = black_end
+    for w in ctx.transcript.words:
+        if w.start >= black_end:
+            new_start = max(black_end, w.start - _BLACK_GUARD_PREROLL_SECONDS)
+            break
+    # Never collapse the window or push the start past the end.
+    if new_start <= seg.start + 0.02 or new_start >= seg.end - 1.0:
+        return
+    old_start = seg.start
+    seg.start = new_start
+    log_ctx.info(
+        "pipeline.black_open_fixed",
+        candidate_idx=candidate_idx,
+        old_start=round(old_start, 3),
+        new_start=round(new_start, 3),
+        black_seconds=round(opening[1] - opening[0], 3),
+    )
+
+
 # =============================================================
 # Main entry
 # =============================================================
@@ -575,11 +698,35 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
         for candidate_idx, cand in enumerate(ctx.montage_candidates):
             out_clip = os.path.join(workdir, f"clip_{candidate_idx}.mp4")
             ass_path = os.path.join(workdir, f"clip_{candidate_idx}.ass")
+
+            # Advance past any black frame the clip would open on (may move the
+            # first segment's start), then decide framing/captions/excerpt from
+            # the final window.
+            await _guard_black_open(
+                ctx=ctx, cand=cand, candidate_idx=candidate_idx, log_ctx=log_ctx
+            )
+            framing = _framing_for_candidate(ctx, cand)
+            log_ctx.info(
+                "pipeline.framing",
+                candidate_idx=candidate_idx,
+                mode=framing[0],
+                center_x=framing[1],
+            )
+            _rebuild_excerpts(ctx, cand)
+
+            # Always burn our captions: creator burned-ins are sparse emphasis
+            # keywords, not full subtitles, and a caption-less clip loses
+            # retention (vision.burned_captions is kept as data only).
             has_captions = write_ass_for_montage(
                 transcript=ctx.transcript,
                 segments=cand.segments,
                 out_path=ass_path,
                 audio_crossfade_seconds=0.15 if len(cand.segments) > 1 else 0.0,
+                margin_v=(
+                    FACE_CROP_MARGIN_V
+                    if framing[0] == "face_crop"
+                    else FIT_BLUR_MARGIN_V
+                ),
             )
             seg_tuples = [(s.start, s.end) for s in cand.segments]
 
@@ -590,16 +737,38 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                     out_path=out_clip,
                     workdir=os.path.join(workdir, f"render_{candidate_idx}"),
                     subtitles_path=ass_path if has_captions else None,
+                    framing=framing,
                 )
             except FFmpegError:
-                # Retry without subtitles
-                rendered_dur = await render_montage_clip(
-                    source=ctx.source_path or "",
-                    segments=seg_tuples,
-                    out_path=out_clip,
-                    workdir=os.path.join(workdir, f"render_{candidate_idx}"),
-                    subtitles_path=None,
-                )
+                # Retry without subtitles (keep framing — face-crop is valid on
+                # 16:9 sources; the burn-in escaping is the usual failure).
+                try:
+                    rendered_dur = await render_montage_clip(
+                        source=ctx.source_path or "",
+                        segments=seg_tuples,
+                        out_path=out_clip,
+                        workdir=os.path.join(workdir, f"render_{candidate_idx}"),
+                        subtitles_path=None,
+                        framing=framing,
+                    )
+                except FFmpegError:
+                    if framing[0] == "fit_blur":
+                        raise
+                    # Last resort: the crop filter itself failed — fall back to
+                    # the always-valid fit-blur framing rather than losing the
+                    # whole job.
+                    log_ctx.warning(
+                        "pipeline.face_crop_render_failed",
+                        candidate_idx=candidate_idx,
+                    )
+                    rendered_dur = await render_montage_clip(
+                        source=ctx.source_path or "",
+                        segments=seg_tuples,
+                        out_path=out_clip,
+                        workdir=os.path.join(workdir, f"render_{candidate_idx}"),
+                        subtitles_path=None,
+                        framing=("fit_blur", 0.5),
+                    )
 
             qc = await validate_rendered_clip(
                 path=out_clip,
@@ -862,7 +1031,14 @@ async def _run_story_path(
         arcs=snap_report.arcs_seen,
         segments=snap_report.segments_seen,
         changed=snap_report.segments_changed,
+        failed=snap_report.segments_failed,
     )
+    if snap_report.segments_failed:
+        log.warning(
+            "pipeline.snap_segments_failed",
+            failed=snap_report.segments_failed,
+            segments=snap_report.segments_seen,
+        )
     ctx.story_arcs = snapped
     return snapped
 
@@ -905,7 +1081,14 @@ async def _run_simple_path(
         arcs=snap_report.arcs_seen,
         segments=snap_report.segments_seen,
         changed=snap_report.segments_changed,
+        failed=snap_report.segments_failed,
     )
+    if snap_report.segments_failed:
+        log.warning(
+            "pipeline.snap_segments_simple_failed",
+            failed=snap_report.segments_failed,
+            segments=snap_report.segments_seen,
+        )
     ctx.story_arcs = snapped
     return snapped
 

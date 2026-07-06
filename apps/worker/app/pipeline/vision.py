@@ -27,6 +27,16 @@ def _coerce_int(v: Any, default: int = 0) -> int:
         return default
 
 
+def _coerce_face_center_x(v: Any) -> float | None:
+    """Clamp face_center_x to [0, 1]; tolerate absence/null/garbage."""
+    if v is None:
+        return None
+    try:
+        return max(0.0, min(1.0, float(v)))
+    except (TypeError, ValueError):
+        return None
+
+
 def _parse_vision(payload: Any) -> VisionResult | None:
     if not isinstance(payload, dict):
         return None
@@ -38,6 +48,8 @@ def _parse_vision(payload: Any) -> VisionResult | None:
         proof_objects=[str(x) for x in (payload.get("proof_objects") or []) if x],
         problems=[str(x) for x in (payload.get("problems") or []) if x],
         visual_score=_coerce_int(payload.get("visual_score")),
+        face_center_x=_coerce_face_center_x(payload.get("face_center_x")),
+        burned_captions=bool(payload.get("burned_captions", False)),
     )
 
 

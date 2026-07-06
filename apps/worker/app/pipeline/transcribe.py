@@ -13,6 +13,76 @@ from ..settings import get_settings
 log = structlog.get_logger()
 
 
+# --- French elision repair -------------------------------------------------
+# whisper-1 returns French elisions as separate, apostrophe-less tokens
+# ("J", "ai" for "j'ai"). We stitch them back together with the typographic
+# apostrophe so both the LLM prompt text and the burned-in captions read right.
+_APOSTROPHE = "’"  # noqa: RUF001 (typographic apostrophe is intentional data)
+_ELIDED_TOKENS = frozenset(
+    {"j", "l", "d", "c", "s", "n", "m", "t", "qu", "jusqu", "puisqu", "lorsqu"}
+)
+# Vowels (+ h muet) that trigger elision when they open the following word.
+_ELISION_VOWELS = "aeiouyéèêëàâîïôûùh"
+
+
+def _elision_starts_with_vowel(word: str) -> bool:
+    w = word.strip()
+    return bool(w) and w[0].lower() in _ELISION_VOWELS
+
+
+def _merge_two(a: TranscriptWord, b: TranscriptWord) -> TranscriptWord:
+    return TranscriptWord(
+        word=f"{a.word.strip()}{_APOSTROPHE}{b.word.strip()}",
+        start=a.start,
+        end=b.end,
+    )
+
+
+def merge_french_elisions(words: list[TranscriptWord]) -> list[TranscriptWord]:
+    """Rebuild French elisions that whisper-1 splits and strips of apostrophes.
+
+    Pure function: returns a new list; the input words are never mutated. An
+    elidable token ("j", "l", "qu", …) is fused with the following vowel-initial
+    word using U+2019 ("J" + "ai" -> "J'ai"), and the fixed "aujourd" + "hui"
+    contraction becomes "aujourd'hui". The merged word spans [start_a, end_b].
+    """
+    if not words:
+        return []
+
+    # Pass 1 — the fixed "aujourd'hui" (aujourd is not otherwise elidable).
+    stage: list[TranscriptWord] = []
+    i, n = 0, len(words)
+    while i < n:
+        cur = words[i]
+        if (
+            i + 1 < n
+            and cur.word.strip().lower() == "aujourd"
+            and words[i + 1].word.strip().lower() == "hui"
+        ):
+            stage.append(_merge_two(cur, words[i + 1]))
+            i += 2
+            continue
+        stage.append(cur)
+        i += 1
+
+    # Pass 2 — elidable token + vowel-initial next word.
+    out: list[TranscriptWord] = []
+    i, m = 0, len(stage)
+    while i < m:
+        cur = stage[i]
+        if (
+            i + 1 < m
+            and cur.word.strip().lower() in _ELIDED_TOKENS
+            and _elision_starts_with_vowel(stage[i + 1].word)
+        ):
+            out.append(_merge_two(cur, stage[i + 1]))
+            i += 2
+            continue
+        out.append(cur)
+        i += 1
+    return out
+
+
 async def _extract_audio(src_path: str, ffmpeg_bin: str) -> str:
     """Downmix to a compact 16 kHz mono MP3.
 
@@ -70,6 +140,10 @@ async def transcribe(audio_or_video_path: str) -> Transcript:
             )
         except Exception:
             continue
+
+    # Repair French elisions before anything downstream (LLM prompt text and
+    # burned-in captions both read from these words).
+    words = merge_french_elisions(words)
 
     lang = getattr(resp, "language", None)
     log.info("transcribe.done", words=len(words), language=lang)

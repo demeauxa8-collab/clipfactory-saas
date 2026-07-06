@@ -71,7 +71,9 @@ def _parse_arcs(payload: Any) -> list[StoryArc]:
                 continue
             start = _coerce_float(s.get("start"))
             end = _coerce_float(s.get("end"))
-            if end - start < 3 or end - start > 30:
+            # Single-segment policy asks for 12-45s clips; accept a margin on
+            # both sides and let scoring/snapping arbitrate inside it.
+            if end - start < 8 or end - start > 50:
                 continue
             segments.append(
                 ArcSegmentSpec(
@@ -85,7 +87,7 @@ def _parse_arcs(payload: Any) -> list[StoryArc]:
         if not segments or len(segments) > 3:
             continue
         total = sum(s.end - s.start for s in segments)
-        if total < 15 or total > 70:
+        if total < 8 or total > 70:
             continue
         arcs.append(
             StoryArc(

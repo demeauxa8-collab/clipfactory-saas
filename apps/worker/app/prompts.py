@@ -281,7 +281,9 @@ Return strict JSON:
   "action": "talking head | reaction | pointing at screen | demo | other",
   "proof_objects": ["string", ...],
   "problems": ["dark" | "no face" | "unreadable slide" | "blurry" | "low contrast", ...],
-  "visual_score": 0..100
+  "visual_score": 0..100,
+  "face_center_x": 0.0..1.0 or null,
+  "burned_captions": true|false
 }}
 
 Scoring rules:
@@ -289,4 +291,11 @@ Scoring rules:
   moment has visible action or visible proof of what is being said.
 - visual_score < 40 when the frames are dark, faceless, or unreadable.
 - visual_score reflects how well this would perform as a vertical short.
+- face_center_x is the average horizontal position of the main speaker's face
+  across the frames (0.0 = far left edge, 0.5 = centre, 1.0 = far right edge),
+  or null when no face is visible. It is used to re-crop the source to a
+  full-height 9:16 vertical framing centred on the speaker.
+- burned_captions is true when the source already has subtitles/captions burned
+  into the picture (visible on-screen text tracking the speech), so we avoid
+  adding a second caption layer.
 """
