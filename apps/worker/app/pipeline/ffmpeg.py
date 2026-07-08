@@ -16,6 +16,12 @@ class FFmpegError(RuntimeError):
 
 LOUDNORM_FILTER = "loudnorm=I=-14:TP=-1.5:LRA=11"
 
+# Intentional dip-to-white at a montage joint: the outgoing segment fades to
+# white over its last WHITE_DIP_SECONDS and the incoming one fades in from white
+# over its first WHITE_DIP_SECONDS. Baked into the intermediates so the concat
+# stays a hard cut; the audio acrossfade is unchanged and no frames are trimmed.
+WHITE_DIP_SECONDS = 0.10
+
 
 @dataclass(frozen=True)
 class MediaProbe:
@@ -142,6 +148,34 @@ async def detect_black_intervals(
     if code != 0:
         return []
     return [(float(m.group(1)), float(m.group(2))) for m in _BLACK_RE.finditer(err)]
+
+
+async def detect_black_open_for_segments(
+    source: str,
+    segments: list[tuple[float, float]],
+    *,
+    window_seconds: float = 1.5,
+    min_black_seconds: float = 0.1,
+    pix_threshold: float = 0.10,
+) -> list[list[tuple[float, float]]]:
+    """Per-segment black-open detection for montages. Runs `detect_black_intervals`
+    at the opening of each segment and returns one interval list per segment (same
+    index order). Lets the runner guard every joint of a multi-segment clip, not
+    just the first segment's opening, without changing `detect_black_intervals`.
+    Offsets are RELATIVE to each segment's own start (0.0 == that segment's start).
+    """
+    results: list[list[tuple[float, float]]] = []
+    for start, _end in segments:
+        results.append(
+            await detect_black_intervals(
+                source,
+                start,
+                window_seconds=window_seconds,
+                min_black_seconds=min_black_seconds,
+                pix_threshold=pix_threshold,
+            )
+        )
+    return results
 
 
 # ---------------- frame extraction ----------------
@@ -389,24 +423,112 @@ async def render_vertical_clip(
 # ---------------- render: multi-segment montage ----------------
 
 
+Framing = tuple[str, float]
+
+
+def _normalize_framings(
+    framings: Framing | list[Framing | None] | None,
+    n: int,
+) -> list[Framing | None]:
+    """Normalise the montage framing input into exactly one framing per segment.
+
+    Accepts, for backward compatibility, either a single framing tuple
+    (`('face_crop', cx)` / `('fit_blur', _)`) applied to every segment, or a
+    per-segment list. `None` (or a `None` entry) means fit+blur for that segment.
+    A single-entry list is replicated across all segments. Any other length that
+    is neither 1 nor `n` is a caller error.
+    """
+    if framings is None:
+        return [None] * n
+    if isinstance(framings, tuple):
+        return [framings] * n
+    items = list(framings)
+    if not items:
+        return [None] * n
+    if len(items) == 1:
+        return [items[0]] * n
+    if len(items) == n:
+        return items
+    raise FFmpegError(
+        f"framings length {len(items)} does not match {n} segments"
+    )
+
+
+def _normalize_transitions(transitions: list[str] | None, n: int) -> list[str]:
+    """Normalise the per-joint transition list. A montage of `n` segments has
+    `n - 1` joints; `None` means all hard cuts. Valid values: 'cut' | 'white_dip'.
+    """
+    joints = max(0, n - 1)
+    if transitions is None:
+        return ["cut"] * joints
+    items = list(transitions)
+    if len(items) != joints:
+        raise FFmpegError(
+            f"transitions length {len(items)} must equal segments-1 ({joints})"
+        )
+    for value in items:
+        if value not in ("cut", "white_dip"):
+            raise FFmpegError(f"unknown transition {value!r}")
+    return items
+
+
+def _segment_intermediate_vf(
+    framing: Framing | None,
+    *,
+    duration: float,
+    fade_in_white: bool = False,
+    fade_out_white: bool = False,
+) -> str:
+    """Build the video filter chain for one montage intermediate: the segment's
+    own framing first, then any dip-to-white fades at joints handled by THIS
+    segment. Fade-in sits at the head (st=0) and fade-out at the tail
+    (st=duration-WHITE_DIP_SECONDS); neither trims frames, so durations are
+    unchanged. Pure/deterministic so the command builder is testable.
+    """
+    vf = _framing_vf(framing)
+    fades: list[str] = []
+    if fade_in_white:
+        fades.append(f"fade=t=in:st=0:d={WHITE_DIP_SECONDS:.2f}:color=white")
+    if fade_out_white:
+        st = max(0.0, duration - WHITE_DIP_SECONDS)
+        fades.append(
+            f"fade=t=out:st={st:.3f}:d={WHITE_DIP_SECONDS:.2f}:color=white"
+        )
+    if fades:
+        vf = vf + "," + ",".join(fades)
+    return vf
+
+
 async def _render_single_segment_intermediate(
     *,
     source: str,
     start: float,
     end: float,
     out_path: str,
-    framing: tuple[str, float] | None = None,
+    framing: Framing | None = None,
+    fade_in_white: bool = False,
+    fade_out_white: bool = False,
 ) -> None:
-    """Render a single segment as a temporary file. Used as input to the concat."""
+    """Render a single segment as a temporary file. Used as input to the concat.
+
+    `fade_in_white` / `fade_out_white` bake the dip-to-white at the joints this
+    segment touches; the caller decides them from the transition list.
+    """
     settings = get_settings()
     duration = max(0.1, end - start)
+    vf = _segment_intermediate_vf(
+        framing,
+        duration=duration,
+        fade_in_white=fade_in_white,
+        fade_out_white=fade_out_white,
+    )
     cmd = [
         settings.ffmpeg_bin,
         "-hide_banner", "-loglevel", "error", "-y",
         "-ss", f"{start:.3f}",
         "-i", source,
         "-t", f"{duration:.3f}",
-        "-vf", _framing_vf(framing),
+        "-vf", vf,
         "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
         "-pix_fmt", "yuv420p",
         "-profile:v", "main", "-level", "4.1",
@@ -427,27 +549,43 @@ async def render_montage_clip(
     workdir: str,
     subtitles_path: str | None = None,
     audio_crossfade_seconds: float = 0.15,
-    framing: tuple[str, float] | None = None,
+    framings: Framing | list[Framing | None] | None = None,
+    transitions: list[str] | None = None,
+    framing: Framing | None = None,          # legacy single-framing alias
 ) -> float:
     """Render a multi-segment vertical clip from a horizontal source.
 
+    Framing is PER-SEGMENT: pass `framings` as a list with one entry per segment
+    (`('face_crop', cx)` / `('fit_blur', _)` / `None` for fit+blur). A single
+    framing tuple — or the legacy `framing=` alias — is replicated across every
+    segment. `transitions` has one entry per joint (`len(segments) - 1`), each
+    'cut' (hard cut, current behaviour) or 'white_dip' (intentional dip-to-white
+    baked into the two intermediates around the joint). `None` means all cuts.
+
     Strategy:
-      1. Render each segment to an intermediate mp4 (vertical, AAC audio).
+      1. Render each segment to an intermediate mp4 (vertical, AAC audio), with
+         its own framing and any white-dip fades at its joints.
       2. Concat with filter_complex: video = hard cut concat, audio = acrossfade
          between adjacent segments (default 150 ms), then loudness-normalize.
       3. Optional subtitles burn-in on the final mux.
 
-    Returns the rendered duration in seconds.
+    Returns the rendered duration in seconds (unchanged by the fades).
     """
     settings = get_settings()
     if not segments:
         raise FFmpegError("no segments to render")
-    if len(segments) == 1:
-        # Single segment — use the simpler renderer
+    n = len(segments)
+    seg_framings = _normalize_framings(
+        framings if framings is not None else framing, n
+    )
+    seg_transitions = _normalize_transitions(transitions, n)
+
+    if n == 1:
+        # Single segment — use the simpler renderer (no joints, no fades).
         s, e = segments[0]
         await render_vertical_clip(
             source=source, start=s, end=e, out_path=out_path,
-            subtitles_path=subtitles_path, framing=framing,
+            subtitles_path=subtitles_path, framing=seg_framings[0],
         )
         return max(0.1, e - s)
 
@@ -456,8 +594,15 @@ async def render_montage_clip(
     seg_durations: list[float] = []
     for idx, (s, e) in enumerate(segments):
         seg_path = os.path.join(workdir, f"_seg_{idx:02d}.mp4")
+        # This segment dips to white at the joint before it (fade in) and/or the
+        # joint after it (fade out) when that joint is a 'white_dip'.
+        fade_in_white = idx > 0 and seg_transitions[idx - 1] == "white_dip"
+        fade_out_white = idx < n - 1 and seg_transitions[idx] == "white_dip"
         await _render_single_segment_intermediate(
-            source=source, start=s, end=e, out_path=seg_path, framing=framing
+            source=source, start=s, end=e, out_path=seg_path,
+            framing=seg_framings[idx],
+            fade_in_white=fade_in_white,
+            fade_out_white=fade_out_white,
         )
         intermediate_paths.append(seg_path)
         seg_durations.append(max(0.1, e - s))
@@ -467,8 +612,8 @@ async def render_montage_clip(
     for path in intermediate_paths:
         inputs_args.extend(["-i", path])
 
-    n = len(intermediate_paths)
-    # Video: pure concat (cut transitions)
+    # Video: pure concat (hard cut joints; any white-dip is already baked into
+    # the intermediates around the joint).
     v_chain = "".join(f"[{i}:v:0]" for i in range(n)) + f"concat=n={n}:v=1:a=0[vraw]"
     # Audio: pairwise acrossfade
     a_steps: list[str] = []

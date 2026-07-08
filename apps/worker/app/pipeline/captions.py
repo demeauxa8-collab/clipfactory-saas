@@ -201,12 +201,16 @@ def _retimed_words_for_montage(
     transcript: Transcript,
     segments: list[MontageSegment],
     audio_crossfade_seconds: float,
-) -> list[tuple[float, float, str]]:
+) -> list[tuple[float, float, str, int]]:
     """For each word in the transcript that falls inside one of the segments,
     map its (start, end) onto the final clip timeline. Returns a list of
-    (start_in_clip, end_in_clip, word).
+    (start_in_clip, end_in_clip, word, segment_idx).
+
+    The trailing ``segment_idx`` is the index of the *originating* segment
+    (position in ``segments``), so a caption group can later inherit its
+    segment's vertical margin and never straddle a segment joint.
     """
-    out: list[tuple[float, float, str]] = []
+    out: list[tuple[float, float, str, int]] = []
     offset = 0.0
     for i, seg in enumerate(segments):
         seg_dur = max(0.0, seg.end - seg.start)
@@ -219,7 +223,7 @@ def _retimed_words_for_montage(
             local_end = min(seg_dur, w.end - seg.start)
             if local_end <= local_start:
                 continue
-            out.append((offset + local_start, offset + local_end, w.word))
+            out.append((offset + local_start, offset + local_end, w.word, i))
         # Move offset forward, accounting for the crossfade overlap with NEXT segment
         offset += seg_dur
         if i < len(segments) - 1:
@@ -228,8 +232,8 @@ def _retimed_words_for_montage(
 
 
 def _split_run(
-    run: list[tuple[float, float, str]], max_size: int
-) -> list[list[tuple[float, float, str]]]:
+    run: list[tuple[float, float, str, int]], max_size: int
+) -> list[list[tuple[float, float, str, int]]]:
     """Split one pause-free run into balanced groups of ``max_size`` words max.
 
     Balancing avoids a stranded 1-word tail (e.g. 4 words -> [2, 2], not [3, 1]):
@@ -239,7 +243,7 @@ def _split_run(
     max_size = max(1, max_size)
     if len(run) <= max_size:
         return [run]
-    groups: list[list[tuple[float, float, str]]] = []
+    groups: list[list[tuple[float, float, str, int]]] = []
     i, total = 0, len(run)
     while i < total:
         remaining = total - i
@@ -255,24 +259,30 @@ def _split_run(
 
 
 def _group_timed(
-    timed: list[tuple[float, float, str]], chunk_words: int
-) -> list[list[tuple[float, float, str]]]:
+    timed: list[tuple[float, float, str, int]], chunk_words: int
+) -> list[list[tuple[float, float, str, int]]]:
     """Group word-timed tokens into caption chunks of ``chunk_words`` max.
 
-    Chunks break early on a >= ``PAUSE_CUT_SECONDS`` silence between words; within
-    a pause-free run words are packed and balanced to avoid orphan 1-word chunks.
+    Chunks break early on a >= ``PAUSE_CUT_SECONDS`` silence between words AND at
+    every segment joint (a change of ``segment_idx``): a group must never straddle
+    two segments, or the crossfade retiming would make the karaoke run through the
+    joint out of sync. Within a pause-free, single-segment run words are packed and
+    balanced to avoid orphan 1-word chunks.
     """
-    runs: list[list[tuple[float, float, str]]] = []
-    run: list[tuple[float, float, str]] = []
+    runs: list[list[tuple[float, float, str, int]]] = []
+    run: list[tuple[float, float, str, int]] = []
     for item in timed:
-        if run and (item[0] - run[-1][1]) >= PAUSE_CUT_SECONDS:
+        if run and (
+            (item[0] - run[-1][1]) >= PAUSE_CUT_SECONDS
+            or item[3] != run[-1][3]
+        ):
             runs.append(run)
             run = []
         run.append(item)
     if run:
         runs.append(run)
 
-    groups: list[list[tuple[float, float, str]]] = []
+    groups: list[list[tuple[float, float, str, int]]] = []
     for r in runs:
         groups.extend(_split_run(r, chunk_words))
     return groups
@@ -287,6 +297,7 @@ def write_ass_for_montage(
     chunk_words: int = 3,
     karaoke: bool = True,
     margin_v: int = FACE_CROP_MARGIN_V,
+    margins_per_segment: list[int] | None = None,
 ) -> bool:
     """Generate an ASS file for a multi-segment montage.
 
@@ -294,6 +305,13 @@ def write_ass_for_montage(
     writer (same chunking, no offset). With ``karaoke=True`` (default) the chunk
     stays on screen while the active word is highlighted word-by-word; with
     ``karaoke=False`` each chunk is a single static line.
+
+    ``margin_v`` sets the style's default vertical margin (header) and is the
+    fallback for every event. When ``margins_per_segment`` is given (one MarginV
+    per segment, e.g. 400 for a face-crop segment and 620 for a fit-blur one) each
+    Dialogue event instead carries the MarginV of the segment its words belong to,
+    so caption height follows the per-segment framing. A group never straddles a
+    joint, so every event maps to exactly one segment margin.
     """
     timed = _retimed_words_for_montage(
         transcript=transcript,
@@ -312,6 +330,15 @@ def write_ass_for_montage(
         if chunk_end <= chunk_start:
             continue
         chunk_words_text = [g[2] for g in group]
+        # The whole group belongs to one segment (runs break at every joint), so
+        # its MarginV is well defined. 0 => the event inherits the style default
+        # (i.e. the global ``margin_v`` in the header), preserving the old output
+        # when ``margins_per_segment`` is None.
+        seg_idx = group[0][3]
+        if margins_per_segment is not None and 0 <= seg_idx < len(margins_per_segment):
+            ev_margin = margins_per_segment[seg_idx]
+        else:
+            ev_margin = 0
 
         if not karaoke:
             text = _render_karaoke_chunk(chunk_words_text, active_idx=-1)
@@ -319,14 +346,14 @@ def write_ass_for_montage(
                 continue
             lines.append(
                 f"Dialogue: 0,{_format_ass_time(chunk_start)},"
-                f"{_format_ass_time(chunk_end)},Default,,0,0,0,,{text}"
+                f"{_format_ass_time(chunk_end)},Default,,0,0,{ev_margin},,{text}"
             )
             continue
 
         # One event per word: each highlights its word and holds until the next
         # word starts (the last holds to the chunk end). The union covers the
         # whole chunk with no gap or flicker.
-        for j, (word_start, word_end, _word) in enumerate(group):
+        for j, (word_start, word_end, _word, _seg) in enumerate(group):
             ev_start = word_start
             ev_end = group[j + 1][0] if j + 1 < len(group) else chunk_end
             if ev_end <= ev_start:
@@ -338,7 +365,7 @@ def write_ass_for_montage(
                 continue
             lines.append(
                 f"Dialogue: 0,{_format_ass_time(ev_start)},"
-                f"{_format_ass_time(ev_end)},Default,,0,0,0,,{text}"
+                f"{_format_ass_time(ev_end)},Default,,0,0,{ev_margin},,{text}"
             )
 
     if not lines:

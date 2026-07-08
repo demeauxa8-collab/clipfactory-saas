@@ -71,9 +71,10 @@ def _parse_arcs(payload: Any) -> list[StoryArc]:
                 continue
             start = _coerce_float(s.get("start"))
             end = _coerce_float(s.get("end"))
-            # Single-segment policy asks for 12-45s clips; accept a margin on
-            # both sides and let scoring/snapping arbitrate inside it.
-            if end - start < 8 or end - start > 50:
+            # Montage-v2: each segment is 3-30s. A short segment is only valid
+            # inside a multi-segment arc; the total-duration gate below still
+            # enforces a minimum overall clip length.
+            if end - start < 3 or end - start > 30:
                 continue
             segments.append(
                 ArcSegmentSpec(
@@ -87,8 +88,24 @@ def _parse_arcs(payload: Any) -> list[StoryArc]:
         if not segments or len(segments) > 3:
             continue
         total = sum(s.end - s.start for s in segments)
-        if total < 8 or total > 70:
+        if total < 12 or total > 60:
             continue
+
+        link_reason = (
+            str(raw.get("link_reason"))[:280] if raw.get("link_reason") else None
+        )
+        # A multi-segment arc without a stated narrative link is downgraded (kept
+        # but flagged) — the scorer will treat its joints as ordinary cuts.
+        if len(segments) > 1 and not link_reason:
+            log.warning(
+                "story_arcs.multi_segment_missing_link_reason",
+                title=str(raw.get("title", ""))[:80],
+                n_segments=len(segments),
+            )
+
+        cf_raw = raw.get("campaign_fit")
+        campaign_fit_llm = _coerce_int(cf_raw) if cf_raw is not None else None
+
         arcs.append(
             StoryArc(
                 title=str(raw.get("title", ""))[:120],
@@ -99,6 +116,13 @@ def _parse_arcs(payload: Any) -> list[StoryArc]:
                 continuity_risk=str(raw.get("continuity_risk", "medium")),
                 suggested_hook=(
                     str(raw.get("suggested_hook"))[:120] if raw.get("suggested_hook") else None
+                ),
+                link_reason=link_reason,
+                campaign_fit_llm=campaign_fit_llm,
+                campaign_fit_reason=(
+                    str(raw.get("campaign_fit_reason"))[:280]
+                    if raw.get("campaign_fit_reason")
+                    else None
                 ),
             )
         )

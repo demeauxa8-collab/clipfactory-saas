@@ -89,6 +89,11 @@ class StoryArc:
     estimated_retention: int       # 0-100
     continuity_risk: str            # "low" | "medium" | "high"
     suggested_hook: str | None = None
+    # Montage-v2: narrative thread between distant segments (required for
+    # multi-segment arcs) and the LLM's own campaign-fit self-report.
+    link_reason: str | None = None
+    campaign_fit_llm: int | None = None    # 0-100, LLM self-report, None if absent
+    campaign_fit_reason: str | None = None
 
 
 # =============================================================

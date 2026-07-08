@@ -259,3 +259,104 @@ def test_no_words_returns_false(tmp_path) -> None:
         audio_crossfade_seconds=0.0,
     )
     assert ok is False
+
+
+# ---------------------------------------------------------------------------
+# Per-segment captions: MarginV per event, segment attribution, joint cuts
+# ---------------------------------------------------------------------------
+
+def _margin_of(line: str) -> int:
+    """MarginV is Dialogue field index 7 (times carry no comma, so a plain
+    comma split is unambiguous up to the Text field)."""
+    return int(line.split(",")[7])
+
+
+def test_default_margin_field_is_zero_when_no_per_segment(tmp_path) -> None:
+    # Without margins_per_segment every event keeps MarginV=0 (style default),
+    # exactly like before this feature.
+    words = [
+        TranscriptWord("objectif", 0.0, 0.4),
+        TranscriptWord("clair", 0.45, 0.9),
+    ]
+    out = tmp_path / "clip.ass"
+    write_ass_for_montage(
+        transcript=Transcript(text="", words=words),
+        segments=[MontageSegment(role="single", start=0.0, end=0.9)],
+        out_path=str(out),
+        audio_crossfade_seconds=0.0,
+    )
+    lines = _dialogue_lines(str(out))
+    assert lines
+    assert all(_margin_of(ln) == 0 for ln in lines)
+
+
+def test_per_segment_margins_applied_per_event(tmp_path) -> None:
+    # Two distant segments (setup 0-2s, payoff 10-12s) with distinct framings:
+    # face-crop margin 400 for segment 0, fit-blur margin 620 for segment 1.
+    words = [
+        TranscriptWord("alpha", 0.0, 0.4),
+        TranscriptWord("bravo", 0.5, 0.9),
+        TranscriptWord("charlie", 10.0, 10.4),
+        TranscriptWord("delta", 10.5, 10.9),
+    ]
+    out = tmp_path / "clip.ass"
+    write_ass_for_montage(
+        transcript=Transcript(text="", words=words),
+        segments=[
+            MontageSegment(role="setup", start=0.0, end=2.0),
+            MontageSegment(role="payoff", start=10.0, end=12.0),
+        ],
+        out_path=str(out),
+        audio_crossfade_seconds=0.15,
+        margins_per_segment=[400, 620],
+    )
+    lines = _dialogue_lines(str(out))
+    saw_seg0 = saw_seg1 = False
+    for ln in lines:
+        text = _text_of(ln)
+        margin = _margin_of(ln)
+        # A group never straddles the joint, so no event mixes both segments.
+        assert not (
+            ("ALPHA" in text or "BRAVO" in text)
+            and ("CHARLIE" in text or "DELTA" in text)
+        )
+        if "ALPHA" in text or "BRAVO" in text:
+            assert margin == 400
+            saw_seg0 = True
+        elif "CHARLIE" in text or "DELTA" in text:
+            assert margin == 620
+            saw_seg1 = True
+    assert saw_seg0 and saw_seg1
+
+
+def test_group_cut_at_segment_joint_without_pause(tmp_path) -> None:
+    # Contiguous on the final timeline (no >=0.3s pause) but crossing the joint:
+    # alpha/bravo live in segment 0, charlie in segment 1. Without the joint cut
+    # a single 3-word chunk would swallow all three; the cut must split them.
+    words = [
+        TranscriptWord("alpha", 0.0, 0.3),
+        TranscriptWord("bravo", 0.35, 0.6),
+        TranscriptWord("charlie", 0.65, 0.95),
+    ]
+    out = tmp_path / "clip.ass"
+    write_ass_for_montage(
+        transcript=Transcript(text="", words=words),
+        segments=[
+            MontageSegment(role="setup", start=0.0, end=0.65),
+            MontageSegment(role="payoff", start=0.65, end=2.0),
+        ],
+        out_path=str(out),
+        audio_crossfade_seconds=0.0,
+        margins_per_segment=[400, 620],
+    )
+    groups = _group_texts(str(out))
+    assert groups == ["ALPHA BRAVO", "CHARLIE"]
+    for g in groups:
+        assert not ("BRAVO" in g and "CHARLIE" in g)
+    # And the margins follow: the "ALPHA BRAVO" events sit at 400, "CHARLIE" at 620.
+    for ln in _dialogue_lines(str(out)):
+        text = _text_of(ln)
+        if "CHARLIE" in text:
+            assert _margin_of(ln) == 620
+        else:
+            assert _margin_of(ln) == 400
