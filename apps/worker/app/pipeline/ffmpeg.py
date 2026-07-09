@@ -300,6 +300,13 @@ async def validate_rendered_clip(
 async def yt_dlp_download(url: str, out_dir: str) -> str:
     settings = get_settings()
     Path(out_dir).mkdir(parents=True, exist_ok=True)
+
+    # Idempotent re-runs: reuse a source already sitting in the workdir instead
+    # of re-hitting YouTube (repeated downloads of the same video get 403'd).
+    cached = [p for p in Path(out_dir).glob("source.*") if p.stat().st_size > 0]
+    if cached:
+        return str(cached[0].resolve())
+
     out_template = os.path.join(out_dir, "source.%(ext)s")
 
     cmd = [
