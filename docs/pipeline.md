@@ -137,18 +137,34 @@ Provider : OpenRouter avec `qwen/qwen3-vl-flash` par défaut. Fallback Claude Ha
 
 ---
 
-## Continuity entre segments éloignés
+## Continuity entre segments éloignés (montage-v2, 2026-07-08)
 
-Quand on concat 2 segments distants (genre 2:00 et 12:30 source), faire un **crossfade audio 150ms** :
+Le montage multi-segments est le concept central : 1 à 3 moments distants
+assemblés quand ils forment un vrai fil narratif (`link_reason` obligatoire
+dans la réponse LLM pour tout arc multi-segments).
 
-```bash
-ffmpeg -i seg1.mp4 -i seg2.mp4 -filter_complex \
-  "[0:a][1:a]acrossfade=d=0.15[a]; \
-   [0:v][1:v]concat=n=2:v=1:a=0[v]" \
-  -map "[v]" -map "[a]" out.mp4
-```
+Au rendu, chaque **joint** entre deux segments adjacents est classé par
+`score.joint_compatibility(vision_a, vision_b)` à partir de la deep vision
+par segment :
 
-V1 : crossfade audio uniquement, pas de fondu visuel (cut sec image). Suffit pour rendre la transition propre.
+- `continuous` (même décor, même présence personne) → **cut sec** + crossfade
+  audio 150 ms (comportement historique) ;
+- `scene_change` (décors différents, ou vision manquante) → **dip-to-white
+  0,10 s** de part et d'autre du joint (fade-out blanc fin du segment sortant,
+  fade-in blanc début de l'entrant, cuits dans les intermédiaires), audio
+  toujours en acrossfade 150 ms. La "téléportation" devient une transition
+  intentionnelle.
+
+Le même classement alimente la pénalité de continuité du scoring (-3 par
+joint continu, -8 par changement de scène, -6 si vision absente) — plus
+d'écrasement forfaitaire des montages.
+
+Le **cadrage est décidé par segment** (plus par clip) : plan visage →
+crop 9:16 plein cadre centré sur `face_center_x` (renvoyé par la deep
+vision) ; plan écran/slide → fit+blur letterbox. Les captions portent une
+MarginV par événement selon le segment (400 plein cadre, 620 fit+blur) et
+les groupes karaoké sont coupés aux joints. La garde anti-frames-noires
+(blackdetect) s'applique au début de chaque segment.
 
 ---
 
@@ -164,7 +180,19 @@ Livré sur `main` (merge `draft/parallel-workers`). Roadmap complète : `docs/pi
 | Sous-titres karaoké | `pipeline/captions.py` (1 event par mot, override couleur `\c` + scale) | mot prononcé surligné en temps réel |
 | Persist `why` par segment | `runner.py` (`_segments_to_jsonb`) + `score.py` | la justification LLM de chaque segment est stockée (explicabilité) |
 
-Encore en roadmap (non implémenté) : recadrage face-aware, courbe d'énergie audio, dédup/diversité des arcs (MMR), trim des silences, variantes de titre/hook, thumbnail. Voir `docs/pipeline-improvements.md`.
+Livré ensuite (passe qualité 2026-07-06 → 2026-07-08, commits `7463048`/`5255a96`) :
+
+| Brique | Où (code) | Effet |
+| --- | --- | --- |
+| Recadrage face-aware par segment | `ffmpeg.py` (`_vertical_face_crop_vf`), `prompts.py`/`vision.py` (`face_center_x`) | visage plein cadre (~50 % de hauteur) sur les plans visage, fit+blur réservé aux écrans |
+| Élisions françaises | `transcribe.py` (`merge_french_elisions`) | whisper-1 renvoie "J","ai" sans apostrophe → "J'ai" (U+2019) partout (captions, excerpts, prompts) |
+| Captions style Submagic | `captions.py` | MAJUSCULES, 2-3 mots/groupe coupés sur pauses et joints, wrap `\N` + shrink `\fs` anti-débordement, highlight vert #00E676 jamais sur mots-outils |
+| Snap frontières v2 | `boundaries.py` | frontières de phrase par gaps adaptatifs (p85) — la ponctuation n'existe pas dans les mots whisper ; extension avant jusqu'à +8 s pour finir la phrase |
+| Garde anti-noir | `ffmpeg.py` (`detect_black_open_for_segments`) + `runner.py` | plus d'ouverture de segment sur des frames noires |
+| Transitions par joint | `ffmpeg.py` (`transitions=`), `score.py` (`joint_compatibility`) | dip-to-white 0,10 s sur changement de scène, cut sec sinon |
+| Cache source | `ffmpeg.py` (`yt_dlp_download`) | re-runs idempotents, plus de re-téléchargement YouTube (403 sur répétition) |
+
+Encore en roadmap (non implémenté) : cadrage par scène À L'INTÉRIEUR d'un segment (un segment mixte visage+écran garde un seul mode), suivi du visage sur les gestes (crop statique), courbe d'énergie audio, dédup/diversité des arcs (MMR), trim des silences, variantes de titre/hook, thumbnail, juge vidéo natif (`docs/clip-judge.md`, worktree redesign). Voir `docs/pipeline-improvements.md`.
 
 ## Scoring (étape 10 simple / 12 story)
 
@@ -174,12 +202,22 @@ Encore en roadmap (non implémenté) : recadrage face-aware, courbe d'énergie a
 total = 0.35·hook + 0.20·emotion + 0.25·visual + 0.15·campaign_fit + 0.05·editing
 ```
 
-**Story arc** (poids différents) :
+**Story arc** (poids montage-v2, 2026-07-08) :
 
 ```
-total = 0.25·payoff_strength + 0.20·setup_clarity + 0.20·visual_proof
-      + 0.15·retention + 0.10·campaign_fit + 0.10·editing_continuity
+total = 0.28·visual_proof + 0.20·hook_strength + 0.18·payoff_strength
+      + 0.12·campaign_fit + 0.12·editing_continuity + 0.10·retention
 ```
+
+- `hook_strength` : le PREMIER segment doit accrocher dans les 2 premières
+  secondes (durée serrée, excerpt qui ouvre sur le hook, visage à l'écran,
+  énergie).
+- `campaign_fit` : 0.5 × auto-évaluation LLM (`campaign_fit` renvoyé par
+  arc avec `campaign_fit_reason`) + 0.5 × match mots-clés FLOU
+  (difflib ≥ 0.8 : tolère les fautes du brief, "buinesse" ≈ "business").
+- `editing_continuity` : pénalité par joint selon `joint_compatibility`
+  (voir section continuity), plus de multiplicateur anti-montage.
+- Pénalité ×0.55 si aucune personne visible sur tout le clip.
 
 Si `visual_score = null` (vision KO) : renormaliser le poids restant.
 

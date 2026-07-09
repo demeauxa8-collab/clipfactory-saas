@@ -3,7 +3,7 @@
 > **Pour Codex (ou tout autre agent) qui reprend ce projet sans contexte.**
 > Tout ce qu'il faut savoir tient dans ce doc + les docs cités ci-dessous.
 
-Dernière mise à jour : 2026-06-21. Auteurs : Augustin (founder), Claude Code, Codex.
+Dernière mise à jour : 2026-07-08. Auteurs : Augustin (founder), Claude Code, Codex.
 
 ---
 
@@ -14,7 +14,7 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 **Différenciateur produit** :
 > Campaign-first. Chaque clip est sélectionné en fonction d'une **campagne** (audience, niche, ton, objectif). Sur vidéos ≥ 5 min, on détecte des **arcs narratifs multi-segments** (setup → payoff à 10 min d'écart). Chaque clip ship avec un **score expliqué** (hook, emotion, visual, fit campagne, editing).
 
-**État du code** : V1 fonctionnellement complète. Web marketing + dashboard polish mergés dans `main` et déployés sur Vercel. Worker enrichi (snapping des bords, loudnorm, gate QC, sous-titres karaoké, persist `why`) mergé dans `main`. Backend/worker prêts côté code, mais la prod API/worker reste bloquée par les comptes externes et l'hébergement (control plane VPS + worker Mac Studio — voir `docs/infrastructure.md`).
+**État du code** : V1 fonctionnellement complète et **pipeline validée end-to-end en local** (2026-07-04 → 08 : vrais clips générés depuis l'UI web, ~7 cents/job). Montage-v2 livré : assemblage multi-segments avec transitions conscientes de la continuité, cadrage face-crop par segment, captions FR karaoké, sélection campaign-driven (voir journal 2026-07-04/08 et `docs/pipeline.md`). La prod API/worker reste bloquée par les comptes externes et l'hébergement (control plane VPS + worker Mac Studio — voir `docs/infrastructure.md`).
 
 **État Git/Vercel le plus récent (2026-05-27)** :
 - `main` contient le polish web via merge commit `1db5cdf`.
@@ -389,6 +389,20 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - **Dashboard user (`/app`) refait** : plus détaillé + plus soigné. Carte crédits avec barre d'usage (balance / crédits du plan), chip plan + date de renouvellement, metrics réels (clips générés depuis la table `clips`, jobs complétés + taux de succès, minutes traitées, jobs en cours), barre de répartition des statuts, campagnes avec compteur de jobs, jobs avec temps relatif, et un feed "Recent activity" alimenté par `analytics_events`.
 - **Page admin `/admin/analytics`** ajoutée (volume d'events par type/source, barres, split par source, fenêtres 7/14/30 j) + entrée dans la nav admin et lien depuis l'overview.
 - Pas de nouveau composant lourd, tout sur les tokens existants (liquid-shell, curve-card, accent unique). Vérifs : web typecheck OK, build OK (30 routes).
+
+### 2026-07-04 → 2026-07-06 — Pipeline validée end-to-end en local + passe qualité
+
+- **Premiers vrais clips end-to-end** (job réel via l'UI web, vidéo YouTube 10 min → 3 clips 1080×1920). Config qui marche : whisper-1 (PAS gpt-4o-mini-transcribe), `google/gemini-2.5-flash` via OpenRouter avec `reasoning:{max_tokens:0}` sur TEXTE **et VISION** (le raisonnement Gemini tronquait le JSON → "parse failed after 3 tries"), `STORAGE_BACKEND=local`, statement_cache_size=0 (pooler pgbouncer), deno + yt-dlp EJS + cookies Chrome pour le n-challenge YouTube, tap `homebrew-ffmpeg/ffmpeg` pour libass.
+- **Passe qualité pilotée par panels de juges vision** (agents Opus mesurant les MP4 réels, 3 lentilles : cadrage/captions/montage, 3 itérations render→judge). 5 défauts "killer" mesurés puis corrigés (commit `7463048`) : cadrage face-crop 9:16 plein cadre (visage 18 % → ~52 % de hauteur), élisions françaises fusionnées ("J ai" → "J'ai"), captions style Submagic (MAJUSCULES, 2-3 mots, wrap+shrink anti-débordement, highlight vert hors mots-outils), garde blackdetect à l'ouverture, snap des frontières réécrit (gaps adaptatifs p85 — whisper ne fournit aucune ponctuation dans les mots). Bug débusqué : `_parse_arcs` rejetait les segments > 30 s alors que le prompt en demandait 45 → "no usable arcs".
+- Ship_score juges : ~0 → ~68/100 en 3 itérations. pytest + ruff installés dans le venv worker.
+
+### 2026-07-08 — Montage-v2 : l'assemblage multi-segments redevient le concept central
+
+- **Décision produit (Augustin)** : le montage de moments distants (setup → payoff) + campagne + couches d'analyse = LE différenciateur. L'interdiction single-segment (2026-07-06, `fde4537`) était une sur-correction du problème "téléportation".
+- **Livré (commit `5255a96`)** : arcs 1-3 segments avec `link_reason` obligatoire en multi ; joints classés par `joint_compatibility(vision_a, vision_b)` (deep vision par segment) → cut sec si même scène, **dip-to-white 0,10 s** si changement de scène (audio toujours acrossfade 150 ms) ; **cadrage par segment** (face-crop plein cadre par plan visage, fit+blur par plan écran) ; captions coupées aux joints avec MarginV par segment ; garde anti-noir par segment ; **campaign_fit refait** : 0.5 × auto-éval LLM par arc + 0.5 × mots-clés flous (difflib ≥ 0.8, tolère les fautes du brief), poids 0.12 ; poids rééquilibrés (visual .28 / hook .20 / payoff .18 / fit .12 / continuity .12 / retention .10). 71 tests verts.
+- **Validé sur run réel** : 3 clips dont 1 vrai montage setup(0:00 "j'ai fait 4,5 M€")→payoff(9:24 "ce qui coûte le plus cher c'est les connaissances"), dip blanc propre au joint, campaign_fit 60→80 sur les 3 clips (tous orientés preuve de résultats/formation = goal campagne). `+ fix(f864e69)` : re-runs réutilisent le source.mp4 du workdir (YouTube 403 sur re-téléchargements répétés).
+- **Boucle d'itération locale** (pour reprendre) : `redis-cli RPUSH clipfactory:jobs:queue '{"job_id":"<id>"}'` + restart worker (`cd apps/worker && nohup .venv/bin/python -m app.main`) ; job de test `2221f645-ed0e-47b2-8201-417d7c517a39`, campagne test "gaspard grojean" (données avec fautes de frappe — à recréer proprement via l'UI).
+- **Restes connus** : cadrage par scène à l'intérieur d'un segment mixte, suivi du visage sur les gestes (crop statique), `snap failed` élevé (9/16 sur le dernier run) à instrumenter, `duration_seconds` DB faux pour les clips multi (end-start global au lieu de la somme des segments), `error_message` non nettoyé quand un job repasse en completed, `link_reason`/`campaign_fit_reason` parsés mais non persistés sur le clip, juge vidéo natif (`docs/clip-judge.md`) non implémenté.
 
 ---
 

@@ -74,9 +74,9 @@ UI V1 doit juste permettre de tester le produit :
 | Plan unique | Starter 29€ / 300 credits / 30 min / 3 clips / 1 concurrent |
 | Billing | Stripe Checkout + webhook + credit grant idempotent |
 | Campagnes | Tables + form simple, attachée à chaque job |
-| Pipeline | Story-first (≥ 5 min) + simple (< 5 min), multi-segments montage, crossfade audio 150 ms, anti-hallucination verify |
-| Vision | Vision cheap globale (Qwen via OpenRouter) + vision deep top 5 arcs (Gemini via OpenRouter) |
-| Score expliqué | Pondération adaptée selon mode : story (payoff 25 / setup 20 / visual 20 / retention 15 / fit 10 / editing 10) ou simple (hook 35 / emotion 20 / visual 25 / fit 15 / editing 5) |
+| Pipeline | Story-first (≥ 5 min) + simple (< 5 min), **montage multi-segments 1-3 moments** (`link_reason` obligatoire), transitions par joint (cut sec / dip-to-white 0,10 s selon continuité), crossfade audio 150 ms, cadrage face-crop par segment, captions FR karaoké, anti-hallucination verify |
+| Vision | Vision cheap globale + vision deep top 5 arcs (gemini-2.5-flash via OpenRouter, `reasoning` désactivé), renvoie `face_center_x` + `burned_captions` par segment |
+| Score expliqué | Story (montage-v2) : visual 28 / hook 20 / payoff 18 / fit 12 / continuity 12 / retention 10 ; campaign_fit = 0.5 auto-éval LLM + 0.5 mots-clés flous ; simple : hook 35 / emotion 20 / visual 25 / fit 15 / editing 5 |
 | Mémoire campagne | Feedback good/bad stocké, pas encore d'apprentissage auto |
 | Logging coût/marge | Colonnes obligatoires sur jobs (estimations OK), split video_map_cost_cents / deep_vision_cost_cents |
 | Dashboard | Crédits, campagnes, jobs, clips téléchargeables, badge MONTAGE sur clips multi-segments |

@@ -29,7 +29,9 @@ Si choix entre "belle UI" et "pipeline fiable" : **toujours pipeline fiable**.
 | 8 | Stripe Checkout + webhook + credit grant | ✓ | Checkout + webhook + idempotency DB, test réel Stripe restant |
 | 9 | Worker pipeline 17 étapes (single-window) | ✓ | Remplacé par T18 (story-first) |
 | 10 | Web pages app (dashboard, campaigns, job, billing) | ✓ | Typecheck/build OK |
-| 11 | Smoke test end-to-end | ~ | nécessite Supabase/Redis/R2/Stripe/OpenAI/OpenRouter/Anthropic réels |
+| 11 | Smoke test end-to-end | ✓ local | Pipeline validée en local 2026-07-04→08 (vrais clips via l'UI web, whisper-1 + gemini-2.5-flash, storage local). Reste : Stripe réel, R2, prod |
+| 19 | Passe qualité rendu (face-crop, captions FR, frontières) | ✓ | 2026-07-06, commit `7463048` — voir journal handoff |
+| 20 | Montage-v2 (multi-segments + continuité + campagne) | ✓ | 2026-07-08, commit `5255a96` — voir `docs/pipeline.md` |
 | 12 | Deploy runbook | en attente | Vercel (web, fait) + VPS control plane OVH/Scaleway + worker Mac Studio — voir `docs/infrastructure.md` |
 | 18 | Pipeline story-first rewrite | ✓ | Voir `docs/pipeline.md` — deux chemins (simple < 5 min / story ≥ 5 min), provider OpenRouter + fallback Haiku, migration 0003 |
 
@@ -61,9 +63,10 @@ Résumé au 2026-05-24 :
 
 ## État vérifié localement
 
-Dernière vérification : 2026-06-21.
+Dernière vérification : 2026-07-08.
 
 - Web : `npm run typecheck` OK, `npm run build` OK (toutes les routes prerender/SSR OK).
 - API : `ruff check app` OK, `python -m compileall -q app` OK.
-- Worker : `ruff check app` OK (40 findings nettoyés, voir journal 2026-06-21), `python -m compileall -q app` OK, `pytest` OK (6 tests captions + boundaries).
-- Pas encore validé : job complet avec vrais services externes et vraie vidéo (bloqué par API keys + VPS, hors périmètre code).
+- Worker : `ruff check app` OK, `python -m compileall -q app` OK, `pytest` OK (**71 tests** : captions, boundaries, framing, scoring).
+- **Job complet validé en local avec vrais services** (OpenAI whisper-1 + OpenRouter gemini-2.5-flash + Supabase + Redis, storage local) : vidéo YouTube 10 min → 3 clips, dont un montage multi-segments. Coût réel ~7 cents/job.
+- Pas encore validé : Stripe réel, R2, déploiement prod (bloqué par comptes externes + VPS).
