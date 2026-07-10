@@ -5,6 +5,8 @@ Migrations (à appliquer dans l'ordre) :
 - `db/migrations/0001_init.sql` — base (profiles, subscriptions, credit_ledger, jobs, clips, stripe_events)
 - `db/migrations/0002_campaigns_costs_vision.sql` — campagnes, feedback, colonnes coûts / vision
 - `db/migrations/0003_story_arcs.sql` — story-first pipeline (video_map, segments multi-fenêtres, fallback tracking)
+- `db/migrations/0004_admin_flag.sql` — flag admin + public stats
+- `db/migrations/0005_analytics_events.sql` — `analytics_events` + vue `analytics_daily` (appliquée le 2026-06-23). ⚠️ un `0005_job_leasing.sql` distinct existe sur la branche locale `draft/parallel-workers` — à renuméroter 0006 si repris
 
 ## Overview
 

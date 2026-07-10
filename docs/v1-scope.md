@@ -108,15 +108,16 @@ UI V1 doit juste permettre de tester le produit :
 
 ---
 
-## Décisions techniques (statut au 2026-05-22)
+## Décisions techniques (statut au 2026-07-08)
 
 Tranchées :
-- ~~Choix providers LLM~~ → OpenRouter primary (DeepSeek V3.2 texte, Gemini 2.5 Flash vision deep, Qwen3-VL Flash vision cheap), Anthropic Haiku 4.5 en fallback.
-- ~~Stratégie fallback~~ → `ENABLE_FALLBACK=true` par défaut, switch automatique sur parse error / timeout / 5xx.
+- ~~Choix providers LLM~~ → OpenRouter primary. **Config validée en réel (2026-07)** : `google/gemini-2.5-flash` sur les 3 rôles (texte, vision cheap, vision deep) avec `reasoning:{max_tokens:0}`. Le mix économique DeepSeek texte + Qwen vision cheap reste une optimisation à re-benchmarker. Fallback Anthropic Haiku 4.5 configuré mais désactivé (pas de clé). Transcription : OpenAI `whisper-1` (word timestamps obligatoires).
+- ~~Stratégie fallback~~ → switch automatique sur parse error / timeout / 5xx quand activé. Défaut code `ENABLE_FALLBACK=true`, mais **`false` en local actuellement** (pas de clé Anthropic).
 - ~~Seuil routing pipeline simple vs story~~ → 5 min (`STORY_PIPELINE_THRESHOLD_SECONDS=300`).
+- ~~Politique montage~~ → montage-v2 (2026-07-08) : 1-3 segments, `link_reason` obligatoire en multi, transitions par joint (cut sec / dip-to-white selon continuité vision), cadrage par segment. L'interdiction single-segment du 2026-07-06 est annulée.
 - ~~Format clips~~ → `segments jsonb` (liste ordonnée). Migration 0003.
 - ~~Anti-hallucination~~ → string match transcript_excerpt vs transcript réel, SequenceMatcher ratio ≥ 0.65 → drop arc complet.
-- ~~Crossfade entre segments~~ → audio uniquement 150 ms (`acrossfade`), cut sec image.
+- ~~Crossfade entre segments~~ → audio 150 ms (`acrossfade`) ; image : cut sec si même scène, dip-to-white 0,10 s si changement de scène (montage-v2).
 
 À mesurer V1 (post-déploiement) :
 - Marge réelle LLM par job (estimée ~12 EUR/mois pour 7 users, à vérifier sur vrais coûts).

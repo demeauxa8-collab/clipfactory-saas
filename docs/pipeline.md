@@ -30,9 +30,9 @@ Contraintes produit :
 | --- | ---: |
 | Segments min | 1 |
 | Segments max | 3 |
-| Durée min segment | 4 s |
-| Durée max segment | 25 s |
-| Durée totale clip | 20-60 s |
+| Durée min segment | 3 s |
+| Durée max segment | 30 s |
+| Durée totale clip | 12-60 s |
 | Premier segment | doit poser contexte/hook |
 | Dernier segment | doit contenir payoff/preuve visuelle |
 
@@ -74,8 +74,8 @@ queued
 | 3 | probe | ffprobe → `duration_seconds` |
 | 4 | check_plan + initial_debit | si dur > plan.max → fail. Débit upfront du `credits_estimated`. |
 | 5 | upload_source | clé `sources/{user_id}/{job_id}.mp4` (best-effort) |
-| 6 | transcribe | OpenAI `gpt-4o-mini-transcribe` (verbose_json + word timestamps) |
-| 7 | select_segments | OpenRouter DeepSeek (fallback Claude Haiku) : retourne 5-8 segments candidats `{start, end, hook, emotion, transcript_excerpt, why, suggested_title, suggested_hook}` |
+| 6 | transcribe | OpenAI **`whisper-1`** (verbose_json + word timestamps — `gpt-4o-mini-transcribe` les refuse). Audio extrait en mp3 mono 16 kHz (limite 25 Mo). Post-process : fusion des élisions françaises ("J","ai" → "J'ai") |
+| 7 | select_segments | Modèle texte primary via env `PRIMARY_TEXT_MODEL` (validé : gemini-2.5-flash, `reasoning` off ; fallback Claude Haiku désactivé) : retourne 5-8 segments candidats `{start, end, hook, emotion, transcript_excerpt, why, suggested_title, suggested_hook}` |
 | 8 | verify_segments | string match transcript_excerpt vs transcript réel (fuzzy ratio ≥ 0.7 sur la fenêtre). Drop hallucinations. |
 | 9 | extract_frames + deep_vision | 2-3 frames par segment restant, Gemini 2.5 Flash vision (fallback Haiku) JSON `{decor, person_visible, energy, action, proof_objects, problems, visual_score}` |
 | 10 | score_and_pick | poids `hook 35% + emotion 20% + visual 25% + campaign_fit 15% + editing 5%`. Garde top `target_clip_count`. |
@@ -95,12 +95,12 @@ queued
 | 5 | upload_source | idem |
 | 6 | transcribe | idem |
 | 7 | **scene_detection + frame_sampling** | FFmpeg `select='gt(scene,0.4)'` + sampling régulier. Cap selon durée : `<10min→80`, `10-30→150`, `>30→220` frames |
-| 8 | **build_video_map** | OpenRouter Qwen3-VL Flash, prompt = `VIDEO_MAP_SYSTEM_PROMPT` + frames + transcript résumé. Sortie : `{video_summary, events[]}` 20-40 events avec `{id, start, end, decor, people, objects, action, transcript_summary, visual_importance, narrative_role}` |
-| 9 | **detect_story_arcs** | OpenRouter DeepSeek (fallback Claude Haiku) texte sur video_map + transcript_lines + campaign. Sortie : 10-15 arcs `{title, arc_type, segments[], viral_reason, estimated_retention, continuity_risk}` |
+| 8 | **build_video_map** | Modèle vision cheap via env `VISION_CHEAP_MODEL` (validé : gemini-2.5-flash, `reasoning` off), prompt = `VIDEO_MAP_SYSTEM_PROMPT` + frames + transcript résumé. Sortie : `{video_summary, events[]}` 20-40 events avec `{id, start, end, decor, people, objects, action, transcript_summary, visual_importance, narrative_role}` |
+| 9 | **detect_story_arcs** | Modèle texte primary (env `PRIMARY_TEXT_MODEL`) sur video_map + transcript_lines + campaign. Sortie montage-v2 : 8-12 arcs de 1-3 segments `{title, arc_type, segments[], viral_reason, estimated_retention, continuity_risk, link_reason, campaign_fit, campaign_fit_reason}` |
 | 10 | **verify_arcs** | Pour chaque arc, pour chaque segment : checker que les mots du transcript dans `[start, end]` existent vraiment. Sinon drop l'arc entier. |
 | 11 | **deep_vision** sur top 5 | Top 5 arcs par `estimated_retention`. Pour chaque segment d'un arc top 5 : extract 4-6 frames (début, milieu, fin, +1-2 si > 15s). Gemini 2.5 Flash vision (fallback Haiku) : confirm decor/action/proof. Retourne `visual_score` agrégé par arc. |
-| 12 | **score_and_pick_arcs** | poids `payoff_strength 25% + setup_clarity 20% + visual_proof 20% + retention 15% + campaign_fit 10% + editing_continuity 10%`. Top `target_clip_count`. |
-| 13 | render_montage | Pour chaque arc retenu, FFmpeg : extract chaque segment, concat avec crossfade audio 150ms (`afade` + `acrossfade`), vertical 1080x1920, h264 |
+| 12 | **score_and_pick_arcs** | poids montage-v2 : `visual_proof 28% + hook_strength 20% + payoff_strength 18% + campaign_fit 12% + editing_continuity 12% + retention 10%` (voir section Scoring). Top `target_clip_count`. |
+| 13 | render_montage | Pour chaque arc retenu, FFmpeg : cadrage PAR SEGMENT (face-crop 9:16 plein cadre ou fit+blur), transitions par joint (cut sec / dip-to-white 0,10 s selon `joint_compatibility`), concat avec crossfade audio 150 ms, vertical 1080x1920, h264. Garde anti-noir par segment avant rendu |
 | 14 | retime_captions | Mots du transcript dans la fenêtre source → recalculés sur la timeline finale (offset cumulatif des segments précédents). ASS burn-in. |
 | 15 | upload + save | clé `clips/{user_id}/{job_id}/{idx}.mp4`. Insert clips avec `segments jsonb`. |
 | 16 | finalize | debit final, cost log (transcription + video_map_cost + arcs_text_cost + deep_vision_cost + render_seconds + storage). |
@@ -133,7 +133,7 @@ On bat avant d'envoyer :
 - réponses concaténées en post-traitement
 - coût cible : **< 5 cents par job sur 30 min de vidéo**
 
-Provider : OpenRouter avec `qwen/qwen3-vl-flash` par défaut. Fallback Claude Haiku si le provider retourne erreur 2× consécutives.
+Provider : OpenRouter, modèle via env `VISION_CHEAP_MODEL` (validé : `google/gemini-2.5-flash` avec `reasoning:{max_tokens:0}` — sans ça le raisonnement consomme le budget tokens et tronque le JSON). Fallback Claude Haiku configuré mais désactivé (`ENABLE_FALLBACK=false`).
 
 ---
 

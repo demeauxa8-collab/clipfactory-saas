@@ -16,13 +16,10 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 
 **État du code** : V1 fonctionnellement complète et **pipeline validée end-to-end en local** (2026-07-04 → 08 : vrais clips générés depuis l'UI web, ~7 cents/job). Montage-v2 livré : assemblage multi-segments avec transitions conscientes de la continuité, cadrage face-crop par segment, captions FR karaoké, sélection campaign-driven (voir journal 2026-07-04/08 et `docs/pipeline.md`). La prod API/worker reste bloquée par les comptes externes et l'hébergement (control plane VPS + worker Mac Studio — voir `docs/infrastructure.md`).
 
-**État Git/Vercel le plus récent (2026-05-27)** :
-- `main` contient le polish web via merge commit `1db5cdf`.
-- PR #1 mergée : `https://github.com/demeauxa8-collab/clipfactory-saas/pull/1`
-- Production Vercel : `https://clipfactory-saas.vercel.app`
-- Dashboard preview sans login : `https://clipfactory-saas.vercel.app/preview/dashboard`
-- Vercel project : `clipfactory-saas`, root directory `apps/web`, GitHub déjà connecté.
-- Domaines `clipfactory.app` et `www.clipfactory.app` ajoutés au projet Vercel, mais DNS pas encore configuré.
+**État Git/Vercel le plus récent (2026-07-08)** :
+- `main` synchronisé avec origin. Derniers commits clés : `7463048` (passe qualité rendu), `5255a96` (montage-v2), `f864e69` (cache source), `f9c09ee` (docs).
+- Production Vercel : `https://clipfactory-saas.vercel.app` (dashboard preview sans login : `/preview/dashboard`). Domaines ajoutés au projet Vercel, DNS toujours pas configuré.
+- Branches locales à trier : `draft/parallel-workers` (1 gros commit wip : fleet workers parallèles + `0005_job_leasing.sql` à renuméroter + 14 skills `.claude/` + scripts deploy VPS/Caddy/systemd — **n'existe QUE sur ce Mac**, plus sur origin) ; `deploy/hetzner-setup` (1 commit doc blocage Hetzner) ; `infra/vps-bootstrap`, `redesign/apple-premium`, `redesign/beige` = entièrement dans main, supprimables. Deux worktrees (`~/clipfactory-redesign`, `~/clipfactory-beige`) contiennent du travail non commité (marketing + `docs/clip-judge.md`).
 
 **Source de vérité** :
 1. Ce fichier (`docs/handoff-codex.md`) → état d'avancement
@@ -49,12 +46,12 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 | Plan unique V1 | Starter 29 €/mo · 300 credits · 30 min · 3 clips · 1 concurrent | Réduire la décision, mesurer la marge réelle avant V2 |
 | 1 credit = | 1 minute de vidéo source | Standard marché (Vugola, Wayin, Opus) |
 | Moteur clipping | Pipeline maison sur cloud, **pas** d'API tierce (Klap/Wayin) | Klap = 4.44 $/vidéo, on vend 0.97 €, marge négative |
-| LLM stack primary | OpenRouter (DeepSeek V3.2 texte + Gemini 2.5 Flash vision deep + Qwen3-VL Flash vision cheap) | ~50 % moins cher que Haiku partout |
-| LLM fallback | Anthropic Claude Haiku 4.5 | Filet sur erreur parse/timeout/5xx du primary |
-| Transcription | OpenAI `gpt-4o-mini-transcribe` | 0.003 $/min, imbattable |
+| LLM stack primary | OpenRouter — **validé en réel : `google/gemini-2.5-flash` partout** (texte + vision cheap + vision deep), avec `reasoning:{max_tokens:0}` sinon le JSON est tronqué. Le mix économique DeepSeek texte + Qwen vision cheap reste une optimisation à re-benchmarker | Modèles passés par env, rien de hardcodé |
+| LLM fallback | Anthropic Claude Haiku 4.5 — configuré mais **désactivé** (`ENABLE_FALLBACK=false`, pas de clé) | Filet sur erreur parse/timeout/5xx du primary |
+| Transcription | OpenAI **`whisper-1`** (⚠️ PAS `gpt-4o-mini-transcribe` : refuse `verbose_json`/timestamps mot à mot, indispensables aux captions). Audio extrait en mp3 mono 16 kHz avant envoi (limite 25 Mo) | Validé sur vrais jobs |
 | Codex CLI / MLX local | **INTERDITS** en SaaS | Compte ChatGPT perso = ban à 10 users ; MLX ne scale pas |
 | Pipeline routing | `< 5 min` → simple, `≥ 5 min` → story-first | Évite le surcoût vision sur vidéos courtes |
-| Vision | 2 étages : cheap globale (Qwen, 80–220 frames) + deep ciblée (Gemini, top 5 arcs) | Marge protégée |
+| Vision | 2 étages : cheap globale (80–220 frames, video map) + deep ciblée (top 5 arcs, renvoie `face_center_x` + `burned_captions` par segment) — les deux sur gemini-2.5-flash actuellement | Marge protégée |
 | Anti-hallucination | `verify_arcs` : string match transcript excerpt vs transcript réel (SequenceMatcher ≥ 0.65), drop si ratio insuffisant | LLMs inventent parfois |
 | Crossfade audio | 150 ms entre segments (`acrossfade`) | Cut sec sonne amateur |
 | Storage | Cloudflare R2 EU (egress gratuit) | Critique pour le download de clips |
@@ -80,8 +77,8 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 | Storage | Cloudflare R2 (S3-compatible) | Bucket `clipfactory-clips` |
 | Queue | Redis (sur VPS) | Simple `BLPOP` |
 | Billing | Stripe Checkout + webhooks idempotents | API version pinned `2025-04-30.basil` |
-| Transcription | OpenAI `gpt-4o-mini-transcribe` | 0.003 $/min |
-| LLM primary | OpenRouter (`deepseek/deepseek-chat-v3.2`, `google/gemini-2.5-flash`, `qwen/qwen3-vl-flash`) | Une seule clé |
+| Transcription | OpenAI **`whisper-1`** (word timestamps ; `gpt-4o-mini-transcribe` les refuse) | validé en réel |
+| LLM primary | OpenRouter — validé : `google/gemini-2.5-flash` partout (`reasoning` off) ; mix DeepSeek/Qwen à re-benchmarker | Une seule clé |
 | LLM fallback | Anthropic `claude-haiku-4-5-20251001` | Auto sur erreur primary |
 | Deploy front | Vercel | Projet `clipfactory-saas`, root `apps/web`, GitHub connecté |
 | Deploy back | API : Caddy + systemd sur VPS OVH/Scaleway. Worker : Mac Studio (launchd, pull) | Voir `docs/infrastructure.md` + `docs/deploy.md` |
@@ -161,13 +158,13 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 │           ├── safety.py            sanitize_text / sanitize_campaign (anti prompt-injection)
 │           ├── providers/           LLMProvider abstraction
 │           │   ├── base.py          contract
-│           │   ├── openrouter.py    primary (DeepSeek / Gemini / Qwen)
+│           │   ├── openrouter.py    primary (modèles via env, validé: gemini-2.5-flash)
 │           │   ├── anthropic.py     fallback (Haiku)
 │           │   └── _jsonparse.py    tolerant JSON extractor
 │           └── pipeline/
 │               ├── runner.py        Orchestrator, simple vs story routing, SSRF-safe URL check
 │               ├── ffmpeg.py        probe / scene detect / extract_frame / render_montage_clip
-│               ├── transcribe.py    OpenAI gpt-4o-mini-transcribe (API)
+│               ├── transcribe.py    OpenAI whisper-1 (API) + fusion élisions FR
 │               ├── video_map.py     scene detect + frame sampling + cheap vision chunked
 │               ├── story_arcs.py    arcs detection via text LLM
 │               ├── verify.py        anti-hallucination string match
@@ -197,7 +194,7 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 
 ---
 
-## 4. État d'avancement (au 2026-05-27)
+## 4. État d'avancement (au 2026-07-08)
 
 **Légende :** `[x]` fait — `[~]` en cours — `[ ]` à faire.
 
@@ -228,8 +225,8 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - [x] **T27.** Migration 0004 + admin API endpoints + public stats endpoint
 - [x] **T28.** Admin dashboard UI (overview, users, jobs, finance)
 - [x] **T29.** Doc consolidation pass — this rewrite, `docs/admin.md`, `docs/seo.md`, `docs/deploy.md`
-- [ ] **T30.** External services setup — Stripe + R2 + OpenAI + OpenRouter + Anthropic accounts
-- [~] **T31.** Smoke test end-to-end — harness Playwright ajouté, exécution live à faire quand les services externes sont prêts (voir section 10)
+- [~] **T30.** External services setup — OpenAI ✓ (whisper-1 opérationnel) + OpenRouter ✓ (gemini-2.5-flash opérationnel) ; restent Stripe, R2, Anthropic (fallback), Turnstile
+- [~] **T31.** Smoke test end-to-end — **pipeline validée en local 2026-07-04→08** (vrais jobs via l'UI web : YouTube → 3 clips, ~7 cents/job, storage local). Reste : Stripe réel, R2, exécution Playwright complète en prod
 - [~] **T32.** Production deploy (Vercel web + VPS control plane + worker Mac Studio) — see `docs/deploy.md` + `docs/infrastructure.md`
   - [x] Web Vercel production deployed from `main`: `https://clipfactory-saas.vercel.app`
   - [ ] Custom DNS for `clipfactory.app`
@@ -253,6 +250,10 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
   - [ ] Configure DNS: `A www.clipfactory.app 76.76.21.21` or switch nameservers to `ns1.vercel-dns.com` / `ns2.vercel-dns.com`.
 - [x] **T37.** Décision archi infra : control plane VPS (OVH/Scaleway) + worker Mac Studio (pull), `docs/infrastructure.md`, adopté 2026-06. Remplace l'option Hetzner (abandonnée pour KYC).
 - [x] **T38.** Améliorations qualité worker mergées dans `main` : snapping des bords (`boundaries.py`), loudnorm -14 LUFS, gate QC post-rendu, sous-titres karaoké, persist `why` par segment (+ tests `test_boundaries.py` / `test_captions.py`). Roadmap restante : `docs/pipeline-improvements.md` (briques 6-11).
+- [x] **T39.** Migration 0005 (`analytics_events` + vue `analytics_daily`) appliquée + dashboards refaits (voir journal 2026-06-23). ⚠️ La branche locale `draft/parallel-workers` contient un AUTRE fichier `0005_job_leasing.sql` — renuméroter en 0006 si repris.
+- [x] **T40.** Pipeline validée end-to-end en local (2026-07-04→06) + passe qualité rendu : face-crop, captions FR, frontières de phrase, garde anti-noir — commit `7463048`, voir journal.
+- [x] **T41.** Montage-v2 (2026-07-08) : multi-segments + transitions par joint + cadrage par segment + campaign_fit LLM/flou — commit `5255a96`, voir journal + `docs/pipeline.md`. 71 tests worker verts.
+- [x] **T42.** Cache du source dans le workdir (`f864e69`) — re-runs sans re-téléchargement YouTube.
 
 ---
 
@@ -406,19 +407,20 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 
 ---
 
-## 6. Services externes (état au 2026-05-27)
+## 6. Services externes (état au 2026-07-08)
 
 | Service | État | Crédentiels |
 | --- | --- | --- |
-| **Supabase EU** | ✓ projet `jsjaizcnjvghoduvyyea` ("clipfactory", org AX). Migrations 0001-0004 appliquées. | `.env` rempli (URL, anon, service_role, JWT secret, DATABASE_URL via pooler) |
+| **Supabase EU** | ✓ projet `jsjaizcnjvghoduvyyea` ("clipfactory", org AX). Migrations 0001-**0005** appliquées. | `.env` rempli (URL, anon, service_role, JWT secret, DATABASE_URL via pooler). Worker : `statement_cache_size=0` obligatoire (pgbouncer) |
 | **GitHub** | ✓ repo `demeauxa8-collab/clipfactory-saas` connecté à Vercel. PR #1 mergée dans `main`. | `gh` connecté comme `demeauxa8-collab` |
 | **Vercel web** | ✓ projet `clipfactory-saas`, root `apps/web`, prod OK sur `https://clipfactory-saas.vercel.app`. | Env publics Supabase/API/Stripe/SITE configurés. `NEXT_PUBLIC_TURNSTILE_SITE_KEY` manque encore |
-| **Cloudflare R2** | À créer | `TODO` dans les 3 `.env` |
+| **OpenAI** | ✓ **opérationnel** (transcription whisper-1 validée sur vrais jobs) | clé dans `worker/.env` |
+| **OpenRouter** | ✓ **opérationnel** (gemini-2.5-flash texte + vision, `reasoning:{max_tokens:0}` obligatoire) | clé dans `worker/.env` |
+| **Redis** | ✓ local (dev) — queue `clipfactory:jobs:queue` | `redis://localhost:6379/0` ; en prod : Redis du VPS |
+| **Cloudflare R2** | À créer (dev utilise `STORAGE_BACKEND=local` → `/tmp/clipfactory-clips`, ⚠️ effacé au reboot) | `TODO` dans les 3 `.env` |
 | **Cloudflare Turnstile** | À créer | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` côté web, `TURNSTILE_SECRET_KEY` côté API |
-| **Stripe FR** | À créer | `TODO` dans `.env` |
-| **OpenAI** | À créer | `TODO` |
-| **OpenRouter** | À créer | `TODO` |
-| **Anthropic** | À créer | `TODO` |
+| **Stripe FR** | À créer (0 événement Stripe en base — jamais testé en réel) | `TODO` dans `.env` |
+| **Anthropic** | À créer (fallback désactivé : `ENABLE_FALLBACK=false`) | `TODO` |
 | **VPS control plane** (OVH/Scaleway) | À provisionner | API + Redis + Caddy ; UE (GDPR). Hetzner abandonné (KYC) |
 | **Worker Mac Studio** | Machine possédée | Transcription + render, modèle pull (va chercher les jobs dans le Redis du VPS) |
 | **Domain** | Ajouté dans Vercel, DNS pas configuré | `clipfactory.app`, `www.clipfactory.app` |
@@ -487,31 +489,40 @@ LOG_LEVEL=INFO
 Hérite des valeurs DB/R2/OpenAI/Anthropic, ajoute :
 
 ```
-# Primary LLM stack (OpenRouter, TODO)
-OPENROUTER_API_KEY=sk-or-TODO
+# Transcription — whisper-1 obligatoire (word timestamps)
+OPENAI_TRANSCRIBE_MODEL=whisper-1
+
+# Storage — "local" en dev (STORAGE_LOCAL_DIR), "r2" en prod
+STORAGE_BACKEND=local
+STORAGE_LOCAL_DIR=/tmp/clipfactory-clips
+
+# Primary LLM stack (OpenRouter) — config VALIDÉE en local 2026-07
+OPENROUTER_API_KEY=...                       # rempli, opérationnel
 OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
 OPENROUTER_HTTP_REFERER=https://clipfactory.app
 OPENROUTER_APP_NAME=ClipFactory
-PRIMARY_TEXT_MODEL=deepseek/deepseek-chat-v3.2
+PRIMARY_TEXT_MODEL=google/gemini-2.5-flash
 PRIMARY_VISION_DEEP_MODEL=google/gemini-2.5-flash
-VISION_CHEAP_MODEL=qwen/qwen3-vl-flash
+VISION_CHEAP_MODEL=google/gemini-2.5-flash
+# (mix DeepSeek/Qwen = optimisation coût à re-benchmarker, voir unit-economics)
 
-# Fallback (Anthropic)
+# Fallback (Anthropic) — désactivé tant que pas de clé
 FALLBACK_TEXT_MODEL=claude-haiku-4-5-20251001
 FALLBACK_VISION_MODEL=claude-haiku-4-5-20251001
-ENABLE_FALLBACK=true
+ENABLE_FALLBACK=false
 EVAL_SAMPLE_RATE=0.0           # V1=0, V1.1=0.05 to A/B benchmark
 
 # Pipeline routing
 STORY_PIPELINE_THRESHOLD_SECONDS=300
 
-# Worker
+# Worker — Mac dev : chemins homebrew perso + yt-dlp du venv
 WORKER_CONCURRENCY=1
 WORKER_TMP_DIR=/tmp/clipfactory
 WORKER_POLL_INTERVAL=2
-FFMPEG_BIN=ffmpeg
-FFPROBE_BIN=ffprobe
-YT_DLP_BIN=yt-dlp
+FFMPEG_BIN=/Users/augustindemeaux/homebrew/bin/ffmpeg   # tap homebrew-ffmpeg (libass requis pour captions)
+FFPROBE_BIN=/Users/augustindemeaux/homebrew/bin/ffprobe
+YT_DLP_BIN=<repo>/apps/worker/.venv/bin/yt-dlp
+YT_DLP_COOKIES_FROM_BROWSER=chrome           # + deno installé (n-challenge YouTube)
 
 # Cost model (cents) — used to log per-job total_cost_estimate_cents
 COST_TRANSCRIBE_CENTS_PER_MIN=0.3

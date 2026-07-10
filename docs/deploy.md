@@ -9,8 +9,8 @@
 | Supabase EU (Frankfurt) | DB + Auth | ✓ done — project ref `jsjaizcnjvghoduvyyea` |
 | Cloudflare R2 | Object storage | todo |
 | Stripe FR | Billing | todo |
-| OpenAI | Transcription (gpt-4o-mini-transcribe, API) | todo |
-| OpenRouter | Primary LLM (DeepSeek + Gemini + Qwen) | todo |
+| OpenAI | Transcription (**whisper-1** — gpt-4o-mini-transcribe refuse les word timestamps) | ✓ opérationnel (clé worker) |
+| OpenRouter | Primary LLM (validé : gemini-2.5-flash partout) | ✓ opérationnel (clé worker) |
 | Anthropic | Fallback LLM (Haiku) | todo |
 | VPS UE (OVH VPS-2 / Scaleway DEV1-M) | API + Redis control plane | todo |
 | Mac Studio (worker) | Transcription + render (modèle pull) | machine possédée |

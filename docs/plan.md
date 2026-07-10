@@ -43,7 +43,7 @@ Voir `docs/handoff-codex.md` section 6. Addition story-first : **créer un compt
 
 Source de vérité : `docs/unit-economics.md`.
 
-Résumé au 2026-05-24 :
+Résumé au 2026-05-24 (⚠️ mix LLM d'époque — la config validée 2026-07 tourne 100 % gemini-2.5-flash, coût réel mesuré ~7 cents/job de 10 min ; re-benchmarker le mix DeepSeek/Qwen avant la prod) :
 
 | Item | Cost/mo |
 | --- | ---: |

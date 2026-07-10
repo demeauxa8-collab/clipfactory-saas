@@ -4,7 +4,7 @@
 
 Document de fondation conceptuelle. La pipeline story-first décrite ici est désormais **implémentée** — `docs/pipeline.md` est la spec d'exécution à jour.
 
-> **Décisions modèles finales (à jour) :** vision globale (cheap) = `qwen/qwen3-vl-flash`, vision deep/arc = **`google/gemini-2.5-flash`** (OpenRouter), texte = `deepseek/deepseek-chat-v3.2`, fallback = Claude Haiku 4.5 (sur erreur primary uniquement). Les mentions « Claude Haiku » pour la vision plus bas dans ce doc sont des **pistes initiales** remplacées par Gemini — gardées pour l'historique.
+> **Décisions modèles (màj 2026-07-08) :** config VALIDÉE en réel = **`google/gemini-2.5-flash`** sur les 3 rôles (texte, vision cheap, vision deep) via OpenRouter, avec `reasoning:{max_tokens:0}`. Le mix économique initial (Qwen3-VL cheap + DeepSeek texte) reste à re-benchmarker. Fallback Claude Haiku 4.5 configuré mais désactivé. Les mentions « Claude Haiku » pour la vision plus bas sont des **pistes initiales** — gardées pour l'historique.
 
 ---
 

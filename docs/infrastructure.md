@@ -25,7 +25,7 @@ L'image de référence : **le VPS est la caisse + la porte d'entrée du resto, l
 - Webhooks Stripe (un webhook raté = de l'argent perdu)
 
 ### Mac Studio (worker) — travail lourd, tolérant aux pannes
-- Transcription via l'**API OpenAI** (`gpt-4o-mini-transcribe`, appelée avec une clé API) — **pas** de Whisper local.
+- Transcription via l'**API OpenAI** (**`whisper-1`** — `gpt-4o-mini-transcribe` refuse les word timestamps nécessaires aux captions) — **pas** de Whisper local.
 - Rendu vidéo (ffmpeg)
 - Génération des captions animées
 

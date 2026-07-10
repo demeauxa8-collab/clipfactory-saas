@@ -2,6 +2,13 @@
 
 Last updated: 2026-06-18 (infra section updated for the Mac Studio + VPS architecture).
 
+> **Reality check 2026-07-08** : la config VALIDÉE en local tourne 100 % sur
+> `google/gemini-2.5-flash` (texte + les 2 étages vision), pas sur le mix
+> DeepSeek/Qwen modélisé ci-dessous. Coût réel mesuré : **~7 cents pour un job
+> de 10 min** (transcription whisper-1 incluse) — sous le budget modélisé. Le
+> mix DeepSeek/Qwen reste l'optimisation à re-benchmarker avant la prod ; les
+> tableaux ci-dessous gardent leur valeur de comparaison de prix.
+
 > **Infra update 2026-06:** the architecture changed — the **worker (FFmpeg + render) now runs on the Mac Studio** (owned hardware), and only a **small control-plane VPS** (OVH VPS-2 ~€8.49 HT / Scaleway DEV1-M) hosts the API + Redis. The Hetzner CPX32 figures below (~€16-20) are **superseded** by this small VPS (~€10-12 TTC) + Mac electricity (~€3); margin improves accordingly. The API cost model (transcription/vision/text) below stays valid as-is. See `docs/infrastructure.md`.
 
 This doc is the financial source of truth for V1 pricing until real production
@@ -133,7 +140,7 @@ downloaded source videos) happens on the Mac Studio, not the VPS. A 2-3 vCPU /
 
 Current pipeline:
 
-- Transcription: OpenAI `gpt-4o-mini-transcribe`.
+- Transcription: OpenAI `whisper-1` (validé — `gpt-4o-mini-transcribe` refuse les word timestamps ; pricing table below kept for reference).
 - Primary text: OpenRouter DeepSeek.
 - Cheap global vision: OpenRouter Qwen VL.
 - Deep targeted vision: OpenRouter Gemini Flash on top arcs.
