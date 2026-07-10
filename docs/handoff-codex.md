@@ -3,7 +3,7 @@
 > **Pour Codex (ou tout autre agent) qui reprend ce projet sans contexte.**
 > Tout ce qu'il faut savoir tient dans ce doc + les docs cités ci-dessous.
 
-Dernière mise à jour : 2026-07-08. Auteurs : Augustin (founder), Claude Code, Codex.
+Dernière mise à jour : 2026-07-10 (audit complet des docs). Auteurs : Augustin (founder), Claude Code, Codex.
 
 ---
 
@@ -34,7 +34,7 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 10. `docs/global-video-understanding.md` → fondations conceptuelles story-first
 11. `docs/unit-economics.md` → crédits, prix API, VPS, marge, seuils de décision
 12. `docs/infrastructure.md` → **archi infra adoptée** : control plane VPS (OVH/Scaleway) + worker Mac Studio (pull)
-13. `docs/pipeline-improvements.md` → roadmap qualité worker (briques 1-5 livrées, 6-11 à faire)
+13. `docs/pipeline-improvements.md` → roadmap qualité worker (briques 1-6 livrées, 7-11 à faire)
 
 ---
 
