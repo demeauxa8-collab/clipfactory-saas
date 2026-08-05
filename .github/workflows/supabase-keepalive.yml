@@ -29,10 +29,11 @@ jobs:
 
           # plan_definitions is world-readable under RLS, so this reaches
           # Postgres itself — a gateway-only hit would not count as activity.
+          # select=* keeps the ping working through column renames.
           status=$(curl -sS -o /tmp/body -w '%{http_code}' --max-time 30 \
             -H "apikey: ${SUPABASE_ANON_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
-            "${SUPABASE_URL}/rest/v1/plan_definitions?select=id&limit=1")
+            "${SUPABASE_URL}/rest/v1/plan_definitions?select=*&limit=1")
 
           echo "HTTP ${status}"
           cat /tmp/body
