@@ -3,6 +3,53 @@ import { NextResponse, type NextRequest } from "next/server";
 
 type CookieToSet = { name: string; value: string; options: CookieOptions };
 
+// Vercel kills the middleware at 25s. Supabase being slow or paused must never
+// cost us the whole request — fail closed to /login well before that.
+const AUTH_TIMEOUT_MS = 3000;
+
+// "Auth session missing" is what a signed-out visitor gets — a normal answer
+// from a healthy service, not an outage. Only a request that never came back
+// counts as degraded.
+function isUnreachable(error: { name?: string; status?: number }): boolean {
+  return (
+    error.name === "AuthRetryableFetchError" ||
+    error.status === 0 ||
+    (typeof error.status === "number" && error.status >= 500)
+  );
+}
+
+async function getUserOrNull(
+  supabase: ReturnType<typeof createServerClient>
+): Promise<{ user: unknown | null; degraded: boolean }> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  try {
+    const result = await Promise.race([
+      supabase.auth.getUser(),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error("auth timeout")), AUTH_TIMEOUT_MS);
+      }),
+    ]);
+
+    if (result.error) {
+      const degraded = isUnreachable(result.error);
+      if (degraded) {
+        console.warn("[middleware] auth unreachable:", result.error.message);
+      }
+      return { user: null, degraded };
+    }
+    return { user: result.data.user, degraded: false };
+  } catch (error) {
+    console.warn(
+      "[middleware] auth unreachable:",
+      error instanceof Error ? error.message : error
+    );
+    return { user: null, degraded: true };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -29,9 +76,7 @@ export async function updateSession(request: NextRequest) {
 
   // IMPORTANT: do not put logic between createServerClient and getUser().
   // Supabase docs say so — it's how the session gets refreshed.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, degraded } = await getUserOrNull(supabase);
 
   const path = request.nextUrl.pathname;
   const isProtected =
@@ -42,7 +87,11 @@ export async function updateSession(request: NextRequest) {
   if (!user && isProtected) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/login";
+    redirectUrl.search = "";
     redirectUrl.searchParams.set("next", path);
+    // Tells /login the bounce came from an unreachable auth service, not from
+    // a genuinely signed-out visitor.
+    if (degraded) redirectUrl.searchParams.set("auth", "unavailable");
     return NextResponse.redirect(redirectUrl);
   }
 

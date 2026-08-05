@@ -54,6 +54,9 @@ export function LoginForm({
   } | null>(null);
   const params = useSearchParams();
   const initialError = params.get("error");
+  // Set by the middleware when it bounced us here because Supabase was
+  // unreachable — the visitor may well still have a valid session.
+  const authUnavailable = params.get("auth") === "unavailable";
   const turnstileEnabled = TURNSTILE_SITE_KEY !== "" && TURNSTILE_SITE_KEY !== "TODO";
 
   // Awaited searchParams support (Next.js 15 returns a Promise in some contexts)
@@ -216,6 +219,13 @@ export function LoginForm({
 
   return (
     <div className="space-y-4">
+      {authUnavailable && (
+        <p className="rounded-md border border-[var(--color-border)] bg-[var(--color-muted)] p-3 text-sm text-[var(--color-muted-foreground)]">
+          We could not reach the sign-in service just now. If you were already
+          signed in, try again in a moment.
+        </p>
+      )}
+
       {turnstileEnabled && (
         <>
           <Script

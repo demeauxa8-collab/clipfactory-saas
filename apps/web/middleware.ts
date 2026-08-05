@@ -6,8 +6,14 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+  // Only routes that actually need a session. Marketing pages must stay up even
+  // when Supabase is down — running auth on them once took the whole site to 504.
   matcher: [
-    // Run on everything except static assets and the favicon.
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    "/app",
+    "/app/:path*",
+    "/admin",
+    "/admin/:path*",
+    "/login",
+    "/auth/:path*",
   ],
 };
