@@ -3,7 +3,7 @@
 > **Pour Codex (ou tout autre agent) qui reprend ce projet sans contexte.**
 > Tout ce qu'il faut savoir tient dans ce doc + les docs cités ci-dessous.
 
-Dernière mise à jour : 2026-07-10 (audit complet des docs). Auteurs : Augustin (founder), Claude Code, Codex.
+Dernière mise à jour : 2026-08-07 (ancrage des coupes + paysage modèles mesuré). Auteurs : Augustin (founder), Claude Code, Codex.
 
 ---
 
@@ -14,10 +14,10 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 **Différenciateur produit** :
 > Campaign-first. Chaque clip est sélectionné en fonction d'une **campagne** (audience, niche, ton, objectif). Sur vidéos ≥ 5 min, on détecte des **arcs narratifs multi-segments** (setup → payoff à 10 min d'écart). Chaque clip ship avec un **score expliqué** (hook, emotion, visual, fit campagne, editing).
 
-**État du code** : V1 fonctionnellement complète et **pipeline validée end-to-end en local** (2026-07-04 → 08 : vrais clips générés depuis l'UI web, ~7 cents/job). Montage-v2 livré : assemblage multi-segments avec transitions conscientes de la continuité, cadrage face-crop par segment, captions FR karaoké, sélection campaign-driven (voir journal 2026-07-04/08 et `docs/pipeline.md`). La prod API/worker reste bloquée par les comptes externes et l'hébergement (control plane VPS + worker Mac Studio — voir `docs/infrastructure.md`).
+**État du code** : V1 fonctionnellement complète et **pipeline validée end-to-end en local** (2026-07-04 → 08 : vrais clips générés depuis l'UI web, ~7 cents/job). Montage-v2 livré (assemblage multi-segments, transitions conscientes de la continuité, cadrage face-crop par segment, captions FR karaoké, sélection campaign-driven), puis **ancrage des coupes sur le transcript** le 2026-08-07 — le correctif le plus important à ce jour, voir le journal. La prod API/worker reste bloquée par les comptes externes et l'hébergement (control plane VPS + worker Mac Studio — voir `docs/infrastructure.md`).
 
-**État Git/Vercel le plus récent (2026-07-08)** :
-- `main` synchronisé avec origin. Derniers commits clés : `7463048` (passe qualité rendu), `5255a96` (montage-v2), `f864e69` (cache source), `f9c09ee` (docs).
+**État Git/Vercel le plus récent (2026-08-07)** :
+- `main` synchronisé avec origin. Derniers commits clés : `7463048` (passe qualité rendu), `5255a96` (montage-v2), `5650df3`+`6fe7efb` (survie du web à un Supabase en pause + keepalive), **`66d21b0` (ancrage des coupes sur le transcript)**.
 - Production Vercel : `https://clipfactory-saas.vercel.app` (dashboard preview sans login : `/preview/dashboard`). Domaines ajoutés au projet Vercel, DNS toujours pas configuré.
 - Branches locales à trier : `draft/parallel-workers` (1 gros commit wip : fleet workers parallèles + `0005_job_leasing.sql` à renuméroter + 14 skills `.claude/` + scripts deploy VPS/Caddy/systemd — **n'existe QUE sur ce Mac**, plus sur origin) ; `deploy/hetzner-setup` (1 commit doc blocage Hetzner) ; `infra/vps-bootstrap`, `redesign/apple-premium`, `redesign/beige` = entièrement dans main, supprimables. Deux worktrees (`~/clipfactory-redesign`, `~/clipfactory-beige`) contiennent du travail non commité (marketing + `docs/clip-judge.md`).
 
@@ -35,6 +35,7 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 11. `docs/unit-economics.md` → crédits, prix API, VPS, marge, seuils de décision
 12. `docs/infrastructure.md` → **archi infra adoptée** : control plane VPS (OVH/Scaleway) + worker Mac Studio (pull)
 13. `docs/pipeline-improvements.md` → roadmap qualité worker (briques 1-6 livrées, 7-11 à faire)
+14. `docs/model-landscape.md` → **quel modèle à quel étage, chiffré sur appels réels** (vidéo/audio natif, clip-judge, transcription). À relire avant tout changement de modèle.
 
 ---
 
@@ -46,7 +47,7 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 | Plan unique V1 | Starter 29 €/mo · 300 credits · 30 min · 3 clips · 1 concurrent | Réduire la décision, mesurer la marge réelle avant V2 |
 | 1 credit = | 1 minute de vidéo source | Standard marché (Vugola, Wayin, Opus) |
 | Moteur clipping | Pipeline maison sur cloud, **pas** d'API tierce (Klap/Wayin) | Klap = 4.44 $/vidéo, on vend 0.97 €, marge négative |
-| LLM stack primary | OpenRouter — **validé en réel : `google/gemini-2.5-flash` partout** (texte + vision cheap + vision deep), avec `reasoning:{max_tokens:0}` sinon le JSON est tronqué. Le mix économique DeepSeek texte + Qwen vision cheap reste une optimisation à re-benchmarker | Modèles passés par env, rien de hardcodé |
+| LLM stack primary | OpenRouter — `google/gemini-2.5-flash` partout (texte + vision cheap + vision deep), `reasoning:{max_tokens:0}` sinon le JSON est tronqué. **Le comparatif chiffré vit dans `docs/model-landscape.md` — le lire avant de changer quoi que ce soit** | Modèles passés par env ; ⚠️ un identifiant retiré du catalogue renvoie 400 et bascule en silence sur le fallback |
 | LLM fallback | Anthropic Claude Haiku 4.5 — configuré mais **désactivé** (`ENABLE_FALLBACK=false`, pas de clé) | Filet sur erreur parse/timeout/5xx du primary |
 | Transcription | OpenAI **`whisper-1`** (⚠️ PAS `gpt-4o-mini-transcribe` : refuse `verbose_json`/timestamps mot à mot, indispensables aux captions). Audio extrait en mp3 mono 16 kHz avant envoi (limite 25 Mo) | Validé sur vrais jobs |
 | Codex CLI / MLX local | **INTERDITS** en SaaS | Compte ChatGPT perso = ban à 10 users ; MLX ne scale pas |
@@ -78,7 +79,7 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 | Queue | Redis (sur VPS) | Simple `BLPOP` |
 | Billing | Stripe Checkout + webhooks idempotents | API version pinned `2025-04-30.basil` |
 | Transcription | OpenAI **`whisper-1`** (word timestamps ; `gpt-4o-mini-transcribe` les refuse) | validé en réel |
-| LLM primary | OpenRouter — validé : `google/gemini-2.5-flash` partout (`reasoning` off) ; mix DeepSeek/Qwen à re-benchmarker | Une seule clé |
+| LLM primary | OpenRouter — `google/gemini-2.5-flash` partout (`reasoning` off). Comparatif mesuré : `docs/model-landscape.md` | Une seule clé |
 | LLM fallback | Anthropic `claude-haiku-4-5-20251001` | Auto sur erreur primary |
 | Deploy front | Vercel | Projet `clipfactory-saas`, root `apps/web`, GitHub connecté |
 | Deploy back | API : Caddy + systemd sur VPS OVH/Scaleway. Worker : Mac Studio (launchd, pull) | Voir `docs/infrastructure.md` + `docs/deploy.md` |
@@ -254,6 +255,13 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - [x] **T40.** Pipeline validée end-to-end en local (2026-07-04→06) + passe qualité rendu : face-crop, captions FR, frontières de phrase, garde anti-noir — commit `7463048`, voir journal.
 - [x] **T41.** Montage-v2 (2026-07-08) : multi-segments + transitions par joint + cadrage par segment + campaign_fit LLM/flou — commit `5255a96`, voir journal + `docs/pipeline.md`. 71 tests worker verts.
 - [x] **T42.** Cache du source dans le workdir (`f864e69`) — re-runs sans re-téléchargement YouTube.
+- [x] **T43.** Web : survie à un Supabase free-tier en pause (`5650df3`) + keepalive Postgres (`6fe7efb`). Le middleware matchait toutes les routes et attendait `getUser()` sans deadline → 504 sur tout le site.
+- [x] **T44.** **Ancrage des coupes sur le transcript** (`66d21b0`) : phrases ponctuées whisper récupérées, `anchor_arcs_to_transcript()`, réparation des arcs courts, hook noté sur la bande réelle, diversité avant la deep vision. Dérive 1,88 s → 0,12 s. Voir journal 2026-08-07.
+- [x] **T45.** Paysage modèles mesuré sur appels réels → `docs/model-landscape.md`.
+- [ ] **T46.** **Clip-judge** (gemini-3.6-flash en vidéo native sur les arcs finalistes) — meilleur retour sur investissement identifié, 0,0115 $/clip, non implémenté.
+- [ ] **T47.** Rendu ffmpeg : passer à un seul encodage (`filter_complex`) au lieu du double encodage actuel (intermédiaires + concat), et ajouter les gestes de monteur manquants (punch-in sur la punchline, cadrage qui varie entre segments, trim des silences).
+- [ ] **T48.** Contrôle au démarrage du worker : vérifier que chaque modèle configuré existe encore dans `/api/v1/models`.
+- [ ] **T49.** Benchmark des 9 modèles texte pour la composition des arcs (harnais prêt : `~/clipfactory-data/bench/bench_arcs.py`).
 
 ---
 
@@ -404,6 +412,29 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - **Validé sur run réel** : 3 clips dont 1 vrai montage setup(0:00 "j'ai fait 4,5 M€")→payoff(9:24 "ce qui coûte le plus cher c'est les connaissances"), dip blanc propre au joint, campaign_fit 60→80 sur les 3 clips (tous orientés preuve de résultats/formation = goal campagne). `+ fix(f864e69)` : re-runs réutilisent le source.mp4 du workdir (YouTube 403 sur re-téléchargements répétés).
 - **Boucle d'itération locale** (pour reprendre) : `redis-cli RPUSH clipfactory:jobs:queue '{"job_id":"<id>"}'` + restart worker (`cd apps/worker && nohup .venv/bin/python -m app.main`) ; job de test `2221f645-ed0e-47b2-8201-417d7c517a39`, campagne test "gaspard grojean" (données avec fautes de frappe — à recréer proprement via l'UI).
 - **Restes connus** : cadrage par scène à l'intérieur d'un segment mixte, suivi du visage sur les gestes (crop statique), `snap failed` élevé (9/16 sur le dernier run) à instrumenter, `duration_seconds` DB faux pour les clips multi (end-start global au lieu de la somme des segments), `error_message` non nettoyé quand un job repasse en completed, `link_reason`/`campaign_fit_reason` parsés mais non persistés sur le clip, juge vidéo natif (`docs/clip-judge.md`) non implémenté.
+
+### 2026-08-07 — Ancrage des coupes sur le transcript + paysage modèles mesuré
+
+**Le défaut de fond, trouvé et corrigé (commit `66d21b0`).** Le pipeline croyait les timestamps du LLM. Mesure sur la fixture réelle : **sur 7 arcs sur 8, les mots cités par le modèle commençaient 0,7 à 8,1 s après le `start` qu'il déclarait** — les clips ouvraient donc sur la mise en route pendant que les champs éditoriaux paraissaient impeccables. Deux raisons pour lesquelles ça passait : `verify_arcs` vérifie le CONTENU et jamais la POSITION (une dérive de 8 s passait avec un ratio de 1.0), et le snap de frontières était **inopérant** — whisper-1 rend des mots quasi collés (écart inter-mots médian ET p85 = 0,000 s), donc le seuil adaptatif s'effondrait sur son plancher et ne produisait que 73 « phrases » pour 2864 mots.
+
+Le déclic : **l'API whisper renvoyait déjà les phrases ponctuées** (`timestamp_granularities=["word","segment"]`) et on les jetait depuis le début → 428 vraies phrases au lieu de 73 devinées.
+
+Livré : `boundaries.anchor_arcs_to_transcript()` (relocalise chaque fenêtre sur les mots réellement cités par appariement flou ±15 s, et étend la fin pour couvrir `payoff_line`) ; réparation des arcs trop courts au lieu du rejet ; hook noté sur ce qui est **réellement prononcé** dans les 2,5 premières secondes et non plus sur un champ que le modèle contrôle ; liste unique de mauvaises attaques partagée entre le prompt et le scoring ; diversité (MMR) appliquée **avant** de payer la deep vision ; durée et langue enfin passées au sélecteur.
+
+| mesure (fixture réelle) | avant | après |
+| --- | ---: | ---: |
+| dérive médiane du début de clip | 1,88 s (max 8,14) | **0,12 s** (max 0,12) |
+| segments correctement calés | 3/7 | **7/7** |
+| punchline à l'intérieur du clip | 7/8 | **8/8** |
+| phrases détectées (2864 mots) | 73 | **428** |
+
+155 tests. **Règle d'or posée : aucune seconde émise par un LLM ne part dans ffmpeg** — voir `docs/model-landscape.md` §0.
+
+**Paysage modèles mesuré** (nouveau doc `docs/model-landscape.md`) : la vidéo native marche, OpenRouter accepte les URLs YouTube directement, et la facturation Gemini vaut 91 tokens/seconde de source indépendamment de la résolution — 10 min coûtent 0,015 $ **son compris**, moins que nos 80 frames muettes à 0,028 $. Mais tous les modèles sous 1,50 $/Mtok se trompent de 65-83 s pour dater un événement (plafond de famille) : seul `gemini-3.6-flash` tombe à 0,9 s. Le **clip-judge** est la brique manquante la mieux notée (6/6 sur la publiabilité, 11/12 sur les bords, 0,0115 $/clip) — il a recalé notre propre montage en identifiant que la dernière phrase était coupée sur « réussi », exact au mot près. Côté transcription, la piste OpenAI est un cul-de-sac assumé (aucun modèle 2026 ne fait de timestamps mot) ; **Deepgram Nova-3** est le seul candidat qui passe les 4 contraintes (-28 % de coût) ; Groq whisper-large-v3 est disqualifié (avale 16 mots, casse 5 % des timestamps sur les chiffres).
+
+**Bug silencieux corrigé** : `qwen/qwen3-vl-flash` et `deepseek/deepseek-chat-v3.2`, les défauts de `settings.py`, ont été **retirés d'OpenRouter** (400) — on tournait sur le fallback sans le savoir.
+
+**Savoir-faire de clippeur encodé dans le prompt** (à partir de références fournies par Augustin, transcrits dans `~/clipfactory-data/bench/craft-refs/`) : le hook doit **promettre sans révéler** (mettre la punchline dans les 2 premières secondes referme la boucle — c'est l'argument même du montage setup→payoff) ; 5 formules de hook (erreur, contre-intuitif, transformation, avertissement, secret) ; enjeux et spécificité chiffrée ; rejet des salutations et auto-présentations ; le hook **visuel** compte autant que le verbal.
 
 ---
 

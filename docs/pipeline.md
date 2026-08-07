@@ -74,7 +74,7 @@ queued
 | 3 | probe | ffprobe → `duration_seconds` |
 | 4 | check_plan + initial_debit | si dur > plan.max → fail. Débit upfront du `credits_estimated`. |
 | 5 | upload_source | clé `sources/{user_id}/{job_id}.mp4` (best-effort) |
-| 6 | transcribe | OpenAI **`whisper-1`** (verbose_json + word timestamps — `gpt-4o-mini-transcribe` les refuse). Audio extrait en mp3 mono 16 kHz (limite 25 Mo). Post-process : fusion des élisions françaises ("J","ai" → "J'ai") |
+| 6 | transcribe | OpenAI **`whisper-1`**, `timestamp_granularities=["word","segment"]` : on garde les mots horodatés ET les **phrases ponctuées** (428 sur notre vidéo de test — elles étaient jetées avant le 2026-08-07 ; ce sont elles qui donnent les vraies frontières de coupe). Audio extrait en mp3 mono 16 kHz (limite 25 Mo). Post-process : fusion des élisions françaises ("J","ai" → "J'ai") |
 | 7 | select_segments | Modèle texte primary via env `PRIMARY_TEXT_MODEL` (validé : gemini-2.5-flash, `reasoning` off ; fallback Claude Haiku désactivé) : retourne 5-8 segments candidats `{start, end, hook, emotion, transcript_excerpt, why, suggested_title, suggested_hook}` |
 | 8 | verify_segments | string match transcript_excerpt vs transcript réel (fuzzy ratio ≥ 0.7 sur la fenêtre). Drop hallucinations. |
 | 9 | extract_frames + deep_vision | 2-3 frames par segment restant, Gemini 2.5 Flash vision (fallback Haiku) JSON `{decor, person_visible, energy, action, proof_objects, problems, visual_score}` |
@@ -97,7 +97,8 @@ queued
 | 7 | **scene_detection + frame_sampling** | FFmpeg `select='gt(scene,0.4)'` + sampling régulier. Cap selon durée : `<10min→80`, `10-30→150`, `>30→220` frames |
 | 8 | **build_video_map** | Modèle vision cheap via env `VISION_CHEAP_MODEL` (validé : gemini-2.5-flash, `reasoning` off), prompt = `VIDEO_MAP_SYSTEM_PROMPT` + frames + transcript résumé. Sortie : `{video_summary, events[]}` 20-40 events avec `{id, start, end, decor, people, objects, action, transcript_summary, visual_importance, narrative_role}` |
 | 9 | **detect_story_arcs** | Modèle texte primary (env `PRIMARY_TEXT_MODEL`) sur video_map + transcript_lines + campaign. Sortie montage-v2 : 8-12 arcs de 1-3 segments `{title, arc_type, segments[], viral_reason, estimated_retention, continuity_risk, link_reason, campaign_fit, campaign_fit_reason}` |
-| 10 | **verify_arcs** | Pour chaque arc, pour chaque segment : checker que les mots du transcript dans `[start, end]` existent vraiment. Sinon drop l'arc entier. |
+| 9b | **anchor_arcs** (2026-08-07) | `boundaries.anchor_arcs_to_transcript()` : retrouve dans le transcript les mots que le modèle a CITÉS et recale la fenêtre dessus (appariement flou ±15 s), puis étend la fin pour englober `payoff_line`. **C'est ici qu'on cesse de croire les timestamps du LLM** — voir l'encadré ci-dessous. |
+| 10 | **verify_arcs** | Pour chaque arc, pour chaque segment : checker que les mots du transcript dans `[start, end]` existent vraiment. Sinon drop l'arc entier. ⚠️ Vérifie le CONTENU, pas la POSITION : sans l'étape 9b, une dérive de 8 s passait avec un ratio de 1.0. |
 | 11 | **deep_vision** sur top 5 | Top 5 arcs par `estimated_retention`. Pour chaque segment d'un arc top 5 : extract 4-6 frames (début, milieu, fin, +1-2 si > 15s). Gemini 2.5 Flash vision (fallback Haiku) : confirm decor/action/proof. Retourne `visual_score` agrégé par arc. |
 | 12 | **score_and_pick_arcs** | poids montage-v2 : `visual_proof 28% + hook_strength 20% + payoff_strength 18% + campaign_fit 12% + editing_continuity 12% + retention 10%` (voir section Scoring). Top `target_clip_count`. |
 | 13 | render_montage | Pour chaque arc retenu, FFmpeg : cadrage PAR SEGMENT (face-crop 9:16 plein cadre ou fit+blur), transitions par joint (cut sec / dip-to-white 0,10 s selon `joint_compatibility`), concat avec crossfade audio 150 ms, vertical 1080x1920, h264. Garde anti-noir par segment avant rendu |
@@ -119,6 +120,43 @@ def verify_segment(transcript_words, start, end, expected_excerpt) -> bool:
 ```
 
 Si un arc a un segment qui rate la vérification → l'arc complet est drop. On préfère 2 clips solides que 3 clips dont 1 hallucination.
+
+---
+
+## Ancrage sur le transcript (étape 9b) — la règle d'or
+
+> **Aucune seconde émise par un LLM ne part directement dans ffmpeg.**
+
+Mesuré le 2026-08-07 sur données réelles : **sur 7 arcs sur 8, les mots cités par
+le modèle commençaient 0,7 à 8,1 s après le `start` qu'il déclarait**. Le modèle
+lit le marqueur `[t]` d'une ligne de transcript comme un début, tout en citant des
+mots situés plusieurs secondes plus loin dans cette ligne. Les clips ouvraient
+donc sur la mise en route.
+
+Le principe : le modèle **cite** (phrase d'ouverture, `payoff_line`), le code
+**date**. Le transcript mot à mot est l'horloge de référence — gratuite, exacte,
+déjà calculée.
+
+Deux dépendances non évidentes :
+
+1. **Les phrases ponctuées de whisper.** L'API renvoie `segments` (texte ponctué +
+   bornes) en plus de `words` (sans ponctuation) : on les jetait. Récupérées via
+   `timestamp_granularities=["word","segment"]` → **428 vraies phrases** contre 73
+   devinées auparavant sur le même audio.
+2. **La détection de silences ne marche pas sur du whisper.** Les mots reviennent
+   quasi collés (écart inter-mots médian ET p90 = 0,000 s), donc un seuil en
+   VALEUR s'effondre sur son plancher. Le secours utilise désormais un critère de
+   RANG (les 12 % plus grands écarts), qui dégrade proprement sur n'importe quelle
+   source.
+
+Effets mesurés : dérive médiane 1,88 s → **0,12 s** (max 8,14 → 0,12), segments
+correctement calés 3/7 → **7/7**, punchline à l'intérieur du clip 7/8 → **8/8**,
+et les arcs sous le plancher de 12 s sont **réparés** (fin poussée à la prochaine
+fin de phrase) au lieu d'être jetés en silence.
+
+Corollaire pour le choix des modèles : un modèle incapable de dater un événement
+reste utilisable pour la video-map et la deep vision, puisque **ces timecodes-là
+viennent des frames qu'on extrait nous-mêmes**. Voir `docs/model-landscape.md`.
 
 ---
 
@@ -209,9 +247,11 @@ total = 0.28·visual_proof + 0.20·hook_strength + 0.18·payoff_strength
       + 0.12·campaign_fit + 0.12·editing_continuity + 0.10·retention
 ```
 
-- `hook_strength` : le PREMIER segment doit accrocher dans les 2 premières
-  secondes (durée serrée, excerpt qui ouvre sur le hook, visage à l'écran,
-  énergie).
+- `hook_strength` : noté sur **ce qui est réellement prononcé** dans les 2,5
+  premières secondes de la fenêtre (`words_in_window`), pas sur le champ
+  `opening_words` que le modèle contrôle — sinon il suffit d'écrire une belle
+  phrase pour échapper à la pénalité d'attaque molle. Liste des connecteurs
+  interdits partagée avec le prompt (source unique).
 - `campaign_fit` : 0.5 × auto-évaluation LLM (`campaign_fit` renvoyé par
   arc avec `campaign_fit_reason`) + 0.5 × match mots-clés FLOU
   (difflib ≥ 0.8 : tolère les fautes du brief, "buinesse" ≈ "business").
