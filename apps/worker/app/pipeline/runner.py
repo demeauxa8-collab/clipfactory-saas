@@ -42,7 +42,7 @@ from ..providers import (
 from ..settings import get_settings
 from ..storage import upload_file
 from .analyze import select_simple_segments
-from .boundaries import snap_arc_segments
+from .boundaries import AnchorReport, anchor_arcs_to_transcript, snap_arc_segments
 from .captions import FACE_CROP_MARGIN_V, FIT_BLUR_MARGIN_V, write_ass_for_montage
 from .ffmpeg import (
     FFmpegError,
@@ -52,7 +52,13 @@ from .ffmpeg import (
     validate_rendered_clip,
     yt_dlp_download,
 )
-from .score import joint_compatibility, rank_and_pick, score_arc
+from .score import (
+    HOOK_OPENING_WINDOW_SECONDS,
+    joint_compatibility,
+    preselect_arcs_for_vision,
+    rank_and_pick,
+    score_arc,
+)
 from .story_arcs import select_story_arcs
 from .transcribe import (
     transcribe,
@@ -486,6 +492,51 @@ def _transitions_for_candidate(
     return transitions
 
 
+def _spoken_opening_text(ctx: JobContext, arc: StoryArc) -> str | None:
+    """What the viewer ACTUALLY hears in the clip's first seconds, read off the
+    timestamped transcript.
+
+    The hook used to be scored on `opening_words`, a field the selection model
+    writes itself — it could promise a punchy attack and still hand us a window
+    that opens on "en fait…". This is the ground truth the scorer needs; None
+    when we have no transcript to check against (the scorer then falls back on
+    the declared field).
+    """
+    if ctx.transcript is None or not arc.segments:
+        return None
+    first = arc.segments[0]
+    end = min(first.end, first.start + HOOK_OPENING_WINDOW_SECONDS)
+    words = words_in_window(ctx.transcript, first.start, end)
+    return " ".join(w.word for w in words).strip() or None
+
+
+def _log_anchor_report(report: AnchorReport, *, label: str) -> None:
+    """Report what anchoring corrected, and what it could not.
+
+    ``segments_unmatched`` is the interesting alarm: it means the model quoted
+    words we cannot find anywhere near the start it declared, i.e. the window is
+    unverifiable rather than merely shifted.
+    """
+    log.info(
+        f"pipeline.anchor_arcs{label}",
+        arcs=report.arcs_seen,
+        segments=report.segments_seen,
+        anchored=report.segments_anchored,
+        unmatched=report.segments_unmatched,
+        max_drift_seconds=report.max_drift_seconds,
+        mean_drift_seconds=round(report.mean_drift_seconds, 3),
+        payoffs_extended=report.payoffs_extended,
+        payoffs_out_of_reach=report.payoffs_out_of_reach,
+        payoffs_unmatched=report.payoffs_unmatched,
+    )
+    if report.segments_unmatched:
+        log.warning(
+            f"pipeline.anchor_arcs_unmatched{label}",
+            unmatched=report.segments_unmatched,
+            segments=report.segments_seen,
+        )
+
+
 def _rebuild_excerpts(ctx: JobContext, cand: MontageCandidate) -> None:
     """Rewrite each segment excerpt (and the candidate excerpt) from the words
     actually inside the final window, so the DB describes what we render, not the
@@ -717,9 +768,21 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
         # Step 13-14 — deep vision on top arcs (cap)
         async with pool.acquire() as conn:
             await _set_status(conn, job_id, "analyzing", current_step="deep_vision")
-        top_for_vision = sorted(arcs, key=lambda a: a.estimated_retention, reverse=True)[
-            :TOP_ARCS_FOR_DEEP_VISION
-        ]
+        # Diversity BEFORE the cap: deep vision is the expensive call, so it is
+        # never spent on an arc that is a rerun of a better one. Ranking also
+        # weighs the campaign fit, not retention alone.
+        top_for_vision, preselect_dropped = preselect_arcs_for_vision(
+            arcs, TOP_ARCS_FOR_DEEP_VISION
+        )
+        for record in preselect_dropped:
+            log_ctx.info("pipeline.vision_preselect_drop", **record)
+        log_ctx.info(
+            "pipeline.vision_preselect",
+            arcs=len(arcs),
+            kept=len(top_for_vision),
+            dropped=len(preselect_dropped),
+            cap=TOP_ARCS_FOR_DEEP_VISION,
+        )
         candidates: list[MontageCandidate] = []
         for idx, arc in enumerate(top_for_vision):
             try:
@@ -744,7 +807,12 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
             ctx.deep_vision_cost_cents += round(
                 frames * settings.cost_vision_deep_cents_per_frame
             )
-            candidate = score_arc(arc=arc, per_segment_vision=per_seg, campaign=ctx.campaign)
+            candidate = score_arc(
+                arc=arc,
+                per_segment_vision=per_seg,
+                campaign=ctx.campaign,
+                opening_text=_spoken_opening_text(ctx, arc),
+            )
             candidate.vision_per_segment = per_seg
             candidates.append(candidate)
 
@@ -1080,6 +1148,9 @@ async def _run_story_path(
         primary, fallback,
         settings.primary_text_model,
         settings.fallback_text_model,
+        # duration + language are what make the prompt say "WRITTEN IN french"
+        # instead of "(unknown …)" — the mechanism that got the titles back into
+        # French. ctx has both; not passing them wasted it.
         lambda p, m: select_story_arcs(
             provider=p,
             model=m,
@@ -1087,12 +1158,26 @@ async def _run_story_path(
             video_map=video_map,
             campaign=ctx.campaign,
             target_clip_count=ctx.target_clip_count,
+            duration_seconds=ctx.duration_seconds,
+            language=ctx.transcript.language if ctx.transcript else None,
+            # Enables the repair pass: an arc under the floor gets its end pushed
+            # to the next sentence end instead of being dropped.
+            transcript=ctx.transcript,
         ),
         label="story_arcs",
     )
     ctx.analysis_tokens += tokens2
     if used_provider.name != primary.name:
         ctx.fallback_used = True
+
+    # 9b. Anchor the declared windows on the words the model actually quoted.
+    # Must run BEFORE verify: the verifier only asks whether the excerpt appears
+    # somewhere in a padded window, so a window drifting several seconds off the
+    # quoted line still scores 1.0 and goes to render as-is.
+    async with pool.acquire() as conn:
+        await _set_status(conn, ctx.job_id, "analyzing", current_step="anchor_arcs")
+    arcs, anchor_report = anchor_arcs_to_transcript(arcs, ctx.transcript)
+    _log_anchor_report(anchor_report, label="")
 
     # 10. Verify (anti-hallucination)
     async with pool.acquire() as conn:
@@ -1101,7 +1186,9 @@ async def _run_story_path(
     log.info("pipeline.verify", kept=len(kept), dropped=dropped)
     async with pool.acquire() as conn:
         await _set_status(conn, ctx.job_id, "analyzing", current_step="snap_segments")
-    snapped, snap_report = snap_arc_segments(kept, ctx.transcript.words)
+    snapped, snap_report = snap_arc_segments(
+        kept, ctx.transcript.words, sentences=ctx.transcript.sentences
+    )
     log.info(
         "pipeline.snap_segments",
         arcs=snap_report.arcs_seen,
@@ -1146,12 +1233,19 @@ async def _run_simple_path(
     if used_provider.name != primary.name:
         ctx.fallback_used = True
 
-    # Verify (same path as story)
+    # Anchor then verify (same path as story). Single-segment arcs carry a
+    # transcript_excerpt too, so they drift the same way and are re-cut the same
+    # way; they have no payoff_line, so the landing pass is simply a no-op.
+    arcs, anchor_report = anchor_arcs_to_transcript(arcs, ctx.transcript)
+    _log_anchor_report(anchor_report, label="_simple")
+
     kept, dropped = verify_arcs(ctx.transcript, arcs)
     log.info("pipeline.verify_simple", kept=len(kept), dropped=dropped)
     async with pool.acquire() as conn:
         await _set_status(conn, ctx.job_id, "analyzing", current_step="snap_segments")
-    snapped, snap_report = snap_arc_segments(kept, ctx.transcript.words)
+    snapped, snap_report = snap_arc_segments(
+        kept, ctx.transcript.words, sentences=ctx.transcript.sentences
+    )
     log.info(
         "pipeline.snap_segments_simple",
         arcs=snap_report.arcs_seen,

@@ -35,9 +35,13 @@ class Settings(BaseSettings):
     openrouter_http_referer: str = "https://clipfactory.app"
     openrouter_app_name: str = "ClipFactory"
 
-    primary_text_model: str = "deepseek/deepseek-chat-v3.2"
+    # Defaults must be model IDs that currently exist on OpenRouter: a dead ID
+    # returns a 400 and the job silently falls through to the fallback provider.
+    # "deepseek/deepseek-chat-v3.2" and "qwen/qwen3-vl-flash" were both retired
+    # (verified against /api/v1/models, 2026-08) — do not restore them.
+    primary_text_model: str = "google/gemini-2.5-flash"
     primary_vision_deep_model: str = "google/gemini-2.5-flash"
-    vision_cheap_model: str = "qwen/qwen3-vl-flash"
+    vision_cheap_model: str = "google/gemini-2.5-flash"
 
     # Fallback / eval stack (Anthropic)
     anthropic_api_key: str = ""

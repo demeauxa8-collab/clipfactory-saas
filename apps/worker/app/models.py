@@ -35,10 +35,29 @@ class TranscriptWord:
 
 
 @dataclass
+class TranscriptSentence:
+    """A punctuated sentence, straight from the ASR.
+
+    verbose_json returns two parallel views of the same audio: "words" (precise
+    timings, no punctuation) and "segments" (punctuated sentences with their own
+    start/end). We used to keep only the words, then re-derive phrase boundaries
+    from silences — unreliable when the ASR packs words back to back. These are
+    the real boundaries.
+    """
+
+    text: str
+    start: float
+    end: float
+
+
+@dataclass
 class Transcript:
     text: str
     words: list[TranscriptWord]
     language: str | None = None
+    # Optional + empty by default: older cached transcripts and every hand-built
+    # Transcript in the tests keep working without them.
+    sentences: list[TranscriptSentence] = field(default_factory=list)
 
 
 # =============================================================
@@ -94,6 +113,11 @@ class StoryArc:
     link_reason: str | None = None
     campaign_fit_llm: int | None = None    # 0-100, LLM self-report, None if absent
     campaign_fit_reason: str | None = None
+    # Editorial self-check reported by the selection model. All optional so older
+    # payloads (and the simple pipeline) keep constructing StoryArc unchanged.
+    opening_words: str | None = None   # first ~8 words of the clip, verbatim
+    self_contained: bool = True        # understandable with zero outside context
+    payoff_line: str | None = None     # verbatim line that makes the clip land
 
 
 # =============================================================

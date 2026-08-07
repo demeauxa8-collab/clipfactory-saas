@@ -7,7 +7,7 @@ import tempfile
 import structlog
 from openai import AsyncOpenAI
 
-from ..models import Transcript, TranscriptWord
+from ..models import Transcript, TranscriptSentence, TranscriptWord
 from ..settings import get_settings
 
 log = structlog.get_logger()
@@ -105,6 +105,37 @@ async def _extract_audio(src_path: str, ffmpeg_bin: str) -> str:
     return out_path
 
 
+def _field(obj: object, name: str) -> object:
+    """Read a field off a verbose_json entry, dict or pydantic object alike."""
+    if isinstance(obj, dict):
+        return obj.get(name)
+    return getattr(obj, name, None)
+
+
+def parse_sentences(raw_segments: object) -> list[TranscriptSentence]:
+    """Turn the verbose_json "segments" list into punctuated sentences.
+
+    Defensive on purpose: one malformed entry must not cost us the whole list,
+    and an ASR that returns no segments at all simply yields [] (the boundary
+    detector then falls back to inter-word gaps).
+    """
+    out: list[TranscriptSentence] = []
+    if not isinstance(raw_segments, (list, tuple)):
+        return out
+    for seg in raw_segments:
+        try:
+            text = str(_field(seg, "text") or "").strip()
+            start = float(_field(seg, "start"))  # type: ignore[arg-type]
+            end = float(_field(seg, "end"))  # type: ignore[arg-type]
+        except (TypeError, ValueError):
+            continue
+        if not text or end <= start:
+            continue
+        out.append(TranscriptSentence(text=text, start=start, end=end))
+    out.sort(key=lambda s: (s.start, s.end))
+    return out
+
+
 async def transcribe(audio_or_video_path: str) -> Transcript:
     settings = get_settings()
     # Generous timeout + retries: whisper-1 on a ~30 min clip can be slow, and a
@@ -118,7 +149,10 @@ async def transcribe(audio_or_video_path: str) -> Transcript:
                 file=fh,
                 model=settings.openai_transcribe_model,
                 response_format="verbose_json",
-                timestamp_granularities=["word"],
+                # "segment" costs nothing extra and is the only place we get
+                # punctuation: sentence boundaries come from there, not from
+                # guessing silences between packed-together words.
+                timestamp_granularities=["word", "segment"],
             )
     finally:
         try:
@@ -145,9 +179,20 @@ async def transcribe(audio_or_video_path: str) -> Transcript:
     # burned-in captions both read from these words).
     words = merge_french_elisions(words)
 
+    sentences = parse_sentences(getattr(resp, "segments", None))
+
     lang = getattr(resp, "language", None)
-    log.info("transcribe.done", words=len(words), language=lang)
-    return Transcript(text=text, words=words, language=lang)
+    log.info(
+        "transcribe.done",
+        words=len(words),
+        sentences=len(sentences),
+        language=lang,
+    )
+    if not sentences:
+        # Not fatal (boundaries.py degrades to gap detection) but worth seeing:
+        # every downstream cut is less precise without punctuation.
+        log.warning("transcribe.no_sentences", model=settings.openai_transcribe_model)
+    return Transcript(text=text, words=words, language=lang, sentences=sentences)
 
 
 def transcript_to_timestamped_lines(t: Transcript, line_seconds: float = 12.0) -> str:
