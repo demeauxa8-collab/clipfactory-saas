@@ -27,7 +27,11 @@ class Settings(BaseSettings):
 
     # Transcription (OpenAI direct — no equivalent cheaper)
     openai_api_key: str
-    openai_transcribe_model: str = "gpt-4o-mini-transcribe"
+    # whisper-1 is the ONLY OpenAI model that returns word timestamps: the
+    # gpt-4o-transcribe family (and its 2026 successors) reject verbose_json by
+    # design, and transcribe() asks for it. A default of anything else makes a
+    # fresh install fail on the first job.
+    openai_transcribe_model: str = "whisper-1"
 
     # Primary LLM stack (OpenRouter — text + vision deep + vision cheap)
     openrouter_api_key: str = ""

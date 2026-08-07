@@ -465,3 +465,42 @@ def test_duration_floors_are_one_documented_pair() -> None:
     The old 8s snap floor was a third, contradictory value."""
     assert MIN_CLIP_SECONDS == 12.0
     assert MIN_SEGMENT_SECONDS == 3.0
+
+
+def test_anchoring_near_end_of_video_keeps_the_clip_length():
+    """Codex P2: shifting a window forward past the transcript end used to clamp
+    the end alone, collapsing a valid 12s arc to ~5s while still passing verify
+    and snap. The declared duration must survive the clamp."""
+    words = [
+        TranscriptWord(word=w, start=100.0 + i * 0.4, end=100.0 + i * 0.4 + 0.38)
+        for i, w in enumerate(
+            "alors on arrive au bout de cette vidéo et je vous montre "
+            "le résultat final des ventes qu on a faites aujourd hui".split()
+        )
+    ]
+    transcript = Transcript(words=words, language="french", text="")
+    declared_start, declared_end = 96.0, 108.0  # 12s, starts before the words
+    arc = StoryArc(
+        title="fin de vidéo",
+        arc_type="continuous",
+        segments=[
+            ArcSegmentSpec(
+                role="single",
+                start=declared_start,
+                end=declared_end,
+                transcript_excerpt="le résultat final des ventes",
+                why=None,
+            )
+        ],
+        viral_reason="",
+        estimated_retention=80,
+        continuity_risk="low",
+        suggested_hook=None,
+    )
+
+    anchored, _report = anchor_arcs_to_transcript([arc], transcript)
+    seg = anchored[0].segments[0]
+    kept = seg.end - seg.start
+    assert kept >= (declared_end - declared_start) - 0.5, (
+        f"clip collapsed to {kept:.2f}s instead of keeping ~12s"
+    )

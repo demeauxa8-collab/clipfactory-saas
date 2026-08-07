@@ -496,7 +496,26 @@ def anchor_arcs_to_transcript(
             drift = abs(shift)
             total_drift += drift
             max_drift = max(max_drift, drift)
-            new_end = min(segment.end + shift, transcript_end + padding_seconds)
+
+            # Shifting the window forward can run its end past the transcript.
+            # Clamping the end alone would silently shorten the clip (a 12s arc
+            # near the end of the video collapsed to 5.2s), so keep the declared
+            # duration by giving back to the start what the end cannot take.
+            duration = segment.end - segment.start
+            max_end = transcript_end + padding_seconds
+            new_end = new_start + duration
+            if new_end > max_end:
+                new_end = max_end
+                recovered_start = max(0.0, new_end - duration)
+                if recovered_start < new_start:
+                    log.info(
+                        "boundaries.anchor_end_clamped",
+                        title=arc.title[:60],
+                        segment=idx,
+                        kept_start=round(recovered_start, 2),
+                        anchored_start=round(new_start, 2),
+                    )
+                    new_start = recovered_start
             log.info(
                 "boundaries.anchored",
                 title=arc.title[:60],
