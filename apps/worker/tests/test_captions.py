@@ -4,7 +4,7 @@ from app.models import MontageSegment, Transcript, TranscriptWord
 from app.pipeline.captions import HIGHLIGHT_BGR, write_ass_for_montage
 from app.pipeline.transcribe import merge_french_elisions
 
-APOS = "’"  # typographic apostrophe used by the elision repair
+APOS = "’"  # noqa: RUF001 (typographic apostrophe is intentional data)
 
 
 def _dialogue_lines(path: str) -> list[str]:
