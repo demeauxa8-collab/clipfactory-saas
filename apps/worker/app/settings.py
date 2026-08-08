@@ -44,8 +44,28 @@ class Settings(BaseSettings):
     # "deepseek/deepseek-chat-v3.2" and "qwen/qwen3-vl-flash" were both retired
     # (verified against /api/v1/models, 2026-08) — do not restore them.
     primary_text_model: str = "google/gemini-2.5-flash"
-    primary_vision_deep_model: str = "google/gemini-2.5-flash"
-    vision_cheap_model: str = "google/gemini-2.5-flash"
+
+    # Both vision stages run qwen3-vl-32b-instruct since 2026-08-08. Measured on
+    # our own frames (docs/model-landscape.md §6): 7/7 on face_center_x,
+    # person_visible and decor — same as gemini-2.5-flash — for 0.000164 $/segment
+    # against 0.000719 $, and 14 real objects named on the video map against 11.
+    #
+    # THE PRICE DEPENDS ON OUR OWN FRAME SIZE. Qwen bills images as tokens
+    # (no flat per-image fee on this endpoint), so cost scales with resolution:
+    # ~146 tokens for one 512x288 frame, ~882 for the same frame at 720p — 6x.
+    # The 4x saving over Gemini only exists because ffmpeg.extract_frame()
+    # downscales every frame with `scale='min(512,iw)':-2`. Raise that cap and
+    # this stage becomes more expensive than the model it replaced.
+    #
+    # ROUTING IS NOT PINNED. OpenRouter serves this model from a single host
+    # today (Alibaba, fp8, checked 2026-08-08) so there is nothing to arbitrate,
+    # but multi-host qwen-VL siblings show up to 2.16x price spread between
+    # hosts. Pinning requires a `provider: {"order": [...],
+    # "allow_fallbacks": false}` field in the request body — a ":alibaba" suffix
+    # on the model ID does NOT pin (measured: it silently routes elsewhere).
+    # See docs/model-landscape.md §6 before adding hosts to this model.
+    primary_vision_deep_model: str = "qwen/qwen3-vl-32b-instruct"
+    vision_cheap_model: str = "qwen/qwen3-vl-32b-instruct"
 
     # Fallback / eval stack (Anthropic)
     anthropic_api_key: str = ""

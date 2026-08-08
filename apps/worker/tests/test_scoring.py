@@ -21,11 +21,11 @@ from app.pipeline.score import (
     PAYOFF_LINE_BONUS,
     PAYOFF_LINE_IN_LAST_SEGMENT_BONUS,
     _avoid_terms,
+    _brief_fit_score,
     _campaign_fit_score,
     _editing_continuity_score,
     _has_weak_lead_in,
     _hook_strength,
-    _keyword_fit_score,
     _payoff_strength,
     _redundancy,
     joint_compatibility,
@@ -297,27 +297,40 @@ def test_editing_continuity_three_segments_not_crushed() -> None:
 
 
 # ---------------------------------------------------------------------------
-# 5. campaign fit — fuzzy keyword match (typo tolerance)
+# 5. campaign fit — concept match, not word match
 # ---------------------------------------------------------------------------
+# These assert ORDER and direction, not magic numbers: the scale is tuned, the
+# ranking is the contract. A clip on the brief's topic must outscore one that
+# is off-topic, and a typo in the brief must not change that.
 
 
-def test_keyword_fit_fuzzy_matches_typo_in_brief() -> None:
-    arc = _arc([_seg(0, 20, text="comment lancer son business en ligne")])
-    # Brief has a typo: "buinesse" should still match "business" in the text.
+def test_brief_fit_tolerates_a_typo_in_the_brief() -> None:
+    on_topic = _arc([_seg(0, 20, text="comment lancer son business en ligne")])
+    off_topic = _arc([_seg(0, 20, text="recette de cuisine facile")])
     campaign = {"niche": "buinesse", "audience": "", "avoid_topics": []}
-    assert _keyword_fit_score(arc, campaign) == 64  # 60 + 4
+    assert _brief_fit_score(on_topic, campaign) > _brief_fit_score(off_topic, campaign)
 
 
-def test_keyword_fit_no_match_stays_baseline() -> None:
+def test_brief_fit_matches_the_vocabulary_of_the_video_not_of_the_brief() -> None:
+    """The reason the keyword version was inert: the brief says "business", the
+    creator says "dropshipping" and "boutique". Concepts must bridge that."""
+    campaign = {"niche": "business", "audience": "", "goal": "", "avoid_topics": []}
+    same_words = _arc([_seg(0, 20, text="on parle business aujourd hui")])
+    other_words = _arc([_seg(0, 20, text="j ai lancé ma boutique en dropshipping")])
+    off_topic = _arc([_seg(0, 20, text="recette de cuisine facile")])
+    assert _brief_fit_score(other_words, campaign) > _brief_fit_score(off_topic, campaign)
+    assert _brief_fit_score(same_words, campaign) > _brief_fit_score(off_topic, campaign)
+
+
+def test_brief_fit_empty_campaign_stays_neutral() -> None:
     arc = _arc([_seg(0, 20, text="recette de cuisine facile")])
-    campaign = {"niche": "buinesse", "audience": "", "avoid_topics": []}
-    assert _keyword_fit_score(arc, campaign) == 60
+    assert _brief_fit_score(arc, {}) == 60
 
 
-def test_keyword_fit_avoid_penalty_unchanged() -> None:
+def test_brief_fit_avoid_penalty_unchanged() -> None:
     arc = _arc([_seg(0, 20, text="parlons de crypto aujourd'hui")])
     campaign = {"niche": "", "audience": "", "avoid_topics": ["crypto"]}
-    assert _keyword_fit_score(arc, campaign) == 35  # 60 - 25
+    assert _brief_fit_score(arc, campaign) == 35  # 60 - 25
 
 
 def test_campaign_fit_blends_llm_and_keyword() -> None:
@@ -326,15 +339,17 @@ def test_campaign_fit_blends_llm_and_keyword() -> None:
         campaign_fit_llm=80,
     )
     campaign = {"niche": "buinesse", "audience": "", "avoid_topics": []}
-    # 0.5 * 80 + 0.5 * 64 = 72
-    assert _campaign_fit_score(arc, campaign) == 72
+    # Half self-report, half measured. Assert the blend, not a tuned constant.
+    measured = _brief_fit_score(arc, campaign)
+    assert _campaign_fit_score(arc, campaign) == round(0.5 * 80 + 0.5 * measured)
 
 
 def test_campaign_fit_defaults_llm_to_60_when_absent() -> None:
-    arc = _arc([_seg(0, 20, text="recette de cuisine")])  # no keyword match, no llm
+    arc = _arc([_seg(0, 20, text="recette de cuisine")])  # off-topic, no llm report
     campaign = {"niche": "buinesse", "audience": "", "avoid_topics": []}
-    # 0.5 * 60 + 0.5 * 60 = 60
-    assert _campaign_fit_score(arc, campaign) == 60
+    # The missing self-report falls back to a neutral 60 for its half.
+    measured = _brief_fit_score(arc, campaign)
+    assert _campaign_fit_score(arc, campaign) == round(0.5 * 60 + 0.5 * measured)
 
 
 # ---------------------------------------------------------------------------
@@ -494,8 +509,8 @@ def test_dirty_avoid_entry_does_not_penalise_a_healthy_clip() -> None:
     arc = _arc(
         [_seg(0, 20, text="j'ai lancé ma formation business et gagné 30000 euros le premier mois")]
     )
-    with_avoid = _keyword_fit_score(arc, DIRTY_CAMPAIGN)
-    without_avoid = _keyword_fit_score(arc, {**DIRTY_CAMPAIGN, "avoid_topics": []})
+    with_avoid = _brief_fit_score(arc, DIRTY_CAMPAIGN)
+    without_avoid = _brief_fit_score(arc, {**DIRTY_CAMPAIGN, "avoid_topics": []})
     assert with_avoid == without_avoid
     assert with_avoid > 60  # campaign keywords did land
 
@@ -503,7 +518,7 @@ def test_dirty_avoid_entry_does_not_penalise_a_healthy_clip() -> None:
 def test_avoid_does_not_fire_on_a_lookalike_word() -> None:
     # "nuire" (from "ou tout contenu pouvant nuire") must not match "nuit".
     arc = _arc([_seg(0, 20, text="je bosse la nuit tous les jours sur mon business")])
-    assert _keyword_fit_score(arc, DIRTY_CAMPAIGN) == _keyword_fit_score(
+    assert _brief_fit_score(arc, DIRTY_CAMPAIGN) == _brief_fit_score(
         arc, {**DIRTY_CAMPAIGN, "avoid_topics": []}
     )
 
@@ -512,8 +527,8 @@ def test_real_avoided_topic_is_penalised() -> None:
     arc = _arc(
         [_seg(0, 20, text="on a monté des détournements moqueurs de ses vidéos pour se moquer")]
     )
-    clean = _keyword_fit_score(arc, {**DIRTY_CAMPAIGN, "avoid_topics": []})
-    assert _keyword_fit_score(arc, DIRTY_CAMPAIGN) == clean - 25
+    clean = _brief_fit_score(arc, {**DIRTY_CAMPAIGN, "avoid_topics": []})
+    assert _brief_fit_score(arc, DIRTY_CAMPAIGN) == clean - 25
 
 
 def test_avoid_penalty_scales_with_coverage() -> None:
@@ -521,17 +536,29 @@ def test_avoid_penalty_scales_with_coverage() -> None:
     campaign = {"avoid_topics": ["détournements moqueurs"]}
     # Only 1 of the 2 significant words is there -> half the penalty, not zero,
     # not the full hit.
-    assert _keyword_fit_score(arc, campaign) == 60 - 12
+    assert _brief_fit_score(arc, campaign) == 60 - 12
 
 
-def test_keyword_fit_covers_the_goal() -> None:
-    arc = _arc([_seg(0, 20, text="ma formation t'apprend exactement ça")])
+def test_goal_ranks_evidence_above_a_bare_product_mention() -> None:
+    """The goal carries the commercial intent, so it must SPREAD the field.
+
+    Comparing one clip with and without a goal is meaningless: without a goal
+    the score is a neutral "unknown". What matters is the order between clips
+    under the SAME brief — proof of a result beats merely naming the offer,
+    which beats a clip about something else entirely.
+    """
     goal_only = {"audience": "", "niche": "", "goal": DIRTY_CAMPAIGN["goal"]}
-    no_goal = {"audience": "", "niche": "", "goal": ""}
-    assert _keyword_fit_score(arc, goal_only) > _keyword_fit_score(arc, no_goal)
+    proof = _arc([_seg(0, 20, text="j ai fait 4 millions et demi en e commerce")])
+    mention = _arc([_seg(0, 20, text="ma formation t'apprend exactement ça")])
+    off_topic = _arc([_seg(0, 20, text="recette de cuisine facile")])
+    assert (
+        _brief_fit_score(proof, goal_only)
+        > _brief_fit_score(mention, goal_only)
+        > _brief_fit_score(off_topic, goal_only)
+    )
 
 
-def test_keyword_bonus_is_capped() -> None:
+def test_stuffing_brief_words_cannot_leave_the_scale() -> None:
     text = "formation business luxe voiture montre voyage argent liberté richesse"
     arc = _arc([_seg(0, 20, text=text)])
     campaign = {
@@ -540,7 +567,9 @@ def test_keyword_bonus_is_capped() -> None:
         "goal": text,
         "avoid_topics": [],
     }
-    assert _keyword_fit_score(arc, campaign) == 88  # 60 + KEYWORD_BONUS_CAP
+    # The per-hit bonus and its cap are gone with the keyword scorer; what must
+    # hold is that piling brief words into a clip cannot push it out of range.
+    assert 60 < _brief_fit_score(arc, campaign) <= 100
 
 
 def test_campaign_fit_survives_the_real_dirty_brief() -> None:

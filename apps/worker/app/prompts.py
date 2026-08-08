@@ -101,58 +101,103 @@ visual events, and a campaign brief. You return clip candidates as strict JSON.
    into "video_read" FIRST, then cut against it. Do not scan the transcript
    top-to-bottom and take whatever comes.
 
-1. THE FIRST 2 SECONDS DECIDE. A clip opens on the strongest utterance of the
-   moment: a number, a blunt claim, a contradiction, a question, an emotional
-   reaction. NEVER on a wind-up, an orphan conjunction, a mid-sentence fragment,
-   or context that only pays off later. Copy the first ~8 words you are cutting on
-   into "opening_words", then re-read them COLD, as if you had never seen the
-   video: if they do not already say something, the start is wrong — move it
-   forward to the sentence that does, and re-quote.
+1. THE FIRST 2 SECONDS OPEN A LOOP — THEY NEVER CLOSE IT. The opening line is the
+   one that makes the rest NECESSARY: a question, a challenge taken on, a number
+   that means nothing until you hear what follows, a claim that demands proof, a
+   consequence about to fall. That is what a strong opening is — not the strongest
+   STATEMENT. A clip that hands over its lesson or its result in the first
+   sentence has already paid the viewer, who scrolls: move the start back to the
+   line that PROMISES it and keep the revelation for the payoff. Moving back is
+   never a licence to open on a connector — land on the first CONTENT word of that
+   sentence ("donc en fait j'ai perdu 40 000 euros" starts at "j'ai perdu 40 000
+   euros"). Still forbidden, however good the promise: opening
+   on a connector ("donc", "en fait", "en vrai", "d'ailleurs", "du coup", "par
+   contre" — the full banned list is in the task block, and it costs the arc its
+   score), on a mid-sentence fragment, or on context that only pays off later. It
+   is the start that moves, never the ban. Copy the first ~8 words into
+   "opening_words" and re-read them
+   COLD, as if you had never seen the video: they must leave you needing the next
+   sentence. Saying nothing and saying everything are both wrong starts.
 
-2. SELF-CONTAINED. A viewer who has seen nothing else must understand. Reject any
-   moment that leans on a pronoun with no antecedent ("ça", "ce truc", "il",
-   "cette méthode") or that needs the previous five minutes. Either move the start
-   to where the subject is actually named, or drop the moment.
+2. THE HOOK HAS A SHAPE — FIND IT IN THE TRANSCRIPT, DO NOT INVENT IT. Look for a
+   spoken line that already is one of these, and name it in "hook_formula" (that
+   field describes the FIRST LINE; "arc_type" describes how the clip is built —
+   the two vocabularies never mix):
+   - mistake_reveal   — the error people keep making ("l'erreur n°1 que font...")
+   - counterintuitive — why the accepted move is the wrong one ("pourquoi X est en
+     fait mauvais pour toi")
+   - transformation   — from X to Y in Z ("comment je suis passé de ... à ... en 3 mois")
+   - urgent_warning   — stop doing X before Y happens ("arrête de X avant que...")
+   - insider_secret   — what an authority does not want you to know
+   A moment matching none of them can still be cut, but "hook_formula": "none" is
+   a warning sign, not a category: check first that you have not missed the line
+   two sentences earlier that gives the clip one of these shapes.
 
-3. ONE IDEA PER CLIP. A clip covering two subjects retains nobody. Cut the weaker
-   one out rather than keeping both.
+3. STAKES AND NUMBERS. A hook implicitly answers "what am I missing if I don't
+   watch?" — money lost, time wasted, a mistake still being made. And it answers
+   with something CONCRETE: "4 millions" beats "beaucoup d'argent", "en 24 heures"
+   beats "rapidement", "10 visites" beats "très peu de trafic". Between two
+   moments that say the same thing, take the one carrying the figure, the amount
+   or the duration.
 
-4. TENSION -> RESOLUTION. The clip must LAND: a number, a proof, a punchline, a
-   revelation — quoted verbatim in "payoff_line". Ending mid-thought kills shares
-   and saves. Announcing a result without stating it ("on va voir combien on a
-   fait") is a teaser, not a payoff: keep cutting until the figure is spoken.
+4. THE FIRST FRAME IS A HOOK TOO. Read the video map at your start timestamp: the
+   picture must catch the eye on its own — an object held up, a gesture, an
+   unusual decor, visible energy, a person reacting. A great sentence over a dead
+   frame loses to a good sentence over a striking one, so when the frames around
+   your start are static or faceless, shift the start to the neighbouring moment
+   whose frames are alive. State what the viewer SEES at second 0 in
+   "visual_hook". Screens, dashboards and b-roll may appear as proof of what is
+   being said, but a person on camera and a spoken line must carry the clip.
 
-5. LENGTH FOLLOWS CONTENT, never the reverse. 12-25s for a single punchy moment;
+5. SELF-CONTAINED, ONE IDEA. A viewer who has seen nothing else must understand:
+   reject any moment leaning on a pronoun with no antecedent ("ça", "ce truc",
+   "il", "cette méthode") or on the previous five minutes — move the start to
+   where the subject is actually named, or drop the moment. And a clip carries ONE
+   idea: covering two subjects retains nobody, so cut the weaker one out.
+
+6. THE LOOP MUST CLOSE. Whatever the opening promised, the clip DELIVERS before it
+   ends — quoted verbatim in "payoff_line": the number, the proof, the punchline,
+   the revelation. Ending mid-thought kills shares and saves. Announcing a result
+   without stating it ("on va voir combien on a fait") is a teaser, not a payoff:
+   keep cutting until the figure is spoken.
+
+7. LENGTH FOLLOWS CONTENT, never the reverse. 12-25s for a single punchy moment;
    25-45s only when a montage genuinely needs both its setup AND its payoff.
    Longer is not better. But 12s is a HARD FLOOR — anything shorter is thrown away
    unseen. A moment that only lasts 8s is not finished: widen it to the sentence
    that sets it up or the one that lands it until the clip is a real clip.
 
-6. MONTAGE ONLY WHEN IT IS EARNED. Use 2-3 segments when the promise and its proof
-   sit FAR APART in the source: promise->proof, claim->demonstration,
-   before->after, question->answer, decision->consequence. If the payoff sits
-   right next to the setup, take the continuous moment instead. An unnecessary
-   montage is worse than a plain single shot.
+8. MONTAGE ONLY WHEN IT IS EARNED, AND THE JOINT MUST READ. Use 2-3 segments when
+   the promise and its proof sit FAR APART in the source: promise->proof,
+   claim->demonstration, before->after, question->answer, decision->consequence.
+   If the payoff sits right next to the setup, take the continuous moment instead
+   — an unnecessary montage is worse than a plain single shot. At the cut the
+   viewer must feel "he said he'd do X — and here's the result", not "why did we
+   jump?": segment 2 must ANSWER segment 1, not merely talk about the same topic.
+   State that answer in "link_reason".
 
-7. THE JOINT MUST READ. At the cut the viewer must feel "he said he'd do X — and
-   here's the result", not "why did we jump?". Segment 2 must ANSWER segment 1,
-   not merely talk about the same topic. State that answer in "link_reason".
+9. REJECT ON SIGHT. Openings that are not hooks: a greeting ("salut à tous",
+   "bienvenue"), a bare self-introduction ("moi c'est X"), an agenda announcement
+   ("dans cette vidéo je vais vous montrer"), a piece of advice with no figure and
+   no stakes. ONE exception, and it matters: a self-introduction CARRIED by a
+   number ("moi c'est X, j'ai fait 4 millions en e-commerce") is a credibility
+   hook — keep it, the figure is doing the work; drop the introduction that comes
+   with none. Also rejected: b-roll with no strong spoken line, screen-only shots,
+   explanations that wander, enumerations, teasers with no payoff, and anything
+   whose interest depends on something outside the clip. A clip you are lukewarm
+   about is a clip you do not submit.
 
-8. REJECT: b-roll with no strong spoken line, screen-only shots, explanations that
-   wander, enumerations, teasers with no payoff, and anything whose interest
-   depends on something outside the clip. A clip you are lukewarm about is a clip
-   you do not submit.
-
-9. THE CAMPAIGN DEFINES WHAT A PAYOFF IS. The brief's goal decides what counts as
-   resolution — for a goal of selling a training program, a payoff is proof of a
-   result, a transformation, a number, credibility, or a contrarian insight that
-   positions the expertise; not generic entertainment. The audience sets the
-   register of the hook. "avoid" is a HARD filter: one touch and the arc is
+10. THE CAMPAIGN DEFINES WHAT A PAYOFF IS, AND WHY THIS PERSON IS WORTH HEARING.
+   The brief's goal decides what counts as resolution — for a goal of selling a
+   training program, a payoff is proof of a result, a transformation, a number, or
+   a contrarian insight that positions the expertise; not generic entertainment.
+   The viewer must also come away knowing who is talking and why it counts: when a
+   clip carries no credential of its own, prefer the start or the segment where
+   the speaker's own result, figure or track record is audible. The audience sets
+   the register of the hook. "avoid" is a HARD filter: one touch and the arc is
    dropped. A punchy moment that ignores the goal is worth less than a quieter one
    that serves it.
 
-The strongest shorts show a person on camera. Screens, dashboards and b-roll may
-appear as proof of what is being said, but a spoken line must carry the clip.
 Briefs are often typo-ridden or half-empty — read through the mistakes, infer the
 intent, and never let a missing field stop you.
 
@@ -229,9 +274,11 @@ arcs must follow from it:
   "arcs": [
     {{
       "title": "max 80 chars, WRITTEN IN {lang} — what the clip is about",
-      "arc_type": "setup_payoff | promise_failure | before_after | challenge_result | question_revelation | phrase_visual_proof | decision_consequence | continuous",
-      "opening_words": "the first ~8 words of the clip, VERBATIM — literally what the viewer hears at second 0. Must NOT start with a connector (see BANNED list below)",
-      "suggested_hook": "REQUIRED, max 100 chars, WRITTEN IN {lang} — the on-screen hook line for seconds 0-2, derived from opening_words (never null)",
+      "arc_type": "how the clip is BUILT — EXACTLY one of these eight identifiers, never a hook_formula value: setup_payoff | promise_failure | before_after | challenge_result | question_revelation | phrase_visual_proof | decision_consequence | continuous",
+      "opening_words": "the first ~8 words of the clip, VERBATIM — literally what the viewer hears at second 0. Must PROMISE without revealing, and must NOT start with a connector (donc / en fait / en vrai / par contre / d'ailleurs / du coup — full BANNED list below)",
+      "suggested_hook": "REQUIRED, max 100 chars, WRITTEN IN {lang} — the on-screen hook line for seconds 0-2, derived from opening_words. It teases the payoff, it never spells it out (never null)",
+      "hook_formula": "mistake_reveal | counterintuitive | transformation | urgent_warning | insider_secret | none — which shape the OPENING LINE has. Its own field: never put one of these values in arc_type, and never put an arc_type value here",
+      "visual_hook": "one short sentence — what the viewer SEES in the first frames, read off the video map, and why it catches the eye",
       "self_contained": true|false,
       "segments": [
         {{
@@ -280,14 +327,21 @@ Hard rules:
   {_BANNED_OPENERS}. Also
   banned: landing mid-sentence, and opening on a pronoun whose referent is not in
   the clip ("ça", "ce truc", "cette méthode", "il"). Any of these means you picked
-  the wrong start: move it forward to the sentence that actually says something,
-  then re-quote opening_words AND the excerpt AND the start timestamp.
+  the wrong start: move it to the nearest sentence that opens a loop, then
+  re-quote opening_words AND the excerpt AND the start timestamp.
 - CUT THE RUN-UP — this is expected of you, not a liberty. Put the strong hook
   word first in start_anchor even when it sits deep inside a timestamped line.
   Do not estimate its sub-line timestamp: the aligner will find the word exactly.
-- Test to apply to every arc before submitting it: read opening_words alone. Does
-  it contain a number, a claim, a question, or a named subject? If not, the arc is
-  not ready.
+- Read opening_words alone before submitting an arc: if it does not make you need
+  the next sentence, the arc is not ready; if it already states the lesson or the
+  result the clip goes on to deliver, you opened on the payoff — move the start to
+  the line that sets it up (usually a few sentences earlier) and let the reveal
+  land inside the clip.
+- hook_formula and visual_hook are there to make you look before you cut: an arc
+  you cannot label with a hook shape, and whose first frames you cannot describe,
+  is usually an arc with no hook at all. Fill them honestly rather than
+  decoratively. Every clip is anchored on a PERSON speaking or reacting on camera;
+  faceless b-roll-only moments are rejected.
 - self_contained must be true. If a viewer would need earlier context, fix the
   start or drop the arc; do not submit it with self_contained=false.
 - payoff_line must appear VERBATIM before or at the last segment's end_anchor.
@@ -311,30 +365,38 @@ Hard rules:
 - Write title, suggested_hook, opening_words and payoff_line in the spoken
   language of the video (see VIDEO CONTEXT above) — they are shown to the client
   and spoken on screen. Keep the analysis fields (why, viral_reason, link_reason,
-  campaign_fit_reason, video_read) in English.
+  campaign_fit_reason, visual_hook, video_read) in English, and hook_formula as
+  one of the listed identifiers.
 - CAMPAIGN-DRIVEN: the goal defines what counts as a payoff, the audience defines
   the hook register. Set campaign_fit honestly (spread the scores — if everything
   is 90+ you are not ranking) and never touch topics in "avoid".
-- Anchor every clip on a PERSON speaking or reacting on camera. Reject faceless
-  b-roll-only moments.
 - transcript_excerpt MUST be copied verbatim from the transcript below. That
   transcript has NO punctuation: if your excerpt contains full stops or commas you
   are writing from memory, not quoting — go back and copy the real words. Invented
   excerpts are detected downstream and the whole arc is thrown away.
-- Quality over quota: a handful of genuinely scroll-stopping clips beats a padded
-  list. Rank the arcs best-first.
+- Quality over quota — but 8 arcs is the FLOOR, not a suggestion: the visual pass
+  downstream discards some, and a short list leaves it nothing to choose from. A
+  long video always holds 8 defensible moments; returning 3 means you stopped
+  looking, not that the video was thin. Rank the arcs best-first.
 
 FINAL CHECK — run these seven on EVERY arc before you emit it, and fix the arc
 rather than shipping it broken:
-1. Does opening_words start with one of: {_BANNED_OPENERS}? -> move the start.
-2. Is opening_words a number, a claim, a question or a reaction? -> if not, move
-   the start.
+1. Read the FIRST TWO WORDS of opening_words. Is either of them in this list:
+   {_BANNED_OPENERS}? -> restart the clip
+   on the first CONTENT word after the whole wind-up ("en vrai de vrai avec un
+   euro" starts at "avec un euro"), then re-quote opening_words, start_anchor and
+   the excerpt. This one is checked automatically and costs the arc its score.
+2. Does opening_words open a loop — number, question, challenge, claim awaiting
+   proof, stakes — WITHOUT already giving the answer, and is it not a greeting, a
+   bare self-introduction or "dans cette vidéo je vais"? -> if not, move the start
+   and re-quote.
 3. Does the last segment's end_anchor finish after the complete payoff_line? ->
    if not, move the end anchor.
 4. Is total_seconds >= 12 and <= 60? -> if not, fix the timestamps.
 5. Would a stranger who saw nothing else understand it? -> if not, drop it.
 6. Are the excerpts copied word-for-word from the transcript (no punctuation
-   added), and is suggested_hook filled? -> if not, fix them.
+   added), is suggested_hook filled, and is arc_type one of the eight listed
+   identifiers? -> if not, fix them.
 7. Do start_anchor and end_anchor quote the exact desired boundary words, and do
    the coarse timestamps point to the same transcript area? -> if not, fix them.
 Title, suggested_hook, opening_words and payoff_line are written in the spoken

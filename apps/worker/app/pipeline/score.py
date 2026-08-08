@@ -21,12 +21,23 @@ log = structlog.get_logger()
 # Montage-v2 weights. Multi-segment clips are first-class now, so the mix leans on
 # campaign fit and payoff strength alongside watchability and a first-2-seconds
 # hook. The LLM's self-reported retention stays discounted. Weights sum to 1.0.
+#
+# campaign_fit went 0.12 -> 0.20 when it stopped being a flat 60. At 0.12 it
+# could not move a ranking even when it was right (a 30-point fit gap was worth
+# 3.6 points of final score, less than the rounding noise on visual_proof); the
+# product we sell is "clips chosen FOR your campaign", so the one term that
+# measures that has to be able to reorder the batch. At 0.20 the same gap is
+# worth 6 points — enough to flip two clips of comparable craft, not enough to
+# ship an ugly one. visual_proof stays first because a clip that looks bad is
+# unusable whatever it says. The 0.08 comes out of the three terms that were
+# double-counting watchability (hook, payoff, editing_continuity) and out of
+# nothing else; retention keeps its discount for being an LLM self-report.
 ARC_WEIGHTS = {
-    "visual_proof": 0.28,
-    "hook_strength": 0.20,
-    "payoff_strength": 0.18,
-    "campaign_fit": 0.12,
-    "editing_continuity": 0.12,
+    "visual_proof": 0.26,
+    "campaign_fit": 0.20,
+    "hook_strength": 0.18,
+    "payoff_strength": 0.16,
+    "editing_continuity": 0.10,
     "retention": 0.10,
 }
 
@@ -120,6 +131,13 @@ _BRIEF_STOPWORDS = frozenset(
         "faites", "montrer", "montre", "extrait", "extraits", "moment",
         "moments", "sujet", "sujets", "chose", "choses", "type", "genre",
         "style", "public", "cible",
+        # goal boilerplate: what the clip must DO to the viewer, never what it
+        # must talk about. Left in, they became dead units the clip could never
+        # cover ("inciter" is not a word anybody says on camera) and capped the
+        # achievable fit for every arc alike.
+        "inciter", "incite", "pousser", "pousse", "amener", "convaincre",
+        "persuader", "generer", "générer", "augmenter", "donner", "envie",
+        "objectif", "objectifs", "afin",
     }
 )
 
@@ -149,13 +167,155 @@ AVOID_MIN_COVERAGE = 0.5
 # One messy brief must not zero the fit on its own.
 AVOID_PENALTY_CAP = 50
 
-# Keyword bonuses. The goal carries the commercial intent ("acheter sa
-# formation"), so a goal hit is worth slightly more than an audience/niche hit.
-KEYWORD_BONUS = 4
-GOAL_KEYWORD_BONUS = 5
-# Cap the keyword half so a keyword-stuffed brief cannot saturate the score and
-# drown the LLM's own judgement.
-KEYWORD_BONUS_CAP = 28
+# ---------------------------------------------------------------------------
+# Campaign lexicon — the brief and the video do not speak the same language
+# ---------------------------------------------------------------------------
+# Measured on the production brief: comparing the brief's WORDS to the clip's
+# words returned the neutral baseline on 4 arcs out of 5, so campaign_fit came
+# out at 74/75/75/75/80 while the selection model was reporting 88-100. The
+# typos were never the cause (fuzzy matching already absorbs "buinesse" ~
+# "business"): the cause is that the brief says "business, formation, jeunes"
+# and the clips say "e-commerce, boutique, dropshipping, coaching". Comparing
+# words cannot bridge that, however tolerant the comparison is.
+#
+# So both sides are projected onto a small hard-coded map of French
+# business/formation/e-commerce concepts before being compared. Said plainly:
+# this is a lexicon, not semantics. There is no embedding and no second model
+# call — an arc must not cost another LLM round-trip. It covers the vertical we
+# sell into and nothing else; outside it no concept lights up, the brief's own
+# words are still matched literally, and the score leans back on the selection
+# model's self-report. That fallback is the design, not a silent failure.
+
+# A stem of 4+ characters matches any word starting with it that adds at most
+# _STEM_MAX_SUFFIX letters — enough for French inflection ("lanc" -> lancer,
+# lancé, lançant) and short enough that a stem cannot reach an unrelated family
+# ("lanc" never gets to "lancinante"). It is a prefix rule, not a lemmatiser:
+# "vendre" also matches "vendredi", and that is the price we pay for having no
+# NLP dependency. Stems shorter than that are matched as whole words only, so
+# "pub" cannot fire on "public". Everything is compared accent-folded — whisper
+# writes "bénéfice", the table below stays ASCII.
+_MIN_STEM_LEN = 4
+_STEM_MAX_SUFFIX = 3
+
+_CONCEPT_STEMS: dict[str, tuple[str, ...]] = {
+    # Selling something: the activity itself.
+    "commerce": (
+        "business", "busines", "buisness", "entrepr", "commerc", "boutique",
+        "ecommerce", "dropship", "shopify", "vente", "vendr", "vendu",
+        "vends", "client", "clientele", "produit", "marque", "magasin",
+        "commande", "achet", "panier", "fournisseur", "livraison", "niche",
+    ),
+    # What a creator sells to their audience — the thing a "buy my formation"
+    # brief is actually about.
+    "formation": (
+        "formation", "coach", "accompagn", "mentor", "apprend", "apprenti",
+        "enseign", "cours", "methode", "tuto", "connaissance", "competence",
+        "savoir", "conseil", "astuce", "strategi", "technique", "programme",
+        "masterclass", "atelier",
+    ),
+    # Money on the table.
+    "argent": (
+        "euro", "dollar", "argent", "benefic", "marge", "profit", "revenu",
+        "chiffre", "gagn", "cash", "budget", "rentab", "invest", "monetis",
+        "salaire", "prix", "coute", "depens", "million", "millier", "milliard",
+        "balle", "riche", "fortune", "payer",
+    ),
+    # Proof that it worked.
+    "resultat": (
+        "resultat", "preuve", "prouv", "reussi", "reussit", "succes", "record",
+        "performan", "croissance", "scale", "cartonn", "explos", "challenge",
+        "conversion", "statistiq", "progress", "atteint", "multipli",
+    ),
+    # Starting from nothing, and the young audience briefs keep asking for.
+    "debutant": (
+        "jeune", "debut", "commenc", "demarr", "lanc", "lancement", "novice",
+        "etudiant", "zero", "premier", "premiere", "amateur",
+    ),
+    # The lifestyle a brief sells alongside the method.
+    "luxe": (
+        "luxe", "luxu", "voiture", "villa", "voyage", "ferrari", "porsche",
+        "rolex", "piscine", "penthouse", "yacht", "palace", "premium",
+    ),
+    # Where the customers come from.
+    "trafic": (
+        "publicit", "tiktok", "instagram", "facebook", "youtube", "google",
+        "algorithm", "audience", "trafic", "visite", "abonne", "ciblag",
+        "campagne", "annonce", "influenc", "pub", "ads", "seo",
+    ),
+    # The head game every formation brief leans on.
+    "mindset": (
+        "mental", "mindset", "discipline", "motiv", "ambit", "sacrifi",
+        "risque", "echec", "abandon", "persever", "liberte", "independan",
+        "rigueur", "habitude", "confiance",
+    ),
+}
+
+# A brief word the lexicon does not know is still honoured, but at half weight:
+# a literal match is the weakest evidence we have, and half of a dirty brief is
+# noise ("quete", "train" from "train de vie").
+LITERAL_UNIT_WEIGHT = 0.5
+
+# What the goal asks the clip to DO. Triggers are read in the goal only.
+# "formation" is deliberately absent from "teach": in "acheter sa formation" it
+# names the product, not the intent.
+_GOAL_INTENTS: dict[str, tuple[str, ...]] = {
+    "sell": (
+        "achet", "vendr", "vente", "convert", "inscri", "souscri", "command",
+        "client", "prospect", "reserv", "abonnement", "payant", "acquer",
+    ),
+    "teach": (
+        "apprend", "enseign", "eduqu", "expliqu", "pedagog", "tuto",
+        "vulgaris", "comprend", "maitris", "transmet",
+    ),
+    "authority": (
+        "notoriete", "credibil", "autorite", "reputation", "visibilit",
+        "branding", "expert", "reference",
+    ),
+    "audience": (
+        "abonne", "communaut", "audience", "follower", "engagement", "viral",
+        "grandir",
+    ),
+}
+
+# A number, a currency or an order of magnitude: the cheapest proof a viewer can
+# check in one second.
+_FIGURE_RE = re.compile(
+    r"\d|[€$£%]|\b(?:euros?|dollars?|pourcents?|mille|milliers?|millions?|"
+    r"milliards?|centaines?|dizaines?)\b"
+)
+
+# Evidence axes: what has to be visible IN THE CLIP for an intent to be served.
+# Concept-backed axes reuse the table above; the rest carry their own stems.
+_AXIS_CONCEPTS: dict[str, tuple[str, ...]] = {
+    "result": ("resultat", "argent"),   # something worked, or it made money
+    "offer": ("formation",),            # the thing the goal wants bought is named
+    "method": ("formation", "trafic"),  # something actionable is handed over
+    "emotion": ("mindset",),
+}
+_AXIS_STEMS: dict[str, tuple[str, ...]] = {
+    # A track record or a before/after — what makes the claim believable.
+    "track_record": (
+        "million", "milliard", "experience", "parcours", "clientele",
+        "temoignage", "eleve", "carriere", "annee", "transform", "desormais",
+        "autrefois", "epoque", "grace", "aujourd",
+    ),
+}
+_INTENT_AXES: dict[str, tuple[str, ...]] = {
+    "sell": ("figure", "result", "offer", "track_record"),
+    "teach": ("method", "figure", "result"),
+    "authority": ("track_record", "result", "figure"),
+    "audience": ("emotion", "figure", "result"),
+}
+
+# Final mix. Both halves neutral (nothing known about the brief) lands on 60,
+# the baseline the previous keyword score returned — so an empty or off-vertical
+# campaign scores exactly as it used to. The goal weighs twice the subject: a
+# brief's audience/niche say which world the clip lives in, its goal says what
+# the clip must make the viewer do, and that is what the customer is buying.
+FIT_BASE = 30
+FIT_TOPICAL_SPAN = 20
+FIT_INTENT_SPAN = 40
+_NEUTRAL_HALF = 0.5
 
 
 def _significant_words(text: str) -> list[str]:
@@ -188,6 +348,8 @@ def _avoid_terms(entry: str) -> list[str]:
 
 
 def _clip_text(arc: StoryArc) -> str:
+    """Everything the arc carries, the model's own rationale included. Used by
+    the avoid scan, which must cast the widest possible net."""
     return " ".join(
         [
             arc.title or "",
@@ -198,29 +360,170 @@ def _clip_text(arc: StoryArc) -> str:
     ).lower()
 
 
-def _keyword_fit_score(arc: StoryArc, campaign: dict[str, Any]) -> int:
-    """Fuzzy overlap with audience + niche + goal, minus a sanitised avoid-list
-    penalty. Baseline 60 (neutral: we know nothing either way)."""
-    fit = 60
-    words = set(_TOKEN_RE.findall(_clip_text(arc)))
+def _spoken_text(arc: StoryArc) -> str:
+    """What the clip actually IS: its title, its hook, and the words on the tape.
 
-    bonus = 0
-    seen: set[str] = set()
-    fields = (
-        (campaign.get("audience") or "", KEYWORD_BONUS),
-        (campaign.get("niche") or "", KEYWORD_BONUS),
-        # The goal is what the clip must actually push the viewer towards.
-        (campaign.get("goal") or "", GOAL_KEYWORD_BONUS),
+    viral_reason is deliberately left out. It is the selection model's
+    commentary about the clip ("directly supports the goal of selling his
+    business formation"), and the other half of the campaign_fit blend is
+    already that model's opinion — reading it here too would dress a self-report
+    up as independent evidence and guarantee agreement with itself.
+    """
+    return " ".join(
+        [
+            arc.title or "",
+            arc.suggested_hook or "",
+            *[s.transcript_excerpt or "" for s in arc.segments],
+        ]
+    ).lower()
+
+
+def _folded_words(text: str) -> set[str]:
+    return {_fold_accents(w) for w in _TOKEN_RE.findall(text.lower())}
+
+
+def _stem_index(words: Iterable[str]) -> set[str]:
+    """Every prefix a stem could plausibly be for these words: the word itself
+    down to _STEM_MAX_SUFFIX letters shorter. Turns stem lookup into set
+    membership instead of a startswith() scan over the whole table.
+
+    French plurals get their own pass, otherwise the suffix budget is spent on
+    the -s and the stem falls short: "coachings" would never reach "coach".
+    """
+    out: set[str] = set()
+    for word in words:
+        forms = [word]
+        if len(word) > _MIN_STEM_LEN and word.endswith(("s", "x")):
+            forms.append(word[:-1])
+        for form in forms:
+            floor = max(_MIN_STEM_LEN, len(form) - _STEM_MAX_SUFFIX)
+            for size in range(floor, len(form) + 1):
+                out.add(form[:size])
+    return out
+
+
+def _matches_stem(stem: str, words: set[str], index: set[str]) -> bool:
+    return stem in index if len(stem) >= _MIN_STEM_LEN else stem in words
+
+
+def _concepts_of(words: set[str]) -> set[str]:
+    """Concepts a piece of text activates.
+
+    No fuzzy pass on this side: transcripts are clean text, and a
+    SequenceMatcher call per (word x stem) pair would cost hundreds of
+    thousands of comparisons per arc for nothing.
+    """
+    index = _stem_index(words)
+    return {
+        concept
+        for concept, stems in _CONCEPT_STEMS.items()
+        if any(_matches_stem(stem, words, index) for stem in stems)
+    }
+
+
+def _concept_of_brief_word(word: str) -> str | None:
+    """Which concept a single brief word belongs to, or None.
+
+    The brief is hand-typed and filthy, so this side keeps the fuzzy pass —
+    that is how "buinesse" reaches "business" and, through it, the whole
+    e-commerce vocabulary the clips actually use.
+    """
+    index = _stem_index([word])
+    for concept, stems in _CONCEPT_STEMS.items():
+        for stem in stems:
+            if _matches_stem(stem, {word}, index):
+                return concept
+            if len(stem) >= _MIN_STEM_LEN and _fuzzy_contains(stem, {word}):
+                return concept
+    return None
+
+
+def _campaign_lexicon(campaign: dict[str, Any]) -> tuple[frozenset[str], frozenset[str]]:
+    """Expand goal + audience + niche into what we will look for in the clips.
+
+    Returns (concepts, literals). Every significant brief word is either
+    recognised as one of the hard-coded concepts — and then the whole concept,
+    i.e. all of its surface forms, is what a clip has to hit — or kept as a
+    literal word, still fuzzy-matched, so a brief outside our vertical is
+    degraded rather than ignored.
+    """
+    concepts: set[str] = set()
+    literals: set[str] = set()
+    for field in ("goal", "audience", "niche"):
+        for word in _significant_words(str(campaign.get(field) or "")):
+            folded = _fold_accents(word)
+            concept = _concept_of_brief_word(folded)
+            if concept is not None:
+                concepts.add(concept)
+            else:
+                literals.add(folded)
+    return frozenset(concepts), frozenset(literals)
+
+
+def _topical_fit(
+    clip_words: set[str], clip_concepts: set[str], campaign: dict[str, Any]
+) -> float | None:
+    """Share of what the brief is ABOUT that the clip also covers, 0..1.
+
+    A recall, not a bonus stack: the old score only ever went up, so every arc
+    drifted back to the baseline. None when the brief says nothing usable.
+    """
+    concepts, literals = _campaign_lexicon(campaign)
+    total = len(concepts) + LITERAL_UNIT_WEIGHT * len(literals)
+    if total <= 0:
+        return None
+    covered = float(len(concepts & clip_concepts))
+    covered += LITERAL_UNIT_WEIGHT * sum(
+        1 for word in literals if _fuzzy_contains(word, clip_words)
     )
-    for raw, points in fields:
-        for keyword in _significant_words(str(raw)):
-            if keyword in seen:
-                continue
-            seen.add(keyword)
-            if _fuzzy_contains(keyword, words):
-                bonus = min(KEYWORD_BONUS_CAP, bonus + points)
-    fit = min(100, fit + bonus)
+    return min(1.0, covered / total)
 
+
+def _intent_fit(
+    spoken: str, clip_words: set[str], clip_concepts: set[str], intents: set[str]
+) -> float | None:
+    """Share of the goal's evidence axes the clip satisfies, 0..1.
+
+    This is the half that separates "talks about business" from "makes someone
+    buy the formation": a proof, a figure, the offer itself, a track record.
+    None when the goal expresses no intent we know how to check.
+    """
+    axes = sorted({axis for intent in intents for axis in _INTENT_AXES[intent]})
+    if not axes:
+        return None
+    index = _stem_index(clip_words)
+    hits = 0
+    for axis in axes:
+        if axis == "figure":
+            found = bool(_FIGURE_RE.search(spoken))
+        else:
+            found = any(c in clip_concepts for c in _AXIS_CONCEPTS.get(axis, ())) or any(
+                _matches_stem(stem, clip_words, index)
+                for stem in _AXIS_STEMS.get(axis, ())
+            )
+        hits += int(found)
+    return hits / len(axes)
+
+
+def _goal_intents(campaign: dict[str, Any]) -> set[str]:
+    words = {
+        _fold_accents(w) for w in _significant_words(str(campaign.get("goal") or ""))
+    }
+    if not words:
+        return set()
+    index = _stem_index(words)
+    return {
+        intent
+        for intent, triggers in _GOAL_INTENTS.items()
+        if any(_matches_stem(trigger, words, index) for trigger in triggers)
+    }
+
+
+def _avoid_penalty(arc: StoryArc, campaign: dict[str, Any]) -> int:
+    """Sanitised avoid-list penalty. Scanned on the widest text and with the
+    stricter fuzzy threshold: a false positive here silently kills a good clip,
+    so a messy brief must cost nothing."""
+    words = set(_TOKEN_RE.findall(_clip_text(arc)))
     penalty = 0
     for avoid in campaign.get("avoid_topics") or []:
         terms = _avoid_terms(str(avoid or ""))
@@ -232,17 +535,47 @@ def _keyword_fit_score(arc: StoryArc, campaign: dict[str, Any]) -> int:
         coverage = matched / len(terms)
         if coverage >= AVOID_MIN_COVERAGE:
             penalty = min(AVOID_PENALTY_CAP, penalty + round(AVOID_PENALTY * coverage))
-    fit = max(0, fit - penalty)
+    return penalty
 
-    return fit
+
+def _brief_fit_score(arc: StoryArc, campaign: dict[str, Any]) -> int:
+    """How well the clip serves this brief, measured on concepts and evidence.
+
+    Two questions, asked separately because they fail separately:
+      * topical — does the clip live in the world the brief describes?
+      * intent  — does it do what the goal asks (proof, figure, offer, track
+        record)? A clip can be perfectly on-topic and still sell nothing.
+    Either half falls back to neutral when the brief does not answer it, so an
+    empty campaign still scores 60 exactly as before. The avoid list is
+    subtracted afterwards, unchanged.
+    """
+    spoken = _spoken_text(arc)
+    clip_words = _folded_words(spoken)
+    clip_concepts = _concepts_of(clip_words)
+
+    topical = _topical_fit(clip_words, clip_concepts, campaign)
+    intent = _intent_fit(spoken, clip_words, clip_concepts, _goal_intents(campaign))
+
+    fit = round(
+        FIT_BASE
+        + FIT_TOPICAL_SPAN * (_NEUTRAL_HALF if topical is None else topical)
+        + FIT_INTENT_SPAN * (_NEUTRAL_HALF if intent is None else intent)
+    )
+    return max(0, min(100, fit - _avoid_penalty(arc, campaign)))
 
 
 def _campaign_fit_score(arc: StoryArc, campaign: dict[str, Any]) -> int:
-    """Blend the LLM's campaign-fit self-report with a fuzzy keyword overlap.
-    Falls back to a neutral 60 for the LLM half when it did not report a value."""
-    keyword_fit = _keyword_fit_score(arc, campaign)
+    """Blend the LLM's campaign-fit self-report with the measured brief fit.
+
+    Kept at half and half. The self-report is informed (the model read the
+    brief) but compressed — on the production run it returned 90-100 for every
+    single arc, which carries almost no ranking signal. The measured half is
+    blunter but actually spreads, so together they rank; alone, neither does.
+    Falls back to a neutral 60 for the LLM half when it did not report a value.
+    """
+    brief_fit = _brief_fit_score(arc, campaign)
     llm = arc.campaign_fit_llm if arc.campaign_fit_llm is not None else 60
-    return max(0, min(100, round(0.5 * llm + 0.5 * keyword_fit)))
+    return max(0, min(100, round(0.5 * llm + 0.5 * brief_fit)))
 
 
 def _editing_continuity_score(arc: StoryArc, per_segment_vision: list[SegmentVision]) -> int:
