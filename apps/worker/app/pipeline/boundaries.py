@@ -108,17 +108,27 @@ class AnchorReport:
     segments_unmatched: int
     max_drift_seconds: float
     total_drift_seconds: float
+    segment_ends_anchored: int
+    segment_ends_unmatched: int
+    segments_missing_explicit_anchors: int
+    arcs_dropped_anchor_conflicts: int
     payoffs_extended: int
     payoffs_out_of_reach: int
     payoffs_unmatched: int
 
     @property
     def mean_drift_seconds(self) -> float:
-        return (
-            self.total_drift_seconds / self.segments_anchored
-            if self.segments_anchored
-            else 0.0
-        )
+        return self.total_drift_seconds / self.segments_anchored if self.segments_anchored else 0.0
+
+
+@dataclass(frozen=True)
+class FinalDurationReport:
+    """Result of the last guard after every boundary mutation has run."""
+
+    arcs_seen: int
+    arcs_kept: int
+    arcs_dropped_segment_duration: int
+    arcs_dropped_clip_duration: int
 
 
 # =============================================================
@@ -176,9 +186,7 @@ def _phrases_from_sentences(
     return phrases
 
 
-def _gap_boundary_indices(
-    words: Sequence[TranscriptWord], *, top_fraction: float
-) -> set[int]:
+def _gap_boundary_indices(words: Sequence[TranscriptWord], *, top_fraction: float) -> set[int]:
     """Indices i where words[i] ends a phrase, by RANK of the following gap.
 
     A value threshold ("a gap of at least 0.28s") is meaningless on an ASR that
@@ -190,10 +198,7 @@ def _gap_boundary_indices(
     n_gaps = len(words) - 1
     if n_gaps <= 0:
         return set()
-    gaps = [
-        (max(0.0, words[i + 1].start - words[i].end), i)
-        for i in range(n_gaps)
-    ]
+    gaps = [(max(0.0, words[i + 1].start - words[i].end), i) for i in range(n_gaps)]
     positive = [(g, i) for g, i in gaps if g > 0.0]
     keep = round(top_fraction * n_gaps)
     if not positive or keep <= 0:
@@ -246,9 +251,7 @@ def _phrases_from_gaps(
 
     phrases: list[Phrase] = []
     for first, last in raw:
-        _split_long_phrase(
-            words, first, last, max_seconds=max_phrase_seconds, out=phrases
-        )
+        _split_long_phrase(words, first, last, max_seconds=max_phrase_seconds, out=phrases)
     return phrases
 
 
@@ -270,9 +273,7 @@ def build_phrase_index(
             ordered, top_fraction=top_fraction, max_phrase_seconds=max_phrase_seconds
         )
         source = "gaps"
-    return PhraseIndex(
-        words=tuple(ordered), phrases=tuple(phrases), source=source
-    )
+    return PhraseIndex(words=tuple(ordered), phrases=tuple(phrases), source=source)
 
 
 def next_phrase_end_after(index: PhraseIndex, time_seconds: float) -> float | None:
@@ -342,6 +343,25 @@ def _locate(
     lo, hi = _word_index_bounds(words, center, tolerance)
     if hi < lo:
         return None
+    # Prefer a literal normalized match. Fuzzy matching is only a fallback for
+    # ASR/model tokenization differences (numbers, apostrophes, elisions).
+    exact: list[tuple[float, int, int]] = []
+    query_words = len(query.split())
+    for i in range(lo, hi + 1):
+        parts: list[str] = []
+        for j in range(i, min(len(words), i + query_words + 3)):
+            if normalized[j]:
+                parts.append(normalized[j])
+            candidate = " ".join(parts)
+            if candidate == query:
+                exact.append((abs(words[i].start - center), i, j))
+                break
+            if len(candidate) > len(query) + 12:
+                break
+    if exact:
+        _distance, first, last = min(exact)
+        return first, last, 1.0
+
     target_len = len(query)
     best: tuple[float, float, int, int] | None = None
     for i in range(lo, hi + 1):
@@ -380,8 +400,22 @@ def _anchor_segment_start(
     tolerance: float,
     min_ratio: float,
     head_words: int,
-) -> tuple[int, float] | None:
-    """Word index the segment should really start on, plus the match ratio."""
+) -> tuple[int, float, bool] | None:
+    """Return word index, match ratio and whether an explicit anchor matched."""
+    explicit = _head_query(segment.start_anchor, n_words=head_words)
+    if len(explicit) >= 8:
+        found = _locate(
+            words,
+            normalized,
+            explicit,
+            center=segment.start,
+            tolerance=tolerance,
+            min_ratio=min_ratio,
+        )
+        if found is not None:
+            first, _last, ratio = found
+            return first, ratio, True
+
     queries = [
         _head_query(segment.transcript_excerpt, n_words=head_words),
         _head_query(quoted_opening, n_words=head_words),
@@ -405,7 +439,7 @@ def _anchor_segment_start(
             best = (ratio, first)
     if best is None:
         return None
-    return best[1], best[0]
+    return best[1], best[0], False
 
 
 def anchor_arcs_to_transcript(
@@ -418,6 +452,7 @@ def anchor_arcs_to_transcript(
     preroll_seconds: float = PREROLL_SECONDS,
     padding_seconds: float = PADDING_SECONDS,
     payoff_lookahead_seconds: float = PAYOFF_LOOKAHEAD_SECONDS,
+    min_segment_seconds: float = MIN_SEGMENT_SECONDS,
     max_segment_seconds: float = MAX_SEGMENT_SECONDS,
 ) -> tuple[list[StoryArc], AnchorReport]:
     """Re-cut every segment on the words the model actually quoted.
@@ -448,6 +483,12 @@ def anchor_arcs_to_transcript(
             segments_unmatched=sum(len(a.segments) for a in arcs),
             max_drift_seconds=0.0,
             total_drift_seconds=0.0,
+            segment_ends_anchored=0,
+            segment_ends_unmatched=0,
+            segments_missing_explicit_anchors=sum(
+                not (s.start_anchor and s.end_anchor) for a in arcs for s in a.segments
+            ),
+            arcs_dropped_anchor_conflicts=0,
             payoffs_extended=0,
             payoffs_out_of_reach=0,
             payoffs_unmatched=0,
@@ -457,6 +498,8 @@ def anchor_arcs_to_transcript(
     seen = anchored = unmatched = 0
     max_drift = 0.0
     total_drift = 0.0
+    ends_anchored = ends_unmatched = 0
+    missing_explicit_anchors = anchor_conflicts = 0
     payoffs_extended = payoffs_out_of_reach = payoffs_unmatched = 0
     out: list[StoryArc] = []
 
@@ -464,6 +507,8 @@ def anchor_arcs_to_transcript(
         segments: list[ArcSegmentSpec] = []
         for idx, segment in enumerate(arc.segments):
             seen += 1
+            if not (segment.start_anchor and segment.end_anchor):
+                missing_explicit_anchors += 1
             found = _anchor_segment_start(
                 words,
                 normalized,
@@ -485,11 +530,15 @@ def anchor_arcs_to_transcript(
                 segments.append(segment)
                 continue
 
-            word_idx, ratio = found
+            word_idx, ratio, explicit_start = found
             new_start = max(0.0, words[word_idx].start - preroll_seconds)
             shift = new_start - segment.start
             if abs(shift) < ANCHOR_MIN_SHIFT_SECONDS:
-                segments.append(segment)
+                segments.append(
+                    replace(segment, start_anchor_resolved=explicit_start)
+                    if explicit_start
+                    else segment
+                )
                 continue
 
             anchored += 1
@@ -525,9 +574,77 @@ def anchor_arcs_to_transcript(
                 drift=round(shift, 2),
                 ratio=round(ratio, 2),
             )
-            segments.append(replace(segment, start=new_start, end=new_end))
+            segments.append(
+                replace(
+                    segment,
+                    start=new_start,
+                    end=new_end,
+                    start_anchor_resolved=explicit_start,
+                )
+            )
+
+        # Every explicit end anchor lets the editor choose the exact final word.
+        # The seconds are only a neighbourhood hint; the transcript word clock
+        # produces the authoritative end passed downstream to FFmpeg.
+        for idx, segment in enumerate(segments):
+            end_query = _normalize(segment.end_anchor or "")
+            if len(end_query) < 8:
+                continue
+            # Search around the LLM's original coarse end. Start anchoring may
+            # translate the working window by several seconds; that translation
+            # must not move the neighbourhood used to resolve the independent
+            # explicit end anchor.
+            declared_end = arc.segments[idx].end
+            found_end = _locate(
+                words,
+                normalized,
+                end_query,
+                center=declared_end,
+                tolerance=tolerance_seconds,
+                min_ratio=min_ratio,
+            )
+            if found_end is None:
+                ends_unmatched += 1
+                log.warning(
+                    "boundaries.end_anchor_not_found",
+                    title=arc.title[:60],
+                    segment=idx,
+                    end=round(declared_end, 2),
+                    anchor=(segment.end_anchor or "")[:60],
+                )
+                continue
+            _first, last_idx, ratio = found_end
+            anchored_end = min(
+                transcript_end + padding_seconds,
+                words[last_idx].end + padding_seconds,
+            )
+            duration = anchored_end - segment.start
+            if duration < min_segment_seconds or duration > max_segment_seconds:
+                ends_unmatched += 1
+                log.warning(
+                    "boundaries.end_anchor_out_of_bounds",
+                    title=arc.title[:60],
+                    segment=idx,
+                    duration=round(duration, 2),
+                )
+                continue
+            ends_anchored += 1
+            log.info(
+                "boundaries.end_anchored",
+                title=arc.title[:60],
+                segment=idx,
+                declared_end=round(declared_end, 2),
+                anchored_end=round(anchored_end, 2),
+                ratio=round(ratio, 2),
+            )
+            segments[idx] = replace(
+                segment,
+                end=anchored_end,
+                end_anchor_resolved=True,
+            )
 
         # --- the clip must land on its payoff ---------------------------------
+        drop_for_anchor_conflict = False
         if arc.payoff_line and segments:
             last = segments[-1]
             payoff_query = _normalize(arc.payoff_line)
@@ -549,6 +666,16 @@ def anchor_arcs_to_transcript(
                 _first, last_idx, _ratio = found_payoff
                 needed_end = words[last_idx].end + padding_seconds
                 if needed_end > last.end + 1e-6:
+                    if last.end_anchor_resolved:
+                        anchor_conflicts += 1
+                        drop_for_anchor_conflict = True
+                        log.warning(
+                            "boundaries.payoff_after_end_anchor",
+                            title=arc.title[:60],
+                            anchored_end=round(last.end, 2),
+                            payoff_end=round(needed_end, 2),
+                        )
+                        continue
                     cap = last.start + max_segment_seconds
                     if needed_end <= cap:
                         payoffs_extended += 1
@@ -568,7 +695,8 @@ def anchor_arcs_to_transcript(
                             needed_end=round(needed_end, 2),
                         )
 
-        out.append(replace(arc, segments=segments))
+        if not drop_for_anchor_conflict:
+            out.append(replace(arc, segments=segments))
 
     report = AnchorReport(
         arcs_seen=len(arcs),
@@ -577,6 +705,10 @@ def anchor_arcs_to_transcript(
         segments_unmatched=unmatched,
         max_drift_seconds=round(max_drift, 3),
         total_drift_seconds=round(total_drift, 3),
+        segment_ends_anchored=ends_anchored,
+        segment_ends_unmatched=ends_unmatched,
+        segments_missing_explicit_anchors=missing_explicit_anchors,
+        arcs_dropped_anchor_conflicts=anchor_conflicts,
         payoffs_extended=payoffs_extended,
         payoffs_out_of_reach=payoffs_out_of_reach,
         payoffs_unmatched=payoffs_unmatched,
@@ -588,9 +720,71 @@ def anchor_arcs_to_transcript(
         anchored=report.segments_anchored,
         unmatched=report.segments_unmatched,
         max_drift=report.max_drift_seconds,
+        ends_anchored=report.segment_ends_anchored,
+        ends_unmatched=report.segment_ends_unmatched,
+        missing_explicit_anchors=report.segments_missing_explicit_anchors,
+        anchor_conflicts=report.arcs_dropped_anchor_conflicts,
         payoffs_extended=report.payoffs_extended,
     )
     return out, report
+
+
+# =============================================================
+# Final guard — no boundary mutation may violate the product contract
+# =============================================================
+
+
+def filter_arcs_by_duration(
+    arcs: Sequence[StoryArc],
+    *,
+    min_segment_seconds: float,
+    max_segment_seconds: float,
+    min_clip_seconds: float,
+    max_clip_seconds: float,
+) -> tuple[list[StoryArc], FinalDurationReport]:
+    """Drop arcs that became invalid after anchoring/snapping.
+
+    Parsers validate the model's coarse seconds, but word anchoring and phrase
+    snapping intentionally mutate those windows. This last deterministic guard
+    is therefore the authoritative duration contract passed to scoring/render.
+    """
+    kept: list[StoryArc] = []
+    dropped_segment = 0
+    dropped_clip = 0
+    for arc in arcs:
+        durations = [segment.end - segment.start for segment in arc.segments]
+        if not durations or any(
+            duration < min_segment_seconds or duration > max_segment_seconds
+            for duration in durations
+        ):
+            dropped_segment += 1
+            log.warning(
+                "boundaries.final_duration_segment_drop",
+                title=arc.title[:60],
+                durations=[round(duration, 3) for duration in durations],
+                minimum=min_segment_seconds,
+                maximum=max_segment_seconds,
+            )
+            continue
+        total = sum(durations)
+        if total < min_clip_seconds or total > max_clip_seconds:
+            dropped_clip += 1
+            log.warning(
+                "boundaries.final_duration_clip_drop",
+                title=arc.title[:60],
+                total=round(total, 3),
+                minimum=min_clip_seconds,
+                maximum=max_clip_seconds,
+            )
+            continue
+        kept.append(arc)
+
+    return kept, FinalDurationReport(
+        arcs_seen=len(arcs),
+        arcs_kept=len(kept),
+        arcs_dropped_segment_duration=dropped_segment,
+        arcs_dropped_clip_duration=dropped_clip,
+    )
 
 
 # =============================================================
@@ -768,9 +962,12 @@ def snap_arc_segments(
         snapped_segments: list[ArcSegmentSpec] = []
         for segment in arc.segments:
             seen += 1
-            start, end, seg_failed = _snap_with_index(
-                index,
-                segment.start,
+            if segment.start_anchor_resolved and segment.end_anchor_resolved:
+                start, end, seg_failed = segment.start, segment.end, False
+            else:
+                start, end, seg_failed = _snap_with_index(
+                    index,
+                    segment.start,
                 segment.end,
                 preroll_seconds=preroll_seconds,
                 padding_seconds=padding_seconds,
@@ -778,9 +975,13 @@ def snap_arc_segments(
                 end_extension_seconds=end_extension_seconds,
                 end_extension_max_duration=end_extension_max_duration,
                 min_duration_seconds=min_duration_seconds,
-                max_duration_seconds=max_duration_seconds,
-                min_retained_fraction=min_retained_fraction,
-            )
+                    max_duration_seconds=max_duration_seconds,
+                    min_retained_fraction=min_retained_fraction,
+                )
+                if segment.start_anchor_resolved:
+                    start = segment.start
+                if segment.end_anchor_resolved:
+                    end = segment.end
             if seg_failed:
                 failed += 1
             if abs(start - segment.start) > 0.001 or abs(end - segment.end) > 0.001:

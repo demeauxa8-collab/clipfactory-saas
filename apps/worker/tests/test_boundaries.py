@@ -23,6 +23,7 @@ from app.pipeline.boundaries import (
     _phrases_from_sentences,
     anchor_arcs_to_transcript,
     build_phrase_index,
+    filter_arcs_by_duration,
     next_phrase_end_after,
     snap_arc_segments,
     snap_segment,
@@ -51,9 +52,21 @@ def words_from_text(text: str, start: float, *, step: float = 0.4) -> list[Trans
 # produce exactly 3 phrases.
 # ---------------------------------------------------------------------------
 DENSE_SPANS = [
-    (10.00, 10.50), (10.55, 11.10), (11.15, 11.90), (11.95, 12.80), (12.85, 13.60),
-    (14.20, 14.80), (14.85, 15.50), (15.55, 16.40), (16.45, 17.30), (17.35, 18.20),
-    (18.80, 19.50), (19.55, 20.40), (20.45, 21.30), (21.35, 22.20), (22.25, 23.10),
+    (10.00, 10.50),
+    (10.55, 11.10),
+    (11.15, 11.90),
+    (11.95, 12.80),
+    (12.85, 13.60),
+    (14.20, 14.80),
+    (14.85, 15.50),
+    (15.55, 16.40),
+    (16.45, 17.30),
+    (17.35, 18.20),
+    (18.80, 19.50),
+    (19.55, 20.40),
+    (20.45, 21.30),
+    (21.35, 22.20),
+    (22.25, 23.10),
 ]
 # Phrase A: 10.00 -> 13.60 | Phrase B: 14.20 -> 18.20 | Phrase C: 18.80 -> 23.10
 
@@ -109,9 +122,15 @@ def test_gap_boundaries_are_ranked_not_thresholded() -> None:
     """Every gap here is far below the old 0.28s floor. A value threshold finds
     nothing; ranking still isolates the two widest breaks."""
     spans = [
-        (0.00, 0.40), (0.40, 0.80), (0.80, 1.20),
-        (1.35, 1.75), (1.75, 2.15), (2.15, 2.55),   # 0.15 break
-        (2.70, 3.10), (3.10, 3.50), (3.50, 3.90),   # 0.15 break
+        (0.00, 0.40),
+        (0.40, 0.80),
+        (0.80, 1.20),
+        (1.35, 1.75),
+        (1.75, 2.15),
+        (2.15, 2.55),  # 0.15 break
+        (2.70, 3.10),
+        (3.10, 3.50),
+        (3.50, 3.90),  # 0.15 break
     ]
     words = words_from(spans)
     assert _gap_boundary_indices(words, top_fraction=0.25) == {2, 5}
@@ -177,12 +196,21 @@ def _arc_with(
     *,
     opening: str | None = None,
     payoff: str | None = None,
+    start_anchor: str | None = None,
+    end_anchor: str | None = None,
 ) -> StoryArc:
     return StoryArc(
         title="Arc",
         arc_type="hook",
         segments=[
-            ArcSegmentSpec(role="single", start=start, end=end, transcript_excerpt=excerpt)
+            ArcSegmentSpec(
+                role="single",
+                start=start,
+                end=end,
+                transcript_excerpt=excerpt,
+                start_anchor=start_anchor,
+                end_anchor=end_anchor,
+            )
         ],
         viral_reason="r",
         estimated_retention=70,
@@ -225,6 +253,18 @@ def test_anchor_can_use_opening_words_when_the_excerpt_is_useless() -> None:
     assert anchored.segments[0].start == pytest.approx(QUOTED_START - 0.12)
 
 
+def test_explicit_start_anchor_has_priority_over_excerpt_head() -> None:
+    arc = _arc_with(
+        1.0,
+        13.0,
+        "c est beaucoup plus long terme que TikTok",
+        start_anchor="le problème c est que sur Google",
+    )
+    (anchored,), report = anchor_arcs_to_transcript([arc], _transcript(ANCHOR_WORDS))
+    assert report.segments_anchored == 1
+    assert anchored.segments[0].start == pytest.approx(QUOTED_START - 0.12)
+
+
 def test_anchor_keeps_the_declared_window_when_nothing_matches() -> None:
     arc = _arc_with(1.0, 13.0, "une phrase qui n'a jamais été prononcée dans cette vidéo")
     (anchored,), report = anchor_arcs_to_transcript([arc], _transcript(ANCHOR_WORDS))
@@ -235,9 +275,7 @@ def test_anchor_keeps_the_declared_window_when_nothing_matches() -> None:
 
 
 def test_anchor_ignores_a_match_outside_the_tolerance_window() -> None:
-    arc = _arc_with(
-        200.0, 212.0, "Le problème c'est que sur Google il faut au minimum 100 euros"
-    )
+    arc = _arc_with(200.0, 212.0, "Le problème c'est que sur Google il faut au minimum 100 euros")
     _, report = anchor_arcs_to_transcript([arc], _transcript(ANCHOR_WORDS))
     assert report.segments_unmatched == 1
 
@@ -313,6 +351,102 @@ def test_unfindable_payoff_is_counted_and_harmless() -> None:
     assert report.payoffs_extended == 0
 
 
+def test_explicit_end_anchor_sets_the_cut_after_its_last_word() -> None:
+    arc = _arc_with(
+        1.0,
+        25.0,
+        "Le problème c est que sur Google il faut au minimum cent euros",
+        start_anchor="le problème c est que sur Google",
+        end_anchor="et là on est vraiment content du résultat obtenu",
+    )
+    (anchored,), report = anchor_arcs_to_transcript([arc], _transcript(ANCHOR_WORDS))
+    seg = anchored.segments[0]
+    # The explicit ending is authoritative: the old 24s coarse window is
+    # shortened to the final anchored word plus the configured 220ms padding.
+    expected_last_word = ANCHOR_WORDS[46].end
+    assert seg.end == pytest.approx(expected_last_word + 0.22)
+    assert report.segment_ends_anchored == 1
+    assert report.segment_ends_unmatched == 0
+
+
+def test_unfindable_end_anchor_keeps_the_window_and_is_reported() -> None:
+    arc = _arc_with(
+        1.0,
+        13.0,
+        "Le problème c est que sur Google il faut au minimum cent euros",
+        end_anchor="une fin totalement inventée",
+    )
+    (anchored,), report = anchor_arcs_to_transcript([arc], _transcript(ANCHOR_WORDS))
+    assert anchored.segments[0].end - anchored.segments[0].start == pytest.approx(12.0)
+    assert report.segment_ends_anchored == 0
+    assert report.segment_ends_unmatched == 1
+
+
+def test_end_anchor_search_uses_original_end_after_start_shift() -> None:
+    tokens = [f"token{i:02d}" for i in range(70)]
+    words = words_from_text(" ".join(tokens), 0.0, step=0.5)
+    arc = _arc_with(
+        0.0,
+        20.0,
+        "token09 token10 token11 token12 token13 token14",
+        start_anchor="token09 token10 token11 token12 token13 token14",
+        end_anchor="token35 token36 token37 token38 token39 token40",
+    )
+    (anchored,), report = anchor_arcs_to_transcript(
+        [arc], _transcript(words), tolerance_seconds=5.0
+    )
+
+    # Resolving the start translates the working end by ~4.4s. The independent
+    # end anchor is still searched around the declared 20s neighbourhood.
+    assert report.segment_ends_anchored == 1
+    assert anchored.segments[0].end == pytest.approx(words[40].end + 0.22)
+
+
+def test_resolved_end_anchor_is_not_moved_by_phrase_snapping() -> None:
+    arc = _arc_with(
+        1.0,
+        25.0,
+        "Le problème c est que sur Google il faut au minimum cent euros",
+        start_anchor="le problème c est que sur Google",
+        end_anchor="et là on est vraiment content du résultat obtenu",
+    )
+    (anchored,), _ = anchor_arcs_to_transcript([arc], _transcript(ANCHOR_WORDS))
+    locked_end = anchored.segments[0].end
+    assert anchored.segments[0].end_anchor_resolved is True
+
+    (snapped,), _ = snap_arc_segments([anchored], ANCHOR_WORDS)
+    assert snapped.segments[0].end == pytest.approx(locked_end)
+
+
+def test_payoff_after_resolved_end_anchor_drops_incoherent_arc() -> None:
+    arc = _arc_with(
+        1.0,
+        25.0,
+        "Le problème c est que sur Google il faut au minimum cent euros",
+        start_anchor="le problème c est que sur Google",
+        end_anchor="on va faire ça ensemble tranquillement sans se presser",
+        payoff="et là on est vraiment content du résultat obtenu",
+    )
+    anchored, report = anchor_arcs_to_transcript([arc], _transcript(ANCHOR_WORDS))
+    assert anchored == []
+    assert report.arcs_dropped_anchor_conflicts == 1
+
+
+def test_repeated_exact_anchor_chooses_occurrence_nearest_declared_time() -> None:
+    phrase = "voici la méthode exacte pour trouver le bon résultat"
+    tail = " ".join(f"suite{i}" for i in range(30))
+    words = words_from_text(f"{phrase} remplissage {phrase} {tail}", 0.0, step=0.5)
+    second_start = (len(phrase.split()) + 1) * 0.5
+    arc = _arc_with(
+        second_start,
+        second_start + 12.0,
+        phrase,
+        start_anchor=phrase,
+    )
+    (anchored,), _ = anchor_arcs_to_transcript([arc], _transcript(words))
+    assert anchored.segments[0].start == pytest.approx(second_start - 0.12)
+
+
 # --- 5. Start snapping: no backward pull ------------------------------------
 
 
@@ -341,8 +475,12 @@ def test_start_advances_when_it_lands_in_silence() -> None:
 
 def test_preroll_clamps_at_zero_and_padding_applied() -> None:
     spans = [
-        (0.05, 0.60), (0.65, 1.30), (1.35, 2.10),   # phrase 1: 0.05 -> 2.10
-        (2.70, 4.00), (4.05, 8.00), (8.05, 10.00),  # phrase 2: 2.70 -> 10.00
+        (0.05, 0.60),
+        (0.65, 1.30),
+        (1.35, 2.10),  # phrase 1: 0.05 -> 2.10
+        (2.70, 4.00),
+        (4.05, 8.00),
+        (8.05, 10.00),  # phrase 2: 2.70 -> 10.00
     ]
     words = words_from(spans)
     start, end = snap_segment(words, 0.30, 9.00)
@@ -367,9 +505,13 @@ def test_end_extension_blocked_by_duration_cap_falls_back_to_last_boundary() -> 
     # cap, so we cannot reach it; snap must recede to the last reachable
     # phrase-end (54.00) rather than cut mid-word.
     spans = [
-        (10.00, 10.50), (10.55, 11.20),                 # phrase 1 -> end 11.20
-        (11.80, 12.50), (12.55, 40.00), (40.05, 54.00),  # long phrase 2 -> end 54.00
-        (54.60, 56.00), (56.05, 60.00),                 # phrase 3 -> end 60.00
+        (10.00, 10.50),
+        (10.55, 11.20),  # phrase 1 -> end 11.20
+        (11.80, 12.50),
+        (12.55, 40.00),
+        (40.05, 54.00),  # long phrase 2 -> end 54.00
+        (54.60, 56.00),
+        (56.05, 60.00),  # phrase 3 -> end 60.00
     ]
     words = words_from(spans)
     sentences = [
@@ -465,6 +607,32 @@ def test_duration_floors_are_one_documented_pair() -> None:
     The old 8s snap floor was a third, contradictory value."""
     assert MIN_CLIP_SECONDS == 12.0
     assert MIN_SEGMENT_SECONDS == 3.0
+
+
+def test_final_duration_guard_rechecks_segments_and_arc_total() -> None:
+    too_short_segment = _arc_with(0.0, 2.99, "x")
+    too_short_total = StoryArc(
+        title="two tiny segments",
+        arc_type="story",
+        segments=[
+            ArcSegmentSpec("setup", 0.0, 4.0, "a"),
+            ArcSegmentSpec("payoff", 10.0, 17.0, "b"),
+        ],
+        viral_reason="",
+        estimated_retention=70,
+        continuity_risk="low",
+    )
+    valid = _arc_with(0.0, 12.0, "valid")
+    kept, report = filter_arcs_by_duration(
+        [too_short_segment, too_short_total, valid],
+        min_segment_seconds=3.0,
+        max_segment_seconds=30.0,
+        min_clip_seconds=12.0,
+        max_clip_seconds=60.0,
+    )
+    assert kept == [valid]
+    assert report.arcs_dropped_segment_duration == 1
+    assert report.arcs_dropped_clip_duration == 1
 
 
 def test_anchoring_near_end_of_video_keeps_the_clip_length():

@@ -33,6 +33,8 @@ def _segment(start: float, end: float, **over: Any) -> dict[str, Any]:
         "role": "single",
         "start": start,
         "end": end,
+        "start_anchor": "j ai fait 4 millions",
+        "end_anchor": "en e commerce",
         "transcript_excerpt": "j ai fait 4 millions en e commerce",
         "why": "states the credential",
     }
@@ -77,6 +79,27 @@ def test_parses_editorial_fields() -> None:
     assert arc.self_contained is True
     assert arc.suggested_hook == "1 euro pour lancer un business"
     assert arc.campaign_fit_llm == 91
+    assert arc.segments[0].start_anchor == "j ai fait 4 millions"
+    assert arc.segments[0].end_anchor == "en e commerce"
+
+
+def test_segment_anchors_are_optional_and_tolerant() -> None:
+    (arc,) = _parse_arcs(
+        _payload(
+            _arc(
+                segments=[
+                    _segment(
+                        0.0,
+                        14.0,
+                        start_anchor=["not", "text"],
+                        end_anchor="   ",
+                    )
+                ]
+            )
+        )
+    )
+    assert arc.segments[0].start_anchor is None
+    assert arc.segments[0].end_anchor is None
 
 
 def test_missing_editorial_fields_default_to_none() -> None:
@@ -214,9 +237,7 @@ def test_segment_without_end_is_dropped_not_treated_as_zero_length() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _sentence_transcript(
-    n_sentences: int = 8, *, sentence_seconds: float = 4.0
-) -> Transcript:
+def _sentence_transcript(n_sentences: int = 8, *, sentence_seconds: float = 4.0) -> Transcript:
     """A transcript cut into clean 4s sentences, each one 4 words long."""
     words: list[TranscriptWord] = []
     sentences: list[TranscriptSentence] = []
@@ -225,9 +246,7 @@ def _sentence_transcript(
         base = s * sentence_seconds
         for w in range(4):
             words.append(TranscriptWord("mot", base + w * step, base + (w + 1) * step))
-        sentences.append(
-            TranscriptSentence(f"Phrase {s}.", base, base + sentence_seconds)
-        )
+        sentences.append(TranscriptSentence(f"Phrase {s}.", base, base + sentence_seconds))
     return Transcript(text="", words=words, sentences=sentences)
 
 
@@ -257,18 +276,16 @@ def test_repair_extends_the_last_segment_of_a_multi_segment_arc() -> None:
 def test_repair_gives_up_when_the_transcript_runs_out() -> None:
     # One 4s sentence in the whole transcript: nothing to extend onto.
     (transcript) = _sentence_transcript(n_sentences=1)
-    assert _parse_arcs(
-        _payload(_arc(segments=[_segment(0.0, 4.0)])), transcript=transcript
-    ) == []
+    assert _parse_arcs(_payload(_arc(segments=[_segment(0.0, 4.0)])), transcript=transcript) == []
 
 
 def test_repair_never_breaks_the_segment_ceiling() -> None:
     # The next sentence only ends at 40s: reaching the floor would mean a
     # segment longer than MAX_SEGMENT_SECONDS, so we drop instead of forcing.
     long_sentences = _sentence_transcript(n_sentences=3, sentence_seconds=40.0)
-    assert _parse_arcs(
-        _payload(_arc(segments=[_segment(0.0, 4.0)])), transcript=long_sentences
-    ) == []
+    assert (
+        _parse_arcs(_payload(_arc(segments=[_segment(0.0, 4.0)])), transcript=long_sentences) == []
+    )
 
 
 def test_arc_already_above_the_floor_is_left_alone() -> None:
