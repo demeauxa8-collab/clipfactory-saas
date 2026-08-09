@@ -126,6 +126,7 @@ def test_arc_weights_sum_to_one() -> None:
         "campaign_fit",
         "editing_continuity",
         "retention",
+        "audience",
     }
 
 

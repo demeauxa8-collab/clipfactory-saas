@@ -22,6 +22,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from ..models import MontageSegment, Transcript
+from .opening import DEFAULT_HOOK_SECONDS, hook_dialogue_line, hook_style_line
 
 
 def _format_ass_time(seconds: float) -> str:
@@ -47,11 +48,14 @@ FACE_CROP_MARGIN_V = 400
 FIT_BLUR_MARGIN_V = 620
 
 
-def _ass_header(margin_v: int) -> str:
+def _ass_header(margin_v: int, *, with_hook: bool = False) -> str:
     style = (
         "Style: Default,Inter,110,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,"
         f"1,0,0,0,100,100,0,0,1,6,2,2,80,80,{margin_v},1"
     )
+    # The hook style is only declared when a hook is actually emitted, so a
+    # caller that does not ask for one gets byte-identical output.
+    styles = [style, hook_style_line()] if with_hook else [style]
     return "\n".join(
         [
             "[Script Info]",
@@ -63,7 +67,7 @@ def _ass_header(margin_v: int) -> str:
             "",
             "[V4+ Styles]",
             ASS_STYLE_FORMAT,
-            style,
+            *styles,
             "",
             "[Events]",
             "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text",
@@ -298,6 +302,8 @@ def write_ass_for_montage(
     karaoke: bool = True,
     margin_v: int = FACE_CROP_MARGIN_V,
     margins_per_segment: list[int] | None = None,
+    hook_text: str | None = None,
+    hook_seconds: float = DEFAULT_HOOK_SECONDS,
 ) -> bool:
     """Generate an ASS file for a multi-segment montage.
 
@@ -312,6 +318,11 @@ def write_ass_for_montage(
     Dialogue event instead carries the MarginV of the segment its words belong to,
     so caption height follows the per-segment framing. A group never straddles a
     joint, so every event maps to exactly one segment margin.
+
+    ``hook_text`` (optional, absent by default) adds the on-screen hook: one
+    static amber title in the top third of the frame, from 0 to ``hook_seconds``
+    (clamped to the clip length). It uses its own style and layer, never the
+    karaoke highlight, and lives far above every caption margin.
     """
     timed = _retimed_words_for_montage(
         transcript=transcript,
@@ -322,6 +333,17 @@ def write_ass_for_montage(
         return False
 
     lines: list[str] = []
+    # The hook opens the file: it belongs to the first instant of the clip and
+    # to its own layer, so caption events keep their existing order below it.
+    hook_line = None
+    if hook_text:
+        clip_end = max(end for _start, end, _word, _seg in timed)
+        hook_line = hook_dialogue_line(
+            hook_text, start_seconds=0.0, end_seconds=min(hook_seconds, clip_end)
+        )
+    if hook_line:
+        lines.append(hook_line)
+
     for group in _group_timed(timed, chunk_words):
         if not group:
             continue
@@ -372,7 +394,8 @@ def write_ass_for_montage(
         return False
 
     Path(out_path).write_text(
-        _ass_header(margin_v) + "\n".join(lines) + "\n", encoding="utf-8"
+        _ass_header(margin_v, with_hook=hook_line is not None) + "\n".join(lines) + "\n",
+        encoding="utf-8",
     )
     return True
 

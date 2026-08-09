@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
@@ -83,6 +84,123 @@ class VideoEvent:
 class VideoMap:
     summary: str
     events: list[VideoEvent]
+
+
+# =============================================================
+# Audience heatmap (YouTube "most replayed")
+# =============================================================
+
+
+@dataclass
+class HeatmapPoint:
+    """One bucket of the re-watch curve. YouTube always returns 100 of them,
+    evenly spread over the whole video."""
+
+    start: float
+    end: float
+    value: float
+
+
+@dataclass
+class AudienceHeatmap:
+    """YouTube's "most replayed" curve — the only signal in this pipeline that
+    is measured audience behaviour instead of a model's opinion.
+
+    READ THIS BEFORE USING `value`. It is normalised PER VIDEO: YouTube scales
+    the curve so this video's most re-watched bucket is 1.0 and its least
+    re-watched one sits near 0.0. It is not a view count, not a watch time, not
+    a retention percentage, and it carries no absolute meaning whatsoever. A
+    500-view vlog and a 50M-view clip both peak at exactly 1.0.
+
+    The only legitimate question it answers is "is this moment re-watched more
+    than the REST OF THIS VIDEO?" — comparisons across sources are meaningless
+    and must never be made. Everything downstream therefore ranks a moment
+    against this video's own points (see `percentile_of`) rather than reading
+    `value` as a score.
+    """
+
+    points: list[HeatmapPoint] = field(default_factory=list)
+
+    @classmethod
+    def from_points(cls, raw: Any) -> AudienceHeatmap | None:
+        """Build from yt-dlp's `heatmap` payload, or return None.
+
+        Deliberately paranoid: this is a bonus signal fed by a third-party
+        scraper whose shape can change under us, so anything unparseable is
+        skipped rather than raised. No points survive -> None, and the caller
+        behaves exactly as if YouTube had published no curve at all.
+        """
+        if not isinstance(raw, (list, tuple)):
+            return None
+        points: list[HeatmapPoint] = []
+        for item in raw:
+            if not isinstance(item, dict):
+                continue
+            try:
+                start = float(item["start_time"])
+                end = float(item["end_time"])
+                value = float(item["value"])
+            except (KeyError, TypeError, ValueError):
+                continue
+            if not (math.isfinite(start) and math.isfinite(end) and math.isfinite(value)):
+                continue
+            if end <= start or value < 0:
+                continue
+            points.append(HeatmapPoint(start=start, end=end, value=value))
+        if not points:
+            return None
+        points.sort(key=lambda p: p.start)
+        return cls(points=points)
+
+    def intensity_between(self, start: float, end: float) -> float | None:
+        """Mean re-watch intensity over [start, end], weighted by how much of
+        each bucket the window actually covers.
+
+        None when the window lands outside the curve — the caller must then
+        drop the audience term rather than invent a value for it.
+        """
+        lo_edge, hi_edge = (start, end) if end > start else (start, start)
+        weighted = 0.0
+        covered = 0.0
+        for p in self.points:
+            overlap = min(hi_edge, p.end) - max(lo_edge, p.start)
+            if overlap > 0:
+                weighted += p.value * overlap
+                covered += overlap
+        if covered > 0:
+            return weighted / covered
+        # Zero-length window, or one sitting exactly on a bucket edge: fall back
+        # to the bucket containing its start.
+        for p in self.points:
+            if p.start <= lo_edge <= p.end:
+                return p.value
+        return None
+
+    def percentile_of(self, value: float) -> float:
+        """Rank of `value` among this video's own bucket intensities, 0..100.
+
+        A rank and not a ratio, on purpose: `value` is only comparable inside
+        one video, and a video that is globally little re-watched still spreads
+        its own moments across the full 0..100 range instead of being scored
+        down as a block.
+
+        Ties are compared with a tolerance, and that is load-bearing rather than
+        cosmetic. A window sitting on a flat stretch of the curve averages back
+        to the very value the buckets carry, but through a weighted sum — so it
+        lands on 0.139999999999 instead of 0.14, every equal bucket counts as
+        "above", and the moment reads 15 when it should read 48. Measured on the
+        fixture: a 33-point swing on identical footage.
+        """
+        if not self.points:
+            return 0.0
+        tolerance = 1e-9
+        below = sum(1 for p in self.points if p.value < value - tolerance)
+        equal = sum(1 for p in self.points if abs(p.value - value) <= tolerance)
+        return 100.0 * (below + 0.5 * equal) / len(self.points)
+
+    def peaks(self, limit: int = 3) -> list[HeatmapPoint]:
+        """The most re-watched buckets, hottest first — for logs and debugging."""
+        return sorted(self.points, key=lambda p: (-p.value, p.start))[: max(0, limit)]
 
 
 # =============================================================
@@ -207,6 +325,9 @@ class JobContext:
     source_r2_key: str | None = None
     transcript: Transcript | None = None
     video_map: VideoMap | None = None
+    # Bonus signal, absent far more often than not (young video, few views,
+    # non-YouTube source, network down). Never gate a step on it.
+    audience_heatmap: AudienceHeatmap | None = None
     story_arcs: list[StoryArc] = field(default_factory=list)
     montage_candidates: list[MontageCandidate] = field(default_factory=list)
 

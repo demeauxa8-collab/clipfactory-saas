@@ -27,6 +27,7 @@ import structlog
 
 from .. import analytics
 from ..models import (
+    AudienceHeatmap,
     JobContext,
     MontageCandidate,
     StoryArc,
@@ -60,6 +61,7 @@ from .captions import FACE_CROP_MARGIN_V, FIT_BLUR_MARGIN_V, write_ass_for_monta
 from .ffmpeg import (
     FFmpegError,
     detect_black_open_for_segments,
+    fetch_audience_heatmap,
     probe_duration_seconds,
     render_montage_clip,
     validate_rendered_clip,
@@ -709,6 +711,22 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
         except FFmpegError as exc:
             raise PipelineFailure("download_failed", "download", str(exc)) from exc
 
+        # Step 2b — audience heatmap (bonus, never blocking)
+        ctx.audience_heatmap = AudienceHeatmap.from_points(
+            await fetch_audience_heatmap(ctx.source_url, workdir)
+        )
+        if ctx.audience_heatmap is not None:
+            log_ctx.info(
+                "pipeline.audience_heatmap",
+                points=len(ctx.audience_heatmap.points),
+                peaks=[
+                    {"start": round(p.start, 1), "value": round(p.value, 3)}
+                    for p in ctx.audience_heatmap.peaks(3)
+                ],
+            )
+        else:
+            log_ctx.info("pipeline.audience_heatmap_absent")
+
         # Step 3 — probe
         async with pool.acquire() as conn:
             await _set_status(conn, job_id, "downloading", current_step="probe")
@@ -824,6 +842,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                 per_segment_vision=per_seg,
                 campaign=ctx.campaign,
                 opening_text=_spoken_opening_text(ctx, arc),
+                audience_heatmap=ctx.audience_heatmap,
             )
             candidate.vision_per_segment = per_seg
             candidates.append(candidate)
@@ -837,6 +856,22 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
             single=len(ctx.montage_candidates) - multi_count,
             total=len(ctx.montage_candidates),
         )
+
+        # What the real audience says about what the model picked. Logged per
+        # retained clip so the two can be compared run after run — the model
+        # proposes, the people who already watched this video arbitrate.
+        if ctx.audience_heatmap is not None:
+            for rank, cand in enumerate(ctx.montage_candidates):
+                log_ctx.info(
+                    "pipeline.audience_pick",
+                    rank=rank,
+                    title=(cand.title or "")[:80],
+                    audience_percentile=cand.score_breakdown.get("audience"),
+                    score_total=cand.score_total,
+                    window=[
+                        [round(s.start, 1), round(s.end, 1)] for s in cand.segments
+                    ],
+                )
 
         # Step 15-16 — render + captions + upload + save
         async with pool.acquire() as conn:

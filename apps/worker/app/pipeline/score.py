@@ -9,6 +9,7 @@ from typing import Any
 import structlog
 
 from ..models import (
+    AudienceHeatmap,
     MontageCandidate,
     MontageSegment,
     SegmentVision,
@@ -18,9 +19,12 @@ from ..models import (
 
 log = structlog.get_logger()
 
-# Montage-v2 weights. Multi-segment clips are first-class now, so the mix leans on
-# campaign fit and payoff strength alongside watchability and a first-2-seconds
-# hook. The LLM's self-reported retention stays discounted. Weights sum to 1.0.
+# Montage-v2 weights, as they stood before the audience term existed. Kept under
+# their own name because they are the reference the renormalisation below has to
+# reproduce exactly whenever a video has no re-watch curve — see ARC_WEIGHTS.
+# Multi-segment clips are first-class now, so the mix leans on campaign fit and
+# payoff strength alongside watchability and a first-2-seconds hook. The LLM's
+# self-reported retention stays discounted. Sums to 1.0.
 #
 # campaign_fit went 0.12 -> 0.20 when it stopped being a flat 60. At 0.12 it
 # could not move a ranking even when it was right (a 30-point fit gap was worth
@@ -32,13 +36,45 @@ log = structlog.get_logger()
 # unusable whatever it says. The 0.08 comes out of the three terms that were
 # double-counting watchability (hook, payoff, editing_continuity) and out of
 # nothing else; retention keeps its discount for being an LLM self-report.
-ARC_WEIGHTS = {
+_PRE_AUDIENCE_ARC_WEIGHTS = {
     "visual_proof": 0.26,
     "campaign_fit": 0.20,
     "hook_strength": 0.18,
     "payoff_strength": 0.16,
     "editing_continuity": 0.10,
     "retention": 0.10,
+}
+
+# How much of the score YouTube's real re-watch curve is allowed to move.
+#
+# Every other term above is somebody's opinion — a model's guess (retention,
+# payoff), a lexicon we wrote (campaign_fit), a heuristic (hook). This one is
+# measured behaviour: viewers went back and watched that exact second again.
+# That is why it gets a share comparable to campaign_fit rather than the token
+# weight of a tie-breaker.
+#
+# 0.12 and not more, because the term is loud by construction: it is a
+# percentile, so within one video it spreads across the full 0..100 range where
+# campaign_fit realistically spans ~30 points. At 0.12 a peak arc beats a
+# trough arc by ~10 points of final score — enough to reorder two clips of
+# comparable craft, never enough to ship an ugly or off-brief one just because
+# people re-watched that bit. It also stays below visual_proof: a moment the
+# audience loved is worthless if the frame is unusable.
+AUDIENCE_WEIGHT = 0.12
+
+# The 0.12 is taken PRO RATA from every existing term rather than carved out of
+# one of them. That is not a cosmetic choice: when a video has no curve — which
+# is the common case, not the edge case — score_arc drops the term and
+# renormalises, and proportional shaving makes those renormalised weights come
+# back to _PRE_AUDIENCE_ARC_WEIGHTS exactly. So a job without a heatmap keeps
+# today's scores to the point, and shipping this cannot re-rank a single
+# existing job. Sums to 1.0.
+ARC_WEIGHTS = {
+    **{
+        key: round(weight * (1.0 - AUDIENCE_WEIGHT), 6)
+        for key, weight in _PRE_AUDIENCE_ARC_WEIGHTS.items()
+    },
+    "audience": AUDIENCE_WEIGHT,
 }
 
 # A clip with no visible person anywhere is almost always weak b-roll for a
@@ -821,6 +857,40 @@ def _retention(arc: StoryArc) -> int:
     return arc.estimated_retention or 60
 
 
+def _audience_score(arc: StoryArc, heatmap: AudienceHeatmap | None) -> int | None:
+    """How hard THIS video's own audience re-watched the footage of this arc, 0..100.
+
+    The arc's mean intensity is duration-weighted across its segments (a 3 s
+    setup must not outweigh a 25 s payoff), then ranked against the video's own
+    100 buckets. Percentile and not "value x 100" for two reasons: the curve is
+    normalised per video so the raw level says nothing, and the ranking is what
+    we actually want — "re-watched more than the rest of this video".
+
+    Known artefact, kept on purpose: the first seconds of almost any YouTube
+    video sit high on the curve (people restart it), so arcs opening at t=0 get
+    a real edge here. That is genuine audience behaviour and the term is only
+    worth AUDIENCE_WEIGHT, so we take it as it comes rather than "correcting"
+    measured data with a hand-made curve of our own.
+
+    None when there is no curve, or when nothing about the arc overlaps it —
+    the caller then removes the term entirely instead of feeding it a guess.
+    """
+    if heatmap is None or not heatmap.points or not arc.segments:
+        return None
+    weighted = 0.0
+    covered = 0.0
+    for segment in arc.segments:
+        intensity = heatmap.intensity_between(segment.start, segment.end)
+        if intensity is None:
+            continue
+        duration = max(segment.end - segment.start, 0.0) or 1.0
+        weighted += intensity * duration
+        covered += duration
+    if covered <= 0:
+        return None
+    return round(heatmap.percentile_of(weighted / covered))
+
+
 def _arc_to_montage_segments(arc: StoryArc) -> list[MontageSegment]:
     return [
         MontageSegment(
@@ -840,6 +910,7 @@ def score_arc(
     per_segment_vision: list[SegmentVision],
     campaign: dict[str, Any],
     opening_text: str | None = None,
+    audience_heatmap: AudienceHeatmap | None = None,
 ) -> MontageCandidate:
     """Score one arc.
 
@@ -848,6 +919,11 @@ def score_arc(
     caller (the runner has `words_in_window`). Passing it moves the hook from
     "what the model declared" to "what the viewer hears"; omitting it keeps the
     previous behaviour, so the simple path and the tests are unaffected.
+
+    `audience_heatmap` is YouTube's re-watch curve for the source, when it
+    published one. Absent (the common case), the audience term is dropped and
+    the remaining weights renormalise back to what they were before the term
+    existed — see ARC_WEIGHTS.
     """
     visual = _visual_proof(per_segment_vision)
     campaign_fit = _campaign_fit_score(arc, campaign)
@@ -855,6 +931,7 @@ def score_arc(
     hook = _hook_strength(arc, per_segment_vision, opening_text=opening_text)
     editing = _editing_continuity_score(arc, per_segment_vision)
     retention = _retention(arc)
+    audience = _audience_score(arc, audience_heatmap)
 
     breakdown: dict[str, int] = {
         "payoff_strength": payoff,
@@ -865,17 +942,16 @@ def score_arc(
     }
     if visual is not None:
         breakdown["visual_proof"] = visual
+    if audience is not None:
+        breakdown["audience"] = audience
 
-    # Renormalise if vision is missing
-    if visual is None:
-        total_weight = sum(w for k, w in ARC_WEIGHTS.items() if k != "visual_proof")
-        weighted = sum(
-            ARC_WEIGHTS[k] * breakdown[k] for k in ARC_WEIGHTS if k != "visual_proof"
-        )
-        score_total = round(weighted / total_weight)
-    else:
-        weighted = sum(ARC_WEIGHTS[k] * breakdown[k] for k in ARC_WEIGHTS)
-        score_total = round(weighted)
+    # Renormalise over the terms we could actually measure. A missing term is
+    # removed, never replaced by a neutral value: a fabricated 50 would drag
+    # every real score towards the middle and flatten the ranking.
+    scored = [k for k in ARC_WEIGHTS if k in breakdown]
+    total_weight = sum(ARC_WEIGHTS[k] for k in scored)
+    weighted = sum(ARC_WEIGHTS[k] * breakdown[k] for k in scored)
+    score_total = round(weighted / total_weight) if total_weight > 0 else 0
 
     # Faceless clips (no visible person in any segment) are almost always weak
     # b-roll for a creator video — knock the score down so face-cam moments win.

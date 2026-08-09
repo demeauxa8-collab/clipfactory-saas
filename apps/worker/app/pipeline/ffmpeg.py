@@ -502,6 +502,99 @@ async def yt_dlp_download(url: str, out_dir: str) -> str:
     return str(candidates[0].resolve())
 
 
+# ---------------- download: audience heatmap (bonus) ----------------
+
+# Cached next to source.* so the idempotent re-run above — which reuses the
+# downloaded file and never calls YouTube again — does not silently lose the
+# curve it fetched the first time round.
+HEATMAP_CACHE_FILENAME = "heatmap.json"
+
+# Metadata only, no media: a few seconds at worst. Capped anyway, because a
+# bonus signal must never be able to hang a paying job.
+HEATMAP_TIMEOUT_SECONDS = 45.0
+
+
+def _read_cached_heatmap(cache: Path) -> tuple[bool, list[dict[str, float]] | None]:
+    """(cache_hit, points). The cache stores misses too — a video with no curve
+    must not cost a network round-trip on every re-run."""
+    try:
+        payload = json.loads(cache.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return False, None
+    if not isinstance(payload, dict) or "points" not in payload:
+        return False, None
+    points = payload["points"]
+    return True, points if isinstance(points, list) else None
+
+
+async def fetch_audience_heatmap(url: str, out_dir: str) -> list[dict[str, float]] | None:
+    """YouTube's "most replayed" curve for `url`, as raw yt-dlp points, or None.
+
+    100 buckets of {"start_time", "end_time", "value"} — real audience
+    behaviour, which is worth more than any model's guess about what should
+    work. `value` is normalised per video; see `models.AudienceHeatmap`.
+
+    THIS IS A BONUS AND IT FAILS OFTEN. Only well-watched, not-too-recent
+    YouTube videos have a curve at all (the source of this very benchmark does
+    not). So every failure path — non-YouTube host, no curve published, network
+    down, yt-dlp absent or reshaped, timeout — returns None instead of raising,
+    and the job proceeds exactly as it did before this signal existed. It runs
+    as its own `--skip-download` call rather than riding on the download
+    command, so nothing here can perturb the one call that must not break.
+    """
+    cache = Path(out_dir) / HEATMAP_CACHE_FILENAME
+    hit, cached = _read_cached_heatmap(cache)
+    if hit:
+        return cached
+
+    settings = get_settings()
+    cmd = [
+        settings.yt_dlp_bin,
+        "--skip-download",
+        "--no-playlist",
+        "--quiet",
+        "--no-warnings",
+        # Print the one field we want instead of dumping the whole info dict:
+        # ~7 KB rather than ~600 KB, and nothing else to parse.
+        "--print",
+        "%(heatmap)j",
+    ]
+    if settings.yt_dlp_cookies_from_browser:
+        cmd += ["--cookies-from-browser", settings.yt_dlp_cookies_from_browser]
+    cmd.append(url)
+
+    points: list[dict[str, float]] | None = None
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        )
+        try:
+            stdout, _ = await asyncio.wait_for(
+                proc.communicate(), timeout=HEATMAP_TIMEOUT_SECONDS
+            )
+        except TimeoutError:
+            proc.kill()
+            await proc.wait()
+            raise
+        if proc.returncode == 0:
+            # "NA" is what yt-dlp prints for a field the video does not have.
+            raw = stdout.decode("utf-8", "replace").strip()
+            parsed = json.loads(raw) if raw and raw != "NA" else None
+            if isinstance(parsed, list):
+                points = [p for p in parsed if isinstance(p, dict)]
+    except Exception:
+        # Anything at all: no curve, and no trace of it on disk either, so a
+        # retry of the same job gets another chance at the network.
+        return None
+
+    try:
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        cache.write_text(json.dumps({"points": points}), encoding="utf-8")
+    except OSError:
+        pass
+    return points
+
+
 # ---------------- render: single-window ----------------
 
 

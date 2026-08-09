@@ -19,6 +19,7 @@ from typing import Literal
 
 from ..models import Transcript
 from .edl import CaptionTheme, CompiledEDL, CompiledShot
+from .opening import DEFAULT_HOOK_SECONDS, hook_dialogue_line, hook_style_line
 
 
 class EDLCaptionError(ValueError):
@@ -175,9 +176,16 @@ def _style_lines() -> list[str]:
     return lines
 
 
-def ass_header() -> str:
-    """Static header with every approved style; no caller can add a style."""
+def ass_header(*, with_hook: bool = False) -> str:
+    """Static header with every approved style; no caller can add a style.
 
+    ``with_hook`` declares the opening-hook style as well; it is left out unless
+    a hook is emitted so existing output stays byte-identical.
+    """
+
+    styles = [*_style_lines()]
+    if with_hook:
+        styles.append(hook_style_line())
     return "\n".join(
         [
             "[Script Info]",
@@ -189,7 +197,7 @@ def ass_header() -> str:
             "",
             "[V4+ Styles]",
             ASS_STYLE_FORMAT,
-            *_style_lines(),
+            *styles,
             "",
             "[Events]",
             "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text",
@@ -360,10 +368,29 @@ def _cue_text(cue: CaptionCue, *, active_index: int) -> str:
     return " ".join(piece for piece in pieces if piece)
 
 
-def render_ass(plan: CaptionPlan) -> str:
-    """Render a fixed-style ASS document from a previously validated plan."""
+def render_ass(
+    plan: CaptionPlan,
+    *,
+    hook_text: str | None = None,
+    hook_seconds: float = DEFAULT_HOOK_SECONDS,
+) -> str:
+    """Render a fixed-style ASS document from a previously validated plan.
+
+    ``hook_text`` (optional, absent by default) prints the clip's promise as a
+    static title over the first ``hook_seconds`` of the timeline. It occupies
+    the reserved top band, so it cannot collide with either caption position.
+    """
 
     lines: list[str] = []
+    hook_line = None
+    if hook_text:
+        hook_line = hook_dialogue_line(
+            hook_text,
+            start_seconds=0.0,
+            end_seconds=min(hook_seconds, plan.duration_ms / 1000.0),
+        )
+    if hook_line:
+        lines.append(hook_line)
     for cue in plan.cues:
         if cue.theme not in THEME_STYLES:
             raise EDLCaptionError(f"cue {cue.cue_id}: unsupported theme")
@@ -383,13 +410,24 @@ def render_ass(plan: CaptionPlan) -> str:
                 f"{_format_ass_time(start)},{_format_ass_time(end)},"
                 f"{cue.style_name},,0,0,{cue.margin_v},,{_cue_text(cue, active_index=index)}"
             )
-    return ass_header() + "\n".join(lines) + ("\n" if lines else "")
+    return ass_header(with_hook=hook_line is not None) + "\n".join(lines) + ("\n" if lines else "")
 
 
-def write_ass_for_edl(plan: CaptionPlan, *, out_path: str) -> bool:
-    """Write captions only when the EDL selected a visible caption theme."""
+def write_ass_for_edl(
+    plan: CaptionPlan,
+    *,
+    out_path: str,
+    hook_text: str | None = None,
+    hook_seconds: float = DEFAULT_HOOK_SECONDS,
+) -> bool:
+    """Write the ASS file when there is anything to burn in.
 
-    if not plan.cues:
+    Without a hook this keeps the old contract exactly: no cue, no file. A hook
+    alone is still worth burning — the promise is what holds the viewer.
+    """
+
+    document = render_ass(plan, hook_text=hook_text, hook_seconds=hook_seconds)
+    if "Dialogue:" not in document:
         return False
-    Path(out_path).write_text(render_ass(plan), encoding="utf-8")
+    Path(out_path).write_text(document, encoding="utf-8")
     return True
