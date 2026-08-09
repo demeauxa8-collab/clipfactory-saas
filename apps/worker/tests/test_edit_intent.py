@@ -3,11 +3,14 @@ import pytest
 from app.models import MontageCandidate, MontageSegment, Transcript, TranscriptWord
 from app.pipeline.edit_intent import (
     EDIT_INTENT_SYSTEM_PROMPT,
+    candidate_edit_scope,
+    direct_edit_with_llm,
     edit_intent_user_prompt,
     parse_edit_intent,
     transcript_to_word_id_lines,
 )
-from app.pipeline.edl import EDLValidationError, compile_edit_intent
+from app.pipeline.edl import CompiledEDL, EDLValidationError, compile_edit_intent
+from app.providers.base import LLMCallResult
 
 
 def _transcript() -> Transcript:
@@ -168,10 +171,62 @@ def test_prompt_exposes_only_closed_assets_and_forbids_raw_ffmpeg() -> None:
         target_duration_seconds=20,
         shot_assets=[{"id": "screen_proof_01", "kind": "screen"}],
         audio_assets=[{"id": "music_tension_01", "kind": "music"}],
+        audio_edit_hints=[
+            {
+                "kind": "dead_air",
+                "left_word_id": "w_000001",
+                "right_word_id": "w_000002",
+            }
+        ],
     )
 
     assert "screen_proof_01" in prompt
     assert "music_tension_01" in prompt
+    assert "dead_air" in prompt
+    assert "right_word_id" in prompt
     assert "w_000000" in prompt
+    assert "w_000004" not in prompt
     assert "do NOT write FFmpeg" in EDIT_INTENT_SYSTEM_PROMPT
     assert "file paths, URLs" in EDIT_INTENT_SYSTEM_PROMPT
+
+
+def test_candidate_scope_is_an_explicit_word_id_authority() -> None:
+    scope = candidate_edit_scope(_candidate(), _transcript())
+
+    assert len(scope.allowed_word_ranges) == 1
+    assert scope.allowed_word_ranges[0].from_word_id == 0
+    assert scope.allowed_word_ranges[0].to_word_id == 3
+
+
+def test_unknown_schema_fields_are_rejected_instead_of_ignored() -> None:
+    payload = _payload()
+    payload["ffmpeg"] = "-filter_complex evil"
+
+    with pytest.raises(EDLValidationError, match="unsupported fields"):
+        parse_edit_intent(payload)
+
+
+@pytest.mark.asyncio
+async def test_llm_boundary_returns_only_the_validated_compiled_edl() -> None:
+    payload = _payload()
+    payload["shots"] = [payload["shots"][1]]  # type: ignore[index]
+    payload["music"] = []
+    payload["sfx"] = []
+
+    class FakeProvider:
+        async def chat_json(self, **_kwargs):
+            return LLMCallResult(payload=payload, tokens_in=10, tokens_out=20)
+
+    compiled, tokens = await direct_edit_with_llm(
+        provider=FakeProvider(),  # type: ignore[arg-type]
+        model="fake",
+        transcript=_transcript(),
+        candidate=_candidate(),
+        source_duration_ms=12_000,
+        target_duration_seconds=2,
+        audio_assets=[],
+    )
+
+    assert isinstance(compiled, CompiledEDL)
+    assert compiled.shots[0].shot_id == "constraint"
+    assert tokens == 30

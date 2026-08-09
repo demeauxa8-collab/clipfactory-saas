@@ -533,7 +533,13 @@ def anchor_arcs_to_transcript(
             word_idx, ratio, explicit_start = found
             new_start = max(0.0, words[word_idx].start - preroll_seconds)
             shift = new_start - segment.start
-            if abs(shift) < ANCHOR_MIN_SHIFT_SECONDS:
+            # A fuzzy/excerpt match may keep a sub-threshold coarse timestamp
+            # to avoid needless jitter. An explicit model-selected word anchor
+            # is different: even 40ms can move a 30fps cut by one frame, so it
+            # must remain authoritative whenever the two values are not equal.
+            if abs(shift) <= 1e-6 or (
+                not explicit_start and abs(shift) < ANCHOR_MIN_SHIFT_SECONDS
+            ):
                 segments.append(
                     replace(segment, start_anchor_resolved=explicit_start)
                     if explicit_start

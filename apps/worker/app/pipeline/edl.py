@@ -218,6 +218,8 @@ class CompiledWordOccurrence:
     source_out_ms: int
     timeline_in_ms: int
     timeline_out_ms: int
+    timeline_in_frame: int
+    timeline_out_frame: int
 
 
 @dataclass(frozen=True)
@@ -698,16 +700,27 @@ def compile_edit_intent(
             word = transcript.words[word_id]
             source_word_in = max(source_in, round(word.start * 1000))
             source_word_out = min(source_out, round(word.end * 1000))
-            occurrence_in = min(
-                timeline_out_ms,
-                timeline_in_ms + round((source_word_in - source_in) / intent.speed),
+            occurrence_in_offset_frames = round(
+                ((source_word_in - source_in) / intent.speed) * fps / 1000
             )
-            occurrence_out = min(
-                timeline_out_ms,
-                timeline_in_ms + round((source_word_out - source_in) / intent.speed),
+            occurrence_out_offset_frames = round(
+                ((source_word_out - source_in) / intent.speed) * fps / 1000
             )
-            if occurrence_out < occurrence_in:
-                occurrence_out = occurrence_in
+            # ASR providers occasionally emit zero-duration words.  Every word
+            # occurrence still needs a visible/renderable interval, so clamp it
+            # to at least one authoritative output frame inside the shot.
+            occurrence_in_offset_frames = min(
+                timeline_frames - 1,
+                max(0, occurrence_in_offset_frames),
+            )
+            occurrence_out_offset_frames = min(
+                timeline_frames,
+                max(occurrence_in_offset_frames + 1, occurrence_out_offset_frames),
+            )
+            occurrence_in_frame = timeline_in_frame + occurrence_in_offset_frames
+            occurrence_out_frame = timeline_in_frame + occurrence_out_offset_frames
+            occurrence_in = round(occurrence_in_frame * 1000 / fps)
+            occurrence_out = round(occurrence_out_frame * 1000 / fps)
             occurrences.append(
                 CompiledWordOccurrence(
                     occurrence_id=f"{intent.shot_id}:{word_id_for_index(word_id)}",
@@ -717,6 +730,8 @@ def compile_edit_intent(
                     source_out_ms=source_word_out,
                     timeline_in_ms=occurrence_in,
                     timeline_out_ms=occurrence_out,
+                    timeline_in_frame=occurrence_in_frame,
+                    timeline_out_frame=occurrence_out_frame,
                 )
             )
         compiled.append(

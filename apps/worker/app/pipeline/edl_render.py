@@ -19,6 +19,12 @@ from pathlib import Path
 from ..models import Transcript
 from .edl import CompiledEDL, CompiledShot, DecodeIsland, EffectIntent
 
+DIALOGUE_JOIN_FADE_SECONDS = 0.008
+MAX_RENDER_DECODE_ISLANDS = 16
+MAX_RENDER_DURATION_SECONDS = 180
+MAX_RENDER_COMPLEXITY = 120
+MAX_RENDER_PIXELS = 2160 * 3840
+
 
 class EDLRenderError(ValueError):
     """A malformed compiled EDL cannot be lowered into a safe FFmpeg graph."""
@@ -49,6 +55,7 @@ class DecodeIslandInput:
             _seconds(self.source_in_ms),
             "-t",
             _seconds(self.duration_ms),
+            "-accurate_seek",
             "-i",
             str(source_path),
         ]
@@ -73,6 +80,8 @@ class RenderedEffect:
     kind: str
     timeline_in_ms: int
     timeline_out_ms: int
+    timeline_in_frame: int
+    timeline_out_frame: int
     intensity: float
 
 
@@ -130,15 +139,15 @@ def _number(value: float) -> str:
     return f"{value:.6f}".rstrip("0").rstrip(".")
 
 
-def _effect_timeline_ms(
+def _effect_timeline_frame(
     effect: EffectIntent,
     *,
     shot: CompiledShot,
     transcript: Transcript,
 ) -> int:
-    """Resolve a word-targeted effect to a clamped output-timeline instant."""
+    """Resolve a word-targeted effect to an authoritative output frame."""
     if effect.at_word_id is None:
-        return shot.timeline_in_ms
+        return shot.timeline_in_frame
     if not 0 <= effect.at_word_id < len(transcript.words):
         raise EDLRenderError(
             f"shot {shot.shot_id}: effect refers to transcript word {effect.at_word_id}"
@@ -148,20 +157,34 @@ def _effect_timeline_ms(
     # seconds, which is subtly wrong after frame rounding and source reuse.
     for occurrence in getattr(shot, "word_occurrences", ()):
         if occurrence.word_id == effect.at_word_id:
-            return occurrence.timeline_in_ms
-    source_word_ms = round(transcript.words[effect.at_word_id].start * 1000)
-    relative_ms = max(0, source_word_ms - shot.source_in_ms)
-    return min(
-        shot.timeline_out_ms,
-        shot.timeline_in_ms + round(relative_ms / shot.speed),
+            return occurrence.timeline_in_frame
+    raise EDLRenderError(
+        f"shot {shot.shot_id}: effect word {effect.at_word_id} has no compiled occurrence"
     )
 
 
-def _validate_edl(edl: CompiledEDL) -> dict[str, DecodeIsland]:
+def _validate_edl(edl: CompiledEDL, transcript: Transcript) -> dict[str, DecodeIsland]:
     if edl.width <= 0 or edl.height <= 0 or edl.fps <= 0 or edl.duration_ms <= 0:
         raise EDLRenderError("EDL output dimensions, fps and duration must be positive")
+    if edl.fps not in {24, 25, 30, 50, 60}:
+        raise EDLRenderError("EDL fps is outside the supported render catalogue")
+    if edl.width * edl.height > MAX_RENDER_PIXELS:
+        raise EDLRenderError("EDL output canvas exceeds the render pixel budget")
+    if edl.duration_frames > edl.fps * MAX_RENDER_DURATION_SECONDS:
+        raise EDLRenderError("EDL duration exceeds the short-form render budget")
+    if edl.duration_ms != round(edl.duration_frames * 1000 / edl.fps):
+        raise EDLRenderError("EDL milliseconds do not match its frame-authoritative duration")
     if not edl.shots or not edl.decode_islands:
         raise EDLRenderError("EDL needs at least one shot and one decode island")
+    if len(edl.decode_islands) > MAX_RENDER_DECODE_ISLANDS:
+        raise EDLRenderError("EDL exceeds the decode-island performance budget")
+    complexity = (
+        len(edl.shots)
+        + sum(shot.framing.mode == "fit_blur" for shot in edl.shots)
+        + sum(len(shot.effects) * 3 for shot in edl.shots)
+    )
+    if complexity > MAX_RENDER_COMPLEXITY:
+        raise EDLRenderError("EDL exceeds the filtergraph complexity budget")
 
     islands = {island.island_id: island for island in edl.decode_islands}
     if len(islands) != len(edl.decode_islands):
@@ -170,19 +193,47 @@ def _validate_edl(edl: CompiledEDL) -> dict[str, DecodeIsland]:
     for island in edl.decode_islands:
         if island.source_out_ms <= island.source_in_ms:
             raise EDLRenderError(f"decode island {island.island_id} has no duration")
+        if island.source_in_ms < 0 or island.source_out_ms - island.source_in_ms > 60_000:
+            raise EDLRenderError(f"decode island {island.island_id} has unsafe source bounds")
         for shot_id in island.shot_ids:
             if shot_id in shot_to_island:
                 raise EDLRenderError(f"shot {shot_id} belongs to multiple decode islands")
             shot_to_island[shot_id] = island.island_id
     expected_in = 0
+    expected_in_frame = 0
     known_shot_ids: set[str] = set()
+    known_occurrence_ids: set[str] = set()
     for shot in edl.shots:
         if shot.shot_id in known_shot_ids:
             raise EDLRenderError(f"duplicate EDL shot {shot.shot_id}")
         known_shot_ids.add(shot.shot_id)
+        if shot.source_in_ms < 0 or shot.source_out_ms <= shot.source_in_ms:
+            raise EDLRenderError(f"shot {shot.shot_id} has invalid source timing")
+        if not math.isfinite(shot.speed) or not 0.5 <= shot.speed <= 2.0:
+            raise EDLRenderError(f"shot {shot.shot_id} has an unsupported speed")
         if shot.timeline_in_ms != expected_in or shot.timeline_out_ms <= expected_in:
             raise EDLRenderError("EDL shots must form a contiguous positive timeline")
         expected_in = shot.timeline_out_ms
+        if (
+            shot.timeline_in_frame != expected_in_frame
+            or shot.timeline_out_frame <= expected_in_frame
+        ):
+            raise EDLRenderError("EDL shots must form a contiguous positive frame timeline")
+        expected_in_frame = shot.timeline_out_frame
+        if (
+            shot.timeline_in_ms != round(shot.timeline_in_frame * 1000 / edl.fps)
+            or shot.timeline_out_ms != round(shot.timeline_out_frame * 1000 / edl.fps)
+        ):
+            raise EDLRenderError(
+                f"shot {shot.shot_id} milliseconds do not match its frame timeline"
+            )
+        if (
+            not math.isfinite(shot.framing.center_x)
+            or not 0.0 <= shot.framing.center_x <= 1.0
+            or not math.isfinite(shot.framing.base_scale)
+            or not 1.0 <= shot.framing.base_scale <= 1.35
+        ):
+            raise EDLRenderError(f"shot {shot.shot_id} has invalid framing geometry")
         island_id = shot_to_island.get(shot.shot_id)
         if island_id is None:
             raise EDLRenderError(f"shot {shot.shot_id} is not assigned to a decode island")
@@ -193,21 +244,91 @@ def _validate_edl(edl: CompiledEDL) -> dict[str, DecodeIsland]:
         )
         if not is_within_island:
             raise EDLRenderError(f"shot {shot.shot_id} lies outside decode island {island_id}")
+        expected_word_ids = list(range(shot.from_word_id, shot.to_word_id + 1))
+        if [item.word_id for item in shot.word_occurrences] != expected_word_ids:
+            raise EDLRenderError(
+                f"shot {shot.shot_id} word occurrences do not match its inclusive word range"
+            )
+        previous_occurrence_frame = shot.timeline_in_frame
+        for occurrence in shot.word_occurrences:
+            if occurrence.occurrence_id in known_occurrence_ids:
+                raise EDLRenderError(
+                    f"duplicate compiled word occurrence {occurrence.occurrence_id!r}"
+                )
+            known_occurrence_ids.add(occurrence.occurrence_id)
+            if occurrence.shot_id != shot.shot_id:
+                raise EDLRenderError(
+                    f"word occurrence {occurrence.occurrence_id!r} belongs to another shot"
+                )
+            if not 0 <= occurrence.word_id < len(transcript.words):
+                raise EDLRenderError(
+                    f"word occurrence {occurrence.occurrence_id!r} is outside the transcript"
+                )
+            expected_source_in = max(
+                shot.source_in_ms,
+                round(transcript.words[occurrence.word_id].start * 1000),
+            )
+            expected_source_out = min(
+                shot.source_out_ms,
+                round(transcript.words[occurrence.word_id].end * 1000),
+            )
+            if (
+                occurrence.source_in_ms != expected_source_in
+                or occurrence.source_out_ms != expected_source_out
+            ):
+                raise EDLRenderError(
+                    f"word occurrence {occurrence.occurrence_id!r} has invalid source timing"
+                )
+            if not (
+                shot.timeline_in_frame
+                <= occurrence.timeline_in_frame
+                < occurrence.timeline_out_frame
+                <= shot.timeline_out_frame
+            ):
+                raise EDLRenderError(
+                    f"word occurrence {occurrence.occurrence_id!r} has invalid frame timing"
+                )
+            if occurrence.timeline_in_frame < previous_occurrence_frame:
+                raise EDLRenderError(
+                    f"word occurrence {occurrence.occurrence_id!r} is not monotonic"
+                )
+            previous_occurrence_frame = occurrence.timeline_in_frame
+            if (
+                occurrence.timeline_in_ms
+                != round(occurrence.timeline_in_frame * 1000 / edl.fps)
+                or occurrence.timeline_out_ms
+                != round(occurrence.timeline_out_frame * 1000 / edl.fps)
+            ):
+                raise EDLRenderError(
+                    f"word occurrence {occurrence.occurrence_id!r} is not frame-authoritative"
+                )
+        for effect in shot.effects:
+            if (
+                not 50 <= effect.duration_ms <= 1_500
+                or not math.isfinite(effect.intensity)
+                or not 0.0 <= effect.intensity <= 1.0
+            ):
+                raise EDLRenderError(f"shot {shot.shot_id} has invalid effect parameters")
+            if effect.at_word_id is not None and effect.at_word_id not in expected_word_ids:
+                raise EDLRenderError(
+                    f"shot {shot.shot_id}: effect word {effect.at_word_id} is outside the shot"
+                )
     if expected_in != edl.duration_ms:
         raise EDLRenderError("EDL duration does not match its shot timeline")
+    if expected_in_frame != edl.duration_frames:
+        raise EDLRenderError("EDL frame duration does not match its shot timeline")
     if set(shot_to_island) != known_shot_ids:
         raise EDLRenderError("decode islands reference an unknown shot")
     return islands
 
 
-def _frame_filter(shot: CompiledShot, *, width: int, height: int) -> str:
-    """Closed framing vocabulary, with deterministic safe fallbacks.
+def _simple_frame_filter(shot: CompiledShot, *, width: int, height: int) -> str:
+    """Closed single-input framing filters.
 
-    Face/screen tracking needs analysis data that is not part of ``CompiledEDL``
-    yet.  Until that is attached, ``locked_face`` and ``follow_primary_face``
-    use the requested centre position; ``screen_focus`` uses a centred crop;
-    ``pip_proof`` uses a clean full-frame proof view rather than inventing a
-    second untrusted input stream.
+    ``fit_blur`` needs a split/overlay graph and is handled by
+    :func:`_append_framing`. ``pip_proof`` cannot be represented honestly until
+    the EDL carries an authorised proof asset, so it is rejected rather than
+    silently rendered as a different effect.
     """
     mode = shot.framing.mode
     if mode == "source_safe":
@@ -215,13 +336,10 @@ def _frame_filter(shot: CompiledShot, *, width: int, height: int) -> str:
             f"scale={width}:{height}:force_original_aspect_ratio=decrease,"
             f"pad={width}:{height}:(ow-iw)/2:(oh-ih)/2:color=black"
         )
-    if mode == "fit_blur":
-        # A true blur background needs a split+overlay graph.  A full-frame
-        # crop is the deterministic no-extra-input equivalent; the renderer can
-        # upgrade this to blur once it owns an overlay-capable framing asset.
-        mode = "screen_focus"
     if mode == "pip_proof":
-        mode = "screen_focus"
+        raise EDLRenderError("pip_proof requires an authorised visual insert asset")
+    if mode == "fit_blur":
+        raise EDLRenderError("fit_blur must be compiled through its split graph")
 
     center_x = _number(shot.framing.center_x)
     scale = _number(shot.framing.base_scale)
@@ -234,35 +352,84 @@ def _frame_filter(shot: CompiledShot, *, width: int, height: int) -> str:
     )
 
 
+def _append_framing(
+    lines: list[str],
+    *,
+    source_label: str,
+    target_label: str,
+    shot: CompiledShot,
+    shot_index: int,
+    width: int,
+    height: int,
+) -> None:
+    """Render a framing preset, including the real fit+blur composition."""
+    if shot.framing.mode != "fit_blur":
+        lines.append(
+            f"[{source_label}]"
+            f"{_simple_frame_filter(shot, width=width, height=height)}"
+            f"[{target_label}]"
+        )
+        return
+
+    background = f"frame_{shot_index}_bg"
+    foreground = f"frame_{shot_index}_fg"
+    blurred = f"frame_{shot_index}_blurred"
+    fitted = f"frame_{shot_index}_fitted"
+    lines.append(f"[{source_label}]split=2[{background}][{foreground}]")
+    lines.append(
+        f"[{background}]scale={width}:{height}:force_original_aspect_ratio=increase,"
+        f"crop={width}:{height},boxblur=20:2[{blurred}]"
+    )
+    lines.append(
+        f"[{foreground}]scale={width}:{height}:force_original_aspect_ratio=decrease"
+        f"[{fitted}]"
+    )
+    lines.append(
+        f"[{blurred}][{fitted}]overlay=(W-w)/2:(H-h)/2,setsar=1[{target_label}]"
+    )
+
+
 def _split_effect(
     lines: list[str],
     *,
     source_label: str,
     target_label: str,
     prefix: str,
-    start_ms: int,
-    end_ms: int,
-    shot_duration_ms: int,
+    start_frame: int,
+    end_frame: int,
+    shot_frames: int,
+    fps: int,
     effect_filter: str,
 ) -> None:
     """Apply an effect only within an output-time interval without re-timing."""
-    start = _seconds(start_ms)
-    end = _seconds(end_ms)
-    duration = _seconds(shot_duration_ms)
-    pre, middle, post, effected = (
-        f"{prefix}_pre",
-        f"{prefix}_mid",
-        f"{prefix}_post",
-        f"{prefix}_fx",
-    )
-    lines.append(f"[{source_label}]split=3[{pre}][{middle}][{post}]")
-    lines.append(f"[{pre}]trim=start=0:end={start},setpts=PTS-STARTPTS[{pre}o]")
-    lines.append(f"[{middle}]trim=start={start}:end={end},setpts=PTS-STARTPTS[{middle}o]")
-    lines.append(f"[{middle}o]{effect_filter}[{effected}]")
-    lines.append(
-        f"[{post}]trim=start={end}:end={duration},setpts=PTS-STARTPTS[{post}o]"
-    )
-    lines.append(f"[{pre}o][{effected}][{post}o]concat=n=3:v=1:a=0[{target_label}]")
+    pieces: list[tuple[int, int, str, str | None]] = []
+    if start_frame > 0:
+        pieces.append((0, start_frame, f"{prefix}_pre", None))
+    pieces.append((start_frame, end_frame, f"{prefix}_mid", effect_filter))
+    if end_frame < shot_frames:
+        pieces.append((end_frame, shot_frames, f"{prefix}_post", None))
+
+    split_labels = "".join(f"[{name}_in]" for _, _, name, _ in pieces)
+    lines.append(f"[{source_label}]split={len(pieces)}{split_labels}")
+    output_labels: list[str] = []
+    for piece_start, piece_end, name, piece_filter in pieces:
+        output = f"{name}_out"
+        chain = (
+            f"[{name}_in]trim=start_frame={piece_start}:"
+            f"end_frame={piece_end},setpts=N/({fps}*TB)"
+        )
+        if piece_filter:
+            chain += f",{piece_filter}"
+        chain += ",setsar=1"
+        lines.append(f"{chain}[{output}]")
+        output_labels.append(f"[{output}]")
+    if len(output_labels) == 1:
+        lines.append(f"{output_labels[0]}null[{target_label}]")
+    else:
+        lines.append(
+            "".join(output_labels)
+            + f"concat=n={len(output_labels)}:v=1:a=0[{target_label}]"
+        )
 
 
 def _freeze_effect(
@@ -271,9 +438,9 @@ def _freeze_effect(
     source_label: str,
     target_label: str,
     prefix: str,
-    start_ms: int,
-    end_ms: int,
-    shot_duration_ms: int,
+    start_frame: int,
+    end_frame: int,
+    shot_frames: int,
     fps: int,
 ) -> None:
     """Freeze a moment while preserving the compiled shot's exact duration.
@@ -282,26 +449,47 @@ def _freeze_effect(
     only duration-conserving implementation without asking the EDL compiler to
     reserve extra source time for a freeze.
     """
-    start = _seconds(start_ms)
-    end = _seconds(end_ms)
-    duration = _seconds(shot_duration_ms)
-    hold = _seconds(end_ms - start_ms)
-    frame = _number(1 / fps)
-    pre, frame_label, post = f"{prefix}_pre", f"{prefix}_frame", f"{prefix}_post"
-    lines.append(f"[{source_label}]split=3[{pre}][{frame_label}][{post}]")
-    lines.append(f"[{pre}]trim=start=0:end={start},setpts=PTS-STARTPTS[{pre}o]")
+    hold_frames = end_frame - start_frame
+    hold = _number(hold_frames / fps)
+    pieces: list[tuple[str, str]] = []
+    split_names: list[str] = []
+    if start_frame > 0:
+        split_names.append(f"{prefix}_pre_in")
+    split_names.append(f"{prefix}_frame_in")
+    if end_frame < shot_frames:
+        split_names.append(f"{prefix}_post_in")
     lines.append(
-        f"[{frame_label}]trim=start={start}:end={_number(start_ms / 1000 + 1 / fps)},"
-        f"setpts=PTS-STARTPTS,tpad=stop_mode=clone:stop_duration={hold},"
-        f"trim=duration={hold},setpts=PTS-STARTPTS[{frame_label}o]"
+        f"[{source_label}]split={len(split_names)}"
+        + "".join(f"[{name}]" for name in split_names)
     )
-    lines.append(f"[{post}]trim=start={end}:end={duration},setpts=PTS-STARTPTS[{post}o]")
-    lines.append(f"[{pre}o][{frame_label}o][{post}o]concat=n=3:v=1:a=0[{target_label}]")
-    del frame  # Documents the output-frame basis and avoids a magic number.
+    if start_frame > 0:
+        lines.append(
+            f"[{prefix}_pre_in]trim=start_frame=0:end_frame={start_frame},"
+            f"setpts=N/({fps}*TB),setsar=1[{prefix}_pre_out]"
+        )
+        pieces.append((f"{prefix}_pre_out", "pre"))
+    lines.append(
+        f"[{prefix}_frame_in]trim=start_frame={start_frame}:"
+        f"end_frame={start_frame + 1},setpts=N/({fps}*TB),"
+        f"tpad=stop_mode=clone:stop_duration={hold},trim=end_frame={hold_frames},"
+        f"setpts=N/({fps}*TB),setsar=1[{prefix}_frame_out]"
+    )
+    pieces.append((f"{prefix}_frame_out", "frame"))
+    if end_frame < shot_frames:
+        lines.append(
+            f"[{prefix}_post_in]trim=start_frame={end_frame}:"
+            f"end_frame={shot_frames},setpts=N/({fps}*TB),"
+            f"setsar=1[{prefix}_post_out]"
+        )
+        pieces.append((f"{prefix}_post_out", "post"))
+    labels = "".join(f"[{label}]" for label, _ in pieces)
+    if len(pieces) == 1:
+        lines.append(f"{labels}null[{target_label}]")
+    else:
+        lines.append(f"{labels}concat=n={len(pieces)}:v=1:a=0[{target_label}]")
 
 
 def _effect_filter(kind: str, *, intensity: float, width: int, height: int, fps: int) -> str:
-    amount = _number(intensity)
     if kind == "punch_in":
         zoom = _number(1.04 + intensity * 0.16)
         return (
@@ -336,12 +524,9 @@ def _effect_filter(kind: str, *, intensity: float, width: int, height: int, fps:
         saturation = _number(1.05 + intensity * 0.75)
         return f"eq=contrast={contrast}:saturation={saturation}"
     if kind == "speed_ramp":
-        # The EDL's top-level speed remains authoritative.  Altering a single
-        # interval's PTS would change a compiled timeline; this visual ramp is
-        # deliberately deferred until the schema carries source reservation.
-        contrast = _number(1.02 + intensity * 0.08)
-        saturation = _number(1.0 + amount * 0.2)
-        return f"eq=contrast={contrast}:saturation={saturation}"
+        raise EDLRenderError(
+            "speed_ramp needs explicit source reservation/keyframes and is not renderable yet"
+        )
     raise EDLRenderError(f"unsupported compiled effect {kind!r}")
 
 
@@ -358,12 +543,20 @@ def _apply_effects(
 ) -> tuple[str, list[RenderedEffect]]:
     current = source_label
     rendered: list[RenderedEffect] = []
-    shot_duration = shot.timeline_duration_ms
+    shot_frames = shot.timeline_out_frame - shot.timeline_in_frame
     for index, effect in enumerate(shot.effects):
-        start_absolute = _effect_timeline_ms(effect, shot=shot, transcript=transcript)
-        start_relative = max(0, start_absolute - shot.timeline_in_ms)
-        end_relative = min(shot_duration, start_relative + effect.duration_ms)
-        if end_relative <= start_relative:
+        start_absolute_frame = _effect_timeline_frame(
+            effect,
+            shot=shot,
+            transcript=transcript,
+        )
+        start_relative_frame = max(
+            0,
+            start_absolute_frame - shot.timeline_in_frame,
+        )
+        duration_frames = max(1, round(effect.duration_ms * fps / 1000))
+        end_relative_frame = min(shot_frames, start_relative_frame + duration_frames)
+        if end_relative_frame <= start_relative_frame:
             continue
         # Never put an LLM-visible shot ID in an FFmpeg stream label.  The EDL
         # compiler validates it, but numeric labels keep this layer standalone
@@ -376,9 +569,9 @@ def _apply_effects(
                 source_label=current,
                 target_label=target,
                 prefix=prefix,
-                start_ms=start_relative,
-                end_ms=end_relative,
-                shot_duration_ms=shot_duration,
+                start_frame=start_relative_frame,
+                end_frame=end_relative_frame,
+                shot_frames=shot_frames,
                 fps=fps,
             )
         else:
@@ -387,9 +580,10 @@ def _apply_effects(
                 source_label=current,
                 target_label=target,
                 prefix=prefix,
-                start_ms=start_relative,
-                end_ms=end_relative,
-                shot_duration_ms=shot_duration,
+                start_frame=start_relative_frame,
+                end_frame=end_relative_frame,
+                shot_frames=shot_frames,
+                fps=fps,
                 effect_filter=_effect_filter(
                     effect.kind,
                     intensity=effect.intensity,
@@ -402,8 +596,14 @@ def _apply_effects(
             RenderedEffect(
                 shot_id=shot.shot_id,
                 kind=effect.kind,
-                timeline_in_ms=shot.timeline_in_ms + start_relative,
-                timeline_out_ms=shot.timeline_in_ms + end_relative,
+                timeline_in_ms=round(
+                    (shot.timeline_in_frame + start_relative_frame) * 1000 / fps
+                ),
+                timeline_out_ms=round(
+                    (shot.timeline_in_frame + end_relative_frame) * 1000 / fps
+                ),
+                timeline_in_frame=shot.timeline_in_frame + start_relative_frame,
+                timeline_out_frame=shot.timeline_in_frame + end_relative_frame,
                 intensity=effect.intensity,
             )
         )
@@ -438,15 +638,28 @@ def _apply_transitions(
             # Concat already implements a frame-accurate butt cut.
             continue
         if kind == "reveal":
-            fade_ms = min(90, cut_ms, edl.duration_ms - cut_ms)
-            if fade_ms <= 0:
+            cut_frame = outgoing.timeline_out_frame
+            fade_frames = min(
+                max(1, round(edl.fps * 0.09)),
+                cut_frame,
+                edl.duration_frames - cut_frame,
+            )
+            if fade_frames <= 0:
                 continue
-            before = _seconds(cut_ms - fade_ms)
-            at = _seconds(cut_ms)
-            duration = _seconds(fade_ms)
+            # A fade-to-black at both sides of the cut produced a visible
+            # black flash in short-form playback.  Keep the incoming image
+            # visible and reveal it with a three-frame exposure/contrast ramp.
+            # The expression is evaluated on the authoritative output PTS, so
+            # this remains duration- and frame-preserving without an overlap.
+            start = _number(cut_frame / edl.fps)
+            duration = _number(fade_frames / edl.fps)
+            progress = f"(t-{start})/{duration}"
+            active = f"between(t,{start},{_number((cut_frame + fade_frames) / edl.fps)})"
             lines.append(
-                f"[{current}]fade=t=out:st={before}:d={duration}:color=black,"
-                f"fade=t=in:st={at}:d={duration}:color=black[{target}]"
+                f"[{current}]eq="
+                f"brightness='if({active},-0.12*(1-{progress}),0)':"
+                f"contrast='if({active},1.12-0.12*{progress},1)':"
+                f"eval=frame[{target}]"
             )
         elif kind == "contrast":
             start = _seconds(max(0, cut_ms - 80))
@@ -468,16 +681,21 @@ def _apply_transitions(
     return current, rendered
 
 
-def compile_ffmpeg_render_plan(edl: CompiledEDL, transcript: Transcript) -> FFmpegRenderPlan:
+def compile_ffmpeg_render_plan(
+    edl: CompiledEDL,
+    transcript: Transcript,
+    *,
+    source_has_audio: bool = True,
+) -> FFmpegRenderPlan:
     """Lower a validated EDL into an island-aware, source-audio FFmpeg graph.
 
     This function is deterministic: the same EDL/transcript returns byte-for-
     byte identical graph text.  It does not call FFmpeg and never resolves an
     external asset ID to a filesystem path.
     """
-    islands = _validate_edl(edl)
     if not transcript.words:
         raise EDLRenderError("a transcript is required for word-timed effects")
+    islands = _validate_edl(edl, transcript)
 
     inputs = tuple(
         DecodeIslandInput(
@@ -494,38 +712,101 @@ def compile_ffmpeg_render_plan(edl: CompiledEDL, transcript: Transcript) -> FFmp
     }
 
     lines: list[str] = []
+    video_source_by_shot: dict[str, str] = {}
+    audio_source_by_shot: dict[str, str] = {}
+    # Each accurately sought island is decoded exactly once.  Split that
+    # decoded stream into the EDL occurrences that reuse it; referencing one
+    # input label repeatedly is invalid for a complex filtergraph.
+    for island in edl.decode_islands:
+        input_spec = input_by_island[island.island_id]
+        ordered_shot_ids = tuple(
+            shot.shot_id for shot in edl.shots if shot_to_island[shot.shot_id] == island.island_id
+        )
+        video_labels = tuple(
+            f"island_{input_spec.input_index}_v_{index}"
+            for index in range(len(ordered_shot_ids))
+        )
+        if len(video_labels) == 1:
+            lines.append(f"[{input_spec.input_index}:v]null[{video_labels[0]}]")
+        else:
+            labels = "".join(f"[{label}]" for label in video_labels)
+            lines.append(f"[{input_spec.input_index}:v]split={len(video_labels)}{labels}")
+        video_source_by_shot.update(dict(zip(ordered_shot_ids, video_labels, strict=True)))
+
+        if source_has_audio:
+            audio_labels = tuple(
+                f"island_{input_spec.input_index}_a_{index}"
+                for index in range(len(ordered_shot_ids))
+            )
+            if len(audio_labels) == 1:
+                lines.append(f"[{input_spec.input_index}:a]anull[{audio_labels[0]}]")
+            else:
+                labels = "".join(f"[{label}]" for label in audio_labels)
+                lines.append(f"[{input_spec.input_index}:a]asplit={len(audio_labels)}{labels}")
+            audio_source_by_shot.update(dict(zip(ordered_shot_ids, audio_labels, strict=True)))
+
     rendered_shots: list[RenderedShot] = []
     rendered_effects: list[RenderedEffect] = []
-    concat_inputs: list[str] = []
+    video_concat_inputs: list[str] = []
+    audio_concat_inputs: list[str] = []
     for shot_index, shot in enumerate(edl.shots):
         island = islands[shot_to_island[shot.shot_id]]
         input_spec = input_by_island[island.island_id]
         offset_in = shot.source_in_ms - island.source_in_ms
         offset_out = shot.source_out_ms - island.source_in_ms
-        base_video = f"v_base_{shot_index}"
-        base_audio = f"a_{shot_index}"
+        raw_video = f"v_raw_{shot_index}"
+        framed_video = f"v_frame_{shot_index}"
+        base_audio = f"a_base_{shot_index}"
         speed = _number(shot.speed)
+        shot_frames = shot.timeline_out_frame - shot.timeline_in_frame
+        shot_duration = _number(shot_frames / edl.fps)
         lines.append(
-            f"[{input_spec.input_index}:v]trim=start={_seconds(offset_in)}:end={_seconds(offset_out)},"
-            f"setpts=PTS-STARTPTS,setpts=PTS/{speed},fps={edl.fps},"
-            f"{_frame_filter(shot, width=edl.width, height=edl.height)}[{base_video}]"
+            f"[{video_source_by_shot[shot.shot_id]}]"
+            f"trim=start={_seconds(offset_in)}:end={_seconds(offset_out)},"
+            f"setpts=(PTS-STARTPTS)/{speed},fps={edl.fps}[{raw_video}]"
         )
-        lines.append(
-            f"[{input_spec.input_index}:a]atrim=start={_seconds(offset_in)}:end={_seconds(offset_out)},"
-            f"asetpts=PTS-STARTPTS,atempo={speed},aresample=48000[{base_audio}]"
+        _append_framing(
+            lines,
+            source_label=raw_video,
+            target_label=framed_video,
+            shot=shot,
+            shot_index=shot_index,
+            width=edl.width,
+            height=edl.height,
         )
+        if source_has_audio:
+            lines.append(
+                f"[{audio_source_by_shot[shot.shot_id]}]"
+                f"atrim=start={_seconds(offset_in)}:end={_seconds(offset_out)},"
+                f"asetpts=PTS-STARTPTS,atempo={speed},aresample=48000,"
+                f"aformat=sample_rates=48000:channel_layouts=stereo,"
+                f"apad=pad_dur={shot_duration},atrim=duration={shot_duration},"
+                f"asetpts=PTS-STARTPTS[{base_audio}]"
+            )
+        else:
+            lines.append(
+                "anullsrc=r=48000:cl=stereo,"
+                f"atrim=duration={shot_duration},asetpts=PTS-STARTPTS[{base_audio}]"
+            )
         video_label, effect_records = _apply_effects(
             lines,
             shot=shot,
             shot_index=shot_index,
-            source_label=base_video,
+            source_label=framed_video,
             transcript=transcript,
             width=edl.width,
             height=edl.height,
             fps=edl.fps,
         )
         rendered_effects.extend(effect_records)
-        concat_inputs.extend((f"[{video_label}]", f"[{base_audio}]"))
+        normalized_video = f"v_shot_{shot_index}"
+        lines.append(
+            f"[{video_label}]tpad=stop_mode=clone:stop_duration=0.100,"
+            f"trim=end_frame={shot_frames},setpts=N/({edl.fps}*TB),setsar=1"
+            f"[{normalized_video}]"
+        )
+        video_concat_inputs.append(f"[{normalized_video}]")
+        audio_concat_inputs.append(f"[{base_audio}]")
         rendered_shots.append(
             RenderedShot(
                 shot_id=shot.shot_id,
@@ -538,16 +819,33 @@ def compile_ffmpeg_render_plan(edl: CompiledEDL, transcript: Transcript) -> FFmp
             )
         )
 
-    lines.append("".join(concat_inputs) + f"concat=n={len(edl.shots)}:v=1:a=1[v_concat][a_concat]")
+    lines.append(
+        "".join(video_concat_inputs)
+        + f"concat=n={len(edl.shots)}:v=1:a=0[v_concat]"
+    )
+    if len(audio_concat_inputs) == 1:
+        lines.append(f"{audio_concat_inputs[0]}anull[a_concat]")
+    else:
+        previous_audio = audio_concat_inputs[0]
+        for join_index, next_audio in enumerate(audio_concat_inputs[1:], start=1):
+            output_label = "a_concat" if join_index == len(audio_concat_inputs) - 1 else (
+                f"a_join_{join_index}"
+            )
+            lines.append(
+                f"{previous_audio}{next_audio}"
+                f"acrossfade=d={DIALOGUE_JOIN_FADE_SECONDS:.3f}:o=0:"
+                f"c1=tri:c2=tri[{output_label}]"
+            )
+            previous_audio = f"[{output_label}]"
     transitioned_video, transitions = _apply_transitions(
         lines, edl=edl, source_label="v_concat"
     )
-    duration = _seconds(edl.duration_ms)
+    duration = _number(edl.duration_frames / edl.fps)
     # FFmpeg rounds a frame count after speed changes.  Pad a single safe
     # margin, then trim both streams back to the compiler's authoritative EDL.
     lines.append(
         f"[{transitioned_video}]tpad=stop_mode=clone:stop_duration=0.100,"
-        f"trim=duration={duration},setpts=PTS-STARTPTS[v_dialogue]"
+        f"trim=end_frame={edl.duration_frames},setpts=N/({edl.fps}*TB)[v_dialogue]"
     )
     lines.append(
         f"[a_concat]apad=pad_dur={duration},atrim=duration={duration},"
@@ -555,14 +853,9 @@ def compile_ffmpeg_render_plan(edl: CompiledEDL, transcript: Transcript) -> FFmp
     )
     limitations = (
         "Music and SFX catalogue IDs are deferred until a trusted asset resolver provides paths.",
-        (
-            "fit_blur and pip_proof use deterministic single-source fallbacks "
-            "until framing analysis carries overlay geometry."
-        ),
-        (
-            "speed_ramp currently preserves the compiled timeline as a visual "
-            "emphasis; time remapping needs source-reservation EDL fields."
-        ),
+        "pip_proof is rejected until the EDL carries an authorised visual insert asset.",
+        "follow_primary_face is a static crop until framing analysis supplies a motion track.",
+        "speed_ramp is rejected until the EDL reserves source time and keyframes explicitly.",
     )
     return FFmpegRenderPlan(
         inputs=inputs,
@@ -576,6 +869,7 @@ def compile_ffmpeg_render_plan(edl: CompiledEDL, transcript: Transcript) -> FFmp
         fps=edl.fps,
         width=edl.width,
         height=edl.height,
+        requires_source_audio=source_has_audio,
         deferred_music_asset_ids=tuple(track.asset_id for track in edl.music),
         deferred_sfx_asset_ids=tuple(cue.asset_id for cue in edl.sfx),
         limitations=limitations,

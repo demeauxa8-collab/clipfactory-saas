@@ -55,14 +55,13 @@ Return one JSON object and no markdown. Required shape:
       "start_anchor": "exact consecutive words beginning at from_word_id",
       "end_anchor": "exact consecutive words ending at to_word_id",
       "framing": {
-        "mode": "source_safe | fit_blur | locked_face | \
-follow_primary_face | screen_focus | pip_proof",
+        "mode": "source_safe | fit_blur | locked_face | screen_focus",
         "center_x": 0.0,
         "base_scale": 1.0
       },
       "effects": [
         {
-          "kind": "punch_in | zoom_out | freeze | speed_ramp | flash | shake | blur | color_pop",
+          "kind": "punch_in | zoom_out | freeze | flash | shake | blur | color_pop",
           "at_word_id": "w_000004 or null",
           "duration_ms": 50,
           "intensity": 0.0
@@ -104,7 +103,10 @@ Editorial rules:
 - You may reuse a short reaction/proof range when repetition serves the story.
 - Prefer hard cuts. Stylized transitions/effects must have a narrative reason.
 - Vary plan scale deliberately; do not add an effect just to simulate activity.
-- Keep proof readable: screen_focus or pip_proof for dashboards/objects.
+- Keep proof readable: fit_blur or screen_focus for dashboards/objects.
+- Use the shot-level speed field for constant speed changes. Do not request
+  face tracking, visual inserts or speed ramps until those capabilities are
+  explicitly supplied in the job catalogue.
 - Music and SFX are optional. Use only supplied asset IDs; an empty list is valid.
 - Never remove or separate a negation, number, price, proper name or payoff phrase.
 - Maximum 30 shots, 3 effects per shot. The compiler enforces a global effect budget.
@@ -181,6 +183,7 @@ def edit_intent_user_prompt(
     target_duration_seconds: int,
     shot_assets: list[dict[str, Any]] | None = None,
     audio_assets: list[dict[str, Any]] | None = None,
+    audio_edit_hints: list[dict[str, Any]] | None = None,
     edit_scope: EditScope | None = None,
 ) -> str:
     scope = edit_scope or candidate_edit_scope(candidate, transcript)
@@ -209,6 +212,9 @@ DETECTED VISUAL SHOT ASSETS (IDs only):
 
 LICENSED AUDIO CATALOGUE (IDs only; empty means no music/SFX):
 {json.dumps(audio_assets or [], ensure_ascii=False)}
+
+MEASURED AUDIO PACING HINTS (evidence only; cuts still use word IDs):
+{json.dumps(audio_edit_hints or [], ensure_ascii=False)}
 
 WORD-ID TRANSCRIPT:
 {transcript_to_word_id_lines(transcript, allowed_word_ranges=scope.allowed_word_ranges)}
@@ -490,6 +496,7 @@ async def direct_edit_with_llm(
     target_duration_seconds: int,
     shot_assets: list[dict[str, Any]] | None = None,
     audio_assets: list[dict[str, Any]] | None = None,
+    audio_edit_hints: list[dict[str, Any]] | None = None,
     edit_scope: EditScope | None = None,
 ) -> tuple[CompiledEDL, int]:
     """Ask for editorial intent and return only its validated compiled form."""
@@ -503,6 +510,7 @@ async def direct_edit_with_llm(
             target_duration_seconds=target_duration_seconds,
             shot_assets=shot_assets,
             audio_assets=audio_assets,
+            audio_edit_hints=audio_edit_hints,
             edit_scope=scope,
         ),
         max_tokens=8192,

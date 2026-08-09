@@ -3,10 +3,12 @@ import pytest
 from app.models import Transcript, TranscriptWord
 from app.pipeline.edl import (
     EditIntentPlan,
+    EditScope,
     EditShotIntent,
     EDLValidationError,
     EffectIntent,
     FramingIntent,
+    InclusiveWordRange,
     MusicIntent,
     SFXCueIntent,
     compile_edit_intent,
@@ -74,12 +76,8 @@ def test_llm_can_reorder_reuse_and_speed_up_word_ranges() -> None:
     ]
     assert edl.shots[0].source_in_ms == 100_000
     assert edl.shots[1].source_in_ms == 0
-    # The timeline is frame-authoritative on purpose: 1470ms at 1.25x is 1176ms,
-    # which is 35.28 frames at 30fps. Quantising to 35 whole frames (1167ms) is
-    # what keeps captions, audio and mux duration on one clock — so the
-    # expectation is the frame grid, not the naive division.
-    speed_frames = max(1, round((edl.shots[2].source_duration_ms / 1.25) * edl.fps / 1000))
-    assert edl.shots[2].timeline_duration_ms == round(speed_frames * 1000 / edl.fps)
+    expected_frames = round(edl.shots[2].source_duration_ms / 1.25 * edl.fps / 1000)
+    assert edl.shots[2].timeline_duration_ms == round(expected_frames * 1000 / edl.fps)
     assert edl.shots[3].source_in_ms == 100_000  # source reuse is intentional
     assert all(
         current.timeline_out_ms == following.timeline_in_ms
@@ -135,8 +133,10 @@ def test_music_and_sfx_are_resolved_against_compiled_timeline() -> None:
     assert edl.music[0].timeline_in_ms == 0
     assert edl.music[0].timeline_out_ms == edl.duration_ms
     payoff = edl.shots[1]
-    expected = payoff.timeline_in_ms + round(
-        (round(transcript.words[6].start * 1000) - payoff.source_in_ms) / payoff.speed
+    expected = next(
+        occurrence.timeline_in_ms
+        for occurrence in payoff.word_occurrences
+        if occurrence.word_id == 6
     )
     assert edl.sfx[0].timeline_at_ms == expected
 
@@ -245,3 +245,183 @@ def test_runtime_role_outside_closed_catalogue_is_rejected() -> None:
     )
     with pytest.raises(EDLValidationError, match="unsupported role"):
         compile_edit_intent(plan, _transcript(), source_duration_ms=120_000)
+
+
+def test_anchor_cannot_claim_words_outside_its_shot() -> None:
+    transcript = Transcript(
+        text="alpha bravo charlie",
+        words=[
+            TranscriptWord("alpha", 0.0, 0.3),
+            TranscriptWord("bravo", 0.31, 0.6),
+            TranscriptWord("charlie", 0.61, 0.9),
+        ],
+    )
+    plan = EditIntentPlan(
+        "2.0",
+        "Unsafe anchors",
+        (
+            EditShotIntent(
+                shot_id="middle",
+                role="hook",
+                from_word_id=1,
+                to_word_id=1,
+                start_anchor="bravo charlie",
+                end_anchor="bravo",
+            ),
+        ),
+    )
+
+    with pytest.raises(EDLValidationError, match="start_anchor does not match"):
+        compile_edit_intent(plan, transcript, source_duration_ms=2_000)
+
+
+def test_scope_allows_reorder_inside_ranges_and_rejects_global_transcript_escape() -> None:
+    scope = EditScope(
+        allowed_word_ranges=(InclusiveWordRange(4, 11),),
+        protected_word_ranges=(InclusiveWordRange(6, 7),),
+        required_word_ranges=(InclusiveWordRange(10, 11),),
+    )
+    valid = EditIntentPlan(
+        "2.0",
+        "Reorder only within explicit authority.",
+        (
+            _shot("payoff", 10, 11, role="hook"),
+            _shot("context", 4, 7, role="payoff"),
+        ),
+    )
+
+    compiled = compile_edit_intent(
+        valid,
+        _transcript(),
+        source_duration_ms=120_000,
+        edit_scope=scope,
+    )
+    assert [shot.from_word_id for shot in compiled.shots] == [10, 4]
+
+    escaped = EditIntentPlan(
+        "2.0",
+        "Escape",
+        (_shot("outside", 0, 3, role="hook"),),
+    )
+    with pytest.raises(EDLValidationError, match="outside the allowed edit scope"):
+        compile_edit_intent(
+            escaped,
+            _transcript(),
+            source_duration_ms=120_000,
+            edit_scope=scope,
+        )
+
+
+def test_scope_rejects_partial_protected_span_and_missing_required_span() -> None:
+    transcript = _transcript()
+    scope = EditScope(
+        allowed_word_ranges=(InclusiveWordRange(4, 11),),
+        protected_word_ranges=(InclusiveWordRange(6, 7),),
+        required_word_ranges=(InclusiveWordRange(10, 11),),
+    )
+    cuts_protected = EditIntentPlan(
+        "2.0",
+        "Bad cut",
+        (_shot("partial", 4, 6, role="hook"),),
+    )
+    with pytest.raises(EDLValidationError, match="cuts through protected"):
+        compile_edit_intent(
+            cuts_protected,
+            transcript,
+            source_duration_ms=120_000,
+            edit_scope=scope,
+        )
+
+    misses_required = EditIntentPlan(
+        "2.0",
+        "Missing payoff",
+        (_shot("context", 4, 7, role="hook"),),
+    )
+    with pytest.raises(EDLValidationError, match="required word range is missing"):
+        compile_edit_intent(
+            misses_required,
+            transcript,
+            source_duration_ms=120_000,
+            edit_scope=scope,
+        )
+
+
+def test_duration_policy_and_catalogue_allowlists_are_authoritative() -> None:
+    plan = EditIntentPlan(
+        "2.0",
+        "Known assets only",
+        (_shot("short", 0, 3, role="hook"),),
+        music=(MusicIntent(asset_id="music_known_01"),),
+        sfx=(SFXCueIntent("sfx_known_01", "short", 1),),
+    )
+    with pytest.raises(EDLValidationError, match="outside target"):
+        compile_edit_intent(
+            plan,
+            _transcript(),
+            source_duration_ms=120_000,
+            target_duration_seconds=20,
+            allowed_music_asset_ids={"music_known_01"},
+            allowed_sfx_asset_ids={"sfx_known_01"},
+        )
+
+    with pytest.raises(EDLValidationError, match="unknown music asset_id"):
+        compile_edit_intent(
+            plan,
+            _transcript(),
+            source_duration_ms=120_000,
+            allowed_music_asset_ids=set(),
+            allowed_sfx_asset_ids={"sfx_known_01"},
+        )
+
+
+def test_replayed_words_have_distinct_frame_aligned_occurrences() -> None:
+    plan = EditIntentPlan(
+        "2.0",
+        "Replay a source moment.",
+        (
+            _shot("first", 4, 7, role="hook", speed=1.25),
+            _shot("replay", 4, 7, role="payoff", speed=1.25),
+        ),
+    )
+
+    edl = compile_edit_intent(plan, _transcript(), source_duration_ms=120_000)
+
+    assert edl.duration_frames == edl.shots[-1].timeline_out_frame
+    assert all(
+        shot.timeline_in_ms == round(shot.timeline_in_frame * 1000 / edl.fps)
+        and shot.timeline_out_ms == round(shot.timeline_out_frame * 1000 / edl.fps)
+        for shot in edl.shots
+    )
+    assert edl.shots[0].word_occurrences[0].word_id == 4
+    assert edl.shots[1].word_occurrences[0].word_id == 4
+    assert (
+        edl.shots[0].word_occurrences[0].occurrence_id
+        != edl.shots[1].word_occurrences[0].occurrence_id
+    )
+
+
+def test_zero_duration_asr_words_get_one_frame_occurrences() -> None:
+    transcript = Transcript(
+        text="Moi c'est précis",
+        words=[
+            TranscriptWord("Moi", 1.0, 1.0),
+            TranscriptWord("c'est", 1.0, 1.08),
+            TranscriptWord("précis", 1.09, 1.38),
+        ],
+    )
+    plan = EditIntentPlan(
+        "2.0",
+        "Keep every ASR word renderable.",
+        (_shot("hook", 0, 2, role="hook"),),
+    )
+
+    edl = compile_edit_intent(plan, transcript, source_duration_ms=2_000)
+
+    assert all(
+        occurrence.timeline_out_frame > occurrence.timeline_in_frame
+        and occurrence.timeline_in_ms
+        == round(occurrence.timeline_in_frame * 1000 / edl.fps)
+        and occurrence.timeline_out_ms
+        == round(occurrence.timeline_out_frame * 1000 / edl.fps)
+        for occurrence in edl.shots[0].word_occurrences
+    )

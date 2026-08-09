@@ -234,6 +234,26 @@ def test_anchor_moves_the_start_onto_the_quoted_words() -> None:
     assert report.max_drift_seconds == pytest.approx(abs(seg.start - 1.0), abs=1e-3)
 
 
+def test_explicit_start_anchor_applies_a_sub_threshold_frame_shift() -> None:
+    exact_start = QUOTED_START - 0.12
+    arc = _arc_with(
+        exact_start + 0.04,
+        exact_start + 12.04,
+        "Le problème c est que sur Google il faut au minimum cent euros",
+        start_anchor="le problème c est que sur Google",
+    )
+
+    (anchored,), report = anchor_arcs_to_transcript(
+        [arc],
+        _transcript(ANCHOR_WORDS),
+    )
+
+    assert anchored.segments[0].start == pytest.approx(exact_start)
+    assert anchored.segments[0].start_anchor_resolved is True
+    assert report.segments_anchored == 1
+    assert report.max_drift_seconds == pytest.approx(0.04)
+
+
 def test_anchor_preserves_the_declared_duration() -> None:
     arc = _arc_with(1.0, 13.0, "Le problème c'est que sur Google il faut au minimum 100 euros")
     (anchored,), _ = anchor_arcs_to_transcript([arc], _transcript(ANCHOR_WORDS))

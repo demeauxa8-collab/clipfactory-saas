@@ -2,12 +2,21 @@ from __future__ import annotations
 
 import asyncio
 import json
+import math
 import os
 import re
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from ..settings import get_settings
+
+if TYPE_CHECKING:
+    from ..models import Transcript
+    from .audio_map import AudioMap
+    from .audio_render_plan import AudioRenderPlan
+    from .edl import CompiledEDL
 
 
 class FFmpegError(RuntimeError):
@@ -83,11 +92,11 @@ async def probe_duration_seconds(path: str) -> float:
     return float(data["format"]["duration"])
 
 
-async def probe_media(path: str) -> MediaProbe:
-    settings = get_settings()
+async def probe_media(path: str, *, ffprobe_bin: str | None = None) -> MediaProbe:
+    probe_binary = ffprobe_bin or get_settings().ffprobe_bin
     code, out, err = await _run(
         [
-            settings.ffprobe_bin,
+            probe_binary,
             "-v",
             "error",
             "-show_entries",
@@ -154,6 +163,66 @@ async def probe_media(path: str) -> MediaProbe:
     )
 
 
+async def analyze_audio_map(
+    path: str,
+    *,
+    silence_noise_db: float = -38.0,
+    min_silence_seconds: float = 0.30,
+    ffmpeg_bin: str | None = None,
+    ffprobe_bin: str | None = None,
+) -> AudioMap:
+    """Measure silence, loudness and peaks in one local audio decode pass."""
+    from .audio_map import build_audio_map
+
+    if not math.isfinite(silence_noise_db) or not -100.0 <= silence_noise_db <= 0.0:
+        raise FFmpegError("silence_noise_db must be finite and in [-100, 0]")
+    if not math.isfinite(min_silence_seconds) or not 0.05 <= min_silence_seconds <= 5.0:
+        raise FFmpegError("min_silence_seconds must be finite and in [0.05, 5]")
+    probe = await probe_media(path, ffprobe_bin=ffprobe_bin)
+    if not probe.has_audio:
+        raise FFmpegError("audio analysis source has no audio stream")
+    binary = ffmpeg_bin or get_settings().ffmpeg_bin
+    noise = _ffmpeg_number(silence_noise_db, label="silence noise")
+    silence_duration = _ffmpeg_number(
+        min_silence_seconds,
+        label="minimum silence duration",
+    )
+    graph = (
+        "[0:a]asplit=3[a_silence][a_loudness][a_stats];"
+        f"[a_silence]silencedetect=noise={noise}dB:d={silence_duration}[a_silence_out];"
+        "[a_loudness]ebur128=peak=true[a_loudness_out];"
+        "[a_stats]astats=metadata=1:reset=0[a_stats_out]"
+    )
+    code, _, err = await _run(
+        [
+            binary,
+            "-hide_banner",
+            "-nostats",
+            "-i",
+            path,
+            "-filter_complex",
+            graph,
+            "-map",
+            "[a_silence_out]",
+            "-map",
+            "[a_loudness_out]",
+            "-map",
+            "[a_stats_out]",
+            "-f",
+            "null",
+            "-",
+        ]
+    )
+    if code != 0:
+        raise FFmpegError(f"audio analysis failed: {err.strip()[-800:]}")
+    return build_audio_map(
+        silencedetect_output=err,
+        duration_seconds=probe.duration_seconds,
+        ebur128_output=err,
+        astats_output=err,
+    )
+
+
 _SCENE_PTS_RE = re.compile(r"pts_time:(\d+(?:\.\d+)?)")
 
 
@@ -190,15 +259,16 @@ async def detect_black_intervals(
     window_seconds: float = 1.5,
     min_black_seconds: float = 0.1,
     pix_threshold: float = 0.10,
+    ffmpeg_bin: str | None = None,
 ) -> list[tuple[float, float]]:
     """Detect black (near-fully dark) intervals in [start, start+window] of the
     source. Returns (black_start, black_end) offsets RELATIVE to `start` — the
     input-seek resets output timestamps so 0.0 is the window start. Used to catch
     clips that open on a black frame. Best-effort: any ffmpeg error yields []."""
-    settings = get_settings()
+    binary = ffmpeg_bin or get_settings().ffmpeg_bin
     code, _, err = await _run(
         [
-            settings.ffmpeg_bin,
+            binary,
             "-hide_banner",
             "-nostats",
             "-ss",
@@ -868,7 +938,12 @@ def _build_single_pass_montage(
     return inputs, ";".join(parts), intended
 
 
-def _validate_mux_timeline(probe: MediaProbe, intended_seconds: float) -> None:
+def _validate_mux_timeline(
+    probe: MediaProbe,
+    intended_seconds: float,
+    *,
+    expected_fps: float = OUTPUT_VIDEO_FPS,
+) -> None:
     """Enforce the physical A/V precision contract of the render engine.
 
     Transcript/audio boundaries are continuous-time values; encoded video is
@@ -876,7 +951,7 @@ def _validate_mux_timeline(probe: MediaProbe, intended_seconds: float) -> None:
     the container must stay within one frame (plus a small mux allowance) of
     the intended edit timeline, and audio/video may not drift further apart.
     """
-    fps = probe.video_fps or OUTPUT_VIDEO_FPS
+    fps = probe.video_fps or expected_fps
     tolerance = (1.0 / fps) + 0.012
     measured = {
         "container": probe.duration_seconds,
@@ -899,15 +974,304 @@ def _validate_mux_timeline(probe: MediaProbe, intended_seconds: float) -> None:
             f"video={probe.video_duration_seconds:.6f}s "
             f"audio={probe.audio_duration_seconds:.6f}s"
         )
-    if probe.video_fps is not None and abs(probe.video_fps - OUTPUT_VIDEO_FPS) > 0.01:
+    if probe.video_fps is not None and abs(probe.video_fps - expected_fps) > 0.01:
         raise FFmpegError(
-            f"unexpected output frame rate {probe.video_fps:.6f}; expected {OUTPUT_VIDEO_FPS:.6f}"
+            f"unexpected output frame rate {probe.video_fps:.6f}; expected {expected_fps:.6f}"
         )
     if probe.audio_sample_rate != OUTPUT_AUDIO_SAMPLE_RATE or probe.audio_channels != 2:
         raise FFmpegError(
             "unexpected output audio format: "
             f"sample_rate={probe.audio_sample_rate} channels={probe.audio_channels}"
         )
+
+
+def _escape_subtitles_filter_path(path: str) -> str:
+    """Escape a trusted local path for one quoted FFmpeg filter argument."""
+    return path.replace("\\", "\\\\").replace(":", "\\:").replace("'", "\\'")
+
+
+def _ffmpeg_number(value: float, *, label: str) -> str:
+    if not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(value):
+        raise FFmpegError(f"{label} must be finite")
+    return f"{float(value):.6f}".rstrip("0").rstrip(".")
+
+
+def _resolved_audio_mix_graph(
+    *,
+    edl: CompiledEDL,
+    audio_plan: AudioRenderPlan | None,
+    first_input_index: int,
+    dialogue_label: str,
+    source_has_audio: bool,
+) -> tuple[list[str], list[str]]:
+    """Build trusted asset inputs and the final dialogue/music/SFX master.
+
+    Paths come only from ``ResolvedAudioAsset`` objects produced by the local
+    registry.  No EDL asset ID or model-controlled path is interpolated into
+    FFmpeg syntax.
+    """
+    intended_seconds = edl.duration_frames / edl.fps
+    intended = f"{intended_seconds:.6f}"
+    asset_input_args: list[str] = []
+    graph: list[str] = []
+    mix_labels: list[str] = []
+
+    if audio_plan is not None:
+        if audio_plan.duration_ms != edl.duration_ms:
+            raise FFmpegError("resolved audio plan duration does not match the EDL")
+        expected_music = Counter(track.asset_id for track in edl.music)
+        resolved_music = Counter(item.track.asset_id for item in audio_plan.music)
+        expected_sfx = Counter((cue.asset_id, cue.timeline_at_ms) for cue in edl.sfx)
+        resolved_sfx = Counter(
+            (item.cue.asset_id, item.cue.timeline_at_ms) for item in audio_plan.sfx
+        )
+        if expected_music != resolved_music or expected_sfx != resolved_sfx:
+            raise FFmpegError("resolved audio plan assets do not match the compiled EDL")
+
+    music_needs_sidechain = bool(
+        audio_plan
+        and any(item.ducking.id != "none" for item in audio_plan.music)
+    )
+    if music_needs_sidechain:
+        graph.append(
+            f"[{dialogue_label}]asplit=2[a_dialogue_mix][a_dialogue_sidechain]"
+        )
+        mix_labels.append("[a_dialogue_mix]")
+    else:
+        mix_labels.append(f"[{dialogue_label}]")
+
+    next_input = first_input_index
+    if audio_plan is not None:
+        for track_index, item in enumerate(audio_plan.music):
+            if not item.asset.path.is_file():
+                raise FFmpegError("resolved music asset file is missing")
+            if item.track.loop:
+                asset_input_args.extend(("-stream_loop", "-1"))
+            asset_input_args.extend(("-i", str(item.asset.path)))
+            duration_seconds = (item.track.timeline_out_ms - item.track.timeline_in_ms) / 1000
+            duration = _ffmpeg_number(duration_seconds, label="music duration")
+            gain = _ffmpeg_number(item.effective_gain_db, label="music gain")
+            fade_in_ms = min(
+                item.track.fade_in_ms,
+                round(duration_seconds * 1000),
+            )
+            fade_out_ms = min(
+                item.track.fade_out_ms,
+                round(duration_seconds * 1000),
+            )
+            chain = (
+                f"[{next_input}:a]atrim=duration={duration},asetpts=PTS-STARTPTS,"
+                "aresample=48000,aformat=sample_rates=48000:channel_layouts=stereo,"
+                f"apad=pad_dur={duration},atrim=duration={duration},volume={gain}dB"
+            )
+            if fade_in_ms > 0:
+                chain += f",afade=t=in:st=0:d={fade_in_ms / 1000:.3f}"
+            if fade_out_ms > 0:
+                fade_start = max(0.0, duration_seconds - fade_out_ms / 1000)
+                chain += f",afade=t=out:st={fade_start:.3f}:d={fade_out_ms / 1000:.3f}"
+            chain += (
+                f",adelay=delays={item.track.timeline_in_ms}:all=1"
+                f"[a_music_{track_index}]"
+            )
+            graph.append(chain)
+            music_label = f"[a_music_{track_index}]"
+            if item.ducking.id != "none":
+                preset = item.ducking
+                threshold = _ffmpeg_number(preset.threshold or 0.0, label="duck threshold")
+                ratio = _ffmpeg_number(preset.ratio or 1.0, label="duck ratio")
+                attack = _ffmpeg_number(preset.attack_ms or 0.0, label="duck attack")
+                release = _ffmpeg_number(preset.release_ms or 0.0, label="duck release")
+                graph.append(
+                    f"{music_label}[a_dialogue_sidechain]"
+                    f"sidechaincompress=threshold={threshold}:ratio={ratio}:"
+                    f"attack={attack}:release={release}[a_music_ducked_{track_index}]"
+                )
+                music_label = f"[a_music_ducked_{track_index}]"
+            mix_labels.append(music_label)
+            next_input += 1
+
+        for cue_index, item in enumerate(audio_plan.sfx):
+            if not item.asset.path.is_file():
+                raise FFmpegError("resolved SFX asset file is missing")
+            asset_input_args.extend(("-i", str(item.asset.path)))
+            duration_seconds = item.asset.asset.duration_seconds
+            duration = _ffmpeg_number(duration_seconds, label="SFX duration")
+            gain = _ffmpeg_number(item.effective_gain_db, label="SFX gain")
+            fade_in_ms = min(item.asset.asset.mix.fade_in_ms, round(duration_seconds * 1000))
+            fade_out_ms = min(item.asset.asset.mix.fade_out_ms, round(duration_seconds * 1000))
+            chain = (
+                f"[{next_input}:a]atrim=duration={duration},asetpts=PTS-STARTPTS,"
+                "aresample=48000,aformat=sample_rates=48000:channel_layouts=stereo,"
+                f"volume={gain}dB"
+            )
+            if fade_in_ms > 0:
+                chain += f",afade=t=in:st=0:d={fade_in_ms / 1000:.3f}"
+            if fade_out_ms > 0:
+                fade_start = max(0.0, duration_seconds - fade_out_ms / 1000)
+                chain += f",afade=t=out:st={fade_start:.3f}:d={fade_out_ms / 1000:.3f}"
+            chain += (
+                f",adelay=delays={item.cue.timeline_at_ms}:all=1"
+                f"[a_sfx_{cue_index}]"
+            )
+            graph.append(chain)
+            mix_labels.append(f"[a_sfx_{cue_index}]")
+            next_input += 1
+
+    if len(mix_labels) == 1:
+        master_input = mix_labels[0]
+    else:
+        graph.append(
+            "".join(mix_labels)
+            + f"amix=inputs={len(mix_labels)}:duration=longest:"
+            "dropout_transition=0:normalize=0[a_edl_mix]"
+        )
+        master_input = "[a_edl_mix]"
+
+    has_resolved_assets = bool(audio_plan and (audio_plan.music or audio_plan.sfx))
+    if audio_plan is not None:
+        target_lufs = _ffmpeg_number(
+            audio_plan.master_target_lufs,
+            label="master target LUFS",
+        )
+        true_peak = _ffmpeg_number(
+            audio_plan.master_true_peak_db,
+            label="master true peak",
+        )
+        loudnorm = f"loudnorm=I={target_lufs}:TP={true_peak}:LRA=11"
+    else:
+        loudnorm = LOUDNORM_FILTER
+    audio_finish = (
+        f"{loudnorm},aresample={OUTPUT_AUDIO_SAMPLE_RATE},"
+        "aformat=sample_rates=48000:channel_layouts=stereo"
+        if source_has_audio or has_resolved_assets
+        else (
+            f"aresample={OUTPUT_AUDIO_SAMPLE_RATE},"
+            "aformat=sample_rates=48000:channel_layouts=stereo"
+        )
+    )
+    graph.append(
+        f"{master_input}{audio_finish},apad=pad_dur={intended},"
+        f"atrim=duration={intended},asetpts=PTS-STARTPTS[a_edl_out]"
+    )
+    return asset_input_args, graph
+
+
+async def render_compiled_edl(
+    *,
+    source: str,
+    edl: CompiledEDL,
+    transcript: Transcript,
+    out_path: str,
+    subtitles_path: str | None = None,
+    audio_plan: AudioRenderPlan | None = None,
+    ffmpeg_bin: str | None = None,
+    ffprobe_bin: str | None = None,
+) -> float:
+    """Execute a validated V2 EDL as one island-aware FFmpeg render.
+
+    The EDL and renderer compiler are the trust boundary: source ranges,
+    filters, labels and timings have already been reduced to closed
+    vocabularies.  External music/SFX IDs are deliberately rejected here until
+    a trusted asset resolver supplies concrete inputs; they are never ignored
+    and an LLM-provided path can never reach this command.
+    """
+    from .edl_render import EDLRenderError, compile_ffmpeg_render_plan
+
+    if ffmpeg_bin is None or ffprobe_bin is None:
+        settings = get_settings()
+        ffmpeg_bin = ffmpeg_bin or settings.ffmpeg_bin
+        ffprobe_bin = ffprobe_bin or settings.ffprobe_bin
+    source_probe = await probe_media(source, ffprobe_bin=ffprobe_bin)
+    if not source_probe.has_video:
+        raise FFmpegError("EDL source has no video stream")
+    if subtitles_path is not None and not Path(subtitles_path).is_file():
+        raise FFmpegError(f"EDL subtitles file does not exist: {subtitles_path}")
+
+    try:
+        plan = compile_ffmpeg_render_plan(
+            edl,
+            transcript,
+            source_has_audio=source_probe.has_audio,
+        )
+    except EDLRenderError as exc:
+        raise FFmpegError(f"EDL render plan is invalid: {exc}") from exc
+    if (plan.deferred_music_asset_ids or plan.deferred_sfx_asset_ids) and audio_plan is None:
+        raise FFmpegError(
+            "EDL contains unresolved audio catalogue assets; resolve them before rendering"
+        )
+
+    graph_parts = [plan.filter_complex]
+    video_map = f"[{plan.video_label}]"
+    if subtitles_path is not None:
+        escaped = _escape_subtitles_filter_path(subtitles_path)
+        graph_parts.append(f"[{plan.video_label}]subtitles='{escaped}'[v_edl_out]")
+        video_map = "[v_edl_out]"
+
+    asset_input_args, audio_graph = _resolved_audio_mix_graph(
+        edl=edl,
+        audio_plan=audio_plan,
+        first_input_index=len(plan.inputs),
+        dialogue_label=plan.audio_label,
+        source_has_audio=source_probe.has_audio,
+    )
+    graph_parts.extend(audio_graph)
+    intended_seconds = edl.duration_frames / edl.fps
+
+    output = Path(out_path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    cmd = [
+        ffmpeg_bin,
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-y",
+        *plan.input_args(source),
+        *asset_input_args,
+        "-filter_complex",
+        ";".join(graph_parts),
+        "-map",
+        video_map,
+        "-map",
+        "[a_edl_out]",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "veryfast",
+        "-crf",
+        "20",
+        "-pix_fmt",
+        "yuv420p",
+        "-profile:v",
+        "main",
+        "-level",
+        "4.1",
+        "-r",
+        str(edl.fps),
+        "-frames:v",
+        str(edl.duration_frames),
+        "-c:a",
+        "aac",
+        "-b:a",
+        "128k",
+        "-ar",
+        str(OUTPUT_AUDIO_SAMPLE_RATE),
+        "-ac",
+        "2",
+        "-movflags",
+        "+faststart",
+        str(output),
+    ]
+    code, _, err = await _run(cmd)
+    if code != 0 or not output.exists():
+        raise FFmpegError(f"EDL render failed: {err.strip()[-1200:]}")
+
+    output_probe = await probe_media(str(output), ffprobe_bin=ffprobe_bin)
+    _validate_mux_timeline(
+        output_probe,
+        intended_seconds,
+        expected_fps=float(edl.fps),
+    )
+    return output_probe.duration_seconds
 
 
 async def render_montage_clip(
