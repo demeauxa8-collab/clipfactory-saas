@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { MarketingNav } from "@/components/marketing/nav";
 import { MarketingFooter } from "@/components/marketing/footer";
 import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
+import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "AI video clipping use cases — creators, podcasts and agencies",
@@ -75,8 +76,8 @@ export default function UseCasesIndexPage() {
               Doesn&apos;t fit your workflow?
             </p>
             <h2 className="mt-2 text-xl font-semibold">Write to us — we read every email.</h2>
-            <Link href="mailto:hello@clipfactory.app" className="mt-4 inline-flex">
-              <Button variant="secondary">hello@clipfactory.app</Button>
+            <Link href={`mailto:${SITE.contactEmail}`} className="mt-4 inline-flex">
+              <Button variant="secondary">{SITE.contactEmail}</Button>
             </Link>
           </div>
         </Container>

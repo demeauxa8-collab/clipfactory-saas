@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/container";
 import { MarketingNav } from "@/components/marketing/nav";
 import { MarketingFooter } from "@/components/marketing/footer";
+import { SITE } from "@/lib/site";
 
 export const metadata = { title: "Terms" };
 
@@ -21,7 +22,7 @@ export default function TermsPage() {
             Billing is monthly via Stripe. Credits unused at the end of a billing cycle do not roll over. You can cancel at any time from your account.
           </p>
           <p className="mt-4">
-            For any question, write to <a className="underline" href="mailto:hello@clipfactory.app">hello@clipfactory.app</a>.
+            For any question, write to <a className="underline" href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>.
           </p>
         </Container>
       </main>

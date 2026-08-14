@@ -9,6 +9,7 @@ import {
   BreadcrumbJsonLd,
   FaqJsonLd,
 } from "@/components/marketing/json-ld";
+import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "AI video clipping pricing — 29€/month, no watermark",
@@ -95,7 +96,7 @@ const PLANS: Plan[] = [
     price: "79€",
     tagline: "Coming soon — join the waitlist.",
     cta: "Notify me",
-    ctaHref: "mailto:hello@clipfactory.app?subject=Creator%20plan%20waitlist",
+    ctaHref: `mailto:${SITE.contactEmail}?subject=Creator%20plan%20waitlist`,
     available: false,
     features: [
       { label: "1 000 video minutes / month", included: true },
@@ -115,7 +116,7 @@ const PLANS: Plan[] = [
     price: "199€",
     tagline: "Coming soon — for studios.",
     cta: "Get in touch",
-    ctaHref: "mailto:hello@clipfactory.app?subject=Agency%20plan",
+    ctaHref: `mailto:${SITE.contactEmail}?subject=Agency%20plan`,
     available: false,
     features: [
       { label: "3 000 video minutes / month", included: true },
@@ -218,8 +219,8 @@ export default function PricingPage() {
             </dl>
             <p className="mt-8 text-sm text-[var(--color-muted-foreground)]">
               Still unsure? Write to{" "}
-              <a href="mailto:hello@clipfactory.app" className="underline">
-                hello@clipfactory.app
+              <a href={`mailto:${SITE.contactEmail}`} className="underline">
+                {SITE.contactEmail}
               </a>{" "}
               or check the <Link href="/faq" className="underline">full FAQ</Link>.
             </p>

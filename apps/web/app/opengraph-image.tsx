@@ -69,7 +69,7 @@ export default function OgImage() {
           }}
         >
           <span>From {SITE.pricingFromEur}€ / month — EU hosted</span>
-          <span style={{ color: "#fafafa" }}>clipfactory.app</span>
+          <span style={{ color: "#fafafa" }}>{SITE.url.replace(/^https?:\/\//, "")}</span>
         </div>
       </div>
     ),

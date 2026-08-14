@@ -1,4 +1,5 @@
 import { Check, X } from "lucide-react";
+import { SITE } from "@/lib/site";
 
 type Cell =
   | { kind: "yes"; note?: string }
@@ -118,7 +119,7 @@ export function ComparisonTable() {
         <p className="mt-4 text-xs text-[var(--color-muted-foreground)]">
           This is a positioning comparison, not a claim that every tool in the market behaves the
           same way. Spotted a weak claim? Ping{" "}
-          <a className="underline" href="mailto:hello@clipfactory.app">hello@clipfactory.app</a>.
+          <a className="underline" href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>.
         </p>
       </div>
     </section>

@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/container";
 import { MarketingNav } from "@/components/marketing/nav";
 import { MarketingFooter } from "@/components/marketing/footer";
+import { SITE } from "@/lib/site";
 
 export const metadata = { title: "Privacy" };
 
@@ -21,7 +22,7 @@ export default function PrivacyPage() {
             We use Supabase (EU region) for authentication and database, Cloudflare R2 for storage, Stripe for billing, OpenAI for transcription, and Anthropic for analysis. Each provider processes the minimum data required for the job.
           </p>
           <p className="mt-4">
-            You can request a full export or deletion of your account by emailing <a className="underline" href="mailto:hello@clipfactory.app">hello@clipfactory.app</a>.
+            You can request a full export or deletion of your account by emailing <a className="underline" href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>.
           </p>
         </Container>
       </main>

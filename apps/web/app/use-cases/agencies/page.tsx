@@ -13,6 +13,7 @@ import { MarketingNav } from "@/components/marketing/nav";
 import { MarketingFooter } from "@/components/marketing/footer";
 import { ClipMockup } from "@/components/marketing/clip-mockup";
 import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
+import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "AI video clipping for agencies and content studios",
@@ -89,7 +90,7 @@ export default function AgenciesUseCasePage() {
               captions, scores and clear reasons. Built to protect agency margin.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="mailto:hello@clipfactory.app?subject=Agency%20pilot">
+              <Link href={`mailto:${SITE.contactEmail}?subject=Agency%20pilot`}>
                 <Button size="lg">
                   Book a pilot call
                   <ArrowRight className="h-4 w-4" />
@@ -182,7 +183,7 @@ export default function AgenciesUseCasePage() {
                   Walk into the brand review with the score on screen: hook, emotion, visual
                   proof, fit and editing difficulty. Less subjective debate.
                 </p>
-                <Link href="mailto:hello@clipfactory.app?subject=Agency%20pilot" className="mt-6 inline-flex">
+                <Link href={`mailto:${SITE.contactEmail}?subject=Agency%20pilot`} className="mt-6 inline-flex">
                   <Button>
                     Book a pilot call
                     <ArrowRight className="h-4 w-4" />
@@ -221,7 +222,7 @@ export default function AgenciesUseCasePage() {
               workspaces in Q3.
             </p>
             <Link
-              href="mailto:hello@clipfactory.app?subject=Agency%20pilot"
+              href={`mailto:${SITE.contactEmail}?subject=Agency%20pilot`}
               className="mt-8 inline-flex"
             >
               <Button size="lg">

@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/container";
 import { MarketingNav } from "@/components/marketing/nav";
 import { MarketingFooter } from "@/components/marketing/footer";
 import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/marketing/json-ld";
+import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "AI clip maker FAQ — pricing, YouTube Shorts, Reels and TikToks",
@@ -45,7 +46,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Is ClipFactory GDPR compliant?",
-    a: "EU hosted, minimal data collection, full data export and deletion on request via hello@clipfactory.app. Public terms and privacy policy on the site.",
+    a: `EU hosted, minimal data collection, full data export and deletion on request via ${SITE.contactEmail}. Public terms and privacy policy on the site.`,
   },
   {
     q: "Can I use ClipFactory clips commercially?",
@@ -57,7 +58,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Do you have an API?",
-    a: "Not yet. Public API ships after the first paying customers stabilise. You can email hello@clipfactory.app to join the API waitlist.",
+    a: `Not yet. Public API ships after the first paying customers stabilise. You can email ${SITE.contactEmail} to join the API waitlist.`,
   },
   {
     q: "Can I work with my team on the same account?",
@@ -96,7 +97,7 @@ export default function FaqPage() {
           </dl>
 
           <p className="mt-10 text-sm text-[var(--color-muted-foreground)]">
-            Still unsure? Email <a href="mailto:hello@clipfactory.app" className="underline">hello@clipfactory.app</a>. I read every message.
+            Still unsure? Email <a href={`mailto:${SITE.contactEmail}`} className="underline">{SITE.contactEmail}</a>. I read every message.
           </p>
         </Container>
       </main>
