@@ -7,9 +7,10 @@
   },
   {
     "name": "Example Clipper",
-    "contact": "@example_clipper on X",
+    "contact": "@example_clipper on Discord",
     "source_url": "https://www.youtube.com/watch?v=REPLACE_ME_TOO",
     "segment": "clipper",
+    "lang": "en",
     "audience": "Football fans on TikTok who watch highlights and argue in the comments."
   }
 ]

@@ -28,10 +28,14 @@ Prospect file — a JSON list:
         "contact": "hello@somepodcast.fr",
         "source_url": "https://www.youtube.com/watch?v=...",
         "segment": "podcaster",
+        "lang": "fr",
         "audience": "optional override",
         "niche": "optional override"
       }
     ]
+
+`lang` only changes the draft message ("fr" by default, "en" for the
+English-speaking clipper communities). `segment` picks the editorial brief.
 """
 
 from __future__ import annotations
@@ -96,6 +100,7 @@ class Prospect:
     segment: str
     audience: str | None = None
     niche: str | None = None
+    lang: str = "fr"
 
     @property
     def slug(self) -> str:
@@ -128,6 +133,7 @@ def load_prospects(path: str) -> list[Prospect]:
             segment=item.get("segment", "podcaster"),
             audience=item.get("audience"),
             niche=item.get("niche"),
+            lang=item.get("lang", "fr"),
         )
         if p.slug in seen:
             raise SystemExit(f"two prospects resolve to the same folder name: {p.slug}")
@@ -326,24 +332,40 @@ def compose_message(prospect: Prospect, clips: list[asyncpg.Record]) -> str:
     """A draft, not a template to send blind — edit the first line per prospect."""
     best = max(clips, key=lambda c: c["score_total"] or 0)
     hook = (best["hook_text"] or best["title"] or "").strip()
-    lines = [
-        f"To: {prospect.contact}",
-        f"Subject: {CLIPS_PER_PROSPECT} clips from your last episode",
-        "",
-        f"Hi — I cut {CLIPS_PER_PROSPECT} vertical clips out of your latest video.",
-        "They're attached. Yours to post, no strings, nothing to sign up for.",
-        "",
-        "The one I'd start with:",
-        f'  "{hook}"' if hook else "  clip-1.mp4",
-        "",
-        "I build the tool that made them. If they're useful I'd genuinely like to",
-        "know what you'd change — that feedback is worth more to me than a customer.",
-        "",
-        "— Augustin",
-        "",
-        "---",
-        "What was generated:",
-    ]
+    quote = f'  "{hook}"' if hook else "  clip-1.mp4"
+
+    if prospect.lang == "en":
+        body = [
+            f"Subject: {CLIPS_PER_PROSPECT} clips from your last episode",
+            "",
+            f"Hi — I cut {CLIPS_PER_PROSPECT} vertical clips out of your latest video.",
+            "They're attached. Yours to post, no strings, nothing to sign up for.",
+            "",
+            "The one I'd start with:",
+            quote,
+            "",
+            "I build the tool that made them. If they're useful I'd genuinely like to",
+            "know what you'd change — that feedback is worth more to me than a customer.",
+        ]
+        footer = "What was generated:"
+    else:
+        body = [
+            f"Objet : {CLIPS_PER_PROSPECT} clips tirés de ton dernier épisode",
+            "",
+            f"Salut — j'ai découpé {CLIPS_PER_PROSPECT} clips verticaux dans ta dernière vidéo.",
+            "Ils sont en pièce jointe. Ils sont à toi, tu peux les poster, il n'y a rien",
+            "à installer et rien à signer.",
+            "",
+            "Celui par lequel je commencerais :",
+            quote,
+            "",
+            "C'est moi qui fais l'outil qui les a montés. S'ils te servent, ce qui",
+            "m'intéresse vraiment c'est ce que tu changerais — ça vaut plus pour moi",
+            "qu'un client de plus.",
+        ]
+        footer = "Ce qui a été généré :"
+
+    lines = [f"To: {prospect.contact}", *body, "", "— Augustin", "", "---", footer]
     for c in clips:
         lines.append(
             f"  clip-{c['idx'] + 1}.mp4 — score {c['score_total'] or '—'} — "

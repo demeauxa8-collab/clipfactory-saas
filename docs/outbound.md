@@ -47,6 +47,35 @@ plus multi-segment montage, which the competition does not do.
 but they pay without arguing and they stay. Best served by giving away clips
 from their own last episode.
 
+## Sourcing — the qualifier that saves the most time
+
+**Do not target the big shows.** GDIY, Pauline Laigneau and their peers already
+employ editors. They will not answer, and a reply would not be a sale anyway.
+
+The ideal prospect is a channel that **publishes long episodes and has no
+Shorts tab worth the name**. That single signal says everything: they produce
+enough material to be serious, and they are leaving the short-form audience on
+the table. It is visible in five seconds.
+
+Sourcing loop, roughly two minutes per prospect:
+
+1. YouTube search on a niche + "podcast", filtered to **this week** and
+   **over 20 minutes** — this surfaces channels that are actively publishing.
+2. Open the channel, click the **Shorts** tab. Empty or nearly empty → prospect.
+   Full of shorts → skip, someone is already doing the job.
+3. The **About** tab usually exposes a business email. No email is not a
+   blocker; a reply to a recent video or a DM works, put that in `contact`.
+4. Copy the URL of their most recent long video into `source_url`.
+
+Twenty qualified prospects is under an hour of work. That is the whole cost of
+entry.
+
+**Clippers are sourced differently.** They have no business inbox — they live
+in Discord servers (Clip Money, Clipster, /clipping) and on Whop campaigns.
+Cold-DMing them gets you banned. The way in is to be present in the server,
+answer questions about editing speed, and offer accounts to people who ask.
+Set `"lang": "en"` on these prospects; those communities are English-speaking.
+
 ## Running a campaign
 
 Prerequisites: Redis running, the worker running, and an operator account whose
