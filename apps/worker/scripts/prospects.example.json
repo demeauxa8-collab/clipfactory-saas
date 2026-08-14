@@ -1,0 +1,15 @@
+[
+  {
+    "name": "Example Podcast",
+    "contact": "hello@example-podcast.fr",
+    "source_url": "https://www.youtube.com/watch?v=REPLACE_ME",
+    "segment": "podcaster"
+  },
+  {
+    "name": "Example Clipper",
+    "contact": "@example_clipper on X",
+    "source_url": "https://www.youtube.com/watch?v=REPLACE_ME_TOO",
+    "segment": "clipper",
+    "audience": "Football fans on TikTok who watch highlights and argue in the comments."
+  }
+]
