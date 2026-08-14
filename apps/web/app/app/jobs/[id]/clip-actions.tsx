@@ -1,14 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { Download, ThumbsDown, ThumbsUp } from "lucide-react";
+import { Download, Lock, ThumbsDown, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { apiFetch, ApiError } from "@/lib/api";
 import { track } from "@/lib/analytics";
 
 type DownloadResp = { url: string; expires_in_seconds: number };
 
-export function ClipActions({ clipId }: { clipId: string }) {
+export function ClipActions({ clipId, locked = false }: { clipId: string; locked?: boolean }) {
   const [busy, setBusy] = React.useState<null | "download" | "good" | "bad">(null);
   const [feedback, setFeedback] = React.useState<"good" | "bad" | null>(null);
   const [error, setError] = React.useState<string | null>(null);
@@ -43,10 +43,28 @@ export function ClipActions({ clipId }: { clipId: string }) {
 
   return (
     <div className="mt-4 flex items-center gap-2">
-      <Button size="sm" onClick={handleDownload} disabled={busy === "download"}>
-        <Download className="h-4 w-4" />
-        {busy === "download" ? "…" : "Download"}
-      </Button>
+      {locked ? (
+        // Scrolls to the paywall below instead of firing a request the API
+        // would answer with 402 anyway.
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => {
+            void track("locked_clip_clicked", { clip_id: clipId });
+            document
+              .getElementById("upgrade-wall")
+              ?.scrollIntoView({ behavior: "smooth", block: "center" });
+          }}
+        >
+          <Lock className="h-4 w-4" />
+          Unlock
+        </Button>
+      ) : (
+        <Button size="sm" onClick={handleDownload} disabled={busy === "download"}>
+          <Download className="h-4 w-4" />
+          {busy === "download" ? "…" : "Download"}
+        </Button>
+      )}
       <Button
         size="sm"
         variant={feedback === "good" ? "primary" : "secondary"}

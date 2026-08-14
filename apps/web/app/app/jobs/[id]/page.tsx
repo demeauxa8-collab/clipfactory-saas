@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Lock } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { clipIsLocked, planFromCode } from "@/lib/plan";
 import { ClipActions } from "./clip-actions";
 import { JobMonitor } from "./job-monitor";
+import { UpgradeWall } from "./upgrade-wall";
 
 export const metadata = { title: "Job" };
 
@@ -28,6 +31,19 @@ export default async function JobPage({ params }: { params: Promise<{ id: string
     )
     .eq("job_id", id)
     .order("idx", { ascending: true });
+
+  // Which plan is paying for this account right now. A paid subscription has a
+  // current_period_end and therefore outranks the trial, whose end is null.
+  const { data: sub } = await supabase
+    .from("subscriptions")
+    .select("plan_code, current_period_end")
+    .in("status", ["trialing", "active"])
+    .order("current_period_end", { ascending: false, nullsFirst: false })
+    .limit(1)
+    .maybeSingle();
+
+  const plan = planFromCode(sub?.plan_code as string | undefined);
+  const lockedCount = (clips ?? []).filter((c) => clipIsLocked(plan, Number(c.idx))).length;
 
   return (
     <Container className="py-10">
@@ -61,9 +77,17 @@ export default async function JobPage({ params }: { params: Promise<{ id: string
         ) : (
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             {(clips ?? []).map((c) => (
-              <ClipCard key={String(c.id)} clip={c as ClipDTO} />
+              <ClipCard
+                key={String(c.id)}
+                clip={c as ClipDTO}
+                locked={clipIsLocked(plan, Number(c.idx))}
+              />
             ))}
           </div>
+        )}
+
+        {lockedCount > 0 && (
+          <UpgradeWall lockedCount={lockedCount} totalCount={clips?.length ?? 0} />
         )}
       </section>
     </Container>
@@ -94,7 +118,7 @@ type ClipDTO = {
   score_breakdown: Record<string, number> | null;
 };
 
-function ClipCard({ clip }: { clip: ClipDTO }) {
+function ClipCard({ clip, locked = false }: { clip: ClipDTO; locked?: boolean }) {
   const breakdown = clip.score_breakdown ?? {};
   const segments = clip.segments ?? [];
   const isMontage = segments.length > 1;
@@ -114,6 +138,12 @@ function ClipCard({ clip }: { clip: ClipDTO }) {
               {clip.hook_text ?? clip.title ?? "Generated clip"}
             </p>
           </div>
+          {/* The clip exists and is rendered — only the file is behind the plan. */}
+          {locked && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/55 backdrop-blur-[3px]">
+              <Lock className="h-5 w-5 text-white/85" />
+            </div>
+          )}
         </div>
 
         <div className="min-w-0">
@@ -174,7 +204,7 @@ function ClipCard({ clip }: { clip: ClipDTO }) {
             </dl>
           )}
 
-          <ClipActions clipId={clip.id} />
+          <ClipActions clipId={clip.id} locked={locked} />
         </div>
       </div>
     </div>

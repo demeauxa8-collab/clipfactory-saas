@@ -156,6 +156,9 @@ class ClipOut(BaseModel):
     score_breakdown: dict[str, int] | None = None
     width: int
     height: int
+    # True when this clip needs a paid plan to download. Everything else about
+    # the clip stays visible — the lock is on the file, not on the insight.
+    locked: bool = False
 
 
 class ClipDownloadUrl(BaseModel):

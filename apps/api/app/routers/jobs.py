@@ -8,7 +8,7 @@ from ..auth import CurrentUser, current_user
 from ..db import get_pool
 from ..rate_limit import LIMIT_JOBS_CREATE, limiter
 from ..schemas import ClipOut, ClipSegment, JobCreate, JobOut, JobWithClips
-from ..services import analytics
+from ..services import analytics, entitlements
 from ..services import jobs as jobs_svc
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
@@ -128,6 +128,7 @@ async def get_job(job_id: str, user: CurrentUser = Depends(current_user)) -> Job
             job_id,
             user.user_id,
         )
+        ent = await entitlements.load(conn, user.user_id)
 
     clips = [
         ClipOut(
@@ -152,6 +153,7 @@ async def get_job(job_id: str, user: CurrentUser = Depends(current_user)) -> Job
             score_breakdown=_json_object(r["score_breakdown"]),
             width=int(r["width"]),
             height=int(r["height"]),
+            locked=ent.clip_is_locked(int(r["idx"])) if ent is not None else False,
         )
         for r in clip_rows
     ]

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +9,16 @@ import { apiFetch, ApiError } from "@/lib/api";
 import { track } from "@/lib/analytics";
 
 type Job = { id: string };
+
+// API error codes are stable identifiers, not copy. Anything unmapped falls
+// back to the raw code so a new server error is still visible rather than swallowed.
+const ERROR_LABELS: Record<string, string> = {
+  insufficient_credits: "You have no credits left for this billing period.",
+  concurrent_jobs_exceeded: "A job is already running. Wait for it to finish.",
+  clip_count_exceeded: "That is more clips than your plan allows.",
+  no_active_subscription: "You need a plan to create a job.",
+  campaign_not_found: "This campaign no longer exists.",
+};
 
 export function SubmitJobForm({ campaignId }: { campaignId: string }) {
   const router = useRouter();
@@ -70,7 +81,18 @@ export function SubmitJobForm({ campaignId }: { campaignId: string }) {
       <Button type="submit" disabled={busy}>
         {busy ? "Submitting…" : "Submit"}
       </Button>
-      {error && <span className="text-sm text-[var(--color-danger)]">{error}</span>}
+      {error &&
+        (error === "trial_used" ? (
+          <span className="text-sm text-[var(--color-muted-foreground)]">
+            Your free video is used.{" "}
+            <Link href="/app/billing" className="text-[var(--color-foreground)] underline">
+              Pick a plan
+            </Link>{" "}
+            to keep clipping.
+          </span>
+        ) : (
+          <span className="text-sm text-[var(--color-danger)]">{ERROR_LABELS[error] ?? error}</span>
+        ))}
     </form>
   );
 }

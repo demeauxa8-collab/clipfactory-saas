@@ -138,7 +138,7 @@ function Hero() {
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <Link href="/login">
               <Button size="lg">
-                Start clipping
+                Clip a video free
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
@@ -149,7 +149,7 @@ function Hero() {
             </Link>
           </div>
           <p className="mt-6 text-xs text-[var(--color-muted-foreground)]">
-            29€/month · 300 video minutes · no watermark · EU hosted
+            First video free, no card · then 29€/month · no watermark · EU hosted
           </p>
         </div>
       </Container>
@@ -543,7 +543,7 @@ function PricingTeaser() {
             </ul>
             <Link href="/login" className="mt-8 block">
               <Button size="lg" className="w-full">
-                Start with Starter
+                Clip a video free, then decide
               </Button>
             </Link>
             <p className="mt-3 text-center text-xs text-[var(--color-muted-foreground)]">
@@ -613,7 +613,7 @@ function FinalCta() {
         </p>
         <Link href="/login" className="mt-8 inline-flex">
           <Button size="lg">
-            Start clipping
+            Clip a video free
             <ArrowRight className="h-4 w-4" />
           </Button>
         </Link>

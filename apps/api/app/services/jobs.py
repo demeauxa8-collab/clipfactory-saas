@@ -6,6 +6,7 @@ import structlog
 from ..schemas import JobCreate, JobOut
 from . import campaigns as campaigns_svc
 from . import credits as credits_svc
+from . import entitlements
 from . import queue as queue_svc
 
 log = structlog.get_logger()
@@ -20,18 +21,17 @@ class JobError(Exception):
         self.message = message
 
 
-async def _active_subscription(conn: asyncpg.Connection, user_id: str) -> asyncpg.Record | None:
-    return await conn.fetchrow(
-        """
-        select s.*, p.max_video_minutes, p.max_clips_per_video, p.max_concurrent_jobs
-          from subscriptions s
-          join plan_definitions p on p.code = s.plan_code
-         where s.user_id = $1 and s.status in ('trialing', 'active')
-         order by s.current_period_end desc nulls last
-         limit 1
-        """,
+async def _jobs_created(conn: asyncpg.Connection, user_id: str) -> int:
+    """Lifetime job count, including failed ones.
+
+    Failed jobs are refunded in credits but still count here: retrying a broken
+    URL forever must not become a way to farm a free trial.
+    """
+    row = await conn.fetchrow(
+        "select count(*)::int as n from jobs where user_id = $1",
         user_id,
     )
+    return int(row["n"]) if row else 0
 
 
 async def _concurrent_jobs(conn: asyncpg.Connection, user_id: str) -> int:
@@ -90,14 +90,21 @@ async def create_job(
     user_id: str,
     payload: JobCreate,
 ) -> JobOut:
-    sub = await _active_subscription(conn, user_id)
-    if sub is None:
+    ent = await entitlements.load(conn, user_id)
+    if ent is None:
         raise JobError("no_active_subscription", "You need an active subscription to create a job.")
 
-    if payload.target_clip_count > int(sub["max_clips_per_video"]):
+    if payload.target_clip_count > ent.max_clips_per_video:
         raise JobError(
             "clip_count_exceeded",
-            f"Your plan allows up to {sub['max_clips_per_video']} clips per video.",
+            f"Your plan allows up to {ent.max_clips_per_video} clips per video.",
+        )
+
+    max_total = ent.max_jobs_total
+    if max_total is not None and await _jobs_created(conn, user_id) >= max_total:
+        raise JobError(
+            "trial_used",
+            "Your free video has already been used. Pick a plan to keep clipping.",
         )
 
     campaign = await campaigns_svc.get_campaign(
@@ -106,7 +113,7 @@ async def create_job(
     if campaign is None:
         raise JobError("campaign_not_found", "Campaign not found or not owned by you.")
 
-    if await _concurrent_jobs(conn, user_id) >= int(sub["max_concurrent_jobs"]):
+    if await _concurrent_jobs(conn, user_id) >= ent.max_concurrent_jobs:
         raise JobError(
             "concurrent_jobs_exceeded",
             "You already have a job running. Wait for it to finish before starting another.",
@@ -114,6 +121,11 @@ async def create_job(
 
     balance = await credits_svc.get_balance(conn, user_id)
     if balance <= 0:
+        if ent.is_trial:
+            raise JobError(
+                "trial_used",
+                "Your free trial credits are spent. Pick a plan to keep clipping.",
+            )
         raise JobError("insufficient_credits", "You have no credits left for this billing period.")
 
     # V1: we don't probe the URL before queueing. Charge the cheapest plausible

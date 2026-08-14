@@ -38,8 +38,8 @@ const PRICING_FAQ = [
     a: "If ClipFactory cannot process the video, the credits are refunded. If a video is too broken to make good clips, we do not charge for fake output.",
   },
   {
-    q: "Is there a free trial?",
-    a: "Not yet. The first paying customers get a personal onboarding call instead. Reach out at hello@clipfactory.app and we'll set you up.",
+    q: "Can I try it before paying?",
+    a: "Yes. Sign up, paste one video of up to 15 minutes, and ClipFactory runs the whole thing for free: transcription, moment selection, scoring and rendering. You see your actual clips — hooks, scores, timestamps — before spending anything. Downloading the files is what needs a plan.",
   },
   {
     q: "Can I cancel anytime?",
@@ -72,7 +72,7 @@ const PLANS: Plan[] = [
     name: "Starter",
     price: "29€",
     tagline: "For solo creators ready to ship.",
-    cta: "Start with Starter",
+    cta: "Clip a video free, then decide",
     ctaHref: "/login",
     highlighted: true,
     available: true,
