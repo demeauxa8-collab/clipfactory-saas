@@ -328,6 +328,98 @@ async def cmd_collect(args: argparse.Namespace) -> int:
     return 0
 
 
+async def cmd_doctor(args: argparse.Namespace) -> int:
+    """Checks every prerequisite and says what to do about each failure.
+
+    Exists because 'nothing happens' is the worst possible error message: a job
+    sitting in the queue with no worker looks exactly like a job being worked on.
+    """
+    ok = True
+
+    def report(label: str, good: bool, detail: str) -> None:
+        nonlocal ok
+        print(f"  [{'ok' if good else 'XX'}] {label}: {detail}")
+        if not good:
+            ok = False
+
+    try:
+        settings = get_settings()
+    except Exception as exc:
+        print(f"  [XX] config: cannot read settings ({exc})")
+        print("\n     Run this from apps/worker, where the .env file lives.")
+        return 1
+
+    for label, path in (("ffmpeg", settings.ffmpeg_bin), ("yt-dlp", settings.yt_dlp_bin)):
+        found = shutil.which(path)
+        report(label, found is not None, found or f"'{path}' not found in PATH")
+
+    clips_dir = Path(settings.storage_local_dir)
+    report(
+        "clips directory",
+        clips_dir.parent.exists(),
+        str(clips_dir) if clips_dir.parent.exists() else f"{clips_dir.parent} does not exist",
+    )
+
+    try:
+        redis = redis_async.from_url(settings.redis_url, decode_responses=True)
+        await redis.ping()
+        depth = int(await redis.llen(JOBS_QUEUE_KEY))
+        await redis.aclose()
+        report("redis", True, f"reachable, {depth} job(s) waiting in the queue")
+        if depth:
+            print("       jobs are waiting — if this number never drops, the worker is not running")
+    except Exception as exc:
+        report("redis", False, f"unreachable ({exc}) — start it with: redis-server")
+
+    try:
+        pool = await asyncpg.create_pool(settings.database_url, min_size=1, max_size=1)
+        async with pool.acquire() as conn:
+            report("database", True, "connected")
+            row = await conn.fetchrow(
+                "select user_id from profiles where email = $1", args.operator
+            )
+            if row is None:
+                report("operator account", False, f"no account for {args.operator}")
+            else:
+                user_id = str(row["user_id"])
+                plan = await conn.fetchrow(
+                    """
+                    select s.plan_code, pd.max_video_minutes
+                      from subscriptions s
+                      join plan_definitions pd on pd.code = s.plan_code
+                     where s.user_id = $1 and s.status in ('trialing', 'active')
+                     order by s.current_period_end desc nulls last
+                     limit 1
+                    """,
+                    user_id,
+                )
+                if plan is None:
+                    report("plan", False, "no active plan — the worker will refuse every job")
+                else:
+                    report(
+                        "plan",
+                        True,
+                        f"{plan['plan_code']}, videos up to {plan['max_video_minutes']} min",
+                    )
+                    if int(plan["max_video_minutes"]) < 60:
+                        print(
+                            "       longer episodes will fail — see the internal plan "
+                            "in docs/outbound.md"
+                        )
+                bal = await conn.fetchrow(
+                    "select coalesce(sum(delta),0)::int as b from credit_ledger where user_id = $1",
+                    user_id,
+                )
+                credits = int(bal["b"])
+                report("credits", credits > 0, f"{credits} left (1 credit = 1 source minute)")
+        await pool.close()
+    except Exception as exc:
+        report("database", False, f"cannot connect ({exc})")
+
+    print("\nAll good — you can run a batch." if ok else "\nFix the [XX] lines above first.")
+    return 0 if ok else 1
+
+
 def compose_message(prospect: Prospect, clips: list[asyncpg.Record]) -> str:
     """A draft, not a template to send blind — edit the first line per prospect."""
     best = max(clips, key=lambda c: c["score_total"] or 0)
@@ -376,19 +468,31 @@ def compose_message(prospect: Prospect, clips: list[asyncpg.Record]) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    parser.add_argument(
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    # Shared by every subcommand so that `outbound.py run x.json --operator me`
+    # works — putting it on the top-level parser only would force the flag
+    # before the subcommand, which nobody types.
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument(
         "--operator",
         default=os.environ.get("OUTBOUND_OPERATOR_EMAIL", ""),
         help="email of the account the jobs run under (or OUTBOUND_OPERATOR_EMAIL)",
     )
-    sub = parser.add_subparsers(dest="command", required=True)
 
-    run = sub.add_parser("run", help="queue one job per prospect")
+    doctor = sub.add_parser(
+        "doctor", parents=[common], help="check that everything needed is in place"
+    )
+    doctor.set_defaults(func=cmd_doctor)
+
+    run = sub.add_parser("run", parents=[common], help="queue one job per prospect")
     run.add_argument("prospects")
     run.add_argument("--force", action="store_true", help="re-queue prospects already done")
     run.set_defaults(func=cmd_run)
 
-    collect = sub.add_parser("collect", help="gather finished clips into send-ready folders")
+    collect = sub.add_parser(
+        "collect", parents=[common], help="gather finished clips into send-ready folders"
+    )
     collect.add_argument("prospects")
     collect.add_argument("--out", default="./outbound", help="output directory")
     collect.set_defaults(func=cmd_collect)
