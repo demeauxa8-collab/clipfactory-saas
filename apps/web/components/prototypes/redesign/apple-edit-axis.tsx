@@ -559,6 +559,7 @@ export function AppleEditAxis() {
             lensSideMarginPx={apertureMargin}
             lensCenterYRatio={apertureCenterYRatio}
             lensRadiusPx={mobile ? 24 : 31}
+            priority
             className={styles.heroShader}
           />
           <div className={styles.heroShade} aria-hidden="true" />

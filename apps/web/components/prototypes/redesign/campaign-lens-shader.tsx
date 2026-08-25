@@ -1,6 +1,7 @@
 "use client";
 
 import type { MotionValue } from "motion/react";
+import Image from "next/image";
 import * as React from "react";
 
 const VERTEX_SHADER = `
@@ -106,6 +107,7 @@ export type CampaignLensShaderProps = {
   lensSideMarginPx?: number;
   lensCenterYRatio?: number;
   lensRadiusPx?: number;
+  priority?: boolean;
   className?: string;
 };
 
@@ -155,6 +157,7 @@ export function CampaignLensShader({
   lensSideMarginPx,
   lensCenterYRatio = 0.5,
   lensRadiusPx = 27,
+  priority = false,
   className,
 }: CampaignLensShaderProps) {
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -461,6 +464,7 @@ export function CampaignLensShader({
       const image = new window.Image();
       textureImage = image;
       image.decoding = "async";
+      image.fetchPriority = priority ? "high" : "auto";
       if (!imageSrc.startsWith("data:") && !imageSrc.startsWith("blob:")) {
         image.crossOrigin = "anonymous";
       }
@@ -514,6 +518,7 @@ export function CampaignLensShader({
     lensRadiusPx,
     lensSideMarginPx,
     lensWidthPx,
+    priority,
   ]);
 
   return (
@@ -535,18 +540,19 @@ export function CampaignLensShader({
     >
       {/* The semantic image stays mounted below the canvas and is the visual
           fallback for unsupported WebGL, CORS failures, and context loss. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src={imageSrc}
         alt={alt}
-        decoding="async"
+        fill
+        priority={priority}
+        fetchPriority={priority ? "high" : "auto"}
+        unoptimized
+        sizes="100vw"
         style={{
           position: "absolute",
           inset: 0,
           zIndex: 0,
           display: "block",
-          width: "100%",
-          height: "100%",
           objectFit: "cover",
         }}
       />
