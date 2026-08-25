@@ -1,0 +1,43 @@
+.wrapper {
+  border-top: 1px solid var(--cf-line);
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.actions svg {
+  height: 0.85rem;
+  stroke-width: 1.8;
+  width: 0.85rem;
+}
+
+.error,
+.message {
+  font-size: 0.68rem;
+  line-height: 1.4;
+  margin-top: 0.7rem;
+}
+
+.error {
+  color: var(--cf-danger);
+}
+
+.message {
+  color: var(--cf-success);
+}
+
+@media (max-width: 520px) {
+  .actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .actions button:first-child {
+    grid-column: 1 / -1;
+  }
+}
