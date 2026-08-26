@@ -9,7 +9,7 @@
     "tokens": ["app/globals.css"],
     "components": ["components/ui", "components/product"],
     "assets": ["public/prototypes"],
-    "instructions": ["AGENTS.md"]
+    "instructions": ["AGENTS.md", "../../docs/ui-ux-system.md"]
   },
   "design": {
     "colorMode": "dark",
@@ -189,6 +189,7 @@
     "Use Edit Axis as the canonical landing and one calm Apple Pro direction across the product",
     "Use Signal Timeline as the canonical processing direction; keep Continuity and Manuscript only as temporary lab references",
     "Use the account to guided brief to source to first-trial processing to locked teaser to contextual paywall to unlocked result to workspace sequence",
+    "Treat the contextual paywall as an interaction after first-clip playback, never as a separate numbered journey step",
     "Keep the A-to-Z local journey as an interactive QA prototype; production requires a bounded first-job trial and gated outputs before moving the paywall after processing",
     "Use Radix Dialog and Tabs rather than hand-rolling focus and keyboard behavior",
     "Use three semantic campaign chapters rather than seven flat fields",

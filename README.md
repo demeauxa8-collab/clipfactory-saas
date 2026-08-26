@@ -34,7 +34,7 @@ docs/
 | Queue | Redis on the control plane VPS |
 | Billing | Stripe Checkout + webhooks |
 | Hosting | Web on Vercel, API on VPS control plane (OVH/Scaleway), worker on Mac Studio (pull) |
-| LLM | OpenRouter (DeepSeek + Gemini + Qwen), Anthropic Haiku fallback, OpenAI gpt-4o-mini-transcribe |
+| LLM | OpenRouter (`google/gemini-2.5-flash`), Anthropic Haiku fallback, OpenAI `whisper-1` transcription with word timestamps |
 
 ## Pricing — V1
 
@@ -61,4 +61,11 @@ Scheduling, API access, MCP, brand templates, advanced editor, face tracking, an
 
 ## Status
 
-Bootstrapping. See [docs/plan.md](docs/plan.md) for the build order.
+The worker pipeline is validated end-to-end locally. The redesigned web landing and customer-journey QA are deployed on Vercel from `redesign/ui-ux-lab`; they are not merged into `main` yet. The complete SaaS launch still depends on Stripe, R2, the API control plane, the production worker, and the custom-domain cutover.
+
+Start here:
+
+- [docs/handoff-codex.md](docs/handoff-codex.md) — current project state and recovery steps.
+- [docs/ui-ux-system.md](docs/ui-ux-system.md) — canonical customer journey, art direction, components, motion, QA, and frontend file map.
+- [docs/deploy.md](docs/deploy.md) — deployment and custom-domain runbook.
+- [docs/plan.md](docs/plan.md) — original build order and backlog context.

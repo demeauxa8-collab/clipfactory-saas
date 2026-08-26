@@ -14,8 +14,8 @@
 | Anthropic | Fallback LLM (Haiku) | todo |
 | VPS UE (OVH VPS-2 / Scaleway DEV1-M) | API + Redis control plane | todo |
 | Mac Studio (worker) | Transcription + render (modèle pull) | machine possédée |
-| Cloudflare Pages | Web frontend | todo |
-| Domain (`clipfactory.app` or alt) | Public URL | todo |
+| Vercel | Web frontend | ✓ projet `clipfactory-saas`, root `apps/web` |
+| Domain `clipfactory.app` | Public URL | ⚠ ajouté à Vercel, mais encore intercepté par une ancienne configuration Cloudflare |
 
 ## Step 1 — DB ready (already done locally)
 
@@ -98,18 +98,62 @@ Target: 2-3 vCPU / 4 GB, EU (GDPR), Ubuntu 24.04.
 
 > BUILD/TEST phase (before first paying customer): you can run everything on the Mac (API included) behind a **Cloudflare Tunnel**, with no VPS at all. The 5.A/5.B split activates at the first paying customer. See `docs/infrastructure.md` §6.
 
-## Step 6 — Cloudflare Pages (≈ 15 min)
+## Step 6 — Vercel web (current production)
 
-1. Cloudflare → **Workers & Pages → Pages** → connect GitHub → select `clipfactory-saas` repo.
-2. Framework preset: Next.js. Root: `apps/web`. Build command: `npm install && npm run build`.
-3. Environment variables (production):
+The frontend is hosted on Vercel. Cloudflare Pages is no longer the active frontend target.
+
+### Current state — verified 2026-08-26
+
+- Project: `clipfactory-saas`.
+- Git repository: `demeauxa8-collab/clipfactory-saas`.
+- Root directory: `apps/web`.
+- Stable Vercel alias: `https://clipfactory-saas.vercel.app`.
+- Deployed UI commit: `4d8b50d` from branch `redesign/ui-ux-lab`.
+- `origin/main` is still at `f17e129`; the UI deployment was promoted before the branch was merged.
+- Landing and `/preview/journey` return 200. The preview routes are `noindex`.
+
+The commit and branch above are a dated snapshot. Before a new release, verify them with `git status`, `git log --oneline -5`, and the Vercel deployment inspector.
+
+### Configuration
+
+1. Keep framework detection on Next.js and the Vercel root directory on `apps/web`.
+2. Required public environment variables:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `NEXT_PUBLIC_API_URL=https://api.clipfactory.app`
    - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
    - `NEXT_PUBLIC_SITE_URL=https://clipfactory.app`
-4. Custom domain: `clipfactory.app`. Set DNS records as instructed.
-5. ⚠️ Next.js 15 SSR + middleware on Pages requires the **`@cloudflare/next-on-pages`** adapter. If the build fails on first try, follow `https://developers.cloudflare.com/pages/framework-guides/nextjs/ssr/`. Fallback: Vercel (zero friction, free tier covers V1).
+   - `NEXT_PUBLIC_TURNSTILE_SITE_KEY` once Turnstile is activated
+3. Never put Supabase service role, Stripe secret, R2 secret, OpenAI, OpenRouter, or Anthropic keys in the web project.
+4. Run `npm run typecheck` and `npm run build` from `apps/web` before pushing.
+5. Verify `/`, `/login`, `/preview/journey`, security headers, and the production build before promotion.
+
+### Git and promotion rule
+
+The intended steady state is a production deployment from `main`. The current feature-branch promotion is temporary. Do not assume that a green Vercel alias means the code is present on `main`.
+
+Before the next production promotion:
+
+1. review the exact diff against `origin/main` ;
+2. preserve unrelated untracked assets and agent files ;
+3. obtain Augustin's authorization before committing or pushing ;
+4. merge or deliberately promote the reviewed SHA ;
+5. record the final SHA and deployment URL in `docs/handoff-codex.md`.
+
+### Custom domain: Cloudflare collision
+
+As of 2026-08-26, `clipfactory.app` still serves the historical orange landing through Cloudflare even though the domain is attached to Vercel. This is not a Vercel build problem: an older Cloudflare Worker/Pages route or proxy configuration intercepts the request before it reaches the Vercel alias.
+
+Cutover procedure:
+
+1. In Cloudflare, identify the exact Worker route, Pages custom domain, redirect rule, or proxy rule serving `clipfactory.app` and `www.clipfactory.app`.
+2. Detach only that historical route after checking that it is no longer needed. Do not delete unrelated Cloudflare services.
+3. Point the apex to Vercel with `A clipfactory.app 76.76.21.21`.
+4. Point `www` as instructed by Vercel, usually a CNAME, or use the exact record shown in the Vercel domain panel.
+5. Use DNS-only during diagnosis if the Cloudflare proxy keeps masking the origin.
+6. Verify both hosts with `curl -I`, inspect the returned HTML title, and confirm that the new graphite landing is served before announcing the domain.
+
+Cloudflare mutations require an explicit, exact-target review. Do not remove a broad zone, Worker, or Pages project merely to make the domain resolve.
 
 ## Step 7 — Supabase auth callback whitelist
 
@@ -175,7 +219,7 @@ See `docs/handoff-codex.md` section "Smoke test". To validate the full flow befo
 
 If a deploy breaks prod:
 
-1. Cloudflare Pages: revert to the previous deployment in the **Deployments** tab — instant.
+1. Vercel: promote the previous known-good deployment from the project **Deployments** view.
 2. API: `git checkout <previous-tag> && systemctl restart clipfactory-api clipfactory-worker`.
 3. DB: migrations are forward-only. To "undo" 0004 (`is_admin`), write `0005_revert_admin.sql` rather than editing 0004.
 4. Stripe: webhook events are idempotent thanks to `stripe_events.event_id` PK — replays are safe.

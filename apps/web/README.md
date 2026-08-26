@@ -21,6 +21,8 @@ npm run dev                   # http://localhost:3000
 | `/auth/callback`, `/auth/signout` | Auth flow plumbing |
 | `/app`, `/app/campaigns/*`, `/app/jobs/*`, `/app/billing` | User dashboard (protected) |
 | `/admin`, `/admin/users`, `/admin/jobs`, `/admin/finance` | Operator dashboard (is_admin only) |
+| `/preview/journey` | End-to-end customer journey QA, no API or charge |
+| `/preview/redesign`, `/preview/processing` | Historical design and motion labs (`noindex`) |
 | `/sitemap.xml`, `/robots.txt`, `/opengraph-image` | SEO |
 
 ## Auth model
@@ -33,7 +35,34 @@ API calls from client components go through `lib/api.ts` (`apiFetch`) which forw
 
 ## Styling
 
-Tailwind v4 (CSS-first, no `tailwind.config.js`). Tokens are defined in `app/globals.css` under `@theme`. Components live in `components/ui/` (button, container, input) and `components/marketing/`.
+The canonical UI/UX specification is [`../../docs/ui-ux-system.md`](../../docs/ui-ux-system.md). Read it before changing the landing, onboarding, processing, paywall, result, or workspace.
+
+Tailwind v4 is CSS-first; there is no `tailwind.config.js`.
+
+- Global tokens: `app/globals.css` under `@theme`.
+- Product aliases and shared chrome: `app/product.css`.
+- Accessible primitives: `components/ui/`.
+- Product primitives: `components/product/`.
+- Canonical landing: `components/prototypes/redesign/apple-edit-axis.tsx` and `edit-axis-story.tsx`.
+- Canonical processing: `components/prototypes/processing/signal-timeline.tsx`.
+- Machine-readable decisions: `.21st/design.json`.
+
+The visual direction is Apple Pro / Final Cut-inspired graphite with one action blue (`#0071e3`). Campaign intent, source timecode, transcript words, visible proof, and the delivered clip must remain connected. Do not reintroduce orange branding, multiple blues, purple mesh gradients, generic metric-card dashboards, fake progress, or decorative infinite motion.
+
+## UI preview and state QA
+
+```text
+/preview/journey
+/preview/journey?screen=brief&state=error
+/preview/journey?lab=1
+/preview/processing?v=3&state=loading
+/preview/processing?v=3&state=error
+/preview/redesign?v=6&clean=1
+```
+
+The guided journey has six visible stages: sign in, campaign, source, build, review, and workspace. The contextual paywall appears when the first ready clip is played; it is not a separate numbered stage.
+
+Before handing off a UI change, verify keyboard navigation, reduced motion, loading/empty/error/success, long copy, and screenshots at 390px and 1440px.
 
 ## Build
 

@@ -3,7 +3,7 @@
 > **Pour Codex (ou tout autre agent) qui reprend ce projet sans contexte.**
 > Tout ce qu'il faut savoir tient dans ce doc + les docs cités ci-dessous.
 
-Dernière mise à jour : 2026-08-07 (ancrage des coupes + paysage modèles mesuré). Auteurs : Augustin (founder), Claude Code, Codex.
+Dernière mise à jour : 2026-08-26 (parcours UI/UX A à Z, direction Apple Pro, Vercel et documentation de transmission). Auteurs : Augustin (founder), Claude Code, Codex.
 
 ---
 
@@ -16,26 +16,30 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 
 **État du code** : V1 fonctionnellement complète et **pipeline validée end-to-end en local** (2026-07-04 → 08 : vrais clips générés depuis l'UI web, ~7 cents/job). Montage-v2 livré (assemblage multi-segments, transitions conscientes de la continuité, cadrage face-crop par segment, captions FR karaoké, sélection campaign-driven), puis **ancrage des coupes sur le transcript** le 2026-08-07 — le correctif le plus important à ce jour, voir le journal. La prod API/worker reste bloquée par les comptes externes et l'hébergement (control plane VPS + worker Mac Studio — voir `docs/infrastructure.md`).
 
-**État Git/Vercel le plus récent (2026-08-07)** :
-- `main` synchronisé avec origin. Derniers commits clés : `7463048` (passe qualité rendu), `5255a96` (montage-v2), `5650df3`+`6fe7efb` (survie du web à un Supabase en pause + keepalive), **`66d21b0` (ancrage des coupes sur le transcript)**.
-- Production Vercel : `https://clipfactory-saas.vercel.app` (dashboard preview sans login : `/preview/dashboard`). Domaines ajoutés au projet Vercel, DNS toujours pas configuré.
-- Branches locales à trier : `draft/parallel-workers` (1 gros commit wip : fleet workers parallèles + `0005_job_leasing.sql` à renuméroter + 14 skills `.claude/` + scripts deploy VPS/Caddy/systemd — **n'existe QUE sur ce Mac**, plus sur origin) ; `deploy/hetzner-setup` (1 commit doc blocage Hetzner) ; `infra/vps-bootstrap`, `redesign/apple-premium`, `redesign/beige` = entièrement dans main, supprimables. Deux worktrees (`~/clipfactory-redesign`, `~/clipfactory-beige`) contiennent du travail non commité (marketing + `docs/clip-judge.md`).
+**État Git/Vercel le plus récent (2026-08-26)** :
+- Le redesign vit dans le worktree `/Users/augustindemeaux/Documents/Codex/2026-08-21/clipfactory-ui-redesign`, branche `redesign/ui-ux-lab`.
+- Commits UI : `2081513` (parcours campaign-first complet) puis `4d8b50d` (priorité/LCP du hero cinématique). `origin/main` et `main` restent à `f17e129` : **le redesign n'est pas encore mergé**.
+- Production Vercel promue sur `4d8b50d` : `https://clipfactory-saas.vercel.app`. Parcours QA : `/preview/journey`. Landing et journey vérifiées en 200.
+- `clipfactory.app` reste intercepté par une ancienne configuration Cloudflare et sert encore l'ancienne landing orange. Le diagnostic et la procédure de cutover vivent dans `docs/deploy.md`.
+- Le worktree contient des fichiers locaux non suivis (`.21st/`, `.cursor/`, `AGENTS.md`, `CLAUDE.md` et PNG source). Ils ne font pas partie du redesign commité. Préserver ces fichiers et utiliser un staging ciblé ; jamais `git add -A`.
+- Augustin demande une autorisation explicite avant chaque commit/push. Il a autorisé le commit et le push ciblés des mises à jour documentaires du 2026-08-26 ; cette autorisation ne couvre pas les autres fichiers locaux.
 
 **Source de vérité** :
 1. Ce fichier (`docs/handoff-codex.md`) → état d'avancement
-2. `docs/v1-scope.md` → ce qui est IN/OUT en V1
-3. `docs/pipeline.md` → séquencement worker (2 chemins simple/story)
-4. `docs/api-contract.md` → tous les endpoints + payloads
-5. `docs/db-schema.md` → invariants DB + toutes migrations
-6. `docs/admin.md` → dashboard admin
-7. `docs/seo.md` → stratégie SEO et fichiers concernés
-8. `docs/security-audit.md` → audit + 3 High fixés
-9. `docs/deploy.md` → runbook deploy step-by-step
-10. `docs/global-video-understanding.md` → fondations conceptuelles story-first
-11. `docs/unit-economics.md` → crédits, prix API, VPS, marge, seuils de décision
-12. `docs/infrastructure.md` → **archi infra adoptée** : control plane VPS (OVH/Scaleway) + worker Mac Studio (pull)
-13. `docs/pipeline-improvements.md` → roadmap qualité worker (briques 1-6 livrées, 7-11 à faire)
-14. `docs/model-landscape.md` → **quel modèle à quel étage, chiffré sur appels réels** (vidéo/audio natif, clip-judge, transcription). À relire avant tout changement de modèle.
+2. `docs/ui-ux-system.md` → **parcours canonique, DA, composants, motion, états, QA et carte frontend**
+3. `docs/v1-scope.md` → ce qui est IN/OUT en V1
+4. `docs/pipeline.md` → séquencement worker (2 chemins simple/story)
+5. `docs/api-contract.md` → tous les endpoints + payloads
+6. `docs/db-schema.md` → invariants DB + toutes migrations
+7. `docs/admin.md` → dashboard admin
+8. `docs/seo.md` → stratégie SEO et fichiers concernés
+9. `docs/security-audit.md` → audit + 3 High fixés
+10. `docs/deploy.md` → runbook Vercel, domaine, API et worker
+11. `docs/global-video-understanding.md` → fondations conceptuelles story-first
+12. `docs/unit-economics.md` → crédits, prix API, VPS, marge, seuils de décision
+13. `docs/infrastructure.md` → **archi infra adoptée** : control plane VPS (OVH/Scaleway) + worker Mac Studio (pull)
+14. `docs/pipeline-improvements.md` → roadmap qualité worker (briques 1-6 livrées, 7-11 à faire)
+15. `docs/model-landscape.md` → **quel modèle à quel étage, chiffré sur appels réels** (vidéo/audio natif, clip-judge, transcription). À relire avant tout changement de modèle.
 
 ---
 
@@ -71,7 +75,7 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 
 | Couche | Choix | Notes |
 | --- | --- | --- |
-| Frontend | Next.js 15 App Router + TS strict + Tailwind v4 + shadcn-style components | Vercel connecté pour preview/prod web. Cloudflare Pages reste une option plus tard |
+| Frontend | Next.js 15 App Router + TS strict + Tailwind v4 + shadcn-style components | Vercel est la cible preview/prod. Cloudflare Pages n'est pas le frontend actif |
 | Backend API | FastAPI 0.115 + asyncpg + pydantic-settings + slowapi | Control plane : petit VPS UE (OVH/Scaleway) derrière Caddy |
 | Worker | Python 3.11 + yt-dlp + FFmpeg + httpx + anthropic + openai + Pillow | Mac Studio (modèle pull : va chercher les jobs dans le Redis du VPS) |
 | DB + Auth | Supabase Postgres 15 + magic-link OTP | Free tier au démarrage |
@@ -96,8 +100,9 @@ ClipFactory est un **SaaS web** qui transforme des vidéos longues YouTube en **
 ## 3. Layout monorepo
 
 ```
-/Users/augustindemeaux/clipfactory-saas/      (local)
-github.com/demeauxa8-collab/clipfactory-saas  (remote)
+/Users/augustindemeaux/Documents/ChatGPT/clips factory saas pricp/             (checkout canonique)
+/Users/augustindemeaux/Documents/Codex/2026-08-21/clipfactory-ui-redesign/     (worktree redesign actif)
+github.com/demeauxa8-collab/clipfactory-saas                                   (remote)
 
 ├── README.md
 ├── .gitignore                       (ignore .env, .env.local, .venv, node_modules…)
@@ -189,13 +194,14 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
     ├── admin.md                     Dashboard admin
     ├── seo.md                       Stratégie SEO + fichiers
     ├── security-audit.md            Audit + 3 High fixés
-    ├── deploy.md                    Runbook deploy
+    ├── deploy.md                    Runbook Vercel + domaine + API/worker
+    ├── ui-ux-system.md              Parcours, DA, motion, composants et QA web
     └── global-video-understanding.md  Fondations story-first
 ```
 
 ---
 
-## 4. État d'avancement (au 2026-07-08)
+## 4. État d'avancement (au 2026-08-26)
 
 **Légende :** `[x]` fait — `[~]` en cours — `[ ]` à faire.
 
@@ -229,8 +235,8 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - [~] **T30.** External services setup — OpenAI ✓ (whisper-1 opérationnel) + OpenRouter ✓ (gemini-2.5-flash opérationnel) ; restent Stripe, R2, Anthropic (fallback), Turnstile
 - [~] **T31.** Smoke test end-to-end — **pipeline validée en local 2026-07-04→08** (vrais jobs via l'UI web : YouTube → 3 clips, ~7 cents/job, storage local). Reste : Stripe réel, R2, exécution Playwright complète en prod
 - [~] **T32.** Production deploy (Vercel web + VPS control plane + worker Mac Studio) — see `docs/deploy.md` + `docs/infrastructure.md`
-  - [x] Web Vercel production deployed from `main`: `https://clipfactory-saas.vercel.app`
-  - [ ] Custom DNS for `clipfactory.app`
+  - [x] Web Vercel production deployed at `https://clipfactory-saas.vercel.app` ; redesign currently promoted from `redesign/ui-ux-lab` commit `4d8b50d`, not yet merged into `main`
+  - [~] Custom domain `clipfactory.app` attached to Vercel but still intercepted by an old Cloudflare route/site
   - [ ] Control plane VPS (OVH/Scaleway) deploy + worker Mac Studio (pull) deploy
 - [x] **T33.** Address 5 Medium security findings before opening to public (`docs/security-audit.md`)
 - [x] **T34.** Marketing + dashboard polish for review
@@ -247,8 +253,9 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - [~] **T36.** Custom domain setup
   - [x] Added `clipfactory.app` to Vercel project.
   - [x] Added `www.clipfactory.app` to Vercel project.
-  - [ ] Configure DNS: `A clipfactory.app 76.76.21.21`.
-  - [ ] Configure DNS: `A www.clipfactory.app 76.76.21.21` or switch nameservers to `ns1.vercel-dns.com` / `ns2.vercel-dns.com`.
+  - [ ] Detach the exact historical Cloudflare Worker/Pages route currently serving the old orange landing.
+  - [ ] Configure/verify apex DNS: `A clipfactory.app 76.76.21.21`.
+  - [ ] Configure `www` with the exact Vercel domain-panel record and verify both hosts end-to-end.
 - [x] **T37.** Décision archi infra : control plane VPS (OVH/Scaleway) + worker Mac Studio (pull), `docs/infrastructure.md`, adopté 2026-06. Remplace l'option Hetzner (abandonnée pour KYC).
 - [x] **T38.** Améliorations qualité worker mergées dans `main` : snapping des bords (`boundaries.py`), loudnorm -14 LUFS, gate QC post-rendu, sous-titres karaoké, persist `why` par segment (+ tests `test_boundaries.py` / `test_captions.py`). Roadmap restante : `docs/pipeline-improvements.md` (briques 6-11).
 - [x] **T39.** Migration 0005 (`analytics_events` + vue `analytics_daily`) appliquée + dashboards refaits (voir journal 2026-06-23). ⚠️ La branche locale `draft/parallel-workers` contient un AUTRE fichier `0005_job_leasing.sql` — renuméroter en 0006 si repris.
@@ -262,6 +269,8 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - [ ] **T47.** Rendu ffmpeg : passer à un seul encodage (`filter_complex`) au lieu du double encodage actuel (intermédiaires + concat), et ajouter les gestes de monteur manquants (punch-in sur la punchline, cadrage qui varie entre segments, trim des silences).
 - [ ] **T48.** Contrôle au démarrage du worker : vérifier que chaque modèle configuré existe encore dans `/api/v1/models`.
 - [ ] **T49.** Benchmark des 9 modèles texte pour la composition des arcs (harnais prêt : `~/clipfactory-data/bench/bench_arcs.py`).
+- [x] **T50.** Redesign UI/UX campaign-first complet sur `redesign/ui-ux-lab` : landing `Edit Axis`, récit marketing, parcours compte → brief → source → `SignalTimeline` → teaser/paywall contextuel → résultat → workspace. Déployé sur Vercel au commit `4d8b50d`, pas encore mergé dans `main`.
+- [x] **T51.** Documentation frontend canonique ajoutée dans `docs/ui-ux-system.md` et handoff/deploy/readmes réconciliés. Commit/push documentaire ciblé autorisé par Augustin le 2026-08-26.
 
 ---
 
@@ -436,15 +445,29 @@ Livré : `boundaries.anchor_arcs_to_transcript()` (relocalise chaque fenêtre su
 
 **Savoir-faire de clippeur encodé dans le prompt** (à partir de références fournies par Augustin, transcrits dans `~/clipfactory-data/bench/craft-refs/`) : le hook doit **promettre sans révéler** (mettre la punchline dans les 2 premières secondes referme la boucle — c'est l'argument même du montage setup→payoff) ; 5 formules de hook (erreur, contre-intuitif, transformation, avertissement, secret) ; enjeux et spécificité chiffrée ; rejet des salutations et auto-présentations ; le hook **visuel** compte autant que le verbal.
 
+### 2026-08-25 → 2026-08-26 — Redesign UI/UX A à Z, motion et Vercel
+
+- **Direction retenue** : Apple Pro / Final Cut plutôt qu'une landing SaaS générique. Graphite neutre, SF Pro/system stack, un seul bleu `#0071e3`, coins concentriques, lumière localisée et glass limité. L'ancienne DA orange/champagne n'est plus canonique.
+- **Concept directeur** : le `Source Thread` relie campaign brief, source, transcript, timecode, image visible, score/rationale et clip livré. Le résultat ne doit jamais paraître « généré par magie » hors contexte.
+- **Landing canonique** : `AppleEditAxis` sur `/`. Hero d'éditeur avec message, aperture 9:16, inspector de campagne et timeline sous un même playhead. `CampaignLensShader` conserve la couleur dans la lentille et désature le contexte ; l'image sémantique Next.js reste le fallback WebGL. `EditAxisStory` déroule story, campagne, preuve, workflow, fiabilité, pricing, FAQ et closing.
+- **Parcours canonique** : compte → brief en trois chapitres → URL source → processing immersif → premier clip prêt → clic lecture → teaser 3 s et paywall contextuel → review → workspace. Le paywall n'est pas une étape numérotée séparée.
+- **Processing retenu** : `SignalTimeline` (7 événements compréhensibles, sans faux pourcentage ni fausse ETA). `SourceCut`/`ProofManuscript` restent des directions de lab.
+- **Composants** : Radix Dialog/Tabs pour focus/clavier ; Motion pour transitions guidées ; player de production adapté d'un composant 21st.dev ; carousel Originkit uniquement dans le lab ; shader de lentille écrit sur mesure pour garantir la synchronisation géométrique.
+- **États et accessibilité** : default/loading/empty/error/success, état long du processing, 390 px, clavier, focus visible, reduced motion/transparency et high contrast intégrés aux surfaces canoniques.
+- **Publication** : commits `2081513` puis `4d8b50d` sur `redesign/ui-ux-lab`, production Vercel promue et vérifiée sur `https://clipfactory-saas.vercel.app`. Lighthouse production : landing 95/100/100/100, journey 97/100/100 (SEO 66 volontaire car `noindex`).
+- **Domaine** : `clipfactory.app` sert encore l'ancienne landing orange à cause d'une interception Cloudflare historique. Ne pas modifier la zone à l'aveugle ; suivre `docs/deploy.md`.
+- **Documentation** : ajout de `docs/ui-ux-system.md`, mise à jour du handoff, du runbook Vercel et des README. Augustin a autorisé le commit/push documentaire ciblé le 2026-08-26.
+
 ---
 
-## 6. Services externes (état au 2026-07-08)
+## 6. Services externes (état au 2026-08-26)
 
 | Service | État | Crédentiels |
 | --- | --- | --- |
 | **Supabase EU** | ✓ projet `jsjaizcnjvghoduvyyea` ("clipfactory", org AX). Migrations 0001-**0005** appliquées. | `.env` rempli (URL, anon, service_role, JWT secret, DATABASE_URL via pooler). Worker : `statement_cache_size=0` obligatoire (pgbouncer) |
-| **GitHub** | ✓ repo `demeauxa8-collab/clipfactory-saas` connecté à Vercel. PR #1 mergée dans `main`. | `gh` connecté comme `demeauxa8-collab` |
-| **Vercel web** | ✓ projet `clipfactory-saas`, root `apps/web`, prod OK sur `https://clipfactory-saas.vercel.app`. | Env publics Supabase/API/Stripe/SITE configurés. `NEXT_PUBLIC_TURNSTILE_SITE_KEY` manque encore |
+| **GitHub** | ✓ repo `demeauxa8-collab/clipfactory-saas` connecté à Vercel. `main`/`origin/main` à `f17e129`; redesign local sur `redesign/ui-ux-lab`, non mergé. | `gh` connecté comme `demeauxa8-collab` |
+| **Vercel web** | ✓ projet `clipfactory-saas`, root `apps/web`, prod `https://clipfactory-saas.vercel.app` promue sur `4d8b50d`. | Env publics Supabase/API/Stripe/SITE configurés. `NEXT_PUBLIC_TURNSTILE_SITE_KEY` manque encore |
+| **Cloudflare DNS/web** | ⚠ `clipfactory.app` et `www` sont attachés à Vercel, mais une ancienne route Worker/Pages sert encore la landing orange. | Inspecter puis détacher la cible exacte ; voir `docs/deploy.md` |
 | **OpenAI** | ✓ **opérationnel** (transcription whisper-1 validée sur vrais jobs) | clé dans `worker/.env` |
 | **OpenRouter** | ✓ **opérationnel** (gemini-2.5-flash texte + vision, `reasoning:{max_tokens:0}` obligatoire) | clé dans `worker/.env` |
 | **Redis** | ✓ local (dev) — queue `clipfactory:jobs:queue` | `redis://localhost:6379/0` ; en prod : Redis du VPS |
@@ -454,8 +477,8 @@ Livré : `boundaries.anchor_arcs_to_transcript()` (relocalise chaque fenêtre su
 | **Anthropic** | À créer (fallback désactivé : `ENABLE_FALLBACK=false`) | `TODO` |
 | **VPS control plane** (OVH/Scaleway) | À provisionner | API + Redis + Caddy ; UE (GDPR). Hetzner abandonné (KYC) |
 | **Worker Mac Studio** | Machine possédée | Transcription + render, modèle pull (va chercher les jobs dans le Redis du VPS) |
-| **Domain** | Ajouté dans Vercel, DNS pas configuré | `clipfactory.app`, `www.clipfactory.app` |
-| **Cloudflare Pages** | Optionnel / plus tard | Vercel est le chemin web actuel |
+| **Domain** | Ajouté dans Vercel ; cutover incomplet car l'ancien service Cloudflare répond encore | `clipfactory.app`, `www.clipfactory.app` |
+| **Cloudflare Pages** | Legacy / non actif pour le nouveau frontend | Ne pas y déployer le redesign ; Vercel est le chemin web actuel |
 
 Étapes détaillées dans `docs/deploy.md`.
 
@@ -589,18 +612,21 @@ COST_TEXT_CENTS_PER_1K_TOKENS=0.03
 
 1. **Lire ce doc en entier**, sections 1 à 7. Section 4 = état actuel des tâches.
 2. **Lire en complément** :
+   - `docs/ui-ux-system.md` avant toute modification landing, onboarding, processing, paywall, résultat ou workspace
    - `docs/v1-scope.md` pour le périmètre
    - `docs/pipeline.md` pour le worker
    - `docs/api-contract.md` pour les endpoints
    - `docs/security-audit.md` pour les fixes en cours et le pre-prod checklist
-3. **Vérifier l'état Git** : `git status` + `git log --oneline -20` sur le repo `/Users/augustindemeaux/clipfactory-saas`.
+3. **Vérifier l'état Git** : `git status` + `git log --oneline -20`. Le redesign courant vit dans `/Users/augustindemeaux/Documents/Codex/2026-08-21/clipfactory-ui-redesign`; confirmer le worktree et la branche au lieu de supposer le chemin.
 4. **Lancer la prochaine tâche `[ ]`** dans la section 4 (par ordre numérique).
 5. **Avant d'éditer un fichier**, le lire (ne jamais écraser sans connaître l'existant).
 6. **À chaque étape terminée** :
    - Cocher `[x]` dans section 4
    - Ajouter une entrée datée au journal section 5 (append-only, ne pas supprimer l'historique)
-   - Commit avec message conventional : `feat(api): ...`, etc.
+   - Montrer le diff et demander l'autorisation d'Augustin avant tout commit/push. Une fois autorisé, utiliser un message conventional ciblé : `feat(web): ...`, `docs(web): ...`, etc.
 7. **Si bloqué** : ajouter une entrée en section 11 "Blockers" et stopper proprement avec un message clair.
+
+Pour une tâche UI, annoncer la lecture produit en une phrase, charger `uikit`, partir d'une référence réelle, réutiliser les tokens/composants, puis vérifier visuellement à 390 px et 1440 px. Le protocole détaillé est dans `docs/ui-ux-system.md`.
 
 ---
 
@@ -639,11 +665,12 @@ Aucun blocker code : tout compile (`npx tsc --noEmit` OK, ruff OK, imports Pytho
 - Cloudflare Turnstile site key + secret key
 
 **Bloqueurs de prod live** :
-- Web Vercel prod OK, mais ne pas considérer le SaaS complet "live" tant que l'API (VPS) + worker (Mac Studio) ne tournent pas.
-- `clipfactory.app` ne résout pas encore : DNS à configurer (`A clipfactory.app 76.76.21.21`, `A www.clipfactory.app 76.76.21.21`) ou nameservers Vercel.
+- Web Vercel prod OK sur `clipfactory-saas.vercel.app`, mais ne pas considérer le SaaS complet "live" tant que l'API (VPS) + worker (Mac Studio) ne tournent pas.
+- `clipfactory.app` résout, mais vers l'ancienne expérience orange servie par une configuration Cloudflare historique. Inspecter et détacher la route Worker/Pages exacte, puis vérifier les enregistrements Vercel. Voir `docs/deploy.md`.
+- Le redesign de production est promu depuis `redesign/ui-ux-lab` (`4d8b50d`) et n'est pas encore mergé dans `main` (`f17e129`). Faire review + autorisation d'Augustin avant commit/merge/push.
 - `NEXT_PUBLIC_API_URL` devra pointer vers `https://api.clipfactory.app` après le déploiement du VPS control plane + DNS.
 - Smoke E2E Playwright doit attendre Stripe/R2/LLM/API/worker réellement branchés.
-- Local worktree peut contenir des docs non commités autour des marges/VPS. Avant de coder, faire `git status` et ne pas écraser ces modifications.
+- Le worktree UI contient des fichiers locaux non suivis, dont des PNG source et des fichiers agent. Avant de coder, faire `git status`, préserver ces fichiers et ne jamais utiliser `git add -A`.
 
 **Questions ouvertes (à arbitrer plus tard)** :
 - Domain final → `clipfactory.app` proposé
@@ -661,6 +688,11 @@ Aucun blocker code : tout compile (`npx tsc --noEmit` OK, ruff OK, imports Pytho
 - Ne pas éditer une migration déjà mergée. Toujours nouvelle migration `0005_*.sql`.
 - Ne pas ajouter de feature non listée dans `docs/v1-scope.md` sans recadrer le scope avec Augustin.
 - Ne pas privilégier l'UI sur la pipeline. Règle hard : si choix → toujours pipeline fiable d'abord.
+- Ne pas modifier l'UI sans lire `docs/ui-ux-system.md` et charger `uikit`.
+- Ne pas réintroduire la DA orange, plusieurs bleus, un hero purple-mesh, des cartes métriques génériques ou une boucle décorative infinie.
+- Ne pas faire du paywall une étape numérotée : il apparaît contextuellement quand l'utilisateur essaie de lire le premier clip prêt.
+- Ne pas activer une direction de lab (`SourceCut`, `ProofManuscript`, `DitherReveal`, `CursorRingField`) sur une route canonique sans décision explicite.
+- Ne pas committer ou pousser sans l'autorisation d'Augustin ; préparer un diff/staging ciblé et le faire relire.
 - Ne pas hardcoder de modèle LLM dans le code worker — passer par env (`PRIMARY_TEXT_MODEL`, etc.).
 - Ne pas écrire des prompts qui mettent les inputs user directement dans le prompt. Toujours `sanitize_campaign` + `--- BEGIN BRIEF ---` delimiters.
 - Ne pas désactiver les triggers RLS Supabase. Le client (anon/auth) doit toujours passer par les policies.
