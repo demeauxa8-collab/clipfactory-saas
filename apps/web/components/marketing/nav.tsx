@@ -24,7 +24,7 @@ export function MarketingNav() {
             <Link
               key={item.href}
               href={item.href as never}
-              className="hidden h-9 items-center rounded-full px-3.5 text-sm text-[var(--color-muted-foreground)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[var(--color-muted)] hover:text-[var(--color-foreground)] md:inline-flex"
+              className="hidden h-9 items-center rounded-full px-3.5 text-sm text-[var(--color-muted-foreground)] transition-[background-color,color,transform] duration-150 ease-out hover:-translate-y-0.5 hover:bg-[var(--color-muted)] hover:text-[var(--color-foreground)] md:inline-flex"
             >
               {item.label}
             </Link>
@@ -35,7 +35,7 @@ export function MarketingNav() {
               Sign in
             </Button>
           </Link>
-          <Link href="/login">
+          <Link href="/login?next=/app/campaigns/new">
             <Button size="sm">Start clipping</Button>
           </Link>
         </nav>

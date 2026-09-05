@@ -73,7 +73,7 @@ export default function AgenciesUseCasePage() {
         ]}
       />
       <MarketingNav />
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         {/* Hero */}
         <section className="border-b border-[var(--color-border)]">
           <Container className="max-w-5xl py-20">
@@ -85,8 +85,9 @@ export default function AgenciesUseCasePage() {
               Turn client videos into short clips faster.
             </h1>
             <p className="mt-4 max-w-2xl text-lg text-[var(--color-muted-foreground)]">
-              Create one brief per client, process long videos, and get vertical clips with
-              captions, scores and clear reasons. Built to protect agency margin.
+              Create one brief per client, process long videos, and get vertical
+              clips with captions, scores and clear reasons. Built to protect
+              agency margin.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="mailto:hello@clipfactory.app?subject=Agency%20pilot">
@@ -179,10 +180,14 @@ export default function AgenciesUseCasePage() {
                   Three clips. Three clear reasons.
                 </h2>
                 <p className="mt-4 text-[var(--color-muted-foreground)]">
-                  Walk into the brand review with the score on screen: hook, emotion, visual
-                  proof, fit and editing difficulty. Less subjective debate.
+                  Walk into the brand review with the score on screen: hook,
+                  emotion, visual proof, fit and editing difficulty. Less
+                  subjective debate.
                 </p>
-                <Link href="mailto:hello@clipfactory.app?subject=Agency%20pilot" className="mt-6 inline-flex">
+                <Link
+                  href="mailto:hello@clipfactory.app?subject=Agency%20pilot"
+                  className="mt-6 inline-flex"
+                >
                   <Button>
                     Book a pilot call
                     <ArrowRight className="h-4 w-4" />
@@ -217,8 +222,8 @@ export default function AgenciesUseCasePage() {
               Pilot it on one client this month.
             </h2>
             <p className="mt-3 text-[var(--color-muted-foreground)]">
-              Starter handles a first client; the Agency plan opens with API access and team
-              workspaces in Q3.
+              Starter handles a first client; the Agency plan opens with API
+              access and team workspaces in Q3.
             </p>
             <Link
               href="mailto:hello@clipfactory.app?subject=Agency%20pilot"

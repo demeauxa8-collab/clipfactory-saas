@@ -2,14 +2,19 @@
 
 import * as React from "react";
 import Script from "next/script";
-import { useSearchParams } from "next/navigation";
+import { Check, ShieldAlert } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { track } from "@/lib/analytics";
+import { safeProtectedPath } from "@/lib/auth/redirect";
+import styles from "./login.module.css";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
 
 type TurnstileWidgetId = string;
 
@@ -24,7 +29,7 @@ declare global {
           callback: (token: string) => void;
           "error-callback": () => void;
           "expired-callback": () => void;
-        }
+        },
       ) => TurnstileWidgetId;
       execute: (widgetId: TurnstileWidgetId) => void;
       reset: (widgetId: TurnstileWidgetId) => void;
@@ -35,7 +40,7 @@ declare global {
 export function LoginForm({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string; error?: string }>;
+  searchParams: { next?: string; error?: string; auth?: string };
 }) {
   const [email, setEmail] = React.useState("");
   const [status, setStatus] = React.useState<
@@ -46,38 +51,36 @@ export function LoginForm({
   >("idle");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [turnstileReady, setTurnstileReady] = React.useState(false);
+  const emailInputRef = React.useRef<HTMLInputElement | null>(null);
+  const focusEmailOnIdleRef = React.useRef(false);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
   const widgetIdRef = React.useRef<TurnstileWidgetId | null>(null);
   const turnstilePromiseRef = React.useRef<{
     resolve: (token: string) => void;
     reject: (error: Error) => void;
   } | null>(null);
-  const params = useSearchParams();
-  const initialError = params.get("error");
+  const initialError = searchParams.error;
   // Set by the middleware when it bounced us here because Supabase was
   // unreachable — the visitor may well still have a valid session.
-  const authUnavailable = params.get("auth") === "unavailable";
-  const turnstileEnabled = TURNSTILE_SITE_KEY !== "" && TURNSTILE_SITE_KEY !== "TODO";
-
-  // Awaited searchParams support (Next.js 15 returns a Promise in some contexts)
-  const [resolved, setResolved] = React.useState<{ next?: string; error?: string }>({});
-  React.useEffect(() => {
-    let cancelled = false;
-    searchParams.then((s) => {
-      if (!cancelled) setResolved(s ?? {});
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [searchParams]);
+  const authConfigured = SUPABASE_URL !== "" && SUPABASE_ANON_KEY !== "";
+  const authUnavailable =
+    searchParams.auth === "unavailable" || !authConfigured;
+  const turnstileEnabled =
+    TURNSTILE_SITE_KEY !== "" && TURNSTILE_SITE_KEY !== "TODO";
+  const shouldReduceMotion = useReducedMotion();
+  const nextPath = safeProtectedPath(searchParams.next);
 
   function callbackUrl(): string {
-    const next = resolved.next ?? "/app";
-    return `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
+    return `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`;
   }
 
   const renderTurnstile = React.useCallback(() => {
-    if (!turnstileEnabled || !turnstileReady || !widgetRef.current || widgetIdRef.current) {
+    if (
+      !turnstileEnabled ||
+      !turnstileReady ||
+      !widgetRef.current ||
+      widgetIdRef.current
+    ) {
       return;
     }
     if (!window.turnstile) return;
@@ -89,7 +92,9 @@ export function LoginForm({
         turnstilePromiseRef.current = null;
       },
       "error-callback"() {
-        turnstilePromiseRef.current?.reject(new Error("Turnstile verification failed"));
+        turnstilePromiseRef.current?.reject(
+          new Error("Turnstile verification failed"),
+        );
         turnstilePromiseRef.current = null;
       },
       "expired-callback"() {
@@ -206,26 +211,32 @@ export function LoginForm({
     }
   }
 
-  if (status === "sent") {
-    return (
-      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-muted)] p-4 text-sm">
-        <p className="font-medium">Check your email.</p>
-        <p className="mt-1 text-[var(--color-muted-foreground)]">
-          We sent a sign-in link to <span className="font-mono">{email}</span>.
-        </p>
-      </div>
-    );
+  function handleUseAnotherEmail() {
+    focusEmailOnIdleRef.current = true;
+    setEmail("");
+    setErrorMessage(null);
+    setStatus("idle");
   }
 
-  return (
-    <div className="space-y-4">
-      {authUnavailable && (
-        <p className="rounded-md border border-[var(--color-border)] bg-[var(--color-muted)] p-3 text-sm text-[var(--color-muted-foreground)]">
-          We could not reach the sign-in service just now. If you were already
-          signed in, try again in a moment.
-        </p>
-      )}
+  const initialErrorMessage = initialError
+    ? initialError === "auth_callback_failed"
+      ? "We couldn’t finish signing you in. Nothing was changed. Please try again."
+      : "We couldn’t sign you in. Please try again."
+    : null;
+  const visibleError = errorMessage ?? initialErrorMessage;
+  const swapInitial = shouldReduceMotion
+    ? { opacity: 0 }
+    : { opacity: 0, filter: "blur(2px)" };
+  const swapExit = shouldReduceMotion
+    ? { opacity: 0 }
+    : { opacity: 0, filter: "blur(2px)" };
+  const swapTransition = {
+    duration: shouldReduceMotion ? 0.16 : 0.2,
+    ease: [0.23, 1, 0.32, 1] as const,
+  };
 
+  return (
+    <div className={styles.formRoot}>
       {turnstileEnabled && (
         <>
           <Script
@@ -234,61 +245,163 @@ export function LoginForm({
             defer
             onLoad={() => setTurnstileReady(true)}
           />
-          <div ref={widgetRef} />
+          <div ref={widgetRef} className={styles.turnstileMount} />
         </>
       )}
 
-      <Button
-        type="button"
-        onClick={handleGoogle}
-        disabled={googleStatus === "verifying" || googleStatus === "redirecting"}
-        variant="secondary"
-        className="w-full"
-      >
-        <GoogleIcon className="h-4 w-4" />
-        {googleStatus === "verifying"
-          ? "Checking browser…"
-          : googleStatus === "redirecting"
-            ? "Redirecting to Google…"
-            : "Continue with Google"}
-      </Button>
+      <AnimatePresence initial={false} mode="wait">
+        {status === "sent" ? (
+          <motion.section
+            key="sent"
+            className={styles.sentState}
+            initial={swapInitial}
+            animate={{ opacity: 1, filter: "blur(0px)" }}
+            exit={swapExit}
+            transition={swapTransition}
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <span className={styles.sentIcon} aria-hidden="true">
+              <Check />
+            </span>
+            <p className={styles.sentEyebrow}>Sign-in link sent</p>
+            <h2>Check your inbox</h2>
+            <p className={styles.sentCopy}>
+              We sent a one-time sign-in link to{" "}
+              <strong className={styles.sentEmail}>{email}</strong>.
+            </p>
+            <p className={styles.sentNote}>
+              You can close this tab after opening the link.
+            </p>
+            <Button
+              type="button"
+              variant="secondary"
+              size="lg"
+              className={styles.secondaryButton}
+              onClick={handleUseAnotherEmail}
+            >
+              Use another email
+            </Button>
+          </motion.section>
+        ) : (
+          <motion.div
+            key="form"
+            className={styles.formState}
+            initial={swapInitial}
+            animate={{ opacity: 1, filter: "blur(0px)" }}
+            exit={swapExit}
+            transition={swapTransition}
+            onAnimationComplete={() => {
+              if (focusEmailOnIdleRef.current) {
+                focusEmailOnIdleRef.current = false;
+                emailInputRef.current?.focus();
+              }
+            }}
+          >
+            {authUnavailable && (
+              <div
+                className={styles.serviceNotice}
+                role="status"
+                aria-live="polite"
+              >
+                <ShieldAlert aria-hidden="true" />
+                <p>
+                  <strong>
+                    {authConfigured
+                      ? "Sign-in is temporarily unavailable."
+                      : "Sign-in is not configured in this local build."}
+                  </strong>
+                  <span>
+                    {authConfigured
+                      ? "We couldn’t confirm your session just now. Your work hasn’t been changed; wait a moment and try again."
+                      : "No production credentials were copied into this worktree. Use the local journey preview to inspect the full flow."}
+                  </span>
+                </p>
+              </div>
+            )}
 
-      <div className="relative flex items-center" role="separator" aria-label="or">
-        <div className="h-px flex-1 bg-[var(--color-border)]" />
-        <span className="px-3 text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">or</span>
-        <div className="h-px flex-1 bg-[var(--color-border)]" />
-      </div>
+            <Button
+              type="button"
+              onClick={handleGoogle}
+              disabled={
+                !authConfigured ||
+                googleStatus === "verifying" ||
+                googleStatus === "redirecting"
+              }
+              aria-busy={
+                googleStatus === "verifying" || googleStatus === "redirecting"
+              }
+              variant="secondary"
+              size="lg"
+              className={styles.googleButton}
+            >
+              <GoogleIcon className={styles.googleIcon} />
+              {googleStatus === "verifying"
+                ? "Checking browser…"
+                : googleStatus === "redirecting"
+                  ? "Redirecting to Google…"
+                  : "Continue with Google"}
+            </Button>
 
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <div className="space-y-1.5">
-          <label htmlFor="email" className="text-sm font-medium">Email</label>
-          <Input
-            id="email"
-            type="email"
-            required
-            autoComplete="email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={status === "sending"}
-          />
-        </div>
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={status === "verifying" || status === "sending"}
-        >
-          {status === "verifying"
-            ? "Checking browser…"
-            : status === "sending"
-              ? "Sending…"
-              : "Send sign-in link"}
-        </Button>
-      </form>
+            <div
+              className={styles.divider}
+              role="separator"
+              aria-label="or use a one-time link"
+            >
+              <span />
+              <p>or use a one-time link</p>
+              <span />
+            </div>
 
-      {(errorMessage || initialError) && (
-        <p className="text-sm text-[var(--color-danger)]">{errorMessage ?? initialError}</p>
-      )}
+            <form
+              onSubmit={handleSubmit}
+              className={styles.emailForm}
+              aria-busy={status === "verifying" || status === "sending"}
+            >
+              <div className={styles.field}>
+                <label htmlFor="email">Work email</label>
+                <Input
+                  ref={emailInputRef}
+                  id="email"
+                  type="email"
+                  required
+                  autoComplete="email"
+                  inputMode="email"
+                  placeholder="name@company.com"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  disabled={!authConfigured || status === "sending"}
+                  className={styles.emailInput}
+                  aria-describedby={visibleError ? "login-error" : undefined}
+                />
+              </div>
+              <Button
+                type="submit"
+                size="lg"
+                className={styles.emailButton}
+                disabled={
+                  !authConfigured ||
+                  status === "verifying" ||
+                  status === "sending"
+                }
+              >
+                {status === "verifying"
+                  ? "Checking browser…"
+                  : status === "sending"
+                    ? "Sending sign-in link…"
+                    : "Email me a sign-in link"}
+              </Button>
+            </form>
+
+            {visibleError && (
+              <p id="login-error" className={styles.errorMessage} role="alert">
+                {visibleError}
+              </p>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
