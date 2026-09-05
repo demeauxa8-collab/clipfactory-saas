@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { Github, Mail, Twitter } from "lucide-react";
 import { Container } from "@/components/ui/container";
+import { DotPattern } from "@/components/ui/dot-pattern";
 import { SITE } from "@/lib/site";
+import { cn } from "@/lib/utils";
 
 const PRODUCT = [
   { href: "/features", label: "Features" },
@@ -23,119 +25,101 @@ const COMPANY = [
   { href: "/legal/privacy", label: "Privacy" },
 ];
 
-export function MarketingFooter() {
-  return (
-    <footer className="border-t border-[var(--color-border)] bg-[#08080a] py-20 text-sm text-[var(--color-muted-foreground)]">
-      <Container className="grid gap-12 md:grid-cols-12">
-        {/* Brand + tagline */}
-        <div className="md:col-span-4">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-base font-semibold text-[var(--color-foreground)]"
-          >
-            <span
-              className="relative inline-flex h-5 w-5 items-center justify-center rounded-[0.5rem] border border-[var(--color-border)] bg-[var(--color-muted)]"
-              aria-hidden
-            >
-              <span className="h-2.5 w-1 rounded-full bg-[var(--color-brand)]" />
-            </span>
-            {SITE.name}
-          </Link>
-          <p className="mt-4 max-w-xs leading-relaxed">
-            AI video clipping for creators, podcasts and agencies. Long videos in,
-            focused clip series out.
-          </p>
-          <div className="mt-6 flex items-center gap-3">
-            <a
-              href={`mailto:${SITE.contactEmail}`}
-              aria-label="Email"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-[0.875rem] border border-[var(--color-border)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
-            >
-              <Mail className="h-4 w-4" />
-            </a>
-            <a
-              href="https://twitter.com/clipfactoryapp"
-              aria-label="Twitter"
-              rel="noreferrer"
-              target="_blank"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-[0.875rem] border border-[var(--color-border)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
-            >
-              <Twitter className="h-4 w-4" />
-            </a>
-            <a
-              href="https://github.com/demeauxa8-collab/clipfactory-saas"
-              aria-label="GitHub"
-              rel="noreferrer"
-              target="_blank"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-[0.875rem] border border-[var(--color-border)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
-            >
-              <Github className="h-4 w-4" />
-            </a>
-          </div>
-        </div>
-
-        {/* Columns */}
-        <div className="md:col-span-2">
-          <FooterCol title="Product" items={PRODUCT} />
-        </div>
-        <div className="md:col-span-2">
-          <FooterCol title="Use cases" items={USE_CASES} />
-        </div>
-        <div className="md:col-span-2">
-          <FooterCol title="Company" items={COMPANY} />
-        </div>
-
-        {/* Newsletter */}
-        <div className="md:col-span-2">
-          <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-foreground)]">
-            Updates
-          </h4>
-          <p className="text-xs leading-relaxed">
-            New features, lessons learned shipping a one-person SaaS. One email, never spam.
-          </p>
-          <a
-            href={`mailto:${SITE.contactEmail}?subject=Subscribe%20to%20updates`}
-            className="mt-4 inline-flex items-center justify-center rounded-full border border-[var(--color-brand)] bg-[var(--color-brand-soft)] px-4 py-2 text-xs font-medium text-[var(--color-brand)] transition-colors hover:bg-[var(--color-brand)] hover:text-[var(--color-brand-foreground)]"
-          >
-            Get product updates
-          </a>
-        </div>
-      </Container>
-
-      <Container className="mt-12 flex flex-col items-start justify-between gap-2 border-t border-[var(--color-border)] pt-6 text-xs md:flex-row">
-        <p>
-          © {new Date().getFullYear()} {SITE.name}. All rights reserved.
-        </p>
-        <p>Made with care in France · EU-hosted infrastructure</p>
-      </Container>
-    </footer>
-  );
-}
-
-function FooterCol({
+function Column({
   title,
-  items,
+  links,
 }: {
   title: string;
-  items: readonly { href: string; label: string }[];
+  links: { href: string; label: string }[];
 }) {
   return (
-    <>
-      <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-foreground)]">
+    <div>
+      <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/30">
         {title}
-      </h4>
-      <ul className="space-y-2">
-        {items.map((it) => (
-          <li key={it.href}>
+      </h3>
+      <ul className="mt-5 space-y-3">
+        {links.map((l) => (
+          <li key={l.href}>
             <Link
-              href={it.href as never}
-              className="hover:text-[var(--color-brand)]"
+              href={l.href as never}
+              className="text-[14px] text-white/50 transition-colors hover:text-white"
             >
-              {it.label}
+              {l.label}
             </Link>
           </li>
         ))}
       </ul>
-    </>
+    </div>
+  );
+}
+
+export function MarketingFooter() {
+  return (
+    <footer className="relative overflow-hidden border-t border-white/[0.06] bg-[#08080a] pb-10 pt-20">
+      <DotPattern
+        width={26}
+        height={26}
+        cr={1}
+        className={cn(
+          "absolute inset-0 h-full w-full fill-white/[0.06]",
+          "[mask-image:radial-gradient(70%_60%_at_50%_0%,#000,transparent_75%)]",
+        )}
+      />
+
+      <Container className="relative">
+        <div className="grid gap-12 md:grid-cols-12">
+          <div className="md:col-span-5">
+            <Link href="/" className="flex items-center gap-2.5">
+              <span
+                aria-hidden
+                className="grid size-6 place-items-center rounded-[0.55rem] border border-white/12 bg-white/[0.06]"
+              >
+                <span className="h-2.5 w-1 rounded-full bg-[#0a84ff] shadow-[0_0_8px_1px_rgba(10,132,255,0.8)]" />
+              </span>
+              <span className="text-[15px] font-semibold tracking-[-0.02em] text-white">
+                {SITE.name}
+              </span>
+            </Link>
+
+            <p className="mt-5 max-w-xs text-[14px] leading-relaxed text-white/40">
+              Turn long videos into a focused series of vertical clips — with
+              the reasoning behind every cut.
+            </p>
+
+            <div className="mt-7 flex items-center gap-2">
+              {[
+                { href: `mailto:${SITE.contactEmail}`, Icon: Mail, label: "Email" },
+                { href: "https://github.com", Icon: Github, label: "GitHub" },
+                { href: "https://x.com", Icon: Twitter, label: "X" },
+              ].map(({ href, Icon, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  aria-label={label}
+                  className="grid size-9 place-items-center rounded-full border border-white/[0.08] bg-white/[0.03] text-white/45 transition-colors hover:border-white/20 hover:text-white"
+                >
+                  <Icon className="size-4" />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-10 sm:grid-cols-3 md:col-span-7">
+            <Column title="Product" links={PRODUCT} />
+            <Column title="Use cases" links={USE_CASES} />
+            <Column title="Company" links={COMPANY} />
+          </div>
+        </div>
+
+        <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-white/[0.06] pt-8 sm:flex-row sm:items-center">
+          <p className="text-[13px] text-white/30">
+            © {new Date().getFullYear()} {SITE.name}. Processed in the EU.
+          </p>
+          <p className="text-[13px] text-white/30">
+            29€/month · 300 video minutes · no watermark
+          </p>
+        </div>
+      </Container>
+    </footer>
   );
 }

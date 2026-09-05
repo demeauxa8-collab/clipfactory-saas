@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import { SITE } from "@/lib/site";
 import { Analytics } from "@/components/analytics";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+
 
 // Inter is the cross-platform fallback behind San Francisco (set in globals.css).
 // The former Fraunces serif display is dropped — clean SF sans only, Apple-style.
@@ -67,7 +69,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={cn("font-sans", inter.variable)}>
       <body className={`${inter.variable} min-h-dvh flex flex-col`}>
         <Analytics />
         {children}
