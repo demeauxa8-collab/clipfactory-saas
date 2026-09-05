@@ -14,7 +14,11 @@ const NAV = [
   { href: "/admin/finance", label: "Finance" },
 ] as const;
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -39,7 +43,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <header className="sticky top-0 z-30 border-b border-[var(--color-border)] bg-[var(--color-background)]/78 backdrop-blur-xl">
         <Container className="flex h-14 items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/admin" className="flex items-center gap-2 font-semibold tracking-tight">
+            <Link
+              href="/admin"
+              className="flex items-center gap-2 font-semibold tracking-tight"
+            >
               <span
                 className="relative inline-flex h-5 w-5 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-muted)]"
                 aria-hidden
@@ -56,7 +63,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 <Link
                   key={n.href}
                   href={n.href as never}
-                  className="inline-flex h-9 items-center rounded-md px-3 text-sm text-[var(--color-muted-foreground)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+                  className="inline-flex h-9 items-center rounded-md px-3 text-sm text-[var(--color-muted-foreground)] transition-[background-color,color,transform] duration-150 ease-out hover:-translate-y-0.5 hover:bg-[var(--color-muted)] hover:text-[var(--color-foreground)]"
                 >
                   {n.label}
                 </Link>
@@ -66,15 +73,21 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <div className="flex items-center gap-2 text-xs text-[var(--color-muted-foreground)]">
             <span className="hidden md:inline">{profile.email}</span>
             <Link href="/app">
-              <Button variant="secondary" size="sm">Exit admin</Button>
+              <Button variant="secondary" size="sm">
+                Exit admin
+              </Button>
             </Link>
             <form action="/auth/signout" method="post">
-              <Button type="submit" variant="ghost" size="sm">Sign out</Button>
+              <Button type="submit" variant="ghost" size="sm">
+                Sign out
+              </Button>
             </form>
           </div>
         </Container>
       </header>
-      <main className="flex-1">{children}</main>
+      <main id="main-content" className="flex-1">
+        {children}
+      </main>
     </>
   );
 }

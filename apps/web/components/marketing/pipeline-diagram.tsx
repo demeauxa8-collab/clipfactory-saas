@@ -1,7 +1,6 @@
 /**
- * Inline SVG that explains the pipeline in one glance.
- * Five nodes left-to-right, connected with arrows.
- * Pure SVG, no dependency, no animation in V1 to keep CLS at zero.
+ * Responsive pipeline explanation with a compact list on small screens and
+ * the connected overview when enough width is available.
  */
 export function PipelineDiagram() {
   const nodes = [
@@ -13,14 +12,42 @@ export function PipelineDiagram() {
   ];
 
   return (
-    <figure aria-label="ClipFactory pipeline" className="overflow-x-auto">
+    <figure aria-label="ClipFactory pipeline" className="w-full">
+      <figcaption className="sr-only">
+        From long video to publish-ready vertical shorts
+      </figcaption>
+      <ol className="grid gap-2 md:hidden">
+        {nodes.map((node, index) => (
+          <li
+            key={node.label}
+            className="grid grid-cols-[2.25rem_minmax(0,1fr)] gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-4"
+          >
+            <span className="font-mono text-xs text-[var(--color-brand)]">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <div className="min-w-0">
+              <strong className="block text-sm">{node.label}</strong>
+              <span className="mt-1 block text-xs text-[var(--color-muted-foreground)]">
+                {node.sub}
+              </span>
+              {index === 2 ? (
+                <span className="mt-3 inline-flex rounded-full border border-[var(--color-brand)] bg-[var(--color-brand-soft)] px-2.5 py-1 text-[11px] font-semibold text-[var(--color-brand)]">
+                  Audience brief applied here
+                </span>
+              ) : null}
+            </div>
+          </li>
+        ))}
+      </ol>
       <svg
         viewBox="0 0 1000 180"
         role="img"
         aria-labelledby="pipeline-title"
-        className="h-auto w-full min-w-[720px] text-[var(--color-foreground)]"
+        className="hidden h-auto w-full text-[var(--color-foreground)] md:block"
       >
-        <title id="pipeline-title">From long video to publish-ready vertical shorts</title>
+        <title id="pipeline-title">
+          From long video to publish-ready vertical shorts
+        </title>
         <defs>
           <marker
             id="arrow"

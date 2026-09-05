@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { safeProtectedPath } from "@/lib/auth/redirect";
 
 type CookieToSet = { name: string; value: string; options: CookieOptions };
 
@@ -19,7 +20,7 @@ function isUnreachable(error: { name?: string; status?: number }): boolean {
 }
 
 async function getUserOrNull(
-  supabase: ReturnType<typeof createServerClient>
+  supabase: ReturnType<typeof createServerClient>,
 ): Promise<{ user: unknown | null; degraded: boolean }> {
   let timer: ReturnType<typeof setTimeout> | undefined;
 
@@ -27,7 +28,10 @@ async function getUserOrNull(
     const result = await Promise.race([
       supabase.auth.getUser(),
       new Promise<never>((_, reject) => {
-        timer = setTimeout(() => reject(new Error("auth timeout")), AUTH_TIMEOUT_MS);
+        timer = setTimeout(
+          () => reject(new Error("auth timeout")),
+          AUTH_TIMEOUT_MS,
+        );
       }),
     ]);
 
@@ -42,7 +46,7 @@ async function getUserOrNull(
   } catch (error) {
     console.warn(
       "[middleware] auth unreachable:",
-      error instanceof Error ? error.message : error
+      error instanceof Error ? error.message : error,
     );
     return { user: null, degraded: true };
   } finally {
@@ -51,44 +55,71 @@ async function getUserOrNull(
 }
 
 export async function updateSession(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+  const isProtected =
+    path === "/app" ||
+    path.startsWith("/app/") ||
+    path === "/admin" ||
+    path.startsWith("/admin/");
+  const isAuthRoute = path === "/login" || path === "/auth/callback";
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  // Local UI work and static previews must remain inspectable without copying
+  // production credentials into the worktree. Protected routes still fail closed.
+  if (!supabaseUrl || !supabaseAnonKey) {
+    if (isProtected) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/login";
+      redirectUrl.search = "";
+      redirectUrl.searchParams.set(
+        "next",
+        safeProtectedPath(`${path}${request.nextUrl.search}`),
+      );
+      redirectUrl.searchParams.set("auth", "unavailable");
+      return NextResponse.redirect(redirectUrl);
+    }
+    if (path === "/auth/callback") {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/login";
+      redirectUrl.search = "";
+      redirectUrl.searchParams.set("auth", "unavailable");
+      return NextResponse.redirect(redirectUrl);
+    }
+    return NextResponse.next({ request });
+  }
+
   let response = NextResponse.next({ request });
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet: CookieToSet[]) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
-          response = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          );
-        },
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
       },
-    }
-  );
+      setAll(cookiesToSet: CookieToSet[]) {
+        cookiesToSet.forEach(({ name, value }) =>
+          request.cookies.set(name, value),
+        );
+        response = NextResponse.next({ request });
+        cookiesToSet.forEach(({ name, value, options }) =>
+          response.cookies.set(name, value, options),
+        );
+      },
+    },
+  });
 
   // IMPORTANT: do not put logic between createServerClient and getUser().
   // Supabase docs say so — it's how the session gets refreshed.
   const { user, degraded } = await getUserOrNull(supabase);
 
-  const path = request.nextUrl.pathname;
-  const isProtected =
-    path === "/app" || path.startsWith("/app/") ||
-    path === "/admin" || path.startsWith("/admin/");
-  const isAuthRoute = path === "/login" || path === "/auth/callback";
-
   if (!user && isProtected) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/login";
     redirectUrl.search = "";
-    redirectUrl.searchParams.set("next", path);
+    redirectUrl.searchParams.set(
+      "next",
+      safeProtectedPath(`${path}${request.nextUrl.search}`),
+    );
     // Tells /login the bounce came from an unreachable auth service, not from
     // a genuinely signed-out visitor.
     if (degraded) redirectUrl.searchParams.set("auth", "unavailable");
@@ -96,10 +127,12 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (user && isAuthRoute && path === "/login") {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/app";
-    redirectUrl.search = "";
-    return NextResponse.redirect(redirectUrl);
+    return NextResponse.redirect(
+      new URL(
+        safeProtectedPath(request.nextUrl.searchParams.get("next")),
+        request.url,
+      ),
+    );
   }
 
   return response;

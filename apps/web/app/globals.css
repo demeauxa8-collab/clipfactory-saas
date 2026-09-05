@@ -21,12 +21,12 @@
   --color-muted: #161618;
   --color-muted-foreground: #a1a1a6;
   --color-border: rgba(255, 255, 255, 0.09);
-  --color-accent: #0a84ff;
+  --color-accent: #0071e3;
   --color-accent-foreground: #ffffff;
-  --color-ring: #0a84ff;
+  --color-ring: #0071e3;
 
-  /* Single accent — Apple system blue. One accent locked page-wide. */
-  --color-brand: #0a84ff;
+  /* Single accent — Apple web blue, dark enough for accessible white labels. */
+  --color-brand: #0071e3;
   --color-brand-soft: #0a2a4a;
   --color-brand-foreground: #ffffff;
   /* Secondary "channels" desaturated to neutral silver/grey so the page stays
@@ -38,13 +38,17 @@
 
   --color-warn: #f59e0b;
   --color-danger: #ef4444;
+  --color-success: #5dd38b;
+  --color-edit-signal: var(--color-accent);
+  --color-paper: #f4f1eb;
+  --color-paper-foreground: #18181b;
 
   /* One soft radius scale, concentric nesting.
      inputs 8px · inner cards 20px · panels 32px · badges 14px · pills full */
-  --radius-sm: 0.5rem;     /* 8px  — inputs */
-  --radius-md: 0.875rem;   /* 14px — small score badges */
-  --radius-lg: 1.25rem;    /* 20px — inner cards */
-  --radius-xl: 2rem;       /* 32px — outer panels */
+  --radius-sm: 0.5rem; /* 8px  — inputs */
+  --radius-md: 0.875rem; /* 14px — small score badges */
+  --radius-lg: 1.25rem; /* 20px — inner cards */
+  --radius-xl: 2rem; /* 32px — outer panels */
 
   /* Soft, wide, low-opacity, tinted elevation — Apple ambient shadow, never a glow. */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -69,7 +73,9 @@ html {
 }
 
 /* Apple display type: tight tracking, never the airy default. */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   letter-spacing: -0.022em;
 }
 
@@ -77,7 +83,9 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans);
-  font-feature-settings: "rlig" 1, "calt" 1;
+  font-feature-settings:
+    "rlig" 1,
+    "calt" 1;
   letter-spacing: -0.01em;
 }
 
@@ -103,82 +111,27 @@ body::before {
   color: var(--color-background);
 }
 
-/* ── Motion language ──────────────────────────────────────────────── */
-@keyframes brand-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(10, 132, 255, 0); }
-  50% { box-shadow: 0 0 0 6px rgba(10, 132, 255, 0.12); }
-}
-.brand-pulse { animation: brand-pulse 2.4s ease-in-out infinite; }
-
-@keyframes fade-up {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-.fade-up { animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.fade-up-2 { animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both; }
-.fade-up-3 { animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both; }
-
-@keyframes stage-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-@keyframes scan-sweep {
-  0% { opacity: 0; transform: translateY(-120%); }
-  12% { opacity: 0.7; }
-  72% { opacity: 0.7; }
-  100% { opacity: 0; transform: translateY(520%); }
-}
-@keyframes playhead {
-  0%, 14% { left: 16%; }
-  34% { left: 34%; }
-  55% { left: 74%; }
-  82%, 100% { left: 92%; }
-}
-@keyframes meter-grow {
-  0% { transform: scaleX(0); }
-  100% { transform: scaleX(1); }
-}
-@keyframes insight-rise {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
+.cf-skip-link {
+  position: fixed;
+  z-index: 1000;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-foreground);
+  color: var(--color-background);
+  font-size: 0.82rem;
+  font-weight: 650;
+  text-decoration: none;
+  transform: translate3d(0, calc(-100% - 1rem), 0);
+  transition: transform 140ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.stage-float {
-  animation: stage-float 9s ease-in-out infinite;
-  transform-origin: 50% 65%;
-}
-.scan-sweep { animation: scan-sweep 5s ease-in-out infinite; }
-.timeline-playhead {
-  animation: playhead 6.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-.score-fill {
-  animation: meter-grow 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
-  transform-origin: left center;
-}
-.insight-card {
-  animation: insight-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-/* Sheen kept but neutral and barely-there (no champagne). */
-.soft-sheen::after {
-  animation: soft-sheen 8s ease-in-out infinite;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    color-mix(in srgb, var(--color-foreground) 8%, transparent),
-    transparent
-  );
-  content: "";
-  inset: 0;
-  pointer-events: none;
-  position: absolute;
-  transform: translateX(-32%);
-}
-@keyframes soft-sheen {
-  0% { transform: translateX(-32%); opacity: 0; }
-  28% { opacity: 0.6; }
-  70% { opacity: 0.3; }
-  100% { transform: translateX(42%); opacity: 0; }
+.cf-skip-link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  transform: translate3d(0, 0, 0);
 }
 
 /* ── Surfaces — all cleaned to flat Apple panels, decorative pseudo-
@@ -191,7 +144,9 @@ body::before {
     transparent 60%
   );
 }
-.liquid-hero::after { content: none; }
+.liquid-hero::after {
+  content: none;
+}
 
 .wave-band {
   background: var(--color-muted);
@@ -199,8 +154,12 @@ body::before {
   border-top: 1px solid var(--color-border);
   position: relative;
 }
-.wave-band::before { content: none; }
-.wave-band::after { content: none; }
+.wave-band::before {
+  content: none;
+}
+.wave-band::after {
+  content: none;
+}
 
 .liquid-shell {
   background: var(--color-muted);
@@ -212,7 +171,9 @@ body::before {
   overflow: hidden;
   position: relative;
 }
-.liquid-shell::before { content: none; }
+.liquid-shell::before {
+  content: none;
+}
 
 .curve-card {
   background: var(--color-muted);
@@ -225,8 +186,12 @@ body::before {
     border-color 0.4s ease,
     box-shadow 0.4s ease;
 }
-.curve-card::after { content: none; }
-.curve-card:hover { box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.7); }
+.curve-card::after {
+  content: none;
+}
+.curve-card:hover {
+  box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.7);
+}
 
 .score-bar {
   background: linear-gradient(
@@ -243,14 +208,13 @@ body::before {
 }
 
 .edit-grid {
-  background:
-    repeating-linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--color-foreground) 5%, transparent) 0,
-      color-mix(in srgb, var(--color-foreground) 5%, transparent) 1px,
-      transparent 1px,
-      transparent 56px
-    );
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-foreground) 5%, transparent) 0,
+    color-mix(in srgb, var(--color-foreground) 5%, transparent) 1px,
+    transparent 1px,
+    transparent 56px
+  );
 }
 
 .frame-notch {
@@ -289,7 +253,9 @@ body::before {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
+  html {
+    scroll-behavior: auto;
+  }
   *,
   *::before,
   *::after {

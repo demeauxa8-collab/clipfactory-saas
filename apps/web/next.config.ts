@@ -22,6 +22,10 @@ const contentSecurityPolicy = [
 ].join("; ");
 
 const config: NextConfig = {
+  // All route metadata is static and inexpensive. Keeping it in <head>
+  // preserves compatibility with HTML-only auditors, link unfurlers and
+  // crawlers instead of relying on streamed metadata in the document body.
+  htmlLimitedBots: /.*/,
   reactStrictMode: true,
   poweredByHeader: false,
   typedRoutes: true,

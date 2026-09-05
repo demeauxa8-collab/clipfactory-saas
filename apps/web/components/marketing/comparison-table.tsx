@@ -75,20 +75,34 @@ export function ComparisonTable() {
             Same video. Better clip series.
           </h2>
           <p className="mt-3 text-[var(--color-muted-foreground)]">
-            Basic tools can find loud moments. ClipFactory is built to find clips that
-            match the objective of the series, make sense in the full video, and still
-            work visually on screen.
+            Basic tools can find loud moments. ClipFactory is built to find
+            clips that match the objective of the series, make sense in the full
+            video, and still work visually on screen.
           </p>
         </div>
 
         <div className="mt-10 overflow-x-auto rounded-xl border border-[var(--color-border)] bg-[var(--color-background)]">
-          <table className="w-full min-w-[700px] text-sm">
+          <table className="w-full table-fixed text-xs sm:text-sm">
+            <colgroup>
+              <col className="w-[34%]" />
+              <col className="w-[22%]" />
+              <col className="w-[22%]" />
+              <col className="w-[22%]" />
+            </colgroup>
             <thead>
               <tr className="border-b border-[var(--color-border)] bg-[var(--color-muted)] text-left">
-                <th className="px-5 py-4 font-medium">Capability</th>
-                <th className="px-5 py-4 font-medium text-[var(--color-brand)]">ClipFactory</th>
-                <th className="px-5 py-4 font-medium">Basic AI clipper</th>
-                <th className="px-5 py-4 font-medium">Manual editor</th>
+                <th className="break-words px-2 py-4 font-medium sm:px-5">
+                  Capability
+                </th>
+                <th className="break-words px-2 py-4 font-medium text-[var(--color-brand)] sm:px-5">
+                  ClipFactory
+                </th>
+                <th className="break-words px-2 py-4 font-medium sm:px-5">
+                  Basic AI clipper
+                </th>
+                <th className="break-words px-2 py-4 font-medium sm:px-5">
+                  Manual editor
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -100,14 +114,16 @@ export function ComparisonTable() {
                     (i % 2 === 1 ? "bg-[var(--color-muted)]/30" : "")
                   }
                 >
-                  <td className="px-5 py-4 font-medium">{row.label}</td>
-                  <td className="px-5 py-4">
+                  <td className="break-words px-2 py-4 font-medium sm:px-5">
+                    {row.label}
+                  </td>
+                  <td className="break-words px-2 py-4 sm:px-5">
                     <CellView cell={row.clipfactory} brand />
                   </td>
-                  <td className="px-5 py-4">
+                  <td className="break-words px-2 py-4 sm:px-5">
                     <CellView cell={row.transcriptClipper} />
                   </td>
-                  <td className="px-5 py-4">
+                  <td className="break-words px-2 py-4 sm:px-5">
                     <CellView cell={row.manualEditor} />
                   </td>
                 </tr>
@@ -116,9 +132,12 @@ export function ComparisonTable() {
           </table>
         </div>
         <p className="mt-4 text-xs text-[var(--color-muted-foreground)]">
-          This is a positioning comparison, not a claim that every tool in the market behaves the
-          same way. Spotted a weak claim? Ping{" "}
-          <a className="underline" href="mailto:hello@clipfactory.app">hello@clipfactory.app</a>.
+          This is a positioning comparison, not a claim that every tool in the
+          market behaves the same way. Spotted a weak claim? Ping{" "}
+          <a className="underline" href="mailto:hello@clipfactory.app">
+            hello@clipfactory.app
+          </a>
+          .
         </p>
       </div>
     </section>
@@ -131,11 +150,16 @@ function CellView({ cell, brand = false }: { cell: Cell; brand?: boolean }) {
       <div className="flex flex-col gap-0.5">
         <Check
           className={
-            "h-4 w-4 " + (brand ? "text-[var(--color-brand)]" : "text-[var(--color-foreground)]")
+            "h-4 w-4 " +
+            (brand
+              ? "text-[var(--color-brand)]"
+              : "text-[var(--color-foreground)]")
           }
         />
         {cell.note && (
-          <span className="text-xs text-[var(--color-muted-foreground)]">{cell.note}</span>
+          <span className="text-xs text-[var(--color-muted-foreground)]">
+            {cell.note}
+          </span>
         )}
       </div>
     );
@@ -145,10 +169,14 @@ function CellView({ cell, brand = false }: { cell: Cell; brand?: boolean }) {
       <div className="flex flex-col gap-0.5">
         <X className="h-4 w-4 text-[var(--color-muted-foreground)]" />
         {cell.note && (
-          <span className="text-xs text-[var(--color-muted-foreground)]">{cell.note}</span>
+          <span className="text-xs text-[var(--color-muted-foreground)]">
+            {cell.note}
+          </span>
         )}
       </div>
     );
   }
-  return <span className="text-[var(--color-foreground)]/90">{cell.value}</span>;
+  return (
+    <span className="text-[var(--color-foreground)]/90">{cell.value}</span>
+  );
 }
