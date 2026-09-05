@@ -81,6 +81,20 @@ class OpenRouterProvider(LLMProvider):
         usage = data.get("usage") or {}
         return int(usage.get("prompt_tokens") or 0), int(usage.get("completion_tokens") or 0)
 
+    # A provider that refuses a zeroed reasoning budget says so in the 400 body.
+    # The wording differs per upstream, so match on the parts that do not move.
+    _REASONING_REFUSALS = (
+        "reasoning is mandatory",
+        "cannot be disabled",
+        "thinking_budget",
+        "thinking budget",
+    )
+
+    @classmethod
+    def _refuses_disabled_reasoning(cls, exc: Exception) -> bool:
+        message = str(exc).lower()
+        return any(needle in message for needle in cls._REASONING_REFUSALS)
+
     async def _post_and_extract(
         self, body: dict[str, Any], model: str, label: str, attempts: int = 5
     ) -> LLMCallResult:
@@ -88,6 +102,15 @@ class OpenRouterProvider(LLMProvider):
 
         Some OpenRouter models intermittently ignore ``response_format`` and
         answer with prose/empty content; a fresh sample almost always parses.
+
+        We ask for reasoning to be switched off because reasoning tokens
+        otherwise eat the max_tokens budget and truncate the JSON — that was
+        measured on Gemini 2.5 Flash. But a whole generation of newer models
+        REFUSES to run without reasoning and answers 400. Rather than keep a
+        list of model names (the catalogue moves faster than we do — two
+        configured IDs were retired under us in a month), we drop the flag on
+        that specific refusal and retry. Losing the cap costs tokens; keeping
+        it would cost us the model entirely.
         """
         last_exc: Exception | None = None
         for _ in range(attempts):
@@ -98,6 +121,17 @@ class OpenRouterProvider(LLMProvider):
                 payload = extract_json(text)
                 return LLMCallResult(payload=payload, tokens_in=tin, tokens_out=tout, model=model)
             except (ProviderError, ValueError) as exc:
+                if "reasoning" in body and self._refuses_disabled_reasoning(exc):
+                    log.info(
+                        "openrouter.reasoning_required",
+                        model=model,
+                        detail="retrying without the disabled-reasoning flag",
+                    )
+                    body = {k: v for k, v in body.items() if k != "reasoning"}
+                    # Reasoning now shares the output budget, so give the JSON
+                    # room to survive it.
+                    body["max_tokens"] = max(int(body.get("max_tokens") or 0), 16384)
+                    continue
                 # Retry on transient network errors and non-JSON responses alike.
                 last_exc = exc
                 continue
