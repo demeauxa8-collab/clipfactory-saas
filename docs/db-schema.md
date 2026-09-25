@@ -6,7 +6,8 @@ Migrations (à appliquer dans l'ordre) :
 - `db/migrations/0002_campaigns_costs_vision.sql` — campagnes, feedback, colonnes coûts / vision
 - `db/migrations/0003_story_arcs.sql` — story-first pipeline (video_map, segments multi-fenêtres, fallback tracking)
 - `db/migrations/0004_admin_flag.sql` — flag admin + public stats
-- `db/migrations/0005_analytics_events.sql` — `analytics_events` + vue `analytics_daily` (appliquée le 2026-06-23). ⚠️ un `0005_job_leasing.sql` distinct existe sur la branche locale `draft/parallel-workers` — à renuméroter 0006 si repris
+- `db/migrations/0005_analytics_events.sql` — `analytics_events` + vue `analytics_daily` (appliquée le 2026-06-23)
+- `db/migrations/0006_clip_series.sql` — limite de sources par forfait, séries multi-vidéos et ordre de traitement. Appliquée au projet Supabase `jsjaizcnjvghoduvyyea` le 2026-09-25 (`20260925153547 clip_series_pro_plan`). Le `0005_job_leasing.sql` d'une ancienne branche devra porter un numéro ultérieur s'il est repris.
 
 ## Overview
 
@@ -31,6 +32,7 @@ stripe_events  (idempotency, no FK)
 | `subscriptions` | Stripe subscription mirror | written by webhook handler |
 | `credit_ledger` | Append-only credit movements | written by webhook + worker |
 | `jobs` | Clipping job lifecycle | written by API + worker |
+| `clip_series` | Group of 2–5 ordered source jobs for one campaign | written by API |
 | `clips` | Rendered output clips | written by worker |
 | `stripe_events` | Webhook idempotency | written by webhook handler |
 
@@ -65,7 +67,18 @@ If a job fails before render starts: full refund via `'job_refund'` entry.
 The Next.js client uses the Supabase anon key with the user's JWT. Direct table reads are allowed for owned rows:
 
 - read own `profiles`, `subscriptions`, `credit_ledger`, `jobs`, `clips`
-- insert own `jobs` (only with `status = 'queued'`)
+- insert own standalone `jobs` (only with `status = 'queued'` and `series_id is null`)
+
+Series rows are readable by their owner. Only the API inserts series rows and
+their jobs. The worker claims one queued series job when all earlier jobs are
+terminal; each clip remains attached to the job for its source video.
+`plan_definitions.max_series_sources = 1` disables multi-video series for that
+plan; higher values permit up to five sources.
+Pro is seeded at 79 EUR/month, 1,000 credits/month and five sources, with
+`is_active = false` until its Stripe price is configured. Starter remains at
+29 EUR/month, 300 credits/month and one source. The migration grants
+authenticated users SELECT on their own series only; creation goes through
+the API using the service role.
 
 Everything else (updates to `subscriptions`, `credit_ledger` inserts, `clips` inserts, `stripe_events`) goes through the FastAPI backend using the service_role key, which bypasses RLS.
 

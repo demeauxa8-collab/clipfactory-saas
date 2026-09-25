@@ -249,6 +249,19 @@ async def _mark_failed(
 ) -> None:
     async with pool.acquire() as conn:
         async with conn.transaction():
+            job = await conn.fetchrow(
+                "select status from jobs where id = $1 and user_id = $2 for update",
+                job_id,
+                user_id,
+            )
+            if job is None or job["status"] in {"completed", "failed", "canceled"}:
+                return
+            ledger = await conn.fetchrow(
+                "select coalesce(sum(delta), 0)::int as net from credit_ledger where job_id = $1",
+                job_id,
+            )
+            # A source that fails before its initial debit must not mint credits.
+            outstanding_debit = max(0, -int(ledger["net"])) if ledger else 0
             await conn.execute(
                 """
                 update jobs
@@ -265,14 +278,15 @@ async def _mark_failed(
                 step,
                 job_id,
             )
-            if refund_credits > 0:
+            refund = min(refund_credits, outstanding_debit)
+            if refund > 0:
                 await conn.execute(
                     """
                     insert into credit_ledger (user_id, delta, reason, job_id, note)
                     values ($1, $2, 'job_refund', $3, $4)
                     """,
                     user_id,
-                    int(refund_credits),
+                    refund,
                     job_id,
                     f"refund {step}: {message[:200]}",
                 )

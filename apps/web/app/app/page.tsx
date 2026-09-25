@@ -137,7 +137,7 @@ export default async function AppHome() {
         <div>
           <h1 className="text-3xl font-semibold tracking-tight md:text-[2.5rem]">Dashboard</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--color-muted-foreground)]">
-            Create a campaign, submit a long video, then review the generated clips, scores and
+            Create a campaign, submit one or more videos, then review the generated clips, scores and
             downloads in one place.
           </p>
         </div>
