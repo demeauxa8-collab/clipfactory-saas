@@ -25,3 +25,12 @@ The database migration is live and the web preview is deployed. Pro remains inac
 - PostgreSQL integration tests exercise the actual API service and worker claim query against temporary tables copied from the migrated schema. They cover ordered claims, continuation after a source failure, Starter exclusion, campaign ownership, cross-account reads, rollback on partial creation, duplicate submissions and recovery of unstarted claims. Every fixture is rolled back; public customer rows are untouched.
 - YouTube URLs are canonicalized by video ID before duplicate detection, including short, watch, Shorts and live links. Channel and playlist URLs are rejected before database writes.
 - Run the integration suite by setting `CLIPFACTORY_TEST_DATABASE_URL` and running `PYTHONPATH=. pytest tests/test_series_postgres.py` from `apps/api`. It skips automatically when that variable is absent.
+
+## Canonical production release — 2026-09-26
+
+- User-confirmed public URL: `https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app`. The `a8goeoazs` deployment was only a feature preview.
+- Integrated the existing production UI from `4d8b50d` with the multi-source feature. Preserved the cinematic homepage, login and product shell; updated the home `#pricing` section and pricing page with Starter and Pro.
+- Restored the empty production Supabase settings from the existing project configuration and set the public site origin to the user-confirmed URL. The Supabase auth settings endpoint answered 200.
+- User confirmed there is no hosted API/worker: video processing runs on their Mac. Updated API and worker were started locally from this worktree, using Redis on loopback port 6381. API health returned 200; anonymous series submission returned 401. This is not a public end-to-end processing validation.
+- No public tunnel is configured. Stripe credentials and R2 credentials in the local API environment are placeholders; the worker currently stores renders locally. The public API URL remains unavailable. Pro stays inactive and is explicitly marked coming soon on both pricing surfaces.
+- Production build passed. Home pricing was inspected at 390px and 1440px with no horizontal overflow or browser page errors. Local screenshots are in `/tmp/clipfactory-release-check`.

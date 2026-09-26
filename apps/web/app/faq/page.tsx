@@ -6,18 +6,19 @@ import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/marketing/json-ld";
 
 export const metadata: Metadata = {
   title: "AI clip maker FAQ — pricing, YouTube Shorts, Reels and TikToks",
-  description: "Common questions about ClipFactory: AI video clipping, pricing, YouTube and Vimeo support, EU hosting, GDPR, cancellation, watermarks and clip quality.",
+  description:
+    "Common questions about ClipFactory: AI video clipping, pricing, YouTube and Vimeo support, privacy, cancellation, watermarks and clip quality.",
   alternates: { canonical: "/faq" },
 };
 
 const FAQ: { q: string; a: string }[] = [
   {
     q: "How much does ClipFactory cost?",
-    a: "Starter costs 29€/month. It includes 300 video minutes, up to 30 minutes per video and 3 clips per video. 1 credit = 1 minute of source video.",
+    a: "Starter costs 29€/month. It includes 300 credits, sources up to 30 minutes and up to three requested clips per source. ClipFactory may return fewer clips when the source does not contain enough verified campaign moments. 1 credit = 1 minute of source video.",
   },
   {
     q: "Where is my data hosted?",
-    a: "ClipFactory is designed around EU hosting: database in Frankfurt, storage in Europe and video processing in Germany. Source videos are deleted after 14 days, rendered clips kept 60 days.",
+    a: "Authentication and the product database are configured on an EU Supabase project. Video storage and processing depend on the active pilot deployment; contact us for the current subprocessor and location list before submitting sensitive material.",
   },
   {
     q: "Which video sources are supported?",
@@ -29,23 +30,23 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Can I cancel any time?",
-    a: "Yes. You can cancel from the billing page. Credits already granted remain usable until the period ends.",
+    a: "During the pilot, contact support to cancel. The billing page shows the current plan and ledger, but self-service subscription management is not live yet.",
   },
   {
     q: "What happens if a job fails?",
-    a: "Credits used for that video are refunded automatically. The job stays visible in your dashboard so you can retry.",
+    a: "The job stays visible with the failed stage and no delivery is implied. Automatic refunds are not promised during the pilot; support can review the credit ledger when needed.",
   },
   {
     q: "How long do my clips stay available?",
-    a: "Rendered clips stay available for 60 days. Source videos are deleted after 14 days. You can download clips during that window.",
+    a: "Availability depends on the active pilot storage configuration. Download delivered clips promptly. You can request source, clip or account deletion at any time through hello@clipfactory.app.",
   },
   {
     q: "Do you store my videos forever?",
-    a: "No. Source videos are deleted after 14 days, clips after 60 days. We do not train any model on your content.",
+    a: "ClipFactory is not designed as permanent media storage. Automated lifecycle deletion is still being completed for the pilot, so contact support for deletion rather than relying on an unverified fixed window. ClipFactory does not intentionally use submitted content to train a ClipFactory model.",
   },
   {
     q: "Is ClipFactory GDPR compliant?",
-    a: "EU hosted, minimal data collection, full data export and deletion on request via hello@clipfactory.app. Public terms and privacy policy on the site.",
+    a: "ClipFactory minimizes account and job data and accepts access, export and deletion requests at hello@clipfactory.app. The current pilot privacy notice lists the limits of the deployment; it does not replace a customer-specific data processing review.",
   },
   {
     q: "Can I use ClipFactory clips commercially?",
@@ -53,7 +54,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "How fast is the processing?",
-    a: "A 30-minute video typically takes 5 to 10 minutes to process. It is not instant because ClipFactory reads the transcript, checks the video and renders the final clips.",
+    a: "Processing time depends on source length and the checks required. ClipFactory shows discrete stages instead of an unconfirmed completion-time estimate.",
   },
   {
     q: "Do you have an API?",
@@ -65,7 +66,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "What if the AI picks bad clips?",
-    a: "Every clip has a thumbs up or thumbs down. Your feedback helps future picks. ClipFactory also drops clips when the quote or moment cannot be verified in the source.",
+    a: "Every clip has a thumbs up or thumbs down so your judgment is recorded for review. That feedback does not silently retrain the system. ClipFactory also drops clips when the quote or moment cannot be verified in the source.",
   },
   {
     q: "Can I see what the AI is doing?",
@@ -76,12 +77,19 @@ const FAQ: { q: string; a: string }[] = [
 export default function FaqPage() {
   return (
     <>
-      <BreadcrumbJsonLd items={[{ name: "Home", href: "/" }, { name: "FAQ", href: "/faq" }]} />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", href: "/" },
+          { name: "FAQ", href: "/faq" },
+        ]}
+      />
       <FaqJsonLd items={FAQ} />
       <MarketingNav />
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         <Container className="max-w-3xl py-20">
-          <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">FAQ</p>
+          <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">
+            FAQ
+          </p>
           <h1 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">
             Common questions about AI video clipping.
           </h1>
@@ -90,13 +98,19 @@ export default function FaqPage() {
             {FAQ.map((item) => (
               <div key={item.q} className="py-6">
                 <dt className="text-lg font-medium">{item.q}</dt>
-                <dd className="mt-2 text-sm text-[var(--color-muted-foreground)]">{item.a}</dd>
+                <dd className="mt-2 text-sm text-[var(--color-muted-foreground)]">
+                  {item.a}
+                </dd>
               </div>
             ))}
           </dl>
 
           <p className="mt-10 text-sm text-[var(--color-muted-foreground)]">
-            Still unsure? Email <a href="mailto:hello@clipfactory.app" className="underline">hello@clipfactory.app</a>. I read every message.
+            Still unsure? Email{" "}
+            <a href="mailto:hello@clipfactory.app" className="underline">
+              hello@clipfactory.app
+            </a>
+            . I read every message.
           </p>
         </Container>
       </main>

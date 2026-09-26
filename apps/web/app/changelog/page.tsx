@@ -36,16 +36,28 @@ const ENTRIES: { date: string; title: string; body: string[] }[] = [
 export default function ChangelogPage() {
   return (
     <>
-      <BreadcrumbJsonLd items={[{ name: "Home", href: "/" }, { name: "Changelog", href: "/changelog" }]} />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", href: "/" },
+          { name: "Changelog", href: "/changelog" },
+        ]}
+      />
       <MarketingNav />
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         <Container className="max-w-3xl py-20">
-          <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">Changelog</p>
-          <h1 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">What&apos;s new.</h1>
+          <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">
+            Changelog
+          </p>
+          <h1 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">
+            What&apos;s new.
+          </h1>
 
           <ul className="mt-12 space-y-12">
             {ENTRIES.map((e) => (
-              <li key={e.date} className="border-l-2 border-[var(--color-border)] pl-6">
+              <li
+                key={e.date}
+                className="border-l-2 border-[var(--color-border)] pl-6"
+              >
                 <time className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">
                   {e.date}
                 </time>

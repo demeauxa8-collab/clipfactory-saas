@@ -5,10 +5,7 @@ import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { MarketingNav } from "@/components/marketing/nav";
 import { MarketingFooter } from "@/components/marketing/footer";
-import {
-  BreadcrumbJsonLd,
-  FaqJsonLd,
-} from "@/components/marketing/json-ld";
+import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/marketing/json-ld";
 
 export const metadata: Metadata = {
   title: "AI video clipping pricing — 29€/month, no watermark",
@@ -22,7 +19,7 @@ export const metadata: Metadata = {
     "OpusClip alternative price",
     "vertical short generator price",
     "YouTube to Shorts pricing",
-    "EU hosted AI clipping",
+    "European AI clipping",
     "no watermark AI clipping",
   ],
   alternates: { canonical: "/pricing" },
@@ -35,7 +32,7 @@ const PRICING_FAQ = [
   },
   {
     q: "What if a job fails?",
-    a: "If ClipFactory cannot process the video, the credits are refunded. If a video is too broken to make good clips, we do not charge for fake output.",
+    a: "The failed stage remains visible so the source or campaign brief can be reviewed. Automatic credit adjustments are not promised during the pilot; contact support if the ledger needs review.",
   },
   {
     q: "Is there a free trial?",
@@ -43,11 +40,11 @@ const PRICING_FAQ = [
   },
   {
     q: "Can I cancel anytime?",
-    a: "Yes. Stripe handles billing — cancel from your billing portal and you keep access until the end of the current period.",
+    a: "During the pilot, cancellation is handled through support. Stripe Checkout activates Starter, but a self-service billing portal is not live yet.",
   },
   {
     q: "Where is my data stored?",
-    a: "ClipFactory is designed around EU hosting: database in Frankfurt, storage in Europe and video processing in Germany. Source videos auto-delete after 14 days, rendered clips after 60.",
+    a: "Authentication and the product database use an EU Supabase project. Video storage and processing depend on the active pilot deployment. Ask for the current subprocessor and location list before submitting sensitive material.",
   },
   {
     q: "Do you take a cut of my revenue?",
@@ -72,14 +69,14 @@ const PLANS: Plan[] = [
     name: "Starter",
     price: "29€",
     tagline: "For solo creators ready to ship.",
-    cta: "Start with Starter",
-    ctaHref: "/login",
+    cta: "Create your campaign",
+    ctaHref: "/app/campaigns/new",
     highlighted: true,
     available: true,
     features: [
       { label: "300 video minutes / month", included: true },
       { label: "Up to 30 min per video", included: true },
-      { label: "3 clips per video", included: true },
+      { label: "Up to 3 requested clips per video", included: true },
       { label: "1 concurrent job", included: true },
       { label: "One source video per job", included: true },
       { label: "Multi-video clip series", included: false },
@@ -102,7 +99,7 @@ const PLANS: Plan[] = [
     features: [
       { label: "1 000 video minutes / month", included: true },
       { label: "Up to 60 min per video", included: true },
-      { label: "3 clips per video", included: true },
+      { label: "Up to 3 requested clips per video", included: true },
       { label: "1 concurrent job", included: true },
       { label: "Up to 5 source videos per clip series", included: true },
       { label: "Multi-part clips when the story needs it", included: true },
@@ -113,26 +110,7 @@ const PLANS: Plan[] = [
       { label: "Priority support", included: true },
     ],
   },
-  {
-    name: "Agency",
-    price: "199€",
-    tagline: "Coming soon — for studios.",
-    cta: "Get in touch",
-    ctaHref: "mailto:hello@clipfactory.app?subject=Agency%20plan",
-    available: false,
-    features: [
-      { label: "3 000 video minutes / month", included: true },
-      { label: "Up to 120 min per video", included: true },
-      { label: "8 clips per video", included: true },
-      { label: "3 concurrent jobs", included: true },
-      { label: "Multi-part clips when the story needs it", included: true },
-      { label: "Saved audience briefs", included: true },
-      { label: "Simple score for every clip", included: true },
-      { label: "Good / bad feedback", included: true },
-      { label: "API access (V2)", included: true },
-      { label: "Priority support", included: true },
-    ],
-  },
+
 ];
 
 export default function PricingPage() {
@@ -146,7 +124,7 @@ export default function PricingPage() {
       />
       <FaqJsonLd items={PRICING_FAQ} />
       <MarketingNav />
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         <section className="border-b border-[var(--color-border)]">
           <Container className="max-w-5xl py-20">
             <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
@@ -156,11 +134,12 @@ export default function PricingPage() {
               Pricing for turning long videos into short clips.
             </h1>
             <p className="mt-4 max-w-2xl text-[var(--color-muted-foreground)] md:text-lg">
-              Simple monthly plans for AI video clipping. You pay for video minutes,
-              get vertical clips with captions, and keep the clips with no watermark.
+              Simple monthly plans for AI video clipping. You pay for video
+              minutes, get vertical clips with captions, and keep the clips with
+              no watermark.
             </p>
 
-            <div className="mt-12 grid gap-6 md:grid-cols-3">
+            <div className="mt-12 grid gap-6 md:grid-cols-2">
               {PLANS.map((p) => (
                 <PlanCard key={p.name} plan={p} />
               ))}
@@ -178,8 +157,9 @@ export default function PricingPage() {
               1 credit = 1 minute of source video.
             </h2>
             <p className="mt-4 text-[var(--color-muted-foreground)]">
-              Upload or paste a 12-minute video and it uses 12 credits. The number of
-              clips does not change the price, so costs stay easy to understand.
+              Paste a public 12-minute YouTube or Vimeo source and it uses 12
+              credits. The number of clips does not change the price, so costs
+              stay easy to understand.
             </p>
             <ul className="mt-8 grid gap-3 text-sm md:grid-cols-2">
               <li className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-4">
@@ -187,16 +167,18 @@ export default function PricingPage() {
                 1080×1920, captions, no watermark — on every plan.
               </li>
               <li className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-4">
-                <span className="font-semibold">Storage retention.</span> Source files deleted
-                after 14 days, rendered clips after 60. GDPR-friendly by design.
+                <span className="font-semibold">Pilot retention.</span>{" "}
+                Automated lifecycle rules are still being completed. Download
+                deliveries promptly or request deletion through support.
               </li>
               <li className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-4">
-                <span className="font-semibold">Stripe billing.</span> VAT included for EU
-                customers. Billing portal for invoices and cancellation.
+                <span className="font-semibold">Stripe Checkout.</span> Starter
+                activation uses secure Checkout. Invoice and cancellation
+                self-service is not yet in product.
               </li>
               <li className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-4">
-                <span className="font-semibold">No revenue share.</span> What your clips earn
-                elsewhere is yours, full stop.
+                <span className="font-semibold">No revenue share.</span> What
+                your clips earn elsewhere is yours, full stop.
               </li>
             </ul>
           </Container>
@@ -215,7 +197,9 @@ export default function PricingPage() {
               {PRICING_FAQ.map((item) => (
                 <div key={item.q} className="py-6">
                   <dt className="text-base font-medium">{item.q}</dt>
-                  <dd className="mt-2 text-sm text-[var(--color-muted-foreground)]">{item.a}</dd>
+                  <dd className="mt-2 text-sm text-[var(--color-muted-foreground)]">
+                    {item.a}
+                  </dd>
                 </div>
               ))}
             </dl>
@@ -224,7 +208,11 @@ export default function PricingPage() {
               <a href="mailto:hello@clipfactory.app" className="underline">
                 hello@clipfactory.app
               </a>{" "}
-              or check the <Link href="/faq" className="underline">full FAQ</Link>.
+              or check the{" "}
+              <Link href="/faq" className="underline">
+                full FAQ
+              </Link>
+              .
             </p>
           </Container>
         </section>
@@ -262,10 +250,14 @@ function PlanCard({ plan }: { plan: Plan }) {
         )}
       </div>
       <div className="mt-2 flex items-baseline gap-1">
-        <span className="text-4xl font-semibold tabular-nums">{plan.price}</span>
+        <span className="text-4xl font-semibold tabular-nums">
+          {plan.price}
+        </span>
         <span className="text-[var(--color-muted-foreground)]">/ month</span>
       </div>
-      <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">{plan.tagline}</p>
+      <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">
+        {plan.tagline}
+      </p>
 
       <ul className="mt-6 flex-1 space-y-2 text-sm">
         {plan.features.map((f) => (
@@ -273,7 +265,9 @@ function PlanCard({ plan }: { plan: Plan }) {
             key={f.label}
             className={
               "flex gap-3 " +
-              (f.included ? "" : "text-[var(--color-muted-foreground)] line-through")
+              (f.included
+                ? ""
+                : "text-[var(--color-muted-foreground)] line-through")
             }
           >
             {f.included ? (
