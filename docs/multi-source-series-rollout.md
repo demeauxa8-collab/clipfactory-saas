@@ -17,4 +17,11 @@
 
 ## Current state on 2026-09-25
 
-The database migration is live and the local code/build/tests are ready for review. Pro remains inactive because no dedicated Stripe price is configured. The public web site answers, but `api.clipfactory.app` does not resolve, and no production API or worker deployment was verified. Do not advertise Pro as purchasable until the API, worker and Stripe smoke test pass.
+The database migration is live and the web preview is deployed. Pro remains inactive because no dedicated Stripe price is configured. The public web site answers, but `api.clipfactory.app` does not resolve, and no production API or worker deployment was verified. Do not advertise Pro as purchasable until the API, worker and Stripe smoke test pass.
+
+## Verification update — 2026-09-26
+
+- Vercel successfully deployed the feature branch; `/pricing` returns HTTP 200 on the preview.
+- PostgreSQL integration tests exercise the actual API service and worker claim query against temporary tables copied from the migrated schema. They cover ordered claims, continuation after a source failure, Starter exclusion, campaign ownership, cross-account reads, rollback on partial creation, duplicate submissions and recovery of unstarted claims. Every fixture is rolled back; public customer rows are untouched.
+- YouTube URLs are canonicalized by video ID before duplicate detection, including short, watch, Shorts and live links. Channel and playlist URLs are rejected before database writes.
+- Run the integration suite by setting `CLIPFACTORY_TEST_DATABASE_URL` and running `PYTHONPATH=. pytest tests/test_series_postgres.py` from `apps/api`. It skips automatically when that variable is absent.

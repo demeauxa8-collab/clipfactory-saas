@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import re
+from urllib.parse import parse_qs, urlparse
+
 import asyncpg
 
 from ..schemas import SeriesCreate, SeriesOut
@@ -12,12 +15,30 @@ from . import jobs as jobs_svc
 YOUTUBE_HOSTS = {"youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be"}
 
 
+def _canonical_video_url(url: str) -> str:
+    parsed = urlparse(url)
+    if parsed.hostname not in YOUTUBE_HOSTS or parsed.username or parsed.password:
+        raise jobs_svc.JobError("unsupported_source", "Use YouTube video URLs for every source.")
+    path = parsed.path.strip("/").split("/")
+    video_id = ""
+    if parsed.hostname == "youtu.be" and len(path) == 1:
+        video_id = path[0]
+    elif parsed.path == "/watch":
+        video_id = parse_qs(parsed.query).get("v", [""])[0]
+    elif len(path) == 2 and path[0] in {"shorts", "live", "embed"}:
+        video_id = path[1]
+    if not re.fullmatch(r"[A-Za-z0-9_-]{11}", video_id):
+        raise jobs_svc.JobError(
+            "unsupported_source",
+            "Use links to individual YouTube videos, not channels or playlists.",
+        )
+    return f"https://www.youtube.com/watch?v={video_id}"
+
+
 async def create_series(
     conn: asyncpg.Connection, *, user_id: str, payload: SeriesCreate
 ) -> SeriesOut:
-    urls = [str(url) for url in payload.source_urls]
-    if any(url.host.lower() not in YOUTUBE_HOSTS for url in payload.source_urls):
-        raise jobs_svc.JobError("unsupported_source", "Use YouTube video URLs for every source.")
+    urls = [_canonical_video_url(str(url)) for url in payload.source_urls]
     if len(set(urls)) != len(urls):
         raise jobs_svc.JobError("duplicate_source", "Each source video must be different.")
 

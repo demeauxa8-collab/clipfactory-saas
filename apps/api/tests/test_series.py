@@ -25,8 +25,18 @@ def test_series_requires_two_to_five_sources() -> None:
 @pytest.mark.parametrize(
     ("urls", "code"),
     [
-        (["https://youtu.be/one", "https://youtu.be/one"], "duplicate_source"),
-        (["https://youtu.be/one", "https://example.com/two"], "unsupported_source"),
+        (["https://youtu.be/source00001", "https://youtu.be/source00001"], "duplicate_source"),
+        (["https://youtu.be/source00001", "https://example.com/two"], "unsupported_source"),
+        (
+            ["https://youtu.be/source00001?si=share", "https://youtube.com/watch?v=source00001&t=30"],
+            "duplicate_source",
+        ),
+        (
+            ["https://youtube.com/shorts/source00001", "https://youtube.com/live/source00001"],
+            "duplicate_source",
+        ),
+        (["https://youtu.be/source00001", "https://youtube.com/playlist?list=123"],
+         "unsupported_source"),
     ],
 )
 async def test_invalid_series_rejected_before_database_access(urls: list[str], code: str) -> None:
@@ -57,7 +67,7 @@ async def test_starter_cannot_create_multi_video_series(monkeypatch: pytest.Monk
     monkeypatch.setattr(jobs_svc, "_active_subscription", starter_subscription)
     payload = SeriesCreate(
         campaign_id="campaign",
-        source_urls=["https://youtu.be/one", "https://youtu.be/two"],
+        source_urls=["https://youtu.be/source00001", "https://youtu.be/source00002"],
     )
     with pytest.raises(JobError) as exc:
         await create_series(Connection(), user_id="user", payload=payload)  # type: ignore[arg-type]
