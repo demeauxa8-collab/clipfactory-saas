@@ -12,7 +12,10 @@ type JobRow = {
   status: string;
   target_clip_count: number;
   queued_at: string;
+  series_id: string | null;
 };
+
+type SeriesRow = { id: string; created_at: string };
 
 export default async function CampaignDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -28,12 +31,24 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
     notFound();
   }
 
-  const { data: jobs } = await supabase
-    .from("jobs")
-    .select("id, source_url, status, target_clip_count, queued_at")
-    .eq("campaign_id", id)
-    .order("queued_at", { ascending: false })
-    .limit(50);
+  const [{ data: jobs }, { data: series }, { data: subscription }] = await Promise.all([
+    supabase.from("jobs")
+      .select("id, source_url, status, target_clip_count, queued_at, series_id")
+      .eq("campaign_id", id).order("queued_at", { ascending: false }).limit(50),
+    supabase.from("clip_series")
+      .select("id, created_at")
+      .eq("campaign_id", id).order("created_at", { ascending: false }).limit(20),
+    supabase.from("subscriptions")
+      .select("plan_code")
+      .in("status", ["active", "trialing"])
+      .order("current_period_end", { ascending: false }).limit(1).maybeSingle(),
+  ]);
+  const { data: plan } = subscription
+    ? await supabase.from("plan_definitions")
+      .select("max_series_sources").eq("code", subscription.plan_code).maybeSingle()
+    : { data: null };
+  const maxSeriesSources = Number(plan?.max_series_sources ?? 1);
+  const standaloneJobs = ((jobs ?? []) as JobRow[]).filter((job) => !job.series_id);
 
   return (
     <Container className="py-10">
@@ -55,23 +70,39 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
       </div>
 
       <section className="mt-10">
-        <h2 className="text-lg font-semibold">Submit a video</h2>
+        <h2 className="text-lg font-semibold">Create clips from videos</h2>
         <p className="mt-1 text-sm text-[var(--color-muted-foreground)]">
-          Paste a YouTube URL. Each job consumes 1 credit per minute of source.
+          {maxSeriesSources > 1
+            ? `Add up to ${maxSeriesSources} YouTube videos to one series. Each source is processed in order.`
+            : "Paste one YouTube URL. Multi-video series are available with Pro."}
         </p>
         <div className="pro-panel mt-4 rounded-lg p-5">
-          <SubmitJobForm campaignId={String(campaign.id)} />
+          <SubmitJobForm campaignId={String(campaign.id)} maxSources={maxSeriesSources} />
         </div>
       </section>
 
+      {(series?.length ?? 0) > 0 && (
+        <section className="mt-10">
+          <h2 className="text-lg font-semibold">Clip series</h2>
+          <div className="pro-card mt-4 divide-y divide-[var(--color-border)] overflow-hidden rounded-lg">
+            {(series as SeriesRow[]).map((item) => (
+              <Link key={item.id} href={`/app/series/${item.id}`} className="flex items-center justify-between gap-4 p-4 text-sm hover:bg-white/[0.035]">
+                <span>Series created {new Date(item.created_at).toLocaleString()}</span>
+                <span className="text-[var(--color-muted-foreground)]">Open →</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       <section className="mt-10">
-        <h2 className="text-lg font-semibold">Jobs in this campaign</h2>
+        <h2 className="text-lg font-semibold">Single-video jobs</h2>
         <div className="pro-card mt-4 overflow-hidden rounded-lg">
-          {(jobs?.length ?? 0) === 0 ? (
-            <p className="p-6 text-sm text-[var(--color-muted-foreground)]">No jobs yet.</p>
+          {standaloneJobs.length === 0 ? (
+            <p className="p-6 text-sm text-[var(--color-muted-foreground)]">No single-video jobs yet.</p>
           ) : (
             <ul className="divide-y divide-[var(--color-border)]">
-              {(jobs ?? []).map((j: JobRow) => (
+              {standaloneJobs.map((j) => (
                 <li
                   key={j.id}
                   className="flex items-center justify-between gap-4 p-4 transition-colors duration-200 hover:bg-white/[0.035]"

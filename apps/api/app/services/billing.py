@@ -14,8 +14,17 @@ from . import credits as credits_svc
 log = structlog.get_logger()
 
 
+class BillingError(Exception):
+    def __init__(self, code: str, message: str) -> None:
+        super().__init__(message)
+        self.code = code
+        self.message = message
+
+
 def _ensure_stripe_configured() -> None:
     settings = get_settings()
+    if not settings.stripe_secret_key:
+        raise BillingError("billing_unavailable", "Billing is not configured yet.")
     stripe.api_key = settings.stripe_secret_key
     stripe.api_version = "2025-04-30.basil"
 
@@ -57,11 +66,27 @@ async def create_checkout_url(
         "select stripe_price_id from plan_definitions where code = $1 and is_active",
         plan_code,
     )
-    if plan_row is None or not plan_row["stripe_price_id"]:
-        # In dev we fall back to the env-configured starter price id.
+    if plan_row is None:
+        raise BillingError("plan_unavailable", "This plan is not available for checkout yet.")
+    price_id = plan_row["stripe_price_id"]
+    if not price_id and plan_code == "starter":
         price_id = settings.stripe_starter_price_id
-    else:
-        price_id = plan_row["stripe_price_id"]
+    if not price_id:
+        raise BillingError("plan_unavailable", "This plan is not available for checkout yet.")
+
+    existing = await conn.fetchrow(
+        """
+        select plan_code from subscriptions
+         where user_id = $1 and status in ('trialing', 'active', 'past_due')
+         order by current_period_end desc nulls last limit 1
+        """,
+        user_id,
+    )
+    if existing:
+        raise BillingError(
+            "subscription_exists",
+            "Manage or change your current subscription in the billing portal.",
+        )
 
     customer_id = await _get_or_create_customer(conn, user_id=user_id, email=email)
 
@@ -74,6 +99,21 @@ async def create_checkout_url(
         allow_promotion_codes=True,
         client_reference_id=user_id,
         subscription_data={"metadata": {"user_id": user_id, "plan_code": plan_code}},
+    )
+    return str(session.url)
+
+
+async def create_portal_url(conn: asyncpg.Connection, *, user_id: str) -> str:
+    settings = get_settings()
+    _ensure_stripe_configured()
+    row = await conn.fetchrow(
+        "select stripe_customer_id from profiles where user_id = $1", user_id
+    )
+    if not row or not row["stripe_customer_id"]:
+        raise BillingError("customer_not_found", "No billing account is linked to this user.")
+    session = stripe.billing_portal.Session.create(
+        customer=str(row["stripe_customer_id"]),
+        return_url=f"{settings.web_base_url}/app/billing",
     )
     return str(session.url)
 
@@ -168,6 +208,26 @@ async def _upsert_subscription(
     return str(row["id"])
 
 
+async def _plan_code_for_subscription(
+    conn: asyncpg.Connection, sub: dict[str, Any]
+) -> str:
+    """Use the billed Stripe price, never client-controlled or stale metadata."""
+    items = (sub.get("items") or {}).get("data") or []
+    if len(items) != 1:
+        raise BillingError("unknown_subscription_price", "Subscription has no single plan price.")
+    price_id = (items[0].get("price") or {}).get("id")
+    if not price_id:
+        raise BillingError("unknown_subscription_price", "Subscription price is missing.")
+    row = await conn.fetchrow(
+        "select code from plan_definitions where stripe_price_id = $1", price_id
+    )
+    if row:
+        return str(row["code"])
+    if price_id == get_settings().stripe_starter_price_id:
+        return "starter"
+    raise BillingError("unknown_subscription_price", "Subscription price is not configured.")
+
+
 async def _grant_credits_once(
     conn: asyncpg.Connection,
     *,
@@ -217,12 +277,14 @@ async def _handle_checkout_completed(conn: asyncpg.Connection, session: dict[str
 
     _ensure_stripe_configured()
     sub = stripe.Subscription.retrieve(sub_id)
-    plan_code = (sub.get("metadata") or {}).get("plan_code", "starter")
+    plan_code = await _plan_code_for_subscription(conn, sub.to_dict())
     plan_row = await conn.fetchrow(
         "select credits_per_period from plan_definitions where code = $1",
         plan_code,
     )
-    credits = int(plan_row["credits_per_period"]) if plan_row else 300
+    if not plan_row:
+        raise BillingError("plan_unavailable", "Subscription plan is not configured.")
+    credits = int(plan_row["credits_per_period"])
 
     db_sub_id = await _upsert_subscription(
         conn, user_id=user_id, plan_code=plan_code, sub=sub.to_dict()
@@ -244,8 +306,11 @@ async def _handle_invoice_paid(conn: asyncpg.Connection, invoice: dict[str, Any]
     if not sub_id:
         return
 
+    _ensure_stripe_configured()
+    sub = stripe.Subscription.retrieve(sub_id)
+    plan_code = await _plan_code_for_subscription(conn, sub.to_dict())
     sub_row = await conn.fetchrow(
-        "select id, user_id, plan_code from subscriptions where stripe_subscription_id = $1",
+        "select id, user_id from subscriptions where stripe_subscription_id = $1",
         sub_id,
     )
     if sub_row is None:
@@ -253,9 +318,17 @@ async def _handle_invoice_paid(conn: asyncpg.Connection, invoice: dict[str, Any]
 
     plan_row = await conn.fetchrow(
         "select credits_per_period from plan_definitions where code = $1",
-        sub_row["plan_code"],
+        plan_code,
     )
-    credits = int(plan_row["credits_per_period"]) if plan_row else 300
+    if not plan_row:
+        raise BillingError("plan_unavailable", "Subscription plan is not configured.")
+    credits = int(plan_row["credits_per_period"])
+    await _upsert_subscription(
+        conn,
+        user_id=str(sub_row["user_id"]),
+        plan_code=plan_code,
+        sub=sub.to_dict(),
+    )
     await _grant_credits_once(
         conn,
         user_id=str(sub_row["user_id"]),
@@ -274,7 +347,7 @@ async def _handle_subscription_updated(conn: asyncpg.Connection, sub: dict[str, 
     )
     if not user_id:
         return
-    plan_code = (sub.get("metadata") or {}).get("plan_code", "starter")
+    plan_code = await _plan_code_for_subscription(conn, sub)
     await _upsert_subscription(conn, user_id=user_id, plan_code=plan_code, sub=sub)
 
 

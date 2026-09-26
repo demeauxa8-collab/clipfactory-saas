@@ -101,6 +101,8 @@ class JobCreate(BaseModel):
 class JobOut(BaseModel):
     id: str
     campaign_id: str | None = None
+    series_id: str | None = None
+    series_position: int | None = None
     source_url: str
     target_clip_count: int
     status: JobStatus
@@ -121,6 +123,19 @@ class JobOut(BaseModel):
     queued_at: datetime
     started_at: datetime | None = None
     finished_at: datetime | None = None
+
+
+class SeriesCreate(BaseModel):
+    campaign_id: str
+    source_urls: list[HttpUrl] = Field(min_length=2, max_length=5)
+    target_clip_count: int = Field(default=3, ge=1, le=3)
+
+
+class SeriesOut(BaseModel):
+    id: str
+    campaign_id: str
+    created_at: datetime
+    jobs: list[JobOut]
 
 
 # =============================================================
@@ -192,11 +207,15 @@ class Feedback(BaseModel):
 
 
 class CheckoutCreate(BaseModel):
-    plan_code: Literal["starter"] = "starter"
+    plan_code: Literal["starter", "pro"] = "starter"
 
 
 class CheckoutResponse(BaseModel):
     checkout_url: str
+
+
+class PortalResponse(BaseModel):
+    portal_url: str
 
 
 # =============================================================

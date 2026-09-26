@@ -1,0 +1,98 @@
+.page {
+  background: var(--story-paper);
+  color: var(--story-ink);
+  color-scheme: light;
+}
+.header {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  margin: 16px 18px 0;
+  color: var(--white);
+  background: var(--graphite);
+}
+.header a[aria-current="page"] { color: var(--white); }
+.plans > section { padding-top: 96px; padding-bottom: 96px; }
+.plans h1 {
+  max-width: 840px;
+  margin: 24px 0 0;
+  font-size: clamp(3.3rem, 7vw, 7rem);
+  font-weight: 650;
+  line-height: 0.96;
+  letter-spacing: -0.075em;
+  text-wrap: balance;
+}
+.plans p { text-wrap: pretty; }
+.credits {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 96px;
+  padding: 96px max(24px, calc((100vw - 1280px) / 2));
+  border-top: 1px solid color-mix(in srgb, var(--story-ink) 14%, transparent);
+}
+.eyebrow {
+  margin-bottom: 24px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.credits h2 { font-size: clamp(3rem, 5vw, 5rem); font-weight: 650; line-height: 1; letter-spacing: -0.065em; }
+.equation { display: flex; align-items: center; gap: 32px; padding-bottom: 32px; border-bottom: 1px solid color-mix(in srgb, var(--story-ink) 14%, transparent); }
+.equation > span { display: grid; gap: 16px; color: var(--muted); font-size: 0.875rem; }
+.equation strong { color: var(--story-ink); font-size: 4rem; font-weight: 600; line-height: 1; letter-spacing: -0.065em; }
+.creditExample > p { margin-top: 24px; max-width: 48ch; color: var(--muted); font-size: 1rem; line-height: 1.6; }
+.faq { color: var(--story-text); }
+.faq h2 { font-weight: 650; line-height: 1; letter-spacing: -0.065em; }
+.faq .eyebrow, .contact { color: var(--story-muted); }
+.contact { margin-top: 32px; font-size: 1rem; line-height: 1.8; }
+.contact a { display: inline-flex; align-items: center; gap: 8px; color: var(--story-text); }
+.contact svg { width: 16px; height: 16px; }
+.footer { display: flex; flex-wrap: wrap; align-items: center; gap: 32px; padding: 48px max(24px, calc((100vw - 1360px) / 2)); background: var(--story-bg); color: var(--story-text); border-top: 1px solid var(--story-line); }
+.footer p, .footer small { color: var(--story-muted); font-size: 0.75rem; }
+.footer nav { display: flex; gap: 24px; margin-left: auto; font-size: 0.875rem; }
+.page a:focus-visible, .page summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
+@media (max-width: 760px) {
+  .header { margin: 12px; padding-left: 12px; grid-template-columns: 1fr auto; }
+  .plans > section { padding-top: 64px; padding-bottom: 64px; }
+  .plans h1 { font-size: clamp(3rem, 10vw, 4rem); }
+  .credits { grid-template-columns: 1fr; gap: 48px; padding: 64px 24px; }
+  .equation { gap: 24px; }
+  .footer { align-items: flex-start; flex-direction: column; gap: 24px; padding: 48px 24px; }
+  .footer nav { margin-left: 0; }
+}
+
+/* Preserve the landing composition with larger comparison text on this page. */
+.plans [data-pricing-rules] > div { grid-template-columns: 64px minmax(160px, 0.9fr) minmax(180px, 1fr) 20px; gap: 16px; }
+.plans [data-pricing-rules] span { font-size: 0.75rem; color: var(--muted); }
+.plans [data-pricing-rules] strong { font-size: 0.875rem; line-height: 1.45; }
+.plans [data-pricing-rules] p { font-size: 0.8125rem; line-height: 1.6; }
+.plans [data-pricing-amount] > span { font-size: 0.8125rem; }
+.plans [data-pricing-amount] small { font-size: 0.8125rem; }
+.plans [data-pricing-amount] > a { font-size: 0.875rem; }
+.faq .contact { margin: 32px 0 0; font-size: 1rem; font-weight: 400; line-height: 1.8; letter-spacing: 0; text-transform: none; }
+@media (max-width: 760px) {
+  .plans [data-pricing-rules] > div { grid-template-columns: 64px minmax(0, 1fr) 20px; gap: 16px; }
+}
+.plans > section > div:first-child p,
+.plans [data-pricing-amount] > span,
+.plans [data-pricing-amount] small {
+  color: var(--muted);
+}
+
+@media (max-width: 760px) {
+  .plans h1 { font-size: clamp(2.25rem, 10vw, 3rem); line-height: 1.05; letter-spacing: -0.05em; }
+  .plans [data-pricing-rules] > div { grid-template-columns: minmax(0, 1fr) 20px; gap: 8px 16px; }
+  .plans [data-pricing-rules] strong { font-size: 0.9375rem; }
+  .plans [data-pricing-rules] p { font-size: 0.875rem; line-height: 1.5; }
+  .credits { padding: 48px 20px; gap: 32px; }
+  .credits h2, .faq h2 { font-size: 2.5rem; line-height: 1.05; }
+  .faq { padding: 64px 20px; gap: 32px; }
+  .faq summary { min-height: 72px; }
+  .faq summary > strong { font-size: 1rem; line-height: 1.45; }
+  .faq details > p { font-size: 0.9375rem; line-height: 1.6; }
+  .footer nav { flex-wrap: wrap; gap: 8px 24px; }
+  .footer nav a { display: inline-flex; align-items: center; min-height: 44px; }
+}

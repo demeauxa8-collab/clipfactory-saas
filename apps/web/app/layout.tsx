@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { SITE } from "@/lib/site";
 import { Analytics } from "@/components/analytics";
 import "./globals.css";
+import "./product.css";
 
 // Inter is the cross-platform fallback behind San Francisco (set in globals.css).
 // The former Fraunces serif display is dropped — clean SF sans only, Apple-style.
@@ -35,7 +36,9 @@ export const metadata: Metadata = {
     siteName: SITE.name,
     title: `${SITE.name} — AI clip maker for Shorts, Reels and TikToks`,
     description: SITE.longDescription,
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: SITE.name }],
+    images: [
+      { url: "/opengraph-image", width: 1200, height: 630, alt: SITE.name },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -50,7 +53,7 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: "/icon.svg",
   },
 };
 
@@ -69,6 +72,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} min-h-dvh flex flex-col`}>
+        <a className="cf-skip-link" href="#main-content">
+          Skip to main content
+        </a>
         <Analytics />
         {children}
       </body>

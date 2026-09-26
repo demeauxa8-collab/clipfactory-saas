@@ -42,14 +42,14 @@ export function MarketingFooter() {
             {SITE.name}
           </Link>
           <p className="mt-4 max-w-xs leading-relaxed">
-            AI video clipping for creators, podcasts and agencies. Long videos in,
-            focused clip series out.
+            AI video clipping for creators, podcasts and agencies. Long videos
+            in, focused clip series out.
           </p>
           <div className="mt-6 flex items-center gap-3">
             <a
               href={`mailto:${SITE.contactEmail}`}
               aria-label="Email"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-[0.875rem] border border-[var(--color-border)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-[0.875rem] border border-[var(--color-border)] transition-[border-color,color,transform] duration-150 ease-out hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
             >
               <Mail className="h-4 w-4" />
             </a>
@@ -58,7 +58,7 @@ export function MarketingFooter() {
               aria-label="Twitter"
               rel="noreferrer"
               target="_blank"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-[0.875rem] border border-[var(--color-border)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-[0.875rem] border border-[var(--color-border)] transition-[border-color,color,transform] duration-150 ease-out hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
             >
               <Twitter className="h-4 w-4" />
             </a>
@@ -67,7 +67,7 @@ export function MarketingFooter() {
               aria-label="GitHub"
               rel="noreferrer"
               target="_blank"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-[0.875rem] border border-[var(--color-border)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-[0.875rem] border border-[var(--color-border)] transition-[border-color,color,transform] duration-150 ease-out hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
             >
               <Github className="h-4 w-4" />
             </a>
@@ -91,7 +91,8 @@ export function MarketingFooter() {
             Updates
           </h4>
           <p className="text-xs leading-relaxed">
-            New features, lessons learned shipping a one-person SaaS. One email, never spam.
+            New features, lessons learned shipping a one-person SaaS. One email,
+            never spam.
           </p>
           <a
             href={`mailto:${SITE.contactEmail}?subject=Subscribe%20to%20updates`}
