@@ -76,3 +76,8 @@
 @media (max-width: 760px) {
   .plans [data-pricing-rules] > div { grid-template-columns: 64px minmax(0, 1fr) 20px; gap: 16px; }
 }
+.plans > section > div:first-child p,
+.plans [data-pricing-amount] > span,
+.plans [data-pricing-amount] small {
+  color: var(--muted);
+}
