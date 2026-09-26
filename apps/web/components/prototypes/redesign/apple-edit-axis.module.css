@@ -1201,3 +1201,19 @@
     backdrop-filter: none;
   }
 }
+
+@media (max-width: 760px) {
+  .header { padding: 4px 8px 4px 16px; min-height: 56px; }
+  .headerActions > .navCta { display: none; }
+  .heroStage { min-height: 980px; }
+  .heroCopy { top: 88px; left: 20px; right: 20px; }
+  .heroCopy h1 { font-size: clamp(2.25rem, 10.5vw, 3rem); line-height: 1.02; }
+  .heroCopy > p { font-size: 1rem; line-height: 1.5; margin-top: 16px; }
+  .heroActions { margin-top: 24px; gap: 12px; }
+  .primaryCta, .secondaryCta { min-height: 48px; font-size: 0.8125rem; }
+  .productEyebrow { font-size: 0.75rem; }
+}
+@media (max-width: 380px) {
+  .heroActions { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  .heroActions > a { width: 100%; justify-content: center; }
+}

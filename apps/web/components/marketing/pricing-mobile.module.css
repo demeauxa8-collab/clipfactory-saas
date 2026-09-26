@@ -1,0 +1,25 @@
+.planNav { display: none; }
+.plan { scroll-margin-top: 24px; }
+@media (max-width: 760px) {
+  .section.section { padding: 64px 20px; }
+  .section > div:first-child { gap: 24px; }
+  .section h1, .section h2 { font-size: clamp(2.25rem, 10vw, 3rem); line-height: 1.05; letter-spacing: -0.05em; }
+  .section > div:first-child p { color: #5f5f65; }
+  .section > div:first-child > div:last-child p { font-size: 1rem; line-height: 1.6; }
+  .planNav { display: grid; grid-template-columns: 1fr 1fr; margin-top: 32px; border-top: 1px solid color-mix(in srgb, var(--story-ink) 14%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--story-ink) 14%, transparent); }
+  .planNav a { display: grid; gap: 4px; min-height: 64px; align-content: center; padding: 12px 8px; font-size: 1rem; font-weight: 600; }
+  .planNav a + a { border-left: 1px solid color-mix(in srgb, var(--story-ink) 14%, transparent); padding-left: 16px; }
+  .planNav span { font-size: 0.75rem; font-weight: 400; color: #5f5f65; }
+  .planNav a:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 4px; }
+  .section .plan { margin-top: 32px; padding-top: 32px; gap: 24px; }
+  .section [data-pricing-amount] > span, .section [data-pricing-amount] small { font-size: 0.8125rem; color: #5f5f65; }
+  .section [data-pricing-amount] > div { margin-top: 24px; }
+  .section [data-pricing-amount] strong { font-size: 4.5rem; line-height: 1; }
+  .section [data-pricing-amount] > p { margin-top: 16px; font-size: 0.9375rem; }
+  .section [data-pricing-amount] > a { width: 100%; min-height: 48px; justify-content: center; margin-top: 24px; font-size: 0.9375rem; }
+  .section [data-pricing-rules] > div { min-height: 0; padding: 20px 0; grid-template-columns: minmax(0, 1fr) 20px; gap: 8px 16px; }
+  .section [data-pricing-rules] span { display: none; }
+  .section [data-pricing-rules] strong { grid-column: 1; font-size: 0.9375rem; line-height: 1.4; }
+  .section [data-pricing-rules] p { grid-column: 1; font-size: 0.875rem; line-height: 1.5; color: #5f5f65; }
+  .section [data-pricing-rules] svg { grid-column: 2; grid-row: 1; }
+}

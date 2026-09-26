@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { ArrowUpRight, Check } from "lucide-react";
+import mobile from "./pricing-mobile.module.css";
 import styles from "@/components/prototypes/redesign/edit-axis-story.module.css";
 
 export function PricingSection({ startHref, standalone = false }: { startHref: Route; standalone?: boolean }) {
@@ -8,7 +9,7 @@ export function PricingSection({ startHref, standalone = false }: { startHref: R
   return (
     <section
       id="pricing"
-      className={styles.pricingSection}
+      className={`${styles.pricingSection} ${mobile.section}`}
       aria-labelledby="pricing-title-v6"
     >
       <div className={styles.pricingIntro}>
@@ -24,7 +25,12 @@ export function PricingSection({ startHref, standalone = false }: { startHref: R
         </div>
       </div>
 
-      <div className={styles.priceLedger}>
+      <nav className={mobile.planNav} aria-label="Choose a plan">
+        <a href="#starter-plan">Starter <span>€29 / month</span></a>
+        <a href="#pro-plan">Pro <span>€79 · Coming soon</span></a>
+      </nav>
+
+      <div id="starter-plan" className={`${styles.priceLedger} ${mobile.plan}`}>
         <div className={styles.priceAmount} data-pricing-amount>
           <span>Starter</span>
           <div>
@@ -74,7 +80,7 @@ export function PricingSection({ startHref, standalone = false }: { startHref: R
         </div>
       </div>
 
-      <div className={styles.priceLedger}>
+      <div id="pro-plan" className={`${styles.priceLedger} ${mobile.plan}`}>
         <div className={styles.priceAmount} data-pricing-amount>
           <span>Pro · Coming soon</span>
           <div>

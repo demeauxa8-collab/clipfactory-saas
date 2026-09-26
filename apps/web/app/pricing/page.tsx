@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, ChevronDown } from "lucide-react";
 import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/marketing/json-ld";
+import { MobileMenu } from "@/components/marketing/mobile-menu";
 import { PricingSection } from "@/components/marketing/pricing-section";
 import landing from "@/components/prototypes/redesign/apple-edit-axis.module.css";
 import story from "@/components/prototypes/redesign/edit-axis-story.module.css";
@@ -38,6 +39,7 @@ export default function PricingPage() {
           <Link href="/pricing" aria-current="page">Pricing</Link>
         </nav>
         <div className={landing.headerActions}>
+          <MobileMenu />
           <Link href="/login" className={landing.signIn}>Sign in</Link>
           <Link href="/app/campaigns/new" className={landing.navCta}>Start a campaign <ArrowUpRight aria-hidden="true" /></Link>
         </div>

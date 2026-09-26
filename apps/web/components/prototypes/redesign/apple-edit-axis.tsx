@@ -12,6 +12,7 @@ import {
   useTransform,
 } from "motion/react";
 import Image from "next/image";
+import { MobileMenu } from "@/components/marketing/mobile-menu";
 import Link from "next/link";
 import type { Route } from "next";
 import { usePathname } from "next/navigation";
@@ -310,6 +311,8 @@ export function AppleEditAxis() {
   ) as Route;
   const heroRef = React.useRef<HTMLElement>(null);
   const stageRef = React.useRef<HTMLDivElement>(null);
+  const heroCopyRef = React.useRef<HTMLDivElement>(null);
+  const [mobileCopyBottom, setMobileCopyBottom] = React.useState(0);
   const timecodeRef = React.useRef<HTMLSpanElement>(null);
   const dragRef = React.useRef({
     pointerId: -1,
@@ -354,7 +357,9 @@ export function AppleEditAxis() {
     Math.max(apertureMargin, stageSize.width - apertureWidth - apertureMargin),
   );
   const axisX = apertureLeft + apertureWidth / 2;
-  const apertureCenterYRatio = mobile ? 0.55 : 0.43;
+  const apertureCenterYRatio = mobile
+    ? Math.max(stageSize.height * 0.57, mobileCopyBottom + 24 + apertureHeight / 2) / stageSize.height
+    : 0.43;
   const apertureCenterY = stageSize.height * apertureCenterYRatio;
   const timelineInset = mobile ? 8 : 22;
   const timelineScale = mobile
@@ -388,8 +393,13 @@ export function AppleEditAxis() {
       setStageSize({ width: stage.clientWidth, height: stage.clientHeight });
     const observer = new ResizeObserver(update);
     observer.observe(stage);
+    const copy = heroCopyRef.current;
+    const measureCopy = () => { if (copy) setMobileCopyBottom(copy.offsetTop + copy.offsetHeight); };
+    const copyObserver = new ResizeObserver(measureCopy);
+    if (copy) copyObserver.observe(copy);
+    measureCopy();
     update();
-    return () => observer.disconnect();
+    return () => { observer.disconnect(); copyObserver.disconnect(); };
   }, []);
 
   React.useLayoutEffect(() => {
@@ -548,7 +558,7 @@ export function AppleEditAxis() {
         <motion.div
           ref={stageRef}
           className={styles.heroStage}
-          style={{ transform: stageTransform, opacity: stageOpacity }}
+          style={{ transform: stageTransform, opacity: stageOpacity, minHeight: mobile ? Math.max(980, mobileCopyBottom + 24 + 338 + 220) : undefined }}
         >
           <CampaignLensShader
             imageSrc="/prototypes/cinematic-source-v1.webp"
@@ -590,6 +600,7 @@ export function AppleEditAxis() {
               <a href="#pricing">Pricing</a>
             </nav>
             <div className={styles.headerActions}>
+              <MobileMenu />
               <Link className={styles.signIn} href={signInHref}>
                 Sign in
               </Link>
@@ -600,6 +611,7 @@ export function AppleEditAxis() {
           </motion.header>
 
           <motion.div
+            ref={heroCopyRef}
             className={styles.heroCopy}
             initial={
               reduceMotion
