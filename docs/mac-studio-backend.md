@@ -8,11 +8,23 @@
 
 ---
 
+## Démarrage rapide
+
+**Message à coller dans Codex sur le Mac Studio :**
+
+> Clone `https://github.com/demeauxa8-collab/clipfactory-saas`, fais `git fetch origin`, puis lis entièrement `git show origin/docs/project-context:docs/mac-studio-backend.md` et `git show origin/docs/project-context:AGENTS.md`. Exécute la mission décrite, section par section, dans l'ordre. Parle-moi en français. Arrête-toi et demande-moi dès qu'il faut `sudo`, un compte, une clé, ou avant de supprimer quoi que ce soit.
+
+**Ordre des étapes :** §2 machine (Augustin) → §3 outils → §4 code (base PR #8) → §5 secrets (Augustin transfère les `.env`) → §6 ASR local + §6.b clips sans R2 (sur la branche `feat/mac-studio-backend`, tests verts) → §7 services launchd → §8 Tailscale Funnel (Augustin se connecte) → §9 Vercel (Augustin redéploie) → §10 `doctor.sh` vert → §11 test de connexion par Claude, puis vrai job → §13 rapport.
+
+**Hors mission** : le test des modèles par groupes (`docs/model-test-plan.md`) se lance **après** cette mission, sur décision d'Augustin. Ne pas le démarrer.
+
+---
+
 ## 0. Règles non négociables
 
 1. **Aucun secret dans git.** Les fichiers `.env` ne sont jamais ajoutés, affichés dans un log, collés dans un message ou un commit. Le repo `demeauxa8-collab/clipfactory-saas` est **public**.
 2. **Jamais de push sur `main`**, jamais de force-push, jamais de merge. Tu travailles sur une branche, tu ouvres une PR en brouillon.
-3. **Aucune modification de la base Supabase** : pas de migration, pas d'écriture manuelle. Le schéma de prod est déjà à jour.
+3. **Aucune modification de la base Supabase** : pas de migration, pas d'écriture manuelle. Le schéma de prod est déjà à jour (la colonne `clips.r2_key` garde son nom, voir §6.b).
 4. **Aucun changement Stripe**, aucun changement de DNS de `clipfactory.app`. Ce domaine n'est pas confirmé comme appartenant au projet : ne pas s'en servir.
 5. **Ne pas toucher aux modèles** choisis dans `models.lock` / `settings.py` : un banc de test est en cours ailleurs, il décidera. Seule exception : l'ajout du backend de transcription locale (§6).
 6. **Redis n'est jamais exposé** hors de `127.0.0.1`. Seul le port de l'API passe par le tunnel.
@@ -35,14 +47,18 @@ Navigateur ──► Vercel (Next.js, clipfactory-saas.vercel.app)
 │                                                          │ BLPOP         │
 │  Worker (python -m app.main) ◄───────────────────────────┘               │
 │    yt-dlp + deno ─► ffmpeg (libass) ─► ASR local MLX (Whisper) ─►        │
-│    LLM/vision via OpenRouter ─► rendu EDL ─► upload R2                   │
+│    LLM/vision via OpenRouter ─► rendu EDL ─► clips sur disque local      │
+│                                              (STORAGE_LOCAL_DIR)         │
+│  API  GET /clips/{id}/download ─► URL signée ─► GET /media/… (fichier)   │
 └──────────────────────────────────────────────────────────────────────────┘
-        │ Postgres (pooler)          │ S3 API               │ HTTPS
-        ▼                            ▼                      ▼
-   Supabase (EU)              Cloudflare R2           OpenRouter / OpenAI (secours ASR)
+        │ Postgres (pooler)                         │ HTTPS
+        ▼                                           ▼
+   Supabase (EU)                         OpenRouter / OpenAI (secours ASR)
 ```
 
-Pourquoi ce choix : zéro VPS à payer, l'IP résidentielle réduit les blocages YouTube, le GPU du M1 Max fait la transcription gratuitement. Limites acceptées pour la phase actuelle : un seul job à la fois, dépendance au courant et à la box. Le passage à un VPS (control plane) reste décrit dans `docs/deploy.md` §5.A.
+**Pas de Cloudflare R2** (décision d'Augustin, 29/09) : les clips restent sur le disque du Mac Studio et l'API les sert elle-même, via des URL signées à durée limitée (§6.b).
+
+Pourquoi ce choix : zéro VPS et zéro stockage cloud à payer, l'IP résidentielle réduit les blocages YouTube, le GPU du M1 Max fait la transcription gratuitement. Limites acceptées pour la phase actuelle : un seul job à la fois, dépendance au courant et à la box, clips sur un seul disque (sauvegarde §12), débit de Tailscale Funnel suffisant pour les premiers clients seulement. Le passage à un VPS (control plane) reste décrit dans `docs/deploy.md` §5.A ; un stockage objet pourra revenir à ce moment-là **sans changer le contrat de l'API**.
 
 ---
 
@@ -158,12 +174,14 @@ Valeurs à **ajuster pour le Mac Studio** (édite les fichiers sans les afficher
 | worker | `WORKER_CONCURRENCY` | `1` |
 | worker | `YT_DLP_COOKIES_FROM_BROWSER` | vide au départ ; `chrome` seulement si YouTube renvoie des 403 ET qu'Augustin est connecté à YouTube dans Chrome sur ce Mac |
 | worker | `ASR_BACKEND` (nouveau, §6) | `mlx_whisper` |
-
-Si `R2_*` est vide ou invalide, **ne bascule pas** en stockage local en silence : stop et préviens Augustin (les clips doivent être téléchargeables depuis le site).
+| api + worker | `STORAGE_BACKEND` | `local` |
+| api + worker | `STORAGE_LOCAL_DIR` | `/Users/<compte>/clipfactory-media` (même dossier pour les deux, créer, `chmod 700`) |
+| api | `MEDIA_SIGNING_SECRET` (nouveau, §6.b) | générée sur place : `openssl rand -hex 32`, écrite directement dans le `.env`, jamais affichée |
+| api + worker | `R2_*` | **supprimer** ces lignes : R2 n'est plus utilisé |
 
 ---
 
-## 6. Le seul vrai développement : la transcription locale (MLX)
+## 6. Développement n°1 : la transcription locale (MLX)
 
 ### Ce qui existe
 `apps/worker/app/pipeline/transcribe.py` → `async def transcribe(path) -> Transcript` : extrait l'audio en mp3 mono 16 kHz, appelle OpenAI `whisper-1` avec `response_format="verbose_json"` et `timestamp_granularities=["word", "segment"]`, construit `Transcript` (mots + phrases), fusionne les élisions françaises (`merge_french_elisions`). La branche de consolidation (PR #8) ajoute une correction des mots de durée nulle. **Tout le reste du pipeline suppose des timestamps au mot fiables : c'est l'horloge des coupes.**
@@ -198,6 +216,32 @@ Sur les **3 premières minutes** d'une vraie source FR (la vidéo de test que te
 Si un seuil n'est pas tenu : laisse `ASR_BACKEND=openai` dans le `.env` du Studio, garde le code, et écris pourquoi dans la PR. **Ne force pas.**
 
 ---
+
+## 6.b Développement n°2 : servir les clips sans R2
+
+### Ce qui existe
+- Worker : `apps/worker/app/storage.py` → `upload_file(local_path, key)`. Avec `STORAGE_BACKEND=local`, il copie déjà le clip dans `STORAGE_LOCAL_DIR/<key>` ; sinon il envoie sur R2 (boto3).
+- API : `GET /clips/{clip_id}/download` (`apps/api/app/routers/clips.py`) vérifie que le clip appartient à l'utilisateur et que le job est `completed`, puis renvoie `{url, expires_in_seconds: 600}` construite par `services/storage.presigned_get_url(key)` → **URL R2**. En local, ce lien ne marche pas : c'est ce qu'il faut remplacer.
+- La colonne `clips.r2_key` garde son nom (pas de migration) : elle contient désormais la clé relative du fichier local.
+
+### Ce qu'il faut construire
+- **Même contrat pour le site** : `GET /clips/{id}/download` renvoie toujours `{url, expires_in_seconds}`. Rien à changer côté web.
+- `presigned_get_url(key, expires_in)` : si `STORAGE_BACKEND=local`, renvoie `{API_BASE_URL}/media/{key}?exp=<unix>&sig=<hmac>` avec `sig = HMAC-SHA256(MEDIA_SIGNING_SECRET, f"{key}|{exp}")` en hex. Sinon, comportement R2 inchangé.
+- Nouvelle route **`GET /media/{key:path}`** (sans session : la signature fait foi) :
+  - refuse (403) si `exp` est dépassé ou si la signature ne correspond pas (`hmac.compare_digest`) ;
+  - résout le chemin sous `STORAGE_LOCAL_DIR` et refuse (404) tout chemin qui en sort (`..`, liens symboliques, chemins absolus) ;
+  - répond avec le fichier en streaming, `Content-Type: video/mp4`, **support des requêtes `Range`** (206) pour que le lecteur vidéo puisse avancer, `Cache-Control: private, max-age=600` ;
+  - `Content-Disposition: attachment` seulement si `?download=1` est dans l'URL signée (le site peut ainsi lire ou télécharger).
+- **Paywall inchangé** : toute règle d'accès existante (plan d'essai sans téléchargement, etc.) s'applique avant de signer. Ne pas créer de chemin qui la contourne. Vérifie dans le code de la PR #8 et de `worktree-free-trial-paywall` où ces règles vivent.
+- `settings.py` (api et worker) : les champs `R2_*` deviennent **optionnels** quand `STORAGE_BACKEND=local` ; l'application refuse de démarrer si `STORAGE_BACKEND=local` sans `STORAGE_LOCAL_DIR` (et, pour l'API, sans `MEDIA_SIGNING_SECRET` d'au moins 32 octets).
+- Le worker supprime la vidéo source et les fichiers intermédiaires en fin de job ; seuls les clips finaux restent dans `STORAGE_LOCAL_DIR`.
+
+### Tests
+- Signature : valide, expirée, falsifiée, clé modifiée → 200 / 403 / 403 / 403.
+- Traversée de chemin : `../`, `%2e%2e/`, chemin absolu, lien symbolique vers l'extérieur → 404.
+- `Range: bytes=0-99` → 206 et 100 octets ; fichier absent → 404.
+- `/clips/{id}/download` : renvoie une URL `/media/…` en local, une URL R2 sinon ; 404 pour le clip d'un autre utilisateur.
+- Démarrage refusé si la configuration locale est incomplète.
 
 ## 7. Services permanents (launchd)
 
@@ -256,7 +300,7 @@ Script **lecture seule** (aucun job créé, aucune écriture en base), sortie un
 | API publique | `curl <API_BASE_URL>/health` en HTTPS |
 | CORS | requête `OPTIONS` avec `Origin: https://clipfactory-saas.vercel.app` → en-tête `access-control-allow-origin` correct |
 | Base | `select 1` via `DATABASE_URL` depuis le venv du worker (pooler : `statement_cache_size=0`) |
-| R2 | put / get / delete d'un objet de 1 octet `doctor/<timestamp>` |
+| Stockage | écrit un fichier test dans `STORAGE_LOCAL_DIR`, génère une URL signée, la télécharge **via l'URL publique** (Funnel), compare le contenu, vérifie qu'une URL expirée renvoie 403, supprime le fichier |
 | OpenRouter | `GET https://openrouter.ai/api/v1/key` (gratuit) → clé valide |
 | OpenAI | `GET https://api.openai.com/v1/models/whisper-1` (gratuit) → 200 |
 | ASR local | si `ASR_BACKEND=mlx_whisper` : transcrit 5 s de silence + bip, sans erreur, temps affiché |
@@ -283,6 +327,9 @@ Script **lecture seule** (aucun job créé, aucune écriture en base), sortie un
 - Mettre à jour : `ops/macos/update.sh`.
 - Arrêter proprement (maintenance) : `launchctl bootout gui/$(id -u)/com.clipfactory.worker` — un job en cours est repris ou échoue proprement (vérifier ce que fait le code et l'écrire).
 - Après une coupure de courant : le Mac redémarre seul ; si FileVault, taper le mot de passe ; puis `doctor.sh`.
+- **Disque** : les clips vivent dans `STORAGE_LOCAL_DIR`. `doctor.sh` alerte sous 40 Go libres. Politique de rétention à décider avec Augustin (par défaut : on ne supprime rien).
+- **Sauvegarde** : sans R2, les clips n'existent que sur ce disque. Si Augustin branche un disque externe, `ops/macos/backup.sh` (rsync nocturne via launchd, de `STORAGE_LOCAL_DIR` vers le disque) ; sinon, noter le risque dans le rapport.
+- Si le Mac est éteint, les clips ne sont plus téléchargeables (avant, R2 les gardait disponibles).
 
 ---
 
@@ -292,6 +339,7 @@ Script **lecture seule** (aucun job créé, aucune écriture en base), sortie un
 - Sortie complète de `doctor.sh`.
 - Branche et lien de la PR brouillon (`feat/mac-studio-backend`), liste des commits.
 - Tableau de mesure MLX vs whisper-1 (§6) et décision : `ASR_BACKEND` actif.
+- Stockage local (§6.b) : chemin de `STORAGE_LOCAL_DIR`, espace libre, résultat du check « Stockage » de `doctor.sh`, sauvegarde en place ou non.
 - Nombre de tests avant / après.
 - Ce qu'Augustin doit faire lui-même (Vercel, Funnel, sudo…), avec les valeurs exactes.
 - Ce qui n'a **pas** été fait et pourquoi.

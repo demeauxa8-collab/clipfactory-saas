@@ -29,10 +29,11 @@
 
 | Doc | Contenu |
 |---|---|
+| [`model-test-plan.md`](model-test-plan.md) | **Plan de test des modèles par groupes** (campagne de A à Z, revue des clips) — à lancer quand le backend Mac Studio est fiable |
 | [`model-landscape.md`](model-landscape.md) | Paysage modèles mesuré (07/08) : ASR, vidéo native, juge |
 | [`unit-economics.md`](unit-economics.md) | Coût par job, marge |
 
-Les résultats de bancs récents (27/09, 28/09, banc du 29/09 en cours) vivent hors repo, dans `~/data clips/bench/` sur le Mac d'Augustin ; leurs conclusions sont reportées dans `pipeline-map-2026-09-29.md` et `models.lock`.
+Les résultats de bancs récents (27/09, 28/09, pré-test transcription du 29/09) vivent hors repo, dans `~/data clips/bench/` sur le Mac d'Augustin ; leurs conclusions sont reportées dans `pipeline-map-2026-09-29.md` et `models.lock`.
 
 ## Produit, web, ops
 
