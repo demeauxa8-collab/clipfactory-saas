@@ -7,10 +7,7 @@ import { MarketingNav } from "@/components/marketing/nav";
 import { MarketingFooter } from "@/components/marketing/footer";
 import { ComparisonTable } from "@/components/marketing/comparison-table";
 import { ClipMockup } from "@/components/marketing/clip-mockup";
-import {
-  BreadcrumbJsonLd,
-  FaqJsonLd,
-} from "@/components/marketing/json-ld";
+import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/marketing/json-ld";
 
 export const metadata: Metadata = {
   title: "ClipFactory vs OpusClip — clip series, context and montage",
@@ -97,7 +94,7 @@ export default function VsOpusClipPage() {
       />
       <FaqJsonLd items={FAQ} />
       <MarketingNav />
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         {/* Hero */}
         <section className="border-b border-[var(--color-border)]">
           <Container className="max-w-5xl py-20">
@@ -108,9 +105,9 @@ export default function VsOpusClipPage() {
               ClipFactory vs OpusClip
             </h1>
             <p className="mt-4 max-w-2xl text-lg text-[var(--color-muted-foreground)]">
-              OpusClip made AI clipping popular. ClipFactory is built for creators who
-              want fewer random clips and a better series: clips that understand the
-              full video, the screen, and the objective.
+              OpusClip made AI clipping popular. ClipFactory is built for
+              creators who want fewer random clips and a better series: clips
+              that understand the full video, the screen, and the objective.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/login">
@@ -126,7 +123,8 @@ export default function VsOpusClipPage() {
               </Link>
             </div>
             <p className="mt-3 text-xs text-[var(--color-muted-foreground)]">
-              No affiliation with OpusClip. Always check each vendor&apos;s current docs before buying.
+              No affiliation with OpusClip. Always check each vendor&apos;s
+              current docs before buying.
             </p>
           </Container>
         </section>
@@ -159,7 +157,9 @@ export default function VsOpusClipPage() {
                     <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-foreground)]">
                       <X className="h-4 w-4" /> OpusClip
                     </div>
-                    <p className="text-sm text-[var(--color-muted-foreground)]">{r.op}</p>
+                    <p className="text-sm text-[var(--color-muted-foreground)]">
+                      {r.op}
+                    </p>
                   </div>
                 </li>
               ))}
@@ -179,9 +179,9 @@ export default function VsOpusClipPage() {
                   Each clip explains why it belongs.
                 </h2>
                 <p className="mt-4 text-[var(--color-muted-foreground)]">
-                  No mystery number. Five components, each with a reason. When you tell
-                  a client why this clip fits the series and another one does not, you
-                  show the breakdown, not a vibe.
+                  No mystery number. Five components, each with a reason. When
+                  you tell a client why this clip fits the series and another
+                  one does not, you show the breakdown, not a vibe.
                 </p>
                 <Link href="/features" className="mt-6 inline-flex">
                   <Button variant="secondary">
@@ -223,7 +223,9 @@ export default function VsOpusClipPage() {
               {FAQ.map((item) => (
                 <div key={item.q} className="py-6">
                   <dt className="text-base font-medium">{item.q}</dt>
-                  <dd className="mt-2 text-sm text-[var(--color-muted-foreground)]">{item.a}</dd>
+                  <dd className="mt-2 text-sm text-[var(--color-muted-foreground)]">
+                    {item.a}
+                  </dd>
                 </div>
               ))}
             </dl>

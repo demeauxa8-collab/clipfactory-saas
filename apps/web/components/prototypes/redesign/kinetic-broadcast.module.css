@@ -1,0 +1,999 @@
+.root {
+  --acid: #ff5a19;
+  --acid-green: #d9ff3f;
+  --bone: #f2eedf;
+  --graphite: #11120f;
+  --graphite-soft: #1a1b17;
+  --line: rgba(242, 238, 223, 0.2);
+  background: var(--graphite);
+  color: var(--bone);
+  font-family: "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  min-height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.root *,
+.root *::before,
+.root *::after {
+  box-sizing: border-box;
+}
+
+.root a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.root a:focus-visible,
+.root button:focus-visible,
+.broadcast:focus-visible {
+  outline: 3px solid var(--acid-green);
+  outline-offset: 4px;
+}
+
+.nav {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr auto 1fr;
+  margin: 0 auto;
+  max-width: 1600px;
+  min-height: 76px;
+  padding: 0 2.25rem;
+  position: relative;
+  z-index: 20;
+}
+
+.brand {
+  align-items: center;
+  display: inline-flex;
+  font-size: 0.82rem;
+  font-weight: 760;
+  gap: 0.72rem;
+  justify-self: start;
+  letter-spacing: 0.02em;
+}
+
+.brandMark {
+  align-items: center;
+  background: var(--acid);
+  color: var(--graphite);
+  display: inline-flex;
+  font-size: 0.7rem;
+  font-weight: 900;
+  height: 2.1rem;
+  justify-content: center;
+  letter-spacing: -0.06em;
+  width: 2.1rem;
+}
+
+.navLinks {
+  align-items: center;
+  display: flex;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.68rem;
+  gap: 2rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.navLinks a,
+.secondaryAction {
+  color: rgba(242, 238, 223, 0.7);
+  transition: color 160ms ease;
+}
+
+.navCta {
+  align-items: center;
+  border: 1px solid var(--bone);
+  display: inline-flex;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.68rem;
+  gap: 0.8rem;
+  justify-self: end;
+  letter-spacing: 0.08em;
+  padding: 0.78rem 0.9rem;
+  text-transform: uppercase;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(34rem, 1.22fr);
+  margin: 0 auto;
+  max-width: 1600px;
+  min-height: calc(100svh - 76px);
+}
+
+.heroCopy {
+  align-items: flex-start;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(2.2rem, 5vw, 5.75rem) clamp(1.5rem, 4vw, 4.25rem) 3rem 2.25rem;
+}
+
+.eyebrow,
+.broadcastHeader,
+.proofHeader {
+  display: flex;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.64rem;
+  justify-content: space-between;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+.eyebrow span:last-child,
+.inputHint,
+.proofHeader span:last-child {
+  color: rgba(242, 238, 223, 0.48);
+}
+
+.headline {
+  font-size: clamp(4rem, 6.7vw, 7.8rem);
+  font-stretch: condensed;
+  font-weight: 870;
+  letter-spacing: -0.075em;
+  line-height: 0.8;
+  margin: clamp(4rem, 9vh, 8rem) 0 2rem;
+  max-width: 8ch;
+  text-transform: uppercase;
+}
+
+.headline span {
+  display: block;
+}
+
+.headlineAccent {
+  color: var(--acid);
+  margin-top: 0.22em;
+}
+
+.supporting {
+  color: rgba(242, 238, 223, 0.72);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(1rem, 1.45vw, 1.24rem);
+  font-weight: 430;
+  line-height: 1.48;
+  margin: 0 0 2.1rem;
+  max-width: 34rem;
+}
+
+.actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.primaryAction,
+.secondaryAction {
+  align-items: center;
+  display: inline-flex;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.72rem;
+  gap: 1rem;
+  justify-content: space-between;
+  letter-spacing: 0.07em;
+  min-height: 3.25rem;
+  padding: 0.85rem 1rem;
+  text-transform: uppercase;
+}
+
+.primaryAction {
+  background: var(--acid);
+  color: var(--graphite);
+  min-width: 13.4rem;
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+.secondaryAction {
+  border-bottom: 1px solid rgba(242, 238, 223, 0.48);
+  min-width: 10.6rem;
+}
+
+.broadcast {
+  min-height: 760px;
+  overflow: hidden;
+  padding: 1.25rem;
+  position: relative;
+}
+
+.shaderSurface {
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.shaderSurface::after {
+  background: linear-gradient(
+    180deg,
+    rgba(17, 18, 15, 0.02),
+    rgba(17, 18, 15, 0.7)
+  );
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.shaderFallback {
+  background-color: var(--graphite);
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 90, 25, 0.76) 0 1px,
+    transparent 1.7px
+  );
+  background-position: center;
+  background-size: 18px 18px;
+  inset: 0;
+  opacity: 0.58;
+  position: absolute;
+}
+
+.broadcastHeader {
+  align-items: center;
+  border-bottom: 1px solid rgba(242, 238, 223, 0.26);
+  padding-bottom: 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.onAir {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.55rem;
+}
+
+.onAirDot {
+  background: var(--acid);
+  border-radius: 50%;
+  height: 0.48rem;
+  width: 0.48rem;
+}
+
+.stageCard {
+  align-items: end;
+  animation: broadcastCut 440ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  display: grid;
+  gap: clamp(1rem, 2.4vw, 2.5rem);
+  grid-template-columns: minmax(14rem, 22rem) minmax(12rem, 1fr);
+  inset: 4.75rem 1.25rem 12.8rem;
+  margin: 0;
+  position: absolute;
+  z-index: 2;
+}
+
+@keyframes broadcastCut {
+  from {
+    opacity: 0;
+    transform: translateX(2rem) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.verticalFrame {
+  align-self: center;
+  aspect-ratio: 9 / 14;
+  background: var(--clip-accent);
+  color: var(--graphite);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-height: 31rem;
+  max-width: 20rem;
+  overflow: hidden;
+  padding: 1rem;
+  position: relative;
+  transform: rotate(-2deg);
+  width: min(100%, 20rem);
+}
+
+.frameNoise {
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent 0 7px,
+    rgba(17, 18, 15, 0.1) 8px
+  );
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.frameTopline,
+.captionPlate {
+  display: flex;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.58rem;
+  font-weight: 760;
+  justify-content: space-between;
+  letter-spacing: 0.1em;
+  position: relative;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+.frameNumber {
+  color: rgba(17, 18, 15, 0.18);
+  font-size: clamp(9rem, 15vw, 15rem);
+  font-weight: 900;
+  left: -0.08em;
+  letter-spacing: -0.12em;
+  line-height: 0.7;
+  position: absolute;
+  top: 24%;
+}
+
+.frameWord {
+  font-size: clamp(2.4rem, 4.8vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.09em;
+  line-height: 0.78;
+  overflow-wrap: anywhere;
+  position: relative;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+.captionPlate {
+  border-top: 2px solid var(--graphite);
+  padding-top: 0.6rem;
+}
+
+.stageCaption {
+  align-items: end;
+  border-left: 1px solid rgba(242, 238, 223, 0.42);
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr auto;
+  margin-bottom: 2rem;
+  padding: 0 0 0 1.5rem;
+}
+
+.captionLabel,
+.proofKicker,
+.proofScoreLabel,
+.sourceBar,
+.segmentList,
+.resultCopy span,
+.resultCopy p {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.captionLabel {
+  color: var(--acid-green);
+}
+
+.stageCaption h2 {
+  font-size: clamp(1.8rem, 3.3vw, 3.5rem);
+  font-weight: 770;
+  letter-spacing: -0.055em;
+  line-height: 0.95;
+  margin: 0.7rem 0 0;
+  max-width: 10ch;
+}
+
+.score {
+  align-items: end;
+  border-left: 1px solid rgba(242, 238, 223, 0.3);
+  display: flex;
+  flex-direction: column;
+  padding-left: 1rem;
+}
+
+.score strong {
+  color: var(--clip-accent);
+  font-size: clamp(2.7rem, 5vw, 5.5rem);
+  font-weight: 900;
+  letter-spacing: -0.08em;
+  line-height: 0.8;
+}
+
+.score span {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  margin-top: 0.6rem;
+  text-transform: uppercase;
+}
+
+.railDock {
+  background: rgba(17, 18, 15, 0.9);
+  border-top: 1px solid rgba(242, 238, 223, 0.28);
+  bottom: 0;
+  left: 0;
+  padding: 0.7rem 1.25rem 1.25rem;
+  position: absolute;
+  right: 0;
+  z-index: 4;
+}
+
+.railControls {
+  align-items: center;
+  display: flex;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.62rem;
+  gap: 0.8rem;
+  justify-content: flex-end;
+  margin-bottom: 0.55rem;
+}
+
+.arrowButton {
+  align-items: center;
+  background: transparent;
+  border: 1px solid rgba(242, 238, 223, 0.34);
+  color: var(--bone);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1rem;
+  height: 2rem;
+  justify-content: center;
+  padding: 0;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+  width: 2.4rem;
+}
+
+.clipRail {
+  display: grid;
+  gap: 1px;
+  grid-auto-columns: minmax(9.5rem, 1fr);
+  grid-auto-flow: column;
+  list-style: none;
+  margin: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding: 0;
+  scrollbar-color: rgba(242, 238, 223, 0.4) transparent;
+  scroll-snap-type: x mandatory;
+}
+
+.railItem {
+  min-width: 0;
+  scroll-snap-align: center;
+}
+
+.railClip {
+  align-items: start;
+  background: rgba(242, 238, 223, 0.07);
+  border: 0;
+  color: var(--bone);
+  cursor: pointer;
+  display: grid;
+  gap: 0.45rem;
+  grid-template-columns: auto 1fr auto;
+  height: 100%;
+  min-height: 5.2rem;
+  padding: 0.85rem;
+  text-align: left;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
+  width: 100%;
+}
+
+.railClip[data-active="true"] {
+  background: var(--bone);
+  color: var(--graphite);
+}
+
+.railNumber,
+.railScore {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+}
+
+.railTitle {
+  display: -webkit-box;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 620;
+  line-height: 1.2;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.railScore {
+  color: var(--acid);
+  font-weight: 800;
+}
+
+.railClip[data-active="true"] .railScore {
+  color: var(--graphite);
+}
+
+.proof {
+  border-top: 1px solid var(--line);
+  margin: 0 auto;
+  max-width: 1600px;
+  padding: 1.25rem 2.25rem clamp(5rem, 10vw, 10rem);
+}
+
+.proofHeader {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1rem;
+}
+
+.proofGrid {
+  display: grid;
+  gap: clamp(3rem, 7vw, 8rem);
+  grid-template-columns: minmax(18rem, 0.82fr) minmax(32rem, 1.18fr);
+  padding-top: clamp(3rem, 7vw, 7.5rem);
+}
+
+.proofCopy {
+  align-self: start;
+  position: sticky;
+  top: 2rem;
+}
+
+.proofKicker {
+  color: var(--acid);
+}
+
+.proofCopy h2 {
+  font-size: clamp(3.25rem, 6.5vw, 7.4rem);
+  font-weight: 870;
+  letter-spacing: -0.075em;
+  line-height: 0.82;
+  margin: 1.4rem 0 2rem;
+  max-width: 8ch;
+  text-transform: uppercase;
+}
+
+.proofCopy > p {
+  color: rgba(242, 238, 223, 0.66);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 28rem;
+}
+
+.proofScore {
+  border-top: 1px solid var(--line);
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+}
+
+.proofScoreLabel {
+  display: flex;
+  justify-content: space-between;
+}
+
+.scoreTrack {
+  background: rgba(242, 238, 223, 0.12);
+  height: 0.42rem;
+  margin-top: 0.8rem;
+  overflow: hidden;
+}
+
+.scoreTrack span {
+  background: var(--acid);
+  display: block;
+  height: 100%;
+  transition: width 360ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.editMap {
+  border-left: 1px solid var(--line);
+  padding-left: clamp(1.25rem, 3vw, 3rem);
+}
+
+.sourceBar {
+  align-items: center;
+  background: var(--bone);
+  color: var(--graphite);
+  display: flex;
+  justify-content: space-between;
+  min-height: 5.2rem;
+  padding: 1rem 1.2rem;
+}
+
+.sourceBar div {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.sourceBar strong {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  text-transform: none;
+}
+
+.segmentList {
+  list-style: none;
+  margin: 2rem 0;
+  padding: 0;
+}
+
+.segmentList li {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 2rem 5rem auto 1fr;
+  min-height: 4.2rem;
+}
+
+.segmentIndex {
+  color: rgba(242, 238, 223, 0.4);
+}
+
+.segmentLabel {
+  color: var(--acid-green);
+}
+
+.segmentLine {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--line) 0 5px,
+    transparent 5px 10px
+  );
+  height: 1px;
+}
+
+.editResult {
+  align-items: center;
+  background: var(--graphite-soft);
+  border: 1px solid var(--line);
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 5.2rem 1fr auto;
+  padding: 0.9rem;
+}
+
+.resultPoster {
+  align-items: center;
+  aspect-ratio: 9 / 12;
+  background: var(--clip-accent);
+  color: var(--graphite);
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0.5rem;
+}
+
+.resultPoster span {
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: -0.08em;
+  text-transform: uppercase;
+  transform: rotate(-90deg);
+}
+
+.resultCopy {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.resultCopy span {
+  color: var(--acid-green);
+}
+
+.resultCopy strong {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(1rem, 2vw, 1.45rem);
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+.resultCopy p {
+  color: rgba(242, 238, 223, 0.48);
+  margin: 0;
+}
+
+.resultScore {
+  color: var(--clip-accent);
+  font-size: clamp(2.6rem, 5vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.08em;
+  padding-right: 0.5rem;
+}
+
+.srOnly {
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .navLinks a:hover,
+  .secondaryAction:hover {
+    color: var(--bone);
+  }
+
+  .navCta:hover {
+    background: var(--bone);
+    color: var(--graphite);
+  }
+
+  .primaryAction:hover {
+    background: var(--acid-green);
+    transform: translateY(-2px);
+  }
+
+  .arrowButton:hover {
+    background: var(--bone);
+    color: var(--graphite);
+  }
+
+  .railClip:hover {
+    background: rgba(242, 238, 223, 0.14);
+    transform: translateY(-2px);
+  }
+
+  .railClip[data-active="true"]:hover {
+    background: var(--bone);
+  }
+}
+
+@media (max-width: 1120px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .heroCopy {
+    border-bottom: 1px solid var(--line);
+    border-right: 0;
+    min-height: 720px;
+  }
+
+  .headline {
+    font-size: clamp(5rem, 12vw, 8.5rem);
+    max-width: 9ch;
+  }
+
+  .broadcast {
+    min-height: 800px;
+  }
+
+  .proofGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .proofCopy {
+    position: static;
+  }
+
+  .proofCopy h2 {
+    max-width: 10ch;
+  }
+
+  .editMap {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding-left: 0;
+    padding-top: 2rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .nav {
+    grid-template-columns: 1fr auto;
+    min-height: 68px;
+    padding: 0 1rem;
+  }
+
+  .navLinks {
+    display: none;
+  }
+
+  .navCta {
+    padding: 0.65rem 0.75rem;
+  }
+
+  .heroCopy {
+    min-height: 660px;
+    padding: 1.35rem 1rem 2rem;
+  }
+
+  .headline {
+    font-size: clamp(3.9rem, 18vw, 6.1rem);
+    margin-bottom: 1.5rem;
+    max-width: 8ch;
+  }
+
+  .supporting {
+    font-size: 1rem;
+  }
+
+  .actions {
+    align-items: stretch;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .primaryAction,
+  .secondaryAction {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .broadcast {
+    min-height: 760px;
+    padding: 1rem;
+  }
+
+  .stageCard {
+    align-items: center;
+    gap: 1rem;
+    grid-template-columns: minmax(10rem, 0.85fr) minmax(9rem, 1.15fr);
+    inset: 4.5rem 1rem 13.5rem;
+  }
+
+  .verticalFrame {
+    max-height: 25rem;
+    padding: 0.75rem;
+    transform: rotate(-1deg);
+  }
+
+  .stageCaption {
+    align-items: start;
+    grid-template-columns: 1fr;
+    margin-bottom: 0;
+    padding-left: 0.8rem;
+  }
+
+  .stageCaption h2 {
+    font-size: clamp(1.5rem, 7vw, 2.4rem);
+  }
+
+  .score {
+    align-items: start;
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  .score strong {
+    font-size: 3rem;
+  }
+
+  .proof {
+    padding: 1rem 1rem 5rem;
+  }
+
+  .proofGrid {
+    padding-top: 3rem;
+  }
+
+  .proofCopy h2 {
+    font-size: clamp(3.4rem, 15vw, 5.6rem);
+  }
+}
+
+@media (max-width: 430px) {
+  .brand > span:last-child {
+    display: none;
+  }
+
+  .navCta {
+    font-size: 0.58rem;
+  }
+
+  .eyebrow span:last-child,
+  .inputHint {
+    display: none;
+  }
+
+  .heroCopy {
+    min-height: 640px;
+  }
+
+  .headline {
+    font-size: clamp(3.5rem, 18vw, 4.5rem);
+    margin-top: 3rem;
+  }
+
+  .broadcast {
+    min-height: 720px;
+  }
+
+  .stageCard {
+    align-items: end;
+    gap: 0.8rem;
+    grid-template-columns: minmax(8.5rem, 0.78fr) minmax(8.5rem, 1.22fr);
+    inset: 4.2rem 0.75rem 13rem;
+  }
+
+  .verticalFrame {
+    max-height: 22rem;
+  }
+
+  .frameTopline,
+  .captionPlate {
+    font-size: 0.48rem;
+  }
+
+  .frameWord {
+    font-size: 2rem;
+  }
+
+  .stageCaption h2 {
+    font-size: 1.45rem;
+    max-width: 9ch;
+  }
+
+  .captionLabel {
+    font-size: 0.52rem;
+  }
+
+  .score strong {
+    font-size: 2.4rem;
+  }
+
+  .railDock {
+    padding: 0.6rem 0.75rem 0.85rem;
+  }
+
+  .clipRail {
+    grid-auto-columns: 9rem;
+  }
+
+  .railClip {
+    min-height: 4.8rem;
+    padding: 0.7rem;
+  }
+
+  .proofHeader span:last-child {
+    text-align: right;
+  }
+
+  .proofCopy h2 {
+    font-size: 3.6rem;
+  }
+
+  .segmentList li {
+    gap: 0.55rem;
+    grid-template-columns: 1.6rem 4rem auto 1fr;
+  }
+
+  .editResult {
+    align-items: stretch;
+    grid-template-columns: 4rem 1fr auto;
+  }
+
+  .resultScore {
+    align-self: center;
+    font-size: 2.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stageCard {
+    animation: none;
+  }
+
+  .navLinks a,
+  .navCta,
+  .primaryAction,
+  .secondaryAction,
+  .arrowButton,
+  .railClip,
+  .scoreTrack span {
+    transition-duration: 0.001ms;
+  }
+}

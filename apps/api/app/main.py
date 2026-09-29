@@ -27,6 +27,7 @@ from .routers import (
     jobs,
     me,
     public,
+    series,
 )
 from .services import analytics
 from .settings import get_settings
@@ -128,6 +129,7 @@ def create_app() -> FastAPI:
     app.include_router(credits.router)
     app.include_router(campaigns.router)
     app.include_router(jobs.router)
+    app.include_router(series.router)
     app.include_router(clips.router)
     app.include_router(feedback.router)
     app.include_router(billing.router)

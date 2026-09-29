@@ -56,13 +56,39 @@ const campaigns = [
 ];
 
 type JobStatus = "completed" | "rendering" | "analyzing" | "failed";
-const jobs: { url: string; status: JobStatus; clips: number; time: string }[] = [
-  { url: "youtube.com/watch?v=founder-interview", status: "completed", clips: 3, time: "14 min source" },
-  { url: "youtube.com/watch?v=agency-call", status: "rendering", clips: 2, time: "22 min source" },
-  { url: "vimeo.com/client-workshop", status: "analyzing", clips: 3, time: "31 min source" },
-  { url: "youtube.com/watch?v=webinar-q1", status: "completed", clips: 4, time: "47 min source" },
-  { url: "youtube.com/watch?v=broken-link", status: "failed", clips: 0, time: "18 min source" },
-];
+const jobs: { url: string; status: JobStatus; clips: number; time: string }[] =
+  [
+    {
+      url: "youtube.com/watch?v=founder-interview",
+      status: "completed",
+      clips: 3,
+      time: "14 min source",
+    },
+    {
+      url: "youtube.com/watch?v=agency-call",
+      status: "rendering",
+      clips: 2,
+      time: "22 min source",
+    },
+    {
+      url: "vimeo.com/client-workshop",
+      status: "analyzing",
+      clips: 3,
+      time: "31 min source",
+    },
+    {
+      url: "youtube.com/watch?v=webinar-q1",
+      status: "completed",
+      clips: 4,
+      time: "47 min source",
+    },
+    {
+      url: "youtube.com/watch?v=broken-link",
+      status: "failed",
+      clips: 0,
+      time: "18 min source",
+    },
+  ];
 
 const clips = [
   {
@@ -108,14 +134,17 @@ export function DashboardPreview() {
     const matchesQuery = j.url.toLowerCase().includes(query.toLowerCase());
     const matchesFilter =
       filter === "All" ||
-      (filter === "Running" && (j.status === "rendering" || j.status === "analyzing")) ||
+      (filter === "Running" &&
+        (j.status === "rendering" || j.status === "analyzing")) ||
       (filter === "Completed" && j.status === "completed") ||
       (filter === "Failed" && j.status === "failed");
     return matchesQuery && matchesFilter;
   });
 
   const shownClips = topClipsOnly ? clips.filter((c) => c.score >= 90) : clips;
-  const usedPct = Math.round(((CREDITS_TOTAL - CREDITS_LEFT) / CREDITS_TOTAL) * 100);
+  const usedPct = Math.round(
+    ((CREDITS_TOTAL - CREDITS_LEFT) / CREDITS_TOTAL) * 100,
+  );
   const maxUsage = Math.max(...usage7d.map((u) => u.v), 1);
 
   return (
@@ -155,7 +184,10 @@ export function DashboardPreview() {
             </span>
           </div>
           <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-[color-mix(in_srgb,var(--color-foreground)_8%,transparent)]">
-            <div className="h-full rounded-full bg-[var(--color-brand)]" style={{ width: `${100 - usedPct}%` }} />
+            <div
+              className="h-full rounded-full bg-[var(--color-brand)]"
+              style={{ width: `${100 - usedPct}%` }}
+            />
           </div>
           <p className="mt-2 text-[11px] text-[var(--color-muted-foreground)]">
             {usedPct}% used this month
@@ -179,7 +211,7 @@ export function DashboardPreview() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search jobs, clips…"
-              className="h-9 w-56 rounded-full border border-[var(--color-border)] bg-[var(--color-muted)] pl-9 pr-3 text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)]"
+              className="h-9 w-56 rounded-full border border-[var(--color-border)] bg-[var(--color-muted)] pl-9 pr-3 text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ring)]"
             />
           </div>
           <Button size="sm" className="ml-auto md:ml-0">
@@ -190,11 +222,13 @@ export function DashboardPreview() {
             Preview · no login
           </span>
           <Link href="/">
-            <Button size="sm" variant="secondary">Home</Button>
+            <Button size="sm" variant="secondary">
+              Home
+            </Button>
           </Link>
         </header>
 
-        <main className="mx-auto max-w-6xl px-6 py-7">
+        <main id="main-content" className="mx-auto max-w-6xl px-6 py-7">
           {/* Header row */}
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div>
@@ -209,10 +243,34 @@ export function DashboardPreview() {
 
           {/* Metric cards with sparkline */}
           <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <Metric icon={Wallet} label="Credits left" value="238" hint="1 credit = 1 source min" trend={[6, 9, 7, 12, 8, 14, 10]} />
-            <Metric icon={Target} label="Campaigns" value="2" hint="Active clip series" trend={[1, 1, 2, 2, 2, 2, 2]} />
-            <Metric icon={Clock3} label="Jobs" value="11" hint="3 running right now" trend={[2, 4, 3, 6, 5, 7, 3]} />
-            <Metric icon={Film} label="Clips ready" value="27" hint="No watermark" trend={[3, 5, 8, 9, 14, 21, 27]} />
+            <Metric
+              icon={Wallet}
+              label="Credits left"
+              value="238"
+              hint="1 credit = 1 source min"
+              trend={[6, 9, 7, 12, 8, 14, 10]}
+            />
+            <Metric
+              icon={Target}
+              label="Campaigns"
+              value="2"
+              hint="Active clip series"
+              trend={[1, 1, 2, 2, 2, 2, 2]}
+            />
+            <Metric
+              icon={Clock3}
+              label="Jobs"
+              value="11"
+              hint="3 running right now"
+              trend={[2, 4, 3, 6, 5, 7, 3]}
+            />
+            <Metric
+              icon={Film}
+              label="Clips ready"
+              value="27"
+              hint="No watermark"
+              trend={[3, 5, 8, 9, 14, 21, 27]}
+            />
           </div>
 
           {/* Two-column work area */}
@@ -293,8 +351,12 @@ export function DashboardPreview() {
                       Series clip · 42.6s · 2 segments
                     </p>
                     <span className="shrink-0 rounded-[0.875rem] bg-[var(--color-brand)] px-3 py-1.5 text-center text-[var(--color-brand-foreground)] shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
-                      <span className="block font-mono text-[9px] uppercase tracking-wider opacity-80">Score</span>
-                      <span className="block text-xl font-semibold tabular-nums leading-none">91</span>
+                      <span className="block font-mono text-[9px] uppercase tracking-wider opacity-80">
+                        Score
+                      </span>
+                      <span className="block text-xl font-semibold tabular-nums leading-none">
+                        91
+                      </span>
                     </span>
                   </div>
                   <h3 className="mt-2 text-base font-semibold leading-snug">
@@ -308,7 +370,11 @@ export function DashboardPreview() {
                       ["Visual proof", 92],
                       ["Audience fit", 90],
                     ].map(([label, value]) => (
-                      <ScoreRow key={label as string} label={label as string} value={value as number} />
+                      <ScoreRow
+                        key={label as string}
+                        label={label as string}
+                        value={value as number}
+                      />
                     ))}
                   </div>
 
@@ -332,18 +398,34 @@ export function DashboardPreview() {
 
           {/* Usage chart + campaigns */}
           <div className="mt-6 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-            <Panel title="Usage" eyebrow="Last 7 days" right={<span className="text-xs text-[var(--color-muted-foreground)]">62 credits</span>}>
+            <Panel
+              title="Usage"
+              eyebrow="Last 7 days"
+              right={
+                <span className="text-xs text-[var(--color-muted-foreground)]">
+                  62 credits
+                </span>
+              }
+            >
               <div className="flex items-end justify-between gap-2.5 pt-2">
                 {usage7d.map((u) => (
-                  <div key={u.d} className="flex flex-1 flex-col items-center gap-2">
+                  <div
+                    key={u.d}
+                    className="flex flex-1 flex-col items-center gap-2"
+                  >
                     <div className="flex h-28 w-full items-end">
                       <div
-                        className="w-full rounded-t-[0.4rem] bg-[var(--color-brand)] transition-all"
-                        style={{ height: `${Math.max((u.v / maxUsage) * 100, 4)}%`, opacity: u.v === 0 ? 0.25 : 1 }}
+                        className="w-full rounded-t-[0.4rem] bg-[var(--color-brand)]"
+                        style={{
+                          height: `${Math.max((u.v / maxUsage) * 100, 4)}%`,
+                          opacity: u.v === 0 ? 0.25 : 1,
+                        }}
                         title={`${u.v} credits`}
                       />
                     </div>
-                    <span className="font-mono text-[10px] text-[var(--color-muted-foreground)]">{u.d}</span>
+                    <span className="font-mono text-[10px] text-[var(--color-muted-foreground)]">
+                      {u.d}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -359,12 +441,16 @@ export function DashboardPreview() {
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <h3 className="font-semibold">{campaign.name}</h3>
-                        <p className="mt-1 text-sm text-[var(--color-muted-foreground)]">{campaign.audience}</p>
+                        <p className="mt-1 text-sm text-[var(--color-muted-foreground)]">
+                          {campaign.audience}
+                        </p>
                       </div>
                       <span className="status-pill">{campaign.jobs} jobs</span>
                     </div>
                     <p className="mt-3 text-sm leading-relaxed text-[var(--color-muted-foreground)]">
-                      <span className="text-[var(--color-foreground)]">Goal: </span>
+                      <span className="text-[var(--color-foreground)]">
+                        Goal:{" "}
+                      </span>
                       {campaign.goal}
                     </p>
                   </div>
@@ -377,8 +463,12 @@ export function DashboardPreview() {
           <section className="liquid-shell mt-6 p-5 md:p-6">
             <div className="mb-5 flex items-end justify-between gap-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.22em] text-[var(--color-brand)]">Library</p>
-                <h2 className="mt-2 text-xl font-semibold tracking-tight">Recent clips</h2>
+                <p className="text-xs uppercase tracking-[0.22em] text-[var(--color-brand)]">
+                  Library
+                </p>
+                <h2 className="mt-2 text-xl font-semibold tracking-tight">
+                  Recent clips
+                </h2>
               </div>
               <button
                 onClick={() => setTopClipsOnly((v) => !v)}
@@ -397,22 +487,30 @@ export function DashboardPreview() {
               {shownClips.map((clip) => (
                 <article
                   key={clip.title}
-                  className="rounded-[1.25rem] border border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-foreground)_3%,transparent)] p-5 transition-all hover:-translate-y-0.5 hover:border-[color-mix(in_srgb,var(--color-border)_45%,var(--color-foreground))]"
+                  className="rounded-[1.25rem] border border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-foreground)_3%,transparent)] p-5 transition-[border-color,transform] duration-150 ease-out hover:-translate-y-0.5 hover:border-[color-mix(in_srgb,var(--color-border)_45%,var(--color-foreground))]"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">Clip</p>
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
+                      Clip
+                    </p>
                     <span className="rounded-[0.6rem] bg-[var(--color-brand)] px-2.5 py-1 font-mono text-sm font-semibold tabular-nums text-[var(--color-brand-foreground)]">
                       {clip.score}
                     </span>
                   </div>
-                  <h3 className="mt-2.5 line-clamp-2 text-sm font-semibold leading-snug">{clip.title}</h3>
-                  <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-[var(--color-muted-foreground)]">{clip.hook}</p>
+                  <h3 className="mt-2.5 line-clamp-2 text-sm font-semibold leading-snug">
+                    {clip.title}
+                  </h3>
+                  <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-[var(--color-muted-foreground)]">
+                    {clip.hook}
+                  </p>
                   <div className="mt-4 flex flex-wrap gap-1.5">
                     {clip.segments.map((segment) => (
-                      <span key={segment} className="status-pill font-mono">{segment}</span>
+                      <span key={segment} className="status-pill font-mono">
+                        {segment}
+                      </span>
                     ))}
                   </div>
-                  <button className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-[var(--color-brand)] hover:gap-1.5 transition-all">
+                  <button className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-[var(--color-brand)] transition-opacity duration-150 hover:opacity-75">
                     Review clip <ChevronRight className="h-3.5 w-3.5" />
                   </button>
                 </article>
@@ -424,21 +522,51 @@ export function DashboardPreview() {
           <section className="mt-6 rounded-[2rem] border border-[var(--color-border)] bg-[var(--color-muted)] p-6">
             <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
               <div>
-                <p className="text-xs uppercase tracking-[0.22em] text-[var(--color-brand)]">Admin preview</p>
+                <p className="text-xs uppercase tracking-[0.22em] text-[var(--color-brand)]">
+                  Admin preview
+                </p>
                 <h2 className="mt-2 text-xl font-semibold tracking-tight">
                   The numbers you watch before opening publicly.
                 </h2>
               </div>
-              <Link href="/preview" className="text-sm text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]">
+              <Link
+                href="/preview"
+                className="text-sm text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
+              >
                 Back to previews →
               </Link>
             </div>
             <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-              <Metric icon={BarChart3} label="MRR" value="203 EUR" hint="7 active Starter subs" />
-              <Metric icon={Sparkles} label="Clips" value="184" hint="Generated lifetime" />
-              <Metric icon={GitBranch} label="Montage" value="41%" hint="Multi-segment clips" />
-              <Metric icon={Eye} label="Vision cost" value="11.80 EUR" hint="Current month" />
-              <Metric icon={Check} label="Margin" value="73%" hint="Gross estimate" />
+              <Metric
+                icon={BarChart3}
+                label="MRR"
+                value="203 EUR"
+                hint="7 active Starter subs"
+              />
+              <Metric
+                icon={Sparkles}
+                label="Clips"
+                value="184"
+                hint="Generated lifetime"
+              />
+              <Metric
+                icon={GitBranch}
+                label="Montage"
+                value="41%"
+                hint="Multi-segment clips"
+              />
+              <Metric
+                icon={Eye}
+                label="Vision cost"
+                value="11.80 EUR"
+                hint="Current month"
+              />
+              <Metric
+                icon={Check}
+                label="Margin"
+                value="73%"
+                hint="Gross estimate"
+              />
             </div>
           </section>
         </main>
@@ -466,7 +594,9 @@ function Metric({
   return (
     <div className="rounded-[1.25rem] border border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-foreground)_3%,var(--color-background))] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
       <div className="flex items-center justify-between gap-4">
-        <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">{label}</p>
+        <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">
+          {label}
+        </p>
         <Icon className="h-4 w-4 text-[var(--color-brand)]" />
       </div>
       <p className="mt-3 text-3xl font-semibold tabular-nums">{value}</p>
@@ -481,9 +611,15 @@ function Metric({
           ))}
         </div>
       ) : (
-        <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">{hint}</p>
+        <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
+          {hint}
+        </p>
       )}
-      {trend ? <p className="mt-2 text-xs text-[var(--color-muted-foreground)]">{hint}</p> : null}
+      {trend ? (
+        <p className="mt-2 text-xs text-[var(--color-muted-foreground)]">
+          {hint}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -493,10 +629,15 @@ function ScoreRow({ label, value }: { label: string; value: number }) {
     <div>
       <div className="flex items-center justify-between text-sm">
         <span>{label}</span>
-        <span className="font-mono text-xs tabular-nums text-[var(--color-muted-foreground)]">{value}</span>
+        <span className="font-mono text-xs tabular-nums text-[var(--color-muted-foreground)]">
+          {value}
+        </span>
       </div>
       <div className="mt-1.5 h-1 rounded-full bg-[color-mix(in_srgb,var(--color-foreground)_8%,transparent)]">
-        <div className="h-full rounded-full bg-[var(--color-brand)]" style={{ width: `${value}%` }} />
+        <div
+          className="h-full rounded-full bg-[var(--color-brand)]"
+          style={{ width: `${value}%` }}
+        />
       </div>
     </div>
   );
@@ -504,13 +645,20 @@ function ScoreRow({ label, value }: { label: string; value: number }) {
 
 function StatusPill({ status }: { status: JobStatus }) {
   const map: Record<JobStatus, string> = {
-    completed: "text-[var(--color-brand)] border-[color-mix(in_srgb,var(--color-brand)_45%,transparent)]",
+    completed:
+      "text-[var(--color-brand)] border-[color-mix(in_srgb,var(--color-brand)_45%,transparent)]",
     rendering: "text-[var(--color-foreground)] border-[var(--color-border)]",
     analyzing: "text-[var(--color-foreground)] border-[var(--color-border)]",
-    failed: "text-[var(--color-danger)] border-[color-mix(in_srgb,var(--color-danger)_45%,transparent)]",
+    failed:
+      "text-[var(--color-danger)] border-[color-mix(in_srgb,var(--color-danger)_45%,transparent)]",
   };
   return (
-    <span className={"inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs " + map[status]}>
+    <span
+      className={
+        "inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs " +
+        map[status]
+      }
+    >
       <span
         className="h-1.5 w-1.5 rounded-full"
         style={{
@@ -518,8 +666,8 @@ function StatusPill({ status }: { status: JobStatus }) {
             status === "completed"
               ? "var(--color-brand)"
               : status === "failed"
-              ? "var(--color-danger)"
-              : "var(--color-muted-foreground)",
+                ? "var(--color-danger)"
+                : "var(--color-muted-foreground)",
         }}
       />
       {status}
@@ -542,8 +690,12 @@ function Panel({
     <section className="liquid-shell p-5 md:p-6">
       <div className="mb-4 flex items-end justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.22em] text-[var(--color-brand)]">{eyebrow}</p>
-          <h2 className="mt-1.5 text-lg font-semibold tracking-tight">{title}</h2>
+          <p className="text-xs uppercase tracking-[0.22em] text-[var(--color-brand)]">
+            {eyebrow}
+          </p>
+          <h2 className="mt-1.5 text-lg font-semibold tracking-tight">
+            {title}
+          </h2>
         </div>
         {right}
       </div>

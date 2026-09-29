@@ -1,51 +1,59 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Container } from "@/components/ui/container";
+import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AppNav } from "@/components/product/app-nav";
+import { ProductBrand } from "@/components/product/product-primitives";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export default async function AppLayout({ children }: { children: React.ReactNode }) {
+export default async function AppLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) {
-    redirect("/login");
-  }
+  if (!user) redirect("/login");
+
+  const { data: ledger } = await supabase.from("credit_ledger").select("delta");
+  const balance = (ledger ?? []).reduce(
+    (total, entry) =>
+      total + (typeof entry.delta === "number" ? entry.delta : 0),
+    0,
+  );
 
   return (
-    <>
-      <header className="sticky top-0 z-30 border-b border-[var(--color-border)] bg-[var(--color-background)]/78 backdrop-blur-xl">
-        <Container className="flex h-14 items-center justify-between">
-          <Link href="/app" className="flex items-center gap-2 font-semibold tracking-tight">
-            <span
-              className="relative inline-flex h-5 w-5 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-muted)]"
-              aria-hidden
-            >
-              <span className="h-2.5 w-1 rounded-sm bg-[var(--color-brand)]" />
-            </span>
-            ClipFactory
-          </Link>
-          <nav className="flex items-center gap-1">
+    <div className="cf-app">
+      <header className="cf-app-chrome">
+        <div className="cf-app-chrome__inner">
+          <ProductBrand href="/app" />
+          <AppNav />
+          <div className="cf-app-chrome__actions">
             <Link
-              href="/app"
-              className="inline-flex h-9 items-center rounded-md px-3 text-sm text-[var(--color-muted-foreground)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[var(--color-muted)] hover:text-[var(--color-foreground)]"
-            >
-              Dashboard
-            </Link>
-            <Link
+              className="cf-credit-chip"
               href="/app/billing"
-              className="inline-flex h-9 items-center rounded-md px-3 text-sm text-[var(--color-muted-foreground)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+              aria-label={`${balance} credits available`}
             >
-              Billing
+              {balance} credits
             </Link>
             <form action="/auth/signout" method="post">
-              <Button type="submit" variant="secondary" size="sm">Sign out</Button>
+              <Button
+                type="submit"
+                variant="ghost"
+                size="sm"
+                aria-label="Sign out"
+              >
+                <LogOut aria-hidden="true" />
+                <span className="cf-signout-label">Sign out</span>
+              </Button>
             </form>
-          </nav>
-        </Container>
+          </div>
+        </div>
       </header>
-      <main className="flex-1">{children}</main>
-    </>
+      <main id="main-content">{children}</main>
+      <AppNav mobile />
+    </div>
   );
 }

@@ -5,8 +5,6 @@
 //   2. First-party API sink (/events) for authenticated users.
 // Analytics must never break the UI, so every path swallows its own errors.
 
-import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const ANON_KEY = "cf_anon_id";
 
@@ -41,6 +39,8 @@ export function getAnonId(): string {
 
 async function sessionToken(): Promise<string | null> {
   try {
+    const { createSupabaseBrowserClient } =
+      await import("@/lib/supabase/browser");
     const supabase = createSupabaseBrowserClient();
     const { data } = await supabase.auth.getSession();
     return data.session?.access_token ?? null;
@@ -49,7 +49,10 @@ async function sessionToken(): Promise<string | null> {
   }
 }
 
-export async function track(event: string, properties: Props = {}): Promise<void> {
+export async function track(
+  event: string,
+  properties: Props = {},
+): Promise<void> {
   // 1) PostHog (if the snippet has loaded).
   try {
     posthog()?.capture(event, properties);
@@ -63,13 +66,17 @@ export async function track(event: string, properties: Props = {}): Promise<void
     if (!token) return;
     await fetch(`${API_URL}/events`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       keepalive: true,
       body: JSON.stringify({
         event,
         properties,
         path: typeof window !== "undefined" ? window.location.pathname : null,
-        referrer: typeof document !== "undefined" ? document.referrer || null : null,
+        referrer:
+          typeof document !== "undefined" ? document.referrer || null : null,
         anon_id: getAnonId(),
         session_id: getAnonId(),
       }),

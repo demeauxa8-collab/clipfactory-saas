@@ -1,0 +1,58 @@
+.intro {
+  margin-top: 2.25rem;
+}
+
+.intro :global(h1) {
+  overflow-wrap: anywhere;
+}
+
+.errorPanel {
+  align-items: flex-start;
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 1.2rem;
+}
+
+.errorPanel > svg {
+  flex: 0 0 auto;
+  height: 1rem;
+  margin-top: 0.15rem;
+  stroke-width: 1.8;
+  width: 1rem;
+}
+
+.errorPanel strong {
+  font-size: 0.86rem;
+  font-weight: 620;
+}
+
+.errorPanel p {
+  color: var(--cf-quiet);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  margin: 0.3rem 0 0.85rem;
+}
+
+.errorPanel a svg {
+  height: 0.82rem;
+  width: 0.82rem;
+}
+
+.results {
+  margin-top: 4.5rem;
+}
+
+.emptyPanel {
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 560px) {
+  .intro {
+    margin-top: 1.7rem;
+  }
+
+  .results {
+    margin-top: 3rem;
+  }
+}

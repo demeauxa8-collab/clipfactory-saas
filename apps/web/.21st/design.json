@@ -1,0 +1,224 @@
+{
+  "version": 1,
+  "project": {
+    "name": "@clipfactory/web",
+    "productType": "campaign-first video editing SaaS",
+    "stack": ["nextjs", "react", "tailwind-v4"]
+  },
+  "sources": {
+    "tokens": ["app/globals.css"],
+    "components": ["components/ui", "components/product"],
+    "assets": ["public/prototypes"],
+    "instructions": ["AGENTS.md"]
+  },
+  "design": {
+    "colorMode": "dark",
+    "colors": {
+      "--color-background": {
+        "value": "#0b0b0d",
+        "source": "app/globals.css"
+      },
+      "--color-foreground": {
+        "value": "#f5f5f7",
+        "source": "app/globals.css"
+      },
+      "--color-muted": {
+        "value": "#161618",
+        "source": "app/globals.css"
+      },
+      "--color-muted-foreground": {
+        "value": "#a1a1a6",
+        "source": "app/globals.css"
+      },
+      "--color-border": {
+        "value": "rgba(255, 255, 255, 0.09)",
+        "source": "app/globals.css"
+      },
+      "--color-accent": {
+        "value": "#0071e3",
+        "source": "app/globals.css"
+      },
+      "--color-accent-foreground": {
+        "value": "#ffffff",
+        "source": "app/globals.css"
+      },
+      "--color-ring": {
+        "value": "#0071e3",
+        "source": "app/globals.css"
+      },
+      "--color-brand": {
+        "value": "#0071e3",
+        "source": "app/globals.css"
+      },
+      "--color-brand-soft": {
+        "value": "#0a2a4a",
+        "source": "app/globals.css"
+      },
+      "--color-brand-foreground": {
+        "value": "#ffffff",
+        "source": "app/globals.css"
+      },
+      "--color-vision": {
+        "value": "#c7c7cc",
+        "source": "app/globals.css"
+      },
+      "--color-vision-soft": {
+        "value": "#1a1a1c",
+        "source": "app/globals.css"
+      },
+      "--color-edit": {
+        "value": "#8e8e93",
+        "source": "app/globals.css"
+      },
+      "--color-edit-soft": {
+        "value": "#161618",
+        "source": "app/globals.css"
+      },
+      "--color-warn": {
+        "value": "#f59e0b",
+        "source": "app/globals.css"
+      },
+      "--color-danger": {
+        "value": "#ef4444",
+        "source": "app/globals.css"
+      },
+      "--color-success": {
+        "value": "#5dd38b",
+        "source": "app/globals.css"
+      },
+      "--color-edit-signal": {
+        "value": "var(--color-accent)",
+        "source": "app/globals.css"
+      },
+      "--color-paper": {
+        "value": "#f4f1eb",
+        "source": "app/globals.css"
+      }
+    },
+    "typography": {
+      "--font-sans": {
+        "value": "-apple-system, BlinkMacSystemFont, \"SF Pro Text\", var(--font-inter),\n    \"Helvetica Neue\", Arial, sans-serif",
+        "source": "app/globals.css"
+      },
+      "--font-serif": {
+        "value": "-apple-system, BlinkMacSystemFont, \"SF Pro Display\", var(--font-inter),\n    \"Helvetica Neue\", Arial, sans-serif",
+        "source": "app/globals.css"
+      },
+      "--font-mono": {
+        "value": "ui-monospace, SFMono-Regular, \"SF Mono\", Menlo, Monaco, Consolas,\n    \"Liberation Mono\", \"Courier New\", monospace",
+        "source": "app/globals.css"
+      }
+    },
+    "spacing": {},
+    "radius": {
+      "--radius-sm": {
+        "value": "0.5rem",
+        "source": "app/globals.css"
+      },
+      "--radius-md": {
+        "value": "0.875rem",
+        "source": "app/globals.css"
+      },
+      "--radius-lg": {
+        "value": "1.25rem",
+        "source": "app/globals.css"
+      },
+      "--radius-xl": {
+        "value": "2rem",
+        "source": "app/globals.css"
+      }
+    },
+    "shadows": {
+      "--shadow-sm": {
+        "value": "0 1px 2px rgba(0, 0, 0, 0.4)",
+        "source": "app/globals.css"
+      },
+      "--shadow-md": {
+        "value": "0 8px 24px -12px rgba(0, 0, 0, 0.7)",
+        "source": "app/globals.css"
+      },
+      "--shadow-lg": {
+        "value": "0 18px 60px rgba(0, 0, 0, 0.42)",
+        "source": "app/globals.css"
+      }
+    },
+    "motion": {
+      "--cf-ease-out": "cubic-bezier(0.23, 1, 0.32, 1)",
+      "--cf-ease-in-out": "cubic-bezier(0.77, 0, 0.175, 1)",
+      "--cf-ease-drawer": "cubic-bezier(0.32, 0.72, 0, 1)"
+    },
+    "density": "comfortable"
+  },
+  "components": {
+    "installed": [
+      "button",
+      "container",
+      "input",
+      "dialog",
+      "tabs",
+      "product-primitives",
+      "paywall-dialog"
+    ],
+    "preferredPrimitives": [
+      "Radix UI for focus-managed dialogs and tabs",
+      "Motion for rare state transitions and guided onboarding",
+      "native controls for forms and radio groups"
+    ],
+    "patterns": [
+      "Source Thread from campaign brief to source to result",
+      "contextual single-plan paywall",
+      "vertical evidence log without fake percentage",
+      "editor layout with clip browser, viewer, timeline and inspector"
+    ]
+  },
+  "constraints": {
+    "must": [
+      "Keep campaign intent, transcript words and visual proof visibly connected",
+      "Support default, loading, empty, error, success and 390px states",
+      "Use one ClipFactory blue for actions, source markers, focus and playheads; reserve green for verified success",
+      "Preserve source and brief context when billing blocks an analysis"
+    ],
+    "avoid": [
+      "generic metric-card dashboards before first value",
+      "purple-blue mesh heroes and glassmorphism on every surface",
+      "fake progress percentages, uploads, retries or subscription portal actions",
+      "transition-all, routine entrance animation and decorative infinite motion"
+    ]
+  },
+  "decisions": [
+    "Use Edit Axis as the canonical landing and one calm Apple Pro direction across the product",
+    "Use Signal Timeline as the canonical processing direction; keep Continuity and Manuscript only as temporary lab references",
+    "Use the account to guided brief to source to first-trial processing to locked teaser to contextual paywall to unlocked result to workspace sequence",
+    "Keep the A-to-Z local journey as an interactive QA prototype; production requires a bounded first-job trial and gated outputs before moving the paywall after processing",
+    "Use Radix Dialog and Tabs rather than hand-rolling focus and keyboard behavior",
+    "Use three semantic campaign chapters rather than seven flat fields",
+    "Show billing checkout return as confirmation pending until subscription data is active"
+  ],
+  "evidence": [
+    {
+      "fact": "components.installed",
+      "source": "components/ui"
+    },
+    {
+      "fact": "design.colorMode:dark",
+      "source": "app/globals.css"
+    },
+    {
+      "fact": "design.tokens",
+      "source": "app/globals.css"
+    },
+    {
+      "fact": "project.stack:nextjs",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:react",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:tailwind-v4",
+      "source": "package.json"
+    }
+  ],
+  "generatedAt": "2026-08-25T18:06:30Z"
+}

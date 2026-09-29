@@ -1,301 +1,70 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Check, Minus } from "lucide-react";
-import { Container } from "@/components/ui/container";
-import { Button } from "@/components/ui/button";
-import { MarketingNav } from "@/components/marketing/nav";
-import { MarketingFooter } from "@/components/marketing/footer";
-import {
-  BreadcrumbJsonLd,
-  FaqJsonLd,
-} from "@/components/marketing/json-ld";
+import { ArrowUpRight, ChevronDown } from "lucide-react";
+import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/marketing/json-ld";
+import { MobileMenu } from "@/components/marketing/mobile-menu";
+import { PricingSection } from "@/components/marketing/pricing-section";
+import landing from "@/components/prototypes/redesign/apple-edit-axis.module.css";
+import story from "@/components/prototypes/redesign/edit-axis-story.module.css";
+import styles from "./pricing.module.css";
 
 export const metadata: Metadata = {
-  title: "AI video clipping pricing — 29€/month, no watermark",
-  description:
-    "ClipFactory pricing starts at 29€ / month for 300 video minutes. Turn long videos into Shorts, Reels and TikToks with captions, no watermark, EU hosting and simple credits.",
-  keywords: [
-    "AI video clipping pricing",
-    "AI clip maker pricing",
-    "AI clipping pricing",
-    "AI clipper price",
-    "OpusClip alternative price",
-    "vertical short generator price",
-    "YouTube to Shorts pricing",
-    "EU hosted AI clipping",
-    "no watermark AI clipping",
-  ],
+  title: "Plans & pricing — Starter and Pro",
+  description: "Starter at €29/month for 300 credits. Explore Pro at €79/month for 1,000 credits and up to five YouTube sources per series. Pro is coming soon.",
   alternates: { canonical: "/pricing" },
 };
 
-const PRICING_FAQ = [
-  {
-    q: "What counts as a 'credit'?",
-    a: "1 credit = 1 minute of source video. A 12-minute video uses 12 credits, whether ClipFactory returns one clip or three clips.",
-  },
-  {
-    q: "What if a job fails?",
-    a: "If ClipFactory cannot process the video, the credits are refunded. If a video is too broken to make good clips, we do not charge for fake output.",
-  },
-  {
-    q: "Is there a free trial?",
-    a: "Not yet. The first paying customers get a personal onboarding call instead. Reach out at hello@clipfactory.app and we'll set you up.",
-  },
-  {
-    q: "Can I cancel anytime?",
-    a: "Yes. Stripe handles billing — cancel from your billing portal and you keep access until the end of the current period.",
-  },
-  {
-    q: "Where is my data stored?",
-    a: "ClipFactory is designed around EU hosting: database in Frankfurt, storage in Europe and video processing in Germany. Source videos auto-delete after 14 days, rendered clips after 60.",
-  },
-  {
-    q: "Do you take a cut of my revenue?",
-    a: "No. You pay a flat monthly fee, that's it. We never take a percentage of what your clips earn elsewhere.",
-  },
+const FAQ = [
+  { q: "Can I use several videos in one series?", a: "Multi-source series are reserved for Pro, with two to five YouTube videos under one campaign brief. Sources are processed in order and results stay grouped. Each exported clip uses one source; footage from different videos is not mixed. Pro subscriptions are not open yet." },
+  { q: "How are credits counted?", a: "One credit covers one minute of source video. A 12-minute video uses 12 credits, whether it produces one clip or three. In a multi-source series, the duration of each video counts toward the total." },
+  { q: "How many clips will I receive?", a: "You can request up to three clips per video. Quality checks may return fewer distinct cuts when the source does not support three. Every delivered clip includes vertical framing, burned captions and a download without a watermark." },
+  { q: "Can I cancel my subscription?", a: "Contact hello@clipfactory.app for billing, invoices or cancellation during the pilot. Pro is not open for subscriptions yet, so joining its notification list does not start a subscription or create a charge." },
+  { q: "What happens if processing fails?", a: "The failed source and its status stay visible. In a series, a failed source does not prevent the next source from being processed. Contact support if a credit adjustment needs review." },
 ];
 
-type PlanFeature = { label: string; included: boolean };
-type Plan = {
-  name: string;
-  price: string;
-  tagline: string;
-  cta: string;
-  ctaHref: string;
-  highlighted?: boolean;
-  available: boolean;
-  features: PlanFeature[];
-};
-
-const PLANS: Plan[] = [
-  {
-    name: "Starter",
-    price: "29€",
-    tagline: "For solo creators ready to ship.",
-    cta: "Start with Starter",
-    ctaHref: "/login",
-    highlighted: true,
-    available: true,
-    features: [
-      { label: "300 video minutes / month", included: true },
-      { label: "Up to 30 min per video", included: true },
-      { label: "3 clips per video", included: true },
-      { label: "1 concurrent job", included: true },
-      { label: "Vertical 1080×1920 + burned captions", included: true },
-      { label: "Simple score for every clip", included: true },
-      { label: "Multi-part clips when the story needs it", included: true },
-      { label: "Audience brief", included: true },
-      { label: "Good / bad feedback", included: true },
-      { label: "API access", included: false },
-      { label: "Priority support", included: false },
-    ],
-  },
-  {
-    name: "Creator",
-    price: "79€",
-    tagline: "Coming soon — join the waitlist.",
-    cta: "Notify me",
-    ctaHref: "mailto:hello@clipfactory.app?subject=Creator%20plan%20waitlist",
-    available: false,
-    features: [
-      { label: "1 000 video minutes / month", included: true },
-      { label: "Up to 60 min per video", included: true },
-      { label: "5 clips per video", included: true },
-      { label: "2 concurrent jobs", included: true },
-      { label: "Multi-part clips when the story needs it", included: true },
-      { label: "Saved audience briefs", included: true },
-      { label: "Simple score for every clip", included: true },
-      { label: "Good / bad feedback", included: true },
-      { label: "API access", included: false },
-      { label: "Priority support", included: true },
-    ],
-  },
-  {
-    name: "Agency",
-    price: "199€",
-    tagline: "Coming soon — for studios.",
-    cta: "Get in touch",
-    ctaHref: "mailto:hello@clipfactory.app?subject=Agency%20plan",
-    available: false,
-    features: [
-      { label: "3 000 video minutes / month", included: true },
-      { label: "Up to 120 min per video", included: true },
-      { label: "8 clips per video", included: true },
-      { label: "3 concurrent jobs", included: true },
-      { label: "Multi-part clips when the story needs it", included: true },
-      { label: "Saved audience briefs", included: true },
-      { label: "Simple score for every clip", included: true },
-      { label: "Good / bad feedback", included: true },
-      { label: "API access (V2)", included: true },
-      { label: "Priority support", included: true },
-    ],
-  },
-];
+function BrandMark() {
+  return <span className={landing.brandMark} aria-hidden="true"><span /><span /><span /></span>;
+}
 
 export default function PricingPage() {
   return (
-    <>
-      <BreadcrumbJsonLd
-        items={[
-          { name: "Home", href: "/" },
-          { name: "Pricing", href: "/pricing" },
-        ]}
-      />
-      <FaqJsonLd items={PRICING_FAQ} />
-      <MarketingNav />
-      <main className="flex-1">
-        <section className="border-b border-[var(--color-border)]">
-          <Container className="max-w-5xl py-20">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
-              Pricing
-            </p>
-            <h1 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">
-              Pricing for turning long videos into short clips.
-            </h1>
-            <p className="mt-4 max-w-2xl text-[var(--color-muted-foreground)] md:text-lg">
-              Simple monthly plans for AI video clipping. You pay for video minutes,
-              get vertical clips with captions, and keep the clips with no watermark.
-            </p>
-
-            <div className="mt-12 grid gap-6 md:grid-cols-3">
-              {PLANS.map((p) => (
-                <PlanCard key={p.name} plan={p} />
-              ))}
-            </div>
-          </Container>
+    <div className={`${landing.page} ${story.rest} ${styles.page}`}>
+      <BreadcrumbJsonLd items={[{ name: "Home", href: "/" }, { name: "Pricing", href: "/pricing" }]} />
+      <FaqJsonLd items={FAQ} />
+      <header className={`${landing.header} ${styles.header}`}>
+        <Link href="/" className={landing.brand} aria-label="ClipFactory home"><BrandMark /><span>ClipFactory</span></Link>
+        <nav className={landing.primaryNav} aria-label="Primary navigation">
+          <Link href="/#story">How it works</Link>
+          <Link href="/#campaign-v6">Features</Link>
+          <Link href="/pricing" aria-current="page">Pricing</Link>
+        </nav>
+        <div className={landing.headerActions}>
+          <MobileMenu />
+          <Link href="/login" className={landing.signIn}>Sign in</Link>
+          <Link href="/app/campaigns/new" className={landing.navCta}>Start a campaign <ArrowUpRight aria-hidden="true" /></Link>
+        </div>
+      </header>
+      <main id="main-content">
+        <div className={styles.plans}><PricingSection startHref="/app/campaigns/new" standalone /></div>
+        <section className={styles.credits} aria-labelledby="credits-title">
+          <div><p className={styles.eyebrow}>Count the source, not the cuts</p><h2 id="credits-title">One minute.<br />One credit.</h2></div>
+          <div className={styles.creditExample}>
+            <div className={styles.equation}><span><strong>12</strong>minutes of source</span><span aria-hidden="true">=</span><span><strong>12</strong>credits used</span></div>
+            <p>Request up to three clips from the same video. The number of clips does not change the credit cost.</p>
+            <p>For a series, add the duration of every source. Credits are counted separately for each video.</p>
+          </div>
         </section>
-
-        {/* Credits explanation */}
-        <section className="border-b border-[var(--color-border)] bg-[var(--color-muted)]">
-          <Container className="max-w-4xl py-20">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
-              How video minutes work
-            </p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-              1 credit = 1 minute of source video.
-            </h2>
-            <p className="mt-4 text-[var(--color-muted-foreground)]">
-              Upload or paste a 12-minute video and it uses 12 credits. The number of
-              clips does not change the price, so costs stay easy to understand.
-            </p>
-            <ul className="mt-8 grid gap-3 text-sm md:grid-cols-2">
-              <li className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-4">
-                <span className="font-semibold">Vertical clips included.</span>{" "}
-                1080×1920, captions, no watermark — on every plan.
-              </li>
-              <li className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-4">
-                <span className="font-semibold">Storage retention.</span> Source files deleted
-                after 14 days, rendered clips after 60. GDPR-friendly by design.
-              </li>
-              <li className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-4">
-                <span className="font-semibold">Stripe billing.</span> VAT included for EU
-                customers. Billing portal for invoices and cancellation.
-              </li>
-              <li className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-4">
-                <span className="font-semibold">No revenue share.</span> What your clips earn
-                elsewhere is yours, full stop.
-              </li>
-            </ul>
-          </Container>
-        </section>
-
-        {/* FAQ */}
-        <section className="border-b border-[var(--color-border)]">
-          <Container className="max-w-3xl py-20">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
-              Pricing FAQ
-            </p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-              Common questions about billing.
-            </h2>
-            <dl className="mt-10 divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
-              {PRICING_FAQ.map((item) => (
-                <div key={item.q} className="py-6">
-                  <dt className="text-base font-medium">{item.q}</dt>
-                  <dd className="mt-2 text-sm text-[var(--color-muted-foreground)]">{item.a}</dd>
-                </div>
-              ))}
-            </dl>
-            <p className="mt-8 text-sm text-[var(--color-muted-foreground)]">
-              Still unsure? Write to{" "}
-              <a href="mailto:hello@clipfactory.app" className="underline">
-                hello@clipfactory.app
-              </a>{" "}
-              or check the <Link href="/faq" className="underline">full FAQ</Link>.
-            </p>
-          </Container>
+        <section className={`${story.faqSection} ${styles.faq}`} aria-labelledby="faq-title">
+          <div className={story.faqHeading}><p className={styles.eyebrow}>A few details</p><h2 id="faq-title">Before your<br />first cut.</h2><p className={styles.contact}>Need a hand choosing?<br /><a href="mailto:hello@clipfactory.app">Talk to us <ArrowUpRight aria-hidden="true" /></a></p></div>
+          <div className={story.faqList}>{FAQ.map((item, index) => <details key={item.q} name="pricing-faq"><summary><span>{String(index + 1).padStart(2, "0")}</span><strong>{item.q}</strong><ChevronDown aria-hidden="true" /></summary><p>{item.a}</p></details>)}</div>
         </section>
       </main>
-      <MarketingFooter />
-    </>
-  );
-}
-
-function PlanCard({ plan }: { plan: Plan }) {
-  return (
-    <div
-      className={
-        "flex flex-col rounded-lg border p-6 " +
-        (plan.highlighted
-          ? "border-2 border-[var(--color-brand)]"
-          : "border-[var(--color-border)]")
-      }
-    >
-      <div className="flex items-center gap-2">
-        <p
-          className={
-            "text-sm font-semibold uppercase tracking-wider " +
-            (plan.highlighted
-              ? "text-[var(--color-brand)]"
-              : "text-[var(--color-muted-foreground)]")
-          }
-        >
-          {plan.name}
-        </p>
-        {!plan.available && (
-          <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-muted)] px-2 py-0.5 text-[10px] uppercase tracking-wider text-[var(--color-muted-foreground)]">
-            Soon
-          </span>
-        )}
-      </div>
-      <div className="mt-2 flex items-baseline gap-1">
-        <span className="text-4xl font-semibold tabular-nums">{plan.price}</span>
-        <span className="text-[var(--color-muted-foreground)]">/ month</span>
-      </div>
-      <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">{plan.tagline}</p>
-
-      <ul className="mt-6 flex-1 space-y-2 text-sm">
-        {plan.features.map((f) => (
-          <li
-            key={f.label}
-            className={
-              "flex gap-3 " +
-              (f.included ? "" : "text-[var(--color-muted-foreground)] line-through")
-            }
-          >
-            {f.included ? (
-              <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-brand)]" />
-            ) : (
-              <Minus className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-muted-foreground)]" />
-            )}
-            <span>{f.label}</span>
-          </li>
-        ))}
-      </ul>
-
-      <Link href={plan.ctaHref as never} className="mt-8 block">
-        <Button
-          className="w-full"
-          variant={plan.highlighted ? "primary" : "secondary"}
-        >
-          {plan.cta}
-        </Button>
-      </Link>
-      {plan.available && (
-        <p className="mt-3 text-center text-xs text-[var(--color-muted-foreground)]">
-          Cancel anytime · VAT included
-        </p>
-      )}
+      <footer className={styles.footer}>
+        <Link href="/" className={landing.brand}><BrandMark /><span>ClipFactory</span></Link>
+        <p>The whole story, kept in sync.</p>
+        <nav aria-label="Footer navigation"><Link href="/legal/terms">Terms</Link><Link href="/legal/privacy">Privacy</Link><a href="mailto:hello@clipfactory.app">Get in touch</a></nav>
+        <small>© {new Date().getFullYear()} ClipFactory</small>
+      </footer>
     </div>
   );
 }

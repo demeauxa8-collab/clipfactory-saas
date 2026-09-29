@@ -11,6 +11,7 @@ import structlog
 from .db import close_pool, get_pool, init_pool
 from .log_sanitize import scrub_email_values
 from .pipeline.runner import run_job
+from .series_queue import claim_next_series_job
 from .settings import get_settings
 
 log = structlog.get_logger()
@@ -38,6 +39,18 @@ async def _worker_loop(stop_event: asyncio.Event) -> None:
     log.info("worker.ready", concurrency=settings.worker_concurrency)
 
     while not stop_event.is_set():
+        try:
+            series_job_id = await claim_next_series_job(pool)
+        except Exception as exc:
+            log.warning("worker.series_claim.error", err=str(exc))
+            series_job_id = None
+        if series_job_id:
+            try:
+                await run_job(pool, series_job_id)
+            except Exception as exc:
+                log.exception("worker.run_job.crash", job_id=series_job_id, err=str(exc))
+            continue
+
         try:
             result = await client.blpop(JOBS_QUEUE_KEY, timeout=settings.worker_poll_interval)
         except Exception as exc:

@@ -23,7 +23,8 @@ class JobError(Exception):
 async def _active_subscription(conn: asyncpg.Connection, user_id: str) -> asyncpg.Record | None:
     return await conn.fetchrow(
         """
-        select s.*, p.max_video_minutes, p.max_clips_per_video, p.max_concurrent_jobs
+        select s.*, p.max_video_minutes, p.max_clips_per_video,
+               p.max_concurrent_jobs, p.max_series_sources
           from subscriptions s
           join plan_definitions p on p.code = s.plan_code
          where s.user_id = $1 and s.status in ('trialing', 'active')
@@ -51,6 +52,8 @@ def _row_to_job_out(row: asyncpg.Record) -> JobOut:
     return JobOut(
         id=str(row["id"]),
         campaign_id=str(row["campaign_id"]) if row["campaign_id"] else None,
+        series_id=str(row["series_id"]) if row["series_id"] else None,
+        series_position=row["series_position"],
         source_url=row["source_url"],
         target_clip_count=row["target_clip_count"],
         status=row["status"],
@@ -75,7 +78,8 @@ def _row_to_job_out(row: asyncpg.Record) -> JobOut:
 
 
 _JOB_COLUMNS = """
-    id, user_id, campaign_id, source_url, target_clip_count, status, current_step,
+    id, user_id, campaign_id, series_id, series_position, source_url,
+    target_clip_count, status, current_step,
     duration_seconds, credits_estimated, credits_charged,
     error_code, error_message, failed_step, retry_count,
     transcription_cost_cents, analysis_tokens, vision_frames_count,
@@ -90,37 +94,43 @@ async def create_job(
     user_id: str,
     payload: JobCreate,
 ) -> JobOut:
-    sub = await _active_subscription(conn, user_id)
-    if sub is None:
-        raise JobError("no_active_subscription", "You need an active subscription to create a job.")
-
-    if payload.target_clip_count > int(sub["max_clips_per_video"]):
-        raise JobError(
-            "clip_count_exceeded",
-            f"Your plan allows up to {sub['max_clips_per_video']} clips per video.",
-        )
-
-    campaign = await campaigns_svc.get_campaign(
-        conn, user_id=user_id, campaign_id=payload.campaign_id
-    )
-    if campaign is None:
-        raise JobError("campaign_not_found", "Campaign not found or not owned by you.")
-
-    if await _concurrent_jobs(conn, user_id) >= int(sub["max_concurrent_jobs"]):
-        raise JobError(
-            "concurrent_jobs_exceeded",
-            "You already have a job running. Wait for it to finish before starting another.",
-        )
-
-    balance = await credits_svc.get_balance(conn, user_id)
-    if balance <= 0:
-        raise JobError("insufficient_credits", "You have no credits left for this billing period.")
-
     # V1: we don't probe the URL before queueing. Charge the cheapest plausible
     # bucket (1 credit) up front; the worker debits the real duration after probe.
     estimated = 1
 
     async with conn.transaction():
+        # Match series creation so two submissions cannot both pass the queue limit.
+        await conn.execute("select pg_advisory_xact_lock(hashtext($1))", user_id)
+        sub = await _active_subscription(conn, user_id)
+        if sub is None:
+            raise JobError(
+                "no_active_subscription", "You need an active subscription to create a job."
+            )
+
+        if payload.target_clip_count > int(sub["max_clips_per_video"]):
+            raise JobError(
+                "clip_count_exceeded",
+                f"Your plan allows up to {sub['max_clips_per_video']} clips per video.",
+            )
+
+        campaign = await campaigns_svc.get_campaign(
+            conn, user_id=user_id, campaign_id=payload.campaign_id
+        )
+        if campaign is None:
+            raise JobError("campaign_not_found", "Campaign not found or not owned by you.")
+
+        if await _concurrent_jobs(conn, user_id) >= int(sub["max_concurrent_jobs"]):
+            raise JobError(
+                "concurrent_jobs_exceeded",
+                "You already have a job running. Wait for it to finish before starting another.",
+            )
+
+        balance = await credits_svc.get_balance(conn, user_id)
+        if balance <= 0:
+            raise JobError(
+                "insufficient_credits", "You have no credits left for this billing period."
+            )
+
         row = await conn.fetchrow(
             f"""
             insert into jobs

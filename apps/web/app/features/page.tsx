@@ -132,7 +132,7 @@ export default function FeaturesPage() {
         ]}
       />
       <MarketingNav />
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         {/* Intro */}
         <section className="border-b border-[var(--color-border)]">
           <Container className="max-w-5xl py-20">
@@ -143,9 +143,10 @@ export default function FeaturesPage() {
               Turn one long video into a series of clips that make sense.
             </h1>
             <p className="mt-4 max-w-2xl text-[var(--color-muted-foreground)] md:text-lg">
-              Simple version: you give a goal, ClipFactory understands the video,
-              then returns clips that fit that goal. Technical version: it uses
-              full-video context, vision checks, multi-segment montage and an explained score.
+              Simple version: you give a goal, ClipFactory understands the
+              video, then returns clips that fit that goal. Technical version:
+              it uses full-video context, vision checks, multi-segment montage
+              and an explained score.
             </p>
 
             <div className="mt-12 grid gap-6 md:grid-cols-2">
@@ -156,7 +157,9 @@ export default function FeaturesPage() {
                 >
                   <f.icon className="h-5 w-5 text-[var(--color-brand)]" />
                   <h2 className="mt-4 text-lg font-medium">{f.title}</h2>
-                  <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">{f.body}</p>
+                  <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">
+                    {f.body}
+                  </p>
                 </article>
               ))}
             </div>
@@ -174,8 +177,9 @@ export default function FeaturesPage() {
                 Context, vision and montage work together.
               </h2>
               <p className="mt-3 text-[var(--color-muted-foreground)]">
-                For a casual user, this simply means better clips. For a creator, agency or
-                technical buyer, these are the layers that make the selection different.
+                For a casual user, this simply means better clips. For a
+                creator, agency or technical buyer, these are the layers that
+                make the selection different.
               </p>
             </div>
 
@@ -207,8 +211,9 @@ export default function FeaturesPage() {
                 From a long video to a planned clip series.
               </h2>
               <p className="mt-3 text-[var(--color-muted-foreground)]">
-                The product keeps the technical work hidden, but the logic is simple:
-                understand the video, choose moments that fit the series objective, then render the clips.
+                The product keeps the technical work hidden, but the logic is
+                simple: understand the video, choose moments that fit the series
+                objective, then render the clips.
               </p>
             </div>
 
@@ -253,29 +258,40 @@ export default function FeaturesPage() {
                   One score, five simple reasons.
                 </h2>
                 <p className="mt-4 text-[var(--color-muted-foreground)]">
-                  Every clip shows its breakdown. You can see why the AI liked it,
-                  why it fits the series goal, then keep it, reject it, or improve the next batch.
+                  Every clip shows its breakdown. You can see why the AI liked
+                  it, why it fits the series goal, then keep it, reject it, or
+                  improve the next batch.
                 </p>
                 <ul className="mt-6 space-y-2 text-sm">
                   <li>
-                    <span className="font-mono text-[var(--color-brand)]">Hook</span> — the first
-                    2 seconds matter more than the rest.
+                    <span className="font-mono text-[var(--color-brand)]">
+                      Hook
+                    </span>{" "}
+                    — the first 2 seconds matter more than the rest.
                   </li>
                   <li>
-                    <span className="font-mono text-[var(--color-brand)]">Emotion</span> —
-                    tension, surprise, reaction.
+                    <span className="font-mono text-[var(--color-brand)]">
+                      Emotion
+                    </span>{" "}
+                    — tension, surprise, reaction.
                   </li>
                   <li>
-                    <span className="font-mono text-[var(--color-brand)]">Visual proof</span> —
-                    face on camera, action, on-screen text.
+                    <span className="font-mono text-[var(--color-brand)]">
+                      Visual proof
+                    </span>{" "}
+                    — face on camera, action, on-screen text.
                   </li>
                   <li>
-                    <span className="font-mono text-[var(--color-brand)]">Fit</span> —
-                    match with your audience and series goal.
+                    <span className="font-mono text-[var(--color-brand)]">
+                      Fit
+                    </span>{" "}
+                    — match with your audience and series goal.
                   </li>
                   <li>
-                    <span className="font-mono text-[var(--color-brand)]">Editing</span> — how
-                    clean the cut will be.
+                    <span className="font-mono text-[var(--color-brand)]">
+                      Editing
+                    </span>{" "}
+                    — how clean the cut will be.
                   </li>
                 </ul>
               </div>
@@ -328,22 +344,23 @@ export default function FeaturesPage() {
             </h2>
             <ul className="mt-8 grid gap-3 text-sm text-[var(--color-muted-foreground)] md:grid-cols-2">
               <li className="rounded-lg border border-[var(--color-border)] p-4">
-              Direct scheduling to TikTok, Reels and Shorts. For V1, download the clips manually.
+                Direct scheduling to TikTok, Reels and Shorts. For V1, download
+                the clips manually.
               </li>
               <li className="rounded-lg border border-[var(--color-border)] p-4">
-              Public API. Coming once the first paying customers are stable.
+                Public API. Coming once the first paying customers are stable.
               </li>
               <li className="rounded-lg border border-[var(--color-border)] p-4">
                 Team workspaces — one user per account at launch.
               </li>
               <li className="rounded-lg border border-[var(--color-border)] p-4">
-              Face-tracking reframe. Vertical crop is centred for now.
+                Face-tracking reframe. Vertical crop is centred for now.
               </li>
               <li className="rounded-lg border border-[var(--color-border)] p-4">
-              Direct upload. Only YouTube and Vimeo URLs at launch.
+                Direct upload. Only YouTube and Vimeo URLs at launch.
               </li>
               <li className="rounded-lg border border-[var(--color-border)] p-4">
-              B-roll insertion and AI sound design. Out of scope for V1.
+                B-roll insertion and AI sound design. Out of scope for V1.
               </li>
             </ul>
           </Container>
@@ -356,8 +373,8 @@ export default function FeaturesPage() {
               Try it on your own video.
             </h2>
             <p className="mt-3 text-[var(--color-muted-foreground)]">
-              Connect your account, paste a URL, tell ClipFactory what you want, and
-              get your first AI clips.
+              Connect your account, paste a URL, tell ClipFactory what you want,
+              and get your first AI clips.
             </p>
             <Link href="/login" className="mt-8 inline-flex">
               <Button size="lg">

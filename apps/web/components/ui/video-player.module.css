@@ -1,0 +1,313 @@
+.root {
+  aspect-ratio: 9 / 16;
+  background: var(--cf-canvas, var(--color-background));
+  border-radius: inherit;
+  color: var(--cf-ink, var(--color-foreground));
+  container-type: inline-size;
+  isolation: isolate;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.root:focus-visible {
+  outline: 2px solid var(--cf-action, var(--color-ring));
+  outline-offset: 3px;
+}
+
+.root:fullscreen {
+  aspect-ratio: auto;
+  border-radius: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.video {
+  background: var(--cf-canvas, var(--color-background));
+  cursor: pointer;
+  display: block;
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
+.pausedMarker {
+  align-items: center;
+  background: color-mix(
+    in srgb,
+    var(--cf-action, var(--color-accent)) 86%,
+    var(--cf-canvas, var(--color-background))
+  );
+  border: 1px solid
+    color-mix(in srgb, var(--cf-ink, var(--color-foreground)) 24%, transparent);
+  border-radius: 50%;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  height: 3.5rem;
+  inset: 50% auto auto 50%;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  transform: translate(-50%, -50%) scale(0.92);
+  transition:
+    opacity 140ms var(--cf-ease-out, ease-out),
+    transform 140ms var(--cf-ease-out, ease-out);
+  width: 3.5rem;
+  z-index: 1;
+}
+
+.pausedMarker[data-visible="true"] {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.pausedMarker svg {
+  fill: currentColor;
+  height: 1.25rem;
+  margin-left: 0.12rem;
+  stroke-width: 1.8;
+  width: 1.25rem;
+}
+
+.controls {
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(
+        in srgb,
+        var(--cf-canvas, var(--color-background)) 88%,
+        transparent
+      )
+      44%
+  );
+  bottom: 0;
+  display: grid;
+  gap: 0.5rem;
+  left: 0;
+  padding: 3.5rem 0.75rem 0.75rem;
+  position: absolute;
+  right: 0;
+  z-index: 2;
+}
+
+.seekRow {
+  align-items: center;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.time {
+  color: color-mix(
+    in srgb,
+    var(--cf-ink, var(--color-foreground)) 78%,
+    transparent
+  );
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  min-width: 2rem;
+}
+
+.time:last-child {
+  text-align: right;
+}
+
+.range {
+  --video-progress: 0%;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  height: 2.75rem;
+  min-width: 0;
+  width: 100%;
+}
+
+.range:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.range:focus-visible {
+  border-radius: 999px;
+  outline: 2px solid var(--cf-action, var(--color-ring));
+  outline-offset: 2px;
+}
+
+.range::-webkit-slider-runnable-track {
+  background: linear-gradient(
+    to right,
+    var(--cf-signal, var(--color-edit-signal)) 0 var(--video-progress),
+    color-mix(in srgb, var(--cf-ink, var(--color-foreground)) 25%, transparent)
+      var(--video-progress) 100%
+  );
+  border-radius: 999px;
+  height: 0.25rem;
+}
+
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--cf-ink, var(--color-foreground));
+  border: 0;
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+  height: 0.875rem;
+  margin-top: -0.3125rem;
+  width: 0.875rem;
+}
+
+.range::-moz-range-track {
+  background: color-mix(
+    in srgb,
+    var(--cf-ink, var(--color-foreground)) 25%,
+    transparent
+  );
+  border-radius: 999px;
+  height: 0.25rem;
+}
+
+.range::-moz-range-progress {
+  background: var(--cf-signal, var(--color-edit-signal));
+  border-radius: 999px;
+  height: 0.25rem;
+}
+
+.range::-moz-range-thumb {
+  background: var(--cf-ink, var(--color-foreground));
+  border: 0;
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+  height: 0.875rem;
+  width: 0.875rem;
+}
+
+.transportRow {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.iconButton {
+  align-items: center;
+  background: color-mix(
+    in srgb,
+    var(--cf-ink, var(--color-foreground)) 8%,
+    transparent
+  );
+  border: 1px solid
+    color-mix(in srgb, var(--cf-ink, var(--color-foreground)) 12%, transparent);
+  border-radius: 50%;
+  color: color-mix(
+    in srgb,
+    var(--cf-ink, var(--color-foreground)) 92%,
+    transparent
+  );
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 2.75rem;
+  justify-content: center;
+  transition:
+    background-color 140ms var(--cf-ease-out, ease-out),
+    border-color 140ms var(--cf-ease-out, ease-out),
+    color 140ms var(--cf-ease-out, ease-out),
+    transform 140ms var(--cf-ease-out, ease-out);
+  width: 2.75rem;
+}
+
+.iconButton:hover:not(:disabled) {
+  background: color-mix(
+    in srgb,
+    var(--cf-action, var(--color-accent)) 24%,
+    transparent
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--cf-action, var(--color-accent)) 48%,
+    transparent
+  );
+}
+
+.iconButton:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.iconButton:focus-visible {
+  outline: 2px solid var(--cf-action, var(--color-ring));
+  outline-offset: 2px;
+}
+
+.iconButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.iconButton svg {
+  height: 1rem;
+  stroke-width: 1.9;
+  width: 1rem;
+}
+
+.volumeGroup {
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  gap: 0.25rem;
+  justify-content: center;
+  max-width: 7.5rem;
+  min-width: 0;
+}
+
+.volumeRange {
+  flex: 1 1 auto;
+  min-width: 3rem;
+}
+
+.srOnly {
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+@container (max-width: 13rem) {
+  .transportRow {
+    display: grid;
+    grid-template-columns: auto auto;
+  }
+
+  .transportRow > .iconButton:first-child {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .transportRow > .iconButton:last-child {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .volumeGroup {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    max-width: none;
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pausedMarker,
+  .iconButton {
+    transition-duration: 0.01ms;
+  }
+}

@@ -67,7 +67,7 @@ export default function CreatorsUseCasePage() {
         ]}
       />
       <MarketingNav />
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         {/* Hero */}
         <section className="border-b border-[var(--color-border)]">
           <Container className="max-w-5xl py-20">
@@ -79,8 +79,8 @@ export default function CreatorsUseCasePage() {
               Turn long videos and podcasts into Shorts, Reels and TikToks.
             </h1>
             <p className="mt-4 max-w-2xl text-lg text-[var(--color-muted-foreground)]">
-              Paste a YouTube or Vimeo link. ClipFactory finds strong moments, adds captions,
-              and explains why each short was selected.
+              Paste a YouTube or Vimeo link. ClipFactory finds strong moments,
+              adds captions, and explains why each short was selected.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/login">
@@ -115,7 +115,9 @@ export default function CreatorsUseCasePage() {
                 >
                   <s.icon className="h-5 w-5 text-[var(--color-brand)]" />
                   <h3 className="mt-4 text-base font-medium">{s.title}</h3>
-                  <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">{s.body}</p>
+                  <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">
+                    {s.body}
+                  </p>
                 </li>
               ))}
             </ol>
@@ -172,8 +174,8 @@ export default function CreatorsUseCasePage() {
                   A clip your audience recognises as yours.
                 </h2>
                 <p className="mt-4 text-[var(--color-muted-foreground)]">
-                  Vertical 1080×1920, captions included, no watermark. The score tells you
-                  whether the clip fits your audience and goal.
+                  Vertical 1080×1920, captions included, no watermark. The score
+                  tells you whether the clip fits your audience and goal.
                 </p>
                 <Link href="/login" className="mt-6 inline-flex">
                   <Button>
@@ -207,7 +209,8 @@ export default function CreatorsUseCasePage() {
               Built for your next episode.
             </h2>
             <p className="mt-3 text-[var(--color-muted-foreground)]">
-              Paste your latest long video, give a simple brief, and see what ClipFactory finds.
+              Paste your latest long video, give a simple brief, and see what
+              ClipFactory finds.
             </p>
             <Link href="/login" className="mt-8 inline-flex">
               <Button size="lg">

@@ -1,0 +1,280 @@
+.form {
+  margin-top: 2rem;
+  position: relative;
+}
+
+.thread {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 1.4rem;
+}
+
+.thread span {
+  background: var(--cf-line-strong);
+  border-radius: 999px;
+  height: 0.18rem;
+  width: 3rem;
+}
+
+.thread span:first-child {
+  background: var(--cf-signal);
+  width: 5rem;
+}
+
+.labelRow {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.labelRow label,
+.clipFieldset legend {
+  font-size: 0.82rem;
+  font-weight: 610;
+}
+
+.labelRow > span {
+  color: var(--cf-faint);
+  font-size: 0.69rem;
+}
+
+.urlInput {
+  margin-top: 0.55rem;
+  position: relative;
+}
+
+.urlInput > svg {
+  color: var(--cf-faint);
+  height: 1rem;
+  left: 1rem;
+  pointer-events: none;
+  position: absolute;
+  stroke-width: 1.7;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  z-index: 1;
+}
+
+.urlInput input {
+  font-family: var(--font-mono);
+  padding-left: 2.75rem;
+}
+
+.urlState {
+  color: var(--cf-faint);
+  font-size: 0.7rem;
+  min-height: 1.9rem;
+  padding-top: 0.55rem;
+}
+
+.urlState :global(.cf-status) svg {
+  height: 0.72rem;
+  stroke-width: 2.2;
+  width: 0.72rem;
+}
+
+.clipFieldset {
+  border-top: 1px solid var(--cf-line);
+  margin-top: 1.25rem;
+  padding-top: 1.35rem;
+}
+
+.clipFieldset > p {
+  color: var(--cf-faint);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  margin-top: 0.35rem;
+}
+
+.clipPicker {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 0.9rem;
+}
+
+.clipPicker label {
+  align-items: baseline;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--cf-line);
+  border-radius: 1rem;
+  cursor: pointer;
+  display: flex;
+  gap: 0.35rem;
+  justify-content: center;
+  min-height: 4.1rem;
+  padding: 1rem;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 140ms var(--cf-ease-out);
+}
+
+.clipPicker label:active {
+  transform: scale(0.98);
+}
+
+.clipPicker label[data-selected="true"] {
+  background: color-mix(in srgb, var(--cf-action) 13%, var(--cf-panel));
+  border-color: color-mix(in srgb, var(--cf-action) 55%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.clipPicker input {
+  height: 1px;
+  opacity: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.clipPicker label:has(input:focus-visible) {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+.clipPicker span {
+  font-size: 1.35rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+
+.clipPicker small {
+  color: var(--cf-faint);
+  font-size: 0.68rem;
+}
+
+.summary {
+  border-bottom: 1px solid var(--cf-line);
+  border-top: 1px solid var(--cf-line);
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 1.35rem;
+  padding: 1rem 0;
+}
+
+.summary > div {
+  min-width: 0;
+}
+
+.summary span,
+.summary strong {
+  display: block;
+}
+
+.summary span {
+  color: var(--cf-faint);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+}
+
+.summary strong {
+  font-size: 0.75rem;
+  font-weight: 570;
+  line-height: 1.35;
+  margin-top: 0.35rem;
+  overflow-wrap: anywhere;
+}
+
+.actions {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-top: 1.35rem;
+}
+
+.actions > p {
+  color: var(--cf-faint);
+  font-size: 0.66rem;
+  line-height: 1.4;
+  max-width: 15rem;
+  text-align: right;
+}
+
+.primaryAction {
+  min-width: 15rem;
+}
+
+.error {
+  align-items: center;
+  background: color-mix(in srgb, var(--cf-danger) 7%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cf-danger) 28%, transparent);
+  border-radius: 1rem;
+  display: grid;
+  gap: 0.25rem 0.8rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+}
+
+.error strong,
+.error span {
+  display: block;
+  grid-column: 1;
+}
+
+.error strong {
+  font-size: 0.78rem;
+}
+
+.error span {
+  color: var(--cf-quiet);
+  font-size: 0.7rem;
+  line-height: 1.45;
+}
+
+.error > :last-child {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .clipPicker label:hover {
+    background: rgba(255, 255, 255, 0.065);
+    border-color: var(--cf-line-strong);
+  }
+}
+
+@media (max-width: 620px) {
+  .summary {
+    grid-template-columns: 1fr;
+  }
+
+  .summary > div + div {
+    border-top: 1px solid var(--cf-line);
+    padding-top: 0.8rem;
+  }
+
+  .actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .actions > p {
+    max-width: none;
+    text-align: left;
+  }
+
+  .primaryAction {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .error {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .error > :last-child {
+    margin-top: 0.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clipPicker label {
+    transition-duration: 0.01ms;
+  }
+}

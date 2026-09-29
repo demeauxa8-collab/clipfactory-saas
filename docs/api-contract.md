@@ -30,9 +30,12 @@ Toutes les réponses sont JSON. Erreurs métier renvoient `{ "detail": { "code":
 | GET | `/jobs` | — | `Job[]` (50 last) | — |
 | POST | `/jobs` | `JobCreate` (incl. `campaign_id`) | `Job` | 10/min |
 | GET | `/jobs/{id}` | — | `JobWithClips` | — |
+| POST | `/series` | `SeriesCreate` | `SeriesOut` (ordered jobs) | 10/min |
+| GET | `/series/{id}` | — | `SeriesOut` (ordered jobs) | — |
 | POST | `/clips/{id}/feedback` | `FeedbackCreate` | `Feedback` | 60/min |
 | GET | `/clips/{id}/download` | — | `{ url, expires_in_seconds }` (presigned R2 URL, TTL 10 min) | — |
-| POST | `/billing/checkout` | `{ "plan_code": "starter" }` | `{ "checkout_url": str }` | 5/hour |
+| POST | `/billing/checkout` | `{ "plan_code": "starter" or "pro" }` | `{ "checkout_url": str }` | 5/hour |
+| POST | `/billing/portal` | — | `{ "portal_url": str }` | 5/hour |
 
 ### Admin (Bearer + profiles.is_admin = true)
 
@@ -88,6 +91,31 @@ Non-admin users hitting `/admin/*` get HTTP 403 `{ detail: "admin_required" }`.
   "target_clip_count": 3
 }
 ```
+
+### SeriesCreate
+
+```json
+{
+  "campaign_id": "uuid",
+  "source_urls": ["https://www.youtube.com/watch?v=...", "https://youtu.be/..."],
+  "target_clip_count": 3
+}
+```
+
+The request accepts 2–5 distinct YouTube URLs. `target_clip_count` applies to
+each video, within the plan's per-video limit. The active plan's
+`max_series_sources` must allow the requested source count; Starter has no
+multi-video access. `SeriesOut.jobs` keeps the source
+order and exposes each job's `series_id` and `series_position`. Sources run one
+after another; a failed video does not block later videos. Credits are charged
+separately from each detected source duration. The clip's `job_id` identifies its
+source. A series does not combine footage from different videos into one clip.
+
+Pro costs 79 EUR/month, grants 1,000 credits per billing period and allows up
+to five sources per series. Starter costs 29 EUR/month, grants 300 credits and
+allows single-source jobs only. Pro checkout is unavailable while its dedicated
+Stripe price is missing or the plan is inactive. Existing subscribers manage
+their subscription through `/billing/portal`.
 
 ### TurnstileVerifyRequest
 
@@ -198,12 +226,14 @@ Notes :
 
 | Event | Effect |
 | --- | --- |
-| `checkout.session.completed` | Create / upsert subscription, grant 300 credits via `credit_ledger` (reason: `subscription_grant`). |
-| `invoice.paid` | If `billing_reason = subscription_cycle`, grant 300 credits (reason: `subscription_renewal`). |
-| `customer.subscription.updated` | Update local subscription status, period end. |
+| `checkout.session.completed` | Create / upsert subscription, grant the purchased plan's credits via `credit_ledger` (reason: `subscription_grant`). |
+| `invoice.paid` | If `billing_reason = subscription_cycle`, grant the purchased plan's credits (reason: `subscription_renewal`). |
+| `customer.subscription.updated` | Update local plan, status and period end from the billed Stripe price. |
 | `customer.subscription.deleted` | Mark subscription `canceled`. Credits already granted are not revoked. |
 
-Idempotency: every event is recorded in `stripe_events(event_id PK)` before processing. Replay = no-op.
+Idempotency: every event and its business changes are committed in one database
+transaction. Processing failure rolls both back and returns HTTP 503 for a
+Stripe retry. Replay of a committed event is a no-op.
 
 Signature replay window: `apps/api/app/services/billing.py::construct_event()` uses `stripe.Webhook.construct_event(...)` without overriding the SDK tolerance, so Stripe's default 5-minute timestamp tolerance applies. This is acceptable for V1 because webhook payloads are only accepted over HTTPS and duplicate events are rejected by the `stripe_events.event_id` primary key before business logic runs.
 

@@ -17,7 +17,10 @@ const VARIANTS = [
 
 export default function PreviewIndex() {
   return (
-    <main className="min-h-dvh bg-neutral-50 dark:bg-neutral-950 px-6 py-16">
+    <main
+      id="main-content"
+      className="min-h-dvh bg-neutral-50 dark:bg-neutral-950 px-6 py-16"
+    >
       <div className="mx-auto max-w-4xl">
         <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">
           Internal preview

@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from ..auth import CurrentUser, current_user
 from ..db import get_pool
 from ..rate_limit import LIMIT_BILLING_CHECKOUT, LIMIT_STRIPE_WEBHOOK, limiter
-from ..schemas import CheckoutCreate, CheckoutResponse
+from ..schemas import CheckoutCreate, CheckoutResponse, PortalResponse
 from ..services import analytics
 from ..services import billing as billing_svc
 
@@ -25,12 +25,27 @@ async def create_checkout(
 ) -> CheckoutResponse:
     pool = get_pool()
     async with pool.acquire() as conn:
-        url = await billing_svc.create_checkout_url(
-            conn,
-            user_id=user.user_id,
-            email=user.email,
-            plan_code=payload.plan_code,
-        )
+        try:
+            url = await billing_svc.create_checkout_url(
+                conn,
+                user_id=user.user_id,
+                email=user.email,
+                plan_code=payload.plan_code,
+            )
+        except billing_svc.BillingError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail={"code": exc.code, "message": exc.message},
+            ) from exc
+        except stripe.StripeError as exc:
+            log.error("billing.checkout.provider_failed", err=str(exc))
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail={
+                    "code": "billing_provider_unavailable",
+                    "message": "Billing is unavailable.",
+                },
+            ) from exc
     analytics.fire_and_forget(
         analytics.track_with_pool(
             pool,
@@ -41,6 +56,32 @@ async def create_checkout(
         )
     )
     return CheckoutResponse(checkout_url=url)
+
+
+@router.post("/billing/portal", response_model=PortalResponse)
+@limiter.limit(LIMIT_BILLING_CHECKOUT)
+async def create_portal(
+    request: Request, user: CurrentUser = Depends(current_user)
+) -> PortalResponse:
+    pool = get_pool()
+    async with pool.acquire() as conn:
+        try:
+            url = await billing_svc.create_portal_url(conn, user_id=user.user_id)
+        except billing_svc.BillingError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail={"code": exc.code, "message": exc.message},
+            ) from exc
+        except stripe.StripeError as exc:
+            log.error("billing.portal.provider_failed", err=str(exc))
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail={
+                    "code": "billing_provider_unavailable",
+                    "message": "Billing is unavailable.",
+                },
+            ) from exc
+    return PortalResponse(portal_url=url)
 
 
 @router.post("/stripe/webhook", include_in_schema=False)
@@ -61,27 +102,24 @@ async def stripe_webhook(request: Request) -> dict[str, bool]:
         ) from exc
 
     pool = get_pool()
-    async with pool.acquire() as conn:
-        async with conn.transaction():
-            is_new = await billing_svc.record_event(conn, event)
-            if not is_new:
-                return {"received": True}
-            try:
+    try:
+        async with pool.acquire() as conn:
+            async with conn.transaction():
+                is_new = await billing_svc.record_event(conn, event)
+                if not is_new:
+                    return {"received": True}
                 await billing_svc.handle_event(conn, event)
-            except Exception as exc:
-                log.error("stripe.webhook.handler_failed", event=event["type"], err=str(exc))
-                # Mark error but don't re-raise (we already recorded the event) to
-                # avoid Stripe retry storms. Visible via stripe_events.error column.
                 await conn.execute(
-                    "update stripe_events set error = $1 where event_id = $2",
-                    str(exc),
+                    "update stripe_events set processed_at = now() where event_id = $1",
                     event["id"],
                 )
-                return {"received": True}
-            await conn.execute(
-                "update stripe_events set processed_at = now() where event_id = $1",
-                event["id"],
-            )
+    except Exception as exc:
+        # Roll back both the event marker and any partial grant. Stripe can retry.
+        log.error("stripe.webhook.handler_failed", event=event["type"], err=str(exc))
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail={"code": "billing_webhook_retry", "message": "Webhook processing will retry."},
+        ) from exc
 
     analytics.fire_and_forget(
         analytics.track_with_pool(
