@@ -1101,14 +1101,7 @@ def _build_single_pass_montage(
             )
 
     if not source_has_audio:
-        silent_input_idx = n
         inputs.extend(["-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo"])
-        split_labels = "".join(f"[asilent{i}]" for i in range(n))
-        parts.append(f"[{silent_input_idx}:a:0]asplit={n}{split_labels}")
-        for idx, duration in enumerate(durations):
-            parts.append(
-                f"[asilent{idx}]atrim=start=0:end={duration:.6f},asetpts=PTS-STARTPTS[a{idx}]"
-            )
 
     parts.append("".join(f"[v{i}]" for i in range(n)) + f"concat=n={n}:v=1:a=0[vconcat]")
     intended = sum(durations)
@@ -1118,7 +1111,11 @@ def _build_single_pass_montage(
         f"trim=start=0:end={intended:.6f},setpts=PTS-STARTPTS[vraw]"
     )
 
-    if n == 1:
+    if not source_has_audio:
+        # A continuous silent bed follows the full edit timeline. Splitting and
+        # joining silence at each cut can truncate the AAC stream on some builds.
+        audio_label = f"[{n}:a:0]"
+    elif n == 1:
         audio_label = "[a0]"
     else:
         previous = "[a0]"
