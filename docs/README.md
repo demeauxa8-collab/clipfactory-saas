@@ -7,6 +7,7 @@
 
 | Doc | Pour quoi |
 |---|---|
+| [`roadmap.md`](roadmap.md) | **Feuille de route** : phases A (backend Mac Studio) → B (pipeline meilleure version) → C (test des modèles) → D (vente), qui fait quoi, critères de sortie, calendrier |
 | [`pipeline-map-2026-09-29.md`](pipeline-map-2026-09-29.md) | **Carte du pipeline** : chaque étape, ce que la prod exécute, la meilleure version existante et où, modèles, ordre de consolidation |
 | [`mac-studio-backend.md`](mac-studio-backend.md) | **Runbook en cours** : API + Redis + worker + ASR local sur le Mac Studio M1 Max, exposé par Tailscale Funnel |
 | [`v1-scope.md`](v1-scope.md) | Ce qui est dans / hors V1 (source de vérité du périmètre) |

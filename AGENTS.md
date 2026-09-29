@@ -42,6 +42,10 @@ Fondateur : Augustin (designer / product, ne code pas ligne à ligne). Parle-lui
 - **PR ouvertes** : #5 (UI edit-axis), #3 (Vercel Analytics), #7 (pages SEO déjà en ligne).
 - **Jamais mesuré à ce jour** : taux de clips publiables jugé par un humain ; job réel de bout en bout en prod. C'est la priorité avant toute nouvelle fonctionnalité.
 
+## Feuille de route et canal entre agents
+
+Plan en cours : `docs/roadmap.md` (phases A → D, une étape = une branche = une PR brouillon, critère de sortie chiffré). **Les agents se parlent par les PR GitHub** : l'exécutant documente dans la description de la PR, le relecteur répond en commentaires de revue, l'exécutant relit les commentaires avant chaque reprise ; `@augustin` dans le fil = question bloquante pour Augustin.
+
 ## Commandes utiles
 
 ```bash
