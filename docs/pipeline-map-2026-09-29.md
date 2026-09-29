@@ -51,7 +51,7 @@ La meilleure version de presque chaque étape existe, mais **elle n'est commité
 | 15 | Jobs / crédits | BLPOP Redis, débit non atomique, remboursement possible sans débit (B01) ; séries `SKIP LOCKED` | `job_state` (réservation `for update`), `job_artifacts`, annulation, timeouts sous-processus | FST **+** MAIN | tests Postgres des deux côtés | **Fusionner les deux corrections** (conflit certain dans `runner.py`/`main.py`) |
 | 16 | Multi-source | `series_queue.py` (une source par clip) | = prod | MAIN | 14 tests | **Garder MAIN**. Montage cross-source : banc seulement |
 | 17 | Provider LLM | `openrouter.py` 173 l. | 231 l. (repli `reasoning`) | FST / architecture-backend | — | **Reporter** |
-| 18 | Sécurité DB | `profiles.is_admin` modifiable par `anon`/`authenticated` (**vérifié en prod le 29/09**) | migration `20260907150016_restrict_client_job_and_profile_writes.sql` | FST, CQ (non suivie) | — | **Appliquer en premier** |
+| 18 | Sécurité DB | Écritures client sur `jobs`/`profiles` restreintes | migration `20260907150016_restrict_client_job_and_profile_writes.sql` | **Appliquée en prod le 29/09** | droits vérifiés après application | Fait — fichier à versionner avec la consolidation |
 | 19 | Bench / scripts | `render_v2_fixture_variants.py` | `benchmark_clipping`, `compare_full_stack`, `full_stack_benchmark`, `render_matched_comparison` + scripts campagne DATA | FST, DATA | — | Reporter FST ; rapatrier DATA |
 | 20 | CI | `smoke.yml` (toujours `skipped`), keepalive | `pipeline-quality.yml` | FST | — | **Reporter** — la CI doit lancer pytest |
 
@@ -76,7 +76,7 @@ Rejetés avec preuve : gpt-4o-mini-transcribe, gpt-transcribe, Groq whisper-larg
 
 ## 5. Ordre de consolidation proposé
 
-1. **Sécurité** — appliquer la migration RLS en prod (seule action urgente, indépendante du reste).
+1. **Sécurité** — ✅ migration RLS appliquée en prod le 29/09 ; reste à versionner le fichier.
 2. **Sauvegarde** — commiter FST tel quel sur une branche poussée (`archive/full-stack-2026-09-25`), et archiver CQ, TP, PRICP. Plus rien ne dépend du disque.
 3. **Branche `consolidate/pipeline-v1`** depuis `origin/main` 75b1a76, reporter dans cet ordre :
    a. `verify`, `boundaries`, `edl*`, `editor_v2`, `clip_render`, `edl_captions`, QC média (lot « qualité », rendu EDL actif) ;

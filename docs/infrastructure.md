@@ -2,6 +2,8 @@
 
 > Décision d'architecture : séparation **control plane** (VPS) / **worker** (Mac Studio).
 > Statut : adopté · Dernière mise à jour : 2026-06
+>
+> **Mise à jour 2026-09-29** : phase actuelle = **tout sur le Mac Studio M1 Max** (API + Redis + worker + ASR local MLX), exposé par Tailscale Funnel, sans VPS. Runbook : `docs/mac-studio-backend.md`. Le découpage VPS/worker ci-dessous s'active au premier client payant.
 
 ---
 
