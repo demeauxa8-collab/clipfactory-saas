@@ -41,8 +41,21 @@ from ..providers import (
 )
 from ..settings import get_settings
 from ..storage import upload_file
-from .analyze import select_simple_segments
-from .boundaries import AnchorReport, anchor_arcs_to_transcript, snap_arc_segments
+from .analyze import (
+    MAX_SIMPLE_SEGMENT_SECONDS,
+    MIN_SIMPLE_SEGMENT_SECONDS,
+    select_simple_segments,
+)
+from .boundaries import (
+    MAX_CLIP_SECONDS,
+    MAX_SEGMENT_SECONDS,
+    MIN_CLIP_SECONDS,
+    MIN_SEGMENT_SECONDS,
+    AnchorReport,
+    anchor_arcs_to_transcript,
+    filter_arcs_by_duration,
+    snap_arc_segments,
+)
 from .captions import FACE_CROP_MARGIN_V, FIT_BLUR_MARGIN_V, write_ass_for_montage
 from .ffmpeg import (
     FFmpegError,
@@ -141,9 +154,7 @@ async def _validate_url(url: str) -> None:
     if not _host_in_whitelist(parsed.hostname):
         raise PipelineFailure("invalid_url", "validate_url", "URL host not allowed in V1")
     if _host_resolves_to_private_ip(parsed.hostname or ""):
-        raise PipelineFailure(
-            "invalid_url", "validate_url", "URL host resolves to a non-public IP"
-        )
+        raise PipelineFailure("invalid_url", "validate_url", "URL host resolves to a non-public IP")
 
     # Follow redirects manually, verifying each hop's host stays in the whitelist.
     # This blocks open-redirect-based SSRF (attacker submits youtu.be/X that 302s
@@ -161,9 +172,7 @@ async def _validate_url(url: str) -> None:
                 except httpx.HTTPError:
                     # Some hosts (YouTube notably) reject HEAD — fall back to GET
                     # with a 1-byte range so we don't pull the body.
-                    resp = await client.get(
-                        current_url, headers={"Range": "bytes=0-0"}
-                    )
+                    resp = await client.get(current_url, headers={"Range": "bytes=0-0"})
                 if resp.status_code in (301, 302, 303, 307, 308):
                     location = resp.headers.get("location")
                     if not location:
@@ -525,6 +534,10 @@ def _log_anchor_report(report: AnchorReport, *, label: str) -> None:
         unmatched=report.segments_unmatched,
         max_drift_seconds=report.max_drift_seconds,
         mean_drift_seconds=round(report.mean_drift_seconds, 3),
+        ends_anchored=report.segment_ends_anchored,
+        ends_unmatched=report.segment_ends_unmatched,
+        missing_explicit_anchors=report.segments_missing_explicit_anchors,
+        anchor_conflicts=report.arcs_dropped_anchor_conflicts,
         payoffs_extended=report.payoffs_extended,
         payoffs_out_of_reach=report.payoffs_out_of_reach,
         payoffs_unmatched=report.payoffs_unmatched,
@@ -787,7 +800,8 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
         for idx, arc in enumerate(top_for_vision):
             try:
                 _, (per_seg, frames, tokens) = await _call_with_fallback(
-                    primary, fallback,
+                    primary,
+                    fallback,
                     settings.primary_vision_deep_model,
                     settings.fallback_vision_model,
                     lambda p, m, arc=arc, idx=idx: deep_vision_for_arc(
@@ -804,9 +818,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                 per_seg, frames, tokens = [], 0, 0
             ctx.vision_frames_count += frames
             ctx.analysis_tokens += tokens
-            ctx.deep_vision_cost_cents += round(
-                frames * settings.cost_vision_deep_cents_per_frame
-            )
+            ctx.deep_vision_cost_cents += round(frames * settings.cost_vision_deep_cents_per_frame)
             candidate = score_arc(
                 arc=arc,
                 per_segment_vision=per_seg,
@@ -865,7 +877,11 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                 transcript=ctx.transcript,
                 segments=cand.segments,
                 out_path=ass_path,
-                audio_crossfade_seconds=0.15 if len(cand.segments) > 1 else 0.0,
+                # The single-pass render engine uses a non-overlapping audio
+                # joint fade, so audio, video and captions share the same
+                # concatenated timeline (within the source frame duration).
+                # No per-joint caption offset remains.
+                audio_crossfade_seconds=0.0,
                 margin_v=margins_per_segment[0],
                 margins_per_segment=margins_per_segment,
             )
@@ -995,10 +1011,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                     (ctx.transcription_cost_cents or 0)
                     + (ctx.video_map_cost_cents or 0)
                     + (ctx.deep_vision_cost_cents or 0)
-                    + round(
-                        (ctx.analysis_tokens / 1000.0)
-                        * settings.cost_text_cents_per_1k_tokens
-                    )
+                    + round((ctx.analysis_tokens / 1000.0) * settings.cost_text_cents_per_1k_tokens)
                 )
                 await conn.execute(
                     """
@@ -1120,7 +1133,8 @@ async def _run_story_path(
     async with pool.acquire() as conn:
         await _set_status(conn, ctx.job_id, "analyzing", current_step="video_map")
     used_provider, (video_map, frames_used, tokens) = await _call_with_fallback(
-        primary, fallback,
+        primary,
+        fallback,
         settings.vision_cheap_model,
         settings.fallback_vision_model,
         lambda p, m: build_video_map(
@@ -1145,7 +1159,8 @@ async def _run_story_path(
         await _set_status(conn, ctx.job_id, "analyzing", current_step="story_arcs")
     lines = transcript_to_timestamped_lines(ctx.transcript)
     used_provider, (arcs, tokens2) = await _call_with_fallback(
-        primary, fallback,
+        primary,
+        fallback,
         settings.primary_text_model,
         settings.fallback_text_model,
         # duration + language are what make the prompt say "WRITTEN IN french"
@@ -1187,7 +1202,11 @@ async def _run_story_path(
     async with pool.acquire() as conn:
         await _set_status(conn, ctx.job_id, "analyzing", current_step="snap_segments")
     snapped, snap_report = snap_arc_segments(
-        kept, ctx.transcript.words, sentences=ctx.transcript.sentences
+        kept,
+        ctx.transcript.words,
+        sentences=ctx.transcript.sentences,
+        min_duration_seconds=MIN_SEGMENT_SECONDS,
+        max_duration_seconds=MAX_SEGMENT_SECONDS,
     )
     log.info(
         "pipeline.snap_segments",
@@ -1202,8 +1221,22 @@ async def _run_story_path(
             failed=snap_report.segments_failed,
             segments=snap_report.segments_seen,
         )
-    ctx.story_arcs = snapped
-    return snapped
+    final, duration_report = filter_arcs_by_duration(
+        snapped,
+        min_segment_seconds=MIN_SEGMENT_SECONDS,
+        max_segment_seconds=MAX_SEGMENT_SECONDS,
+        min_clip_seconds=MIN_CLIP_SECONDS,
+        max_clip_seconds=MAX_CLIP_SECONDS,
+    )
+    log.info(
+        "pipeline.final_duration_guard",
+        seen=duration_report.arcs_seen,
+        kept=duration_report.arcs_kept,
+        dropped_segment=duration_report.arcs_dropped_segment_duration,
+        dropped_clip=duration_report.arcs_dropped_clip_duration,
+    )
+    ctx.story_arcs = final
+    return final
 
 
 async def _run_simple_path(
@@ -1217,7 +1250,8 @@ async def _run_simple_path(
     assert ctx.transcript is not None
     lines = transcript_to_timestamped_lines(ctx.transcript)
     used_provider, (arcs, tokens) = await _call_with_fallback(
-        primary, fallback,
+        primary,
+        fallback,
         settings.primary_text_model,
         settings.fallback_text_model,
         lambda p, m: select_simple_segments(
@@ -1236,7 +1270,12 @@ async def _run_simple_path(
     # Anchor then verify (same path as story). Single-segment arcs carry a
     # transcript_excerpt too, so they drift the same way and are re-cut the same
     # way; they have no payoff_line, so the landing pass is simply a no-op.
-    arcs, anchor_report = anchor_arcs_to_transcript(arcs, ctx.transcript)
+    arcs, anchor_report = anchor_arcs_to_transcript(
+        arcs,
+        ctx.transcript,
+        min_segment_seconds=MIN_SIMPLE_SEGMENT_SECONDS,
+        max_segment_seconds=MAX_SIMPLE_SEGMENT_SECONDS,
+    )
     _log_anchor_report(anchor_report, label="_simple")
 
     kept, dropped = verify_arcs(ctx.transcript, arcs)
@@ -1244,7 +1283,12 @@ async def _run_simple_path(
     async with pool.acquire() as conn:
         await _set_status(conn, ctx.job_id, "analyzing", current_step="snap_segments")
     snapped, snap_report = snap_arc_segments(
-        kept, ctx.transcript.words, sentences=ctx.transcript.sentences
+        kept,
+        ctx.transcript.words,
+        sentences=ctx.transcript.sentences,
+        min_duration_seconds=MIN_SIMPLE_SEGMENT_SECONDS,
+        max_duration_seconds=MAX_SIMPLE_SEGMENT_SECONDS,
+        end_extension_max_duration=MAX_SIMPLE_SEGMENT_SECONDS,
     )
     log.info(
         "pipeline.snap_segments_simple",
@@ -1259,8 +1303,22 @@ async def _run_simple_path(
             failed=snap_report.segments_failed,
             segments=snap_report.segments_seen,
         )
-    ctx.story_arcs = snapped
-    return snapped
+    final, duration_report = filter_arcs_by_duration(
+        snapped,
+        min_segment_seconds=MIN_SIMPLE_SEGMENT_SECONDS,
+        max_segment_seconds=MAX_SIMPLE_SEGMENT_SECONDS,
+        min_clip_seconds=MIN_SIMPLE_SEGMENT_SECONDS,
+        max_clip_seconds=MAX_SIMPLE_SEGMENT_SECONDS,
+    )
+    log.info(
+        "pipeline.final_duration_guard_simple",
+        seen=duration_report.arcs_seen,
+        kept=duration_report.arcs_kept,
+        dropped_segment=duration_report.arcs_dropped_segment_duration,
+        dropped_clip=duration_report.arcs_dropped_clip_duration,
+    )
+    ctx.story_arcs = final
+    return final
 
 
 def _video_map_json(ctx: JobContext) -> str | None:

@@ -218,6 +218,8 @@ def _parse_arcs(payload: Any, *, transcript: Transcript | None = None) -> list[S
                     end=end,
                     transcript_excerpt=str(s.get("transcript_excerpt", ""))[:300],
                     why=str(s.get("why", ""))[:280] or None,
+                    start_anchor=_coerce_text(s.get("start_anchor"), max_len=180),
+                    end_anchor=_coerce_text(s.get("end_anchor"), max_len=180),
                 )
             )
         if not segments:
@@ -231,9 +233,7 @@ def _parse_arcs(payload: Any, *, transcript: Transcript | None = None) -> list[S
             rejected["arc_too_long"] += 1
             continue
         if total < MIN_ARC_SECONDS:
-            repaired = (
-                _extend_to_duration_floor(segments, index) if index is not None else None
-            )
+            repaired = _extend_to_duration_floor(segments, index) if index is not None else None
             if repaired is None:
                 rejected["arc_too_short_unrepairable"] += 1
                 continue
@@ -279,9 +279,7 @@ def _parse_arcs(payload: Any, *, transcript: Transcript | None = None) -> list[S
                 suggested_hook=_coerce_text(raw.get("suggested_hook"), max_len=120),
                 link_reason=link_reason,
                 campaign_fit_llm=campaign_fit_llm,
-                campaign_fit_reason=_coerce_text(
-                    raw.get("campaign_fit_reason"), max_len=280
-                ),
+                campaign_fit_reason=_coerce_text(raw.get("campaign_fit_reason"), max_len=280),
                 opening_words=_coerce_text(raw.get("opening_words"), max_len=200),
                 self_contained=self_contained,
                 payoff_line=_coerce_text(raw.get("payoff_line"), max_len=300),

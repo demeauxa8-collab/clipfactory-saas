@@ -259,9 +259,18 @@ github.com/demeauxa8-collab/clipfactory-saas  (remote)
 - [x] **T44.** **Ancrage des coupes sur le transcript** (`66d21b0`) : phrases ponctuées whisper récupérées, `anchor_arcs_to_transcript()`, réparation des arcs courts, hook noté sur la bande réelle, diversité avant la deep vision. Dérive 1,88 s → 0,12 s. Voir journal 2026-08-07.
 - [x] **T45.** Paysage modèles mesuré sur appels réels → `docs/model-landscape.md`.
 - [ ] **T46.** **Clip-judge** (gemini-3.6-flash en vidéo native sur les arcs finalistes) — meilleur retour sur investissement identifié, 0,0115 $/clip, non implémenté.
-- [ ] **T47.** Rendu ffmpeg : passer à un seul encodage (`filter_complex`) au lieu du double encodage actuel (intermédiaires + concat), et ajouter les gestes de monteur manquants (punch-in sur la punchline, cadrage qui varie entre segments, trim des silences).
+- [~] **T47.** Rendu/Editor Brain V2 : socle local `CompiledEDL` + rendu
+  `filter_complex` one-pass, cadrages/ROI, effets, musique/SFX catalogués,
+  captions sémantiques et QC implémentés/testés. **Non activé dans
+  `runner.py`, non commité** : revue de previews et branchement feature-gaté
+  restent obligatoires.
 - [ ] **T48.** Contrôle au démarrage du worker : vérifier que chaque modèle configuré existe encore dans `/api/v1/models`.
 - [ ] **T49.** Benchmark des 9 modèles texte pour la composition des arcs (harnais prêt : `~/clipfactory-data/bench/bench_arcs.py`).
+- [~] **T50.** Context Intelligence : Campaign Research cité + audit de qualité,
+  Second Brain global/campaign/source, retrieval obligatoire, Context Pack
+  signé, Director 2.2 cité, provenance décision→outcome et apprentissage
+  gouverné implémentés localement. **Aucun réseau réel, DB, runner, commit ou
+  push** ; adapters et validation produit restent à faire.
 
 ---
 
@@ -435,6 +444,37 @@ Livré : `boundaries.anchor_arcs_to_transcript()` (relocalise chaque fenêtre su
 **Bug silencieux corrigé** : `qwen/qwen3-vl-flash` et `deepseek/deepseek-chat-v3.2`, les défauts de `settings.py`, ont été **retirés d'OpenRouter** (400) — on tournait sur le fallback sans le savoir.
 
 **Savoir-faire de clippeur encodé dans le prompt** (à partir de références fournies par Augustin, transcrits dans `~/clipfactory-data/bench/craft-refs/`) : le hook doit **promettre sans révéler** (mettre la punchline dans les 2 premières secondes referme la boucle — c'est l'argument même du montage setup→payoff) ; 5 formules de hook (erreur, contre-intuitif, transformation, avertissement, secret) ; enjeux et spécificité chiffrée ; rejet des salutations et auto-présentations ; le hook **visuel** compte autant que le verbal.
+
+### 2026-08-09 — Editor Brain V2 + Context Intelligence (local, non activé)
+
+- **Editor Brain V2** : graphe de beats source/visuel/audio, plans motivés par
+  IDs de mots, compilation EDL frame-aware, micro-cuts/réordonnancement,
+  variations de cadrage et ROI écran, effets fermés, musique/SFX par catalogue,
+  captions sémantiques et rendu FFmpeg one-pass. Le LLM ne fournit toujours
+  aucune seconde à FFmpeg.
+- **Second Brain** : vaults global/campaign/source immuables, notes versionnées,
+  relations, backlinks, snapshots tenant/campaign/source, ingestion du brief et
+  du BeatGraph, retrieval déterministe par question et blocage des contraintes
+  campagne explicitement contradictoires.
+- **Campaign Research** : pack cité fermé, runtime search/fetch/synthesis/cache
+  injecté, DNS + IP peer par hop, budgets/fallback, neutralisation du contenu web
+  jusqu'au vrai Context Pack, puis audit indépendant de fraîcheur, diversité,
+  concentration, triangulation et contre-évidence. Un pack `complete` doit avoir
+  un audit `trusted_complete` avant assemblage.
+- **Chaîne de confiance** : Context Pack = sélections exactes du retrieval ;
+  capability HMAC obligatoire avant prompt/parse/validate/compile Director 2.2 ;
+  décisions citées → audit digesté → provenance de variante liée au snapshot et
+  à l'issuance → expérience A/B → outcome lié → autorité de promotion signée →
+  gouvernance append-only avec revue humaine et digest d'autorité. Les artefacts
+  legacy restent lisibles mais ne peuvent pas être signés ou promus.
+- **Validation locale** : **600 tests worker passés**, y compris les tests de
+  rendu FFmpeg avec configuration locale factice ; Ruff complet vert ; Black
+  vert sur les 28 fichiers Context/Research/Knowledge/Authority concernés ;
+  `compileall` et `git diff --check` verts.
+- **Frontière volontaire** : aucun module ci-dessus n'est importé par
+  `runner.py`; aucun appel provider/réseau réel, aucune migration DB, aucun
+  stage/commit/push. Prochaine décision : revue humaine des previews et des
+  contrats, puis adapters persistants et activation derrière feature flag.
 
 ---
 

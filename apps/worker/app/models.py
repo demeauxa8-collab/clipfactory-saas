@@ -97,6 +97,16 @@ class ArcSegmentSpec:
     end: float
     transcript_excerpt: str
     why: str | None = None
+    # The model chooses words, not authoritative seconds. These verbatim anchors
+    # let deterministic code recover the exact first and last transcript words
+    # before FFmpeg sees the segment. Optional for old/simple payloads.
+    start_anchor: str | None = None
+    end_anchor: str | None = None
+    # Internal provenance set by the deterministic transcript aligner. These
+    # flags are deliberately separate from the model payload: once an explicit
+    # anchor has been resolved, later phrase snapping must not move that edge.
+    start_anchor_resolved: bool = False
+    end_anchor_resolved: bool = False
 
 
 @dataclass
