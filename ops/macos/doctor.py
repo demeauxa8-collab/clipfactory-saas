@@ -80,15 +80,23 @@ def require_settings():
 
 def tools_check():
     names = ["python3.12", "ffmpeg", "ffprobe", "yt-dlp", "deno"]
+    versions = []
     for name in names:
         path = shutil.which(name)
         if path is None:
-            raise CheckError("tool missing")
-        run(path, "-version" if name in ("ffmpeg", "ffprobe") else "--version")
+            raise CheckError(f"{name} missing")
+        first_line = run(
+            path, "-version" if name in ("ffmpeg", "ffprobe") else "--version"
+        ).splitlines()[0]
+        parts = first_line.split()
+        version = parts[2] if name in ("ffmpeg", "ffprobe") else (
+            parts[0] if name == "yt-dlp" else parts[1]
+        )
+        versions.append(f"{name} {version}")
     filters = run("ffmpeg", "-hide_banner", "-filters")
     if not re.search(r"\s+ass\s", filters) or not re.search(r"\s+subtitles\s", filters):
         raise CheckError("libass filters missing")
-    return "python, ffmpeg/libass, ffprobe, yt-dlp, deno"
+    return ", ".join(versions) + ", libass"
 
 
 def redis_check():

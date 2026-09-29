@@ -28,13 +28,15 @@ jobs:
           POSTGRES_DB: clipfactory_test
         ports: ['5432:5432']
         options: >-
-          --health-cmd 'pg_isready -U clipfactory_test -d clipfactory_test'
+          --health-cmd=pg_isready
           --health-interval 5s --health-timeout 5s --health-retries 10
     env:
       PYTHONPATH: apps/${{ matrix.app }}
       CLIPFACTORY_TEST_DATABASE_URL: postgresql://clipfactory_test:test@127.0.0.1:5432/clipfactory_test
       DATABASE_URL: postgresql://clipfactory_test:test@127.0.0.1:5432/clipfactory_test
       STORAGE_BACKEND: local
+      STORAGE_LOCAL_DIR: /tmp/clipfactory-ci-clips
+      MEDIA_SIGNING_SECRET: ci-only-media-signing-key-000000000000000000000000
       R2_ACCOUNT_ID: local
       R2_ACCESS_KEY_ID: local
       R2_SECRET_ACCESS_KEY: local
