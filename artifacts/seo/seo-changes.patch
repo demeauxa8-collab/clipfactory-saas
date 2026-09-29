@@ -1,0 +1,4100 @@
+diff --git a/apps/web/.env.example b/apps/web/.env.example
+index 3db849c..b62e35e 100644
+--- a/apps/web/.env.example
++++ b/apps/web/.env.example
+@@ -8,3 +8,9 @@ NEXT_PUBLIC_TURNSTILE_SITE_KEY=TODO
+ # events to PostHog (autocapture + session replay). Leave empty to disable PostHog.
+ NEXT_PUBLIC_POSTHOG_KEY=
+ NEXT_PUBLIC_POSTHOG_HOST=https://eu.posthog.com
++
++# Public canonical origin: use the stable production host, never a deployment URL.
++NEXT_PUBLIC_SITE_URL=https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app
++# Optional verification tokens from Google Search Console / Bing Webmaster Tools.
++GOOGLE_SITE_VERIFICATION=
++BING_SITE_VERIFICATION=
+diff --git a/apps/web/app/about/page.tsx b/apps/web/app/about/page.tsx
+index 789b501..173c4ec 100644
+--- a/apps/web/app/about/page.tsx
++++ b/apps/web/app/about/page.tsx
+@@ -1,4 +1,4 @@
+-import type { Metadata } from "next";
++import { pageMetadata } from "@/lib/seo";
+ import Link from "next/link";
+ import { ArrowRight, Github, Mail, MapPin, ShieldCheck } from "lucide-react";
+ import { Container } from "@/components/ui/container";
+@@ -8,20 +8,7 @@ import { MarketingFooter } from "@/components/marketing/footer";
+ import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
+ import { SITE } from "@/lib/site";
+ 
+-export const metadata: Metadata = {
+-  title: "About ClipFactory — AI video clipping for creators",
+-  description: `Why ${SITE.name} exists, who builds it, and what we promise to creators, podcasters and agencies turning long videos into short clips.`,
+-  keywords: [
+-    "ClipFactory founders",
+-    "AX Studio",
+-    "independent AI SaaS",
+-    "EU AI clipping",
+-    "AI video clipping",
+-    "AI clip maker",
+-    "long video to shorts",
+-  ],
+-  alternates: { canonical: "/about" },
+-};
++export const metadata = pageMetadata("/about");
+ 
+ const PROMISES = [
+   {
+@@ -83,7 +70,7 @@ export default function AboutPage() {
+         ]}
+       />
+       <MarketingNav />
+-      <main id="main-content" className="flex-1">
++      <main id="main-content" className="marketing-page flex-1">
+         {/* Intro */}
+         <section className="border-b border-[var(--color-border)]">
+           <Container className="max-w-3xl py-20">
+diff --git a/apps/web/app/admin/layout.tsx b/apps/web/app/admin/layout.tsx
+index fd4af7d..0a56ab7 100644
+--- a/apps/web/app/admin/layout.tsx
++++ b/apps/web/app/admin/layout.tsx
+@@ -1,10 +1,11 @@
++import { NO_INDEX } from "@/lib/seo";
+ import Link from "next/link";
+ import { redirect } from "next/navigation";
+ import { Container } from "@/components/ui/container";
+ import { Button } from "@/components/ui/button";
+ import { createSupabaseServerClient } from "@/lib/supabase/server";
+ 
+-export const metadata = { title: "Admin" };
++export const metadata = { title: "Admin", robots: NO_INDEX };
+ 
+ const NAV = [
+   { href: "/admin", label: "Overview" },
+diff --git a/apps/web/app/app/layout.tsx b/apps/web/app/app/layout.tsx
+index 6a373a1..53dcb55 100644
+--- a/apps/web/app/app/layout.tsx
++++ b/apps/web/app/app/layout.tsx
+@@ -1,3 +1,5 @@
++export const metadata = { robots: NO_INDEX };
++import { NO_INDEX } from "@/lib/seo";
+ import Link from "next/link";
+ import { redirect } from "next/navigation";
+ import { LogOut } from "lucide-react";
+diff --git a/apps/web/app/changelog/page.tsx b/apps/web/app/changelog/page.tsx
+index 534cec5..f2e3701 100644
+--- a/apps/web/app/changelog/page.tsx
++++ b/apps/web/app/changelog/page.tsx
+@@ -1,14 +1,10 @@
+-import type { Metadata } from "next";
++import { pageMetadata } from "@/lib/seo";
+ import { Container } from "@/components/ui/container";
+ import { MarketingNav } from "@/components/marketing/nav";
+ import { MarketingFooter } from "@/components/marketing/footer";
+ import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
+ 
+-export const metadata: Metadata = {
+-  title: "Changelog",
+-  description: "What's new in ClipFactory.",
+-  alternates: { canonical: "/changelog" },
+-};
++export const metadata = pageMetadata("/changelog");
+ 
+ const ENTRIES: { date: string; title: string; body: string[] }[] = [
+   {
+@@ -43,7 +39,7 @@ export default function ChangelogPage() {
+         ]}
+       />
+       <MarketingNav />
+-      <main id="main-content" className="flex-1">
++      <main id="main-content" className="marketing-page flex-1">
+         <Container className="max-w-3xl py-20">
+           <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">
+             Changelog
+diff --git a/apps/web/app/faq/page.tsx b/apps/web/app/faq/page.tsx
+index d9221bb..3abfd6f 100644
+--- a/apps/web/app/faq/page.tsx
++++ b/apps/web/app/faq/page.tsx
+@@ -1,15 +1,10 @@
+-import type { Metadata } from "next";
++import { pageMetadata } from "@/lib/seo";
+ import { Container } from "@/components/ui/container";
+ import { MarketingNav } from "@/components/marketing/nav";
+ import { MarketingFooter } from "@/components/marketing/footer";
+ import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/marketing/json-ld";
+ 
+-export const metadata: Metadata = {
+-  title: "AI clip maker FAQ — pricing, YouTube Shorts, Reels and TikToks",
+-  description:
+-    "Common questions about ClipFactory: AI video clipping, pricing, YouTube and Vimeo support, privacy, cancellation, watermarks and clip quality.",
+-  alternates: { canonical: "/faq" },
+-};
++export const metadata = pageMetadata("/faq");
+ 
+ const FAQ: { q: string; a: string }[] = [
+   {
+@@ -85,7 +80,7 @@ export default function FaqPage() {
+       />
+       <FaqJsonLd items={FAQ} />
+       <MarketingNav />
+-      <main id="main-content" className="flex-1">
++      <main id="main-content" className="marketing-page flex-1">
+         <Container className="max-w-3xl py-20">
+           <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">
+             FAQ
+diff --git a/apps/web/app/features/page.tsx b/apps/web/app/features/page.tsx
+index f968153..8b8d52a 100644
+--- a/apps/web/app/features/page.tsx
++++ b/apps/web/app/features/page.tsx
+@@ -1,4 +1,4 @@
+-import type { Metadata } from "next";
++import { pageMetadata } from "@/lib/seo";
+ import Link from "next/link";
+ import { Container } from "@/components/ui/container";
+ import { Button } from "@/components/ui/button";
+@@ -18,25 +18,7 @@ import {
+   Target,
+ } from "lucide-react";
+ 
+-export const metadata: Metadata = {
+-  title: "AI clip maker features — clip series, montage and video context",
+-  description:
+-    "How ClipFactory uses a clip series goal, full-video context, vision checks and multi-part montage to turn long videos into Shorts, Reels and TikToks with captions and simple scores.",
+-  keywords: [
+-    "AI clipping features",
+-    "AI clip maker features",
+-    "YouTube Shorts generator features",
+-    "long video to shorts AI",
+-    "AI montage tool",
+-    "AI vision video clipping",
+-    "context-aware AI clipper",
+-    "story arcs AI clipping",
+-    "explained AI clip score",
+-    "vertical shorts generator",
+-    "EU hosted AI",
+-  ],
+-  alternates: { canonical: "/features" },
+-};
++export const metadata = pageMetadata("/features");
+ 
+ const FEATURES = [
+   {
+@@ -132,7 +114,7 @@ export default function FeaturesPage() {
+         ]}
+       />
+       <MarketingNav />
+-      <main id="main-content" className="flex-1">
++      <main id="main-content" className="marketing-page flex-1">
+         {/* Intro */}
+         <section className="border-b border-[var(--color-border)]">
+           <Container className="max-w-5xl py-20">
+diff --git a/apps/web/app/layout.tsx b/apps/web/app/layout.tsx
+index 4d38d2b..cfadb31 100644
+--- a/apps/web/app/layout.tsx
++++ b/apps/web/app/layout.tsx
+@@ -1,9 +1,11 @@
+ import type { Metadata, Viewport } from "next";
+ import { Inter } from "next/font/google";
+ import { SITE } from "@/lib/site";
++import { NO_INDEX } from "@/lib/seo";
+ import { Analytics } from "@/components/analytics";
+ import "./globals.css";
+ import "./product.css";
++import "./marketing.css";
+ 
+ // Inter is the cross-platform fallback behind San Francisco (set in globals.css).
+ // The former Fraunces serif display is dropped — clean SF sans only, Apple-style.
+@@ -24,11 +26,7 @@ export const metadata: Metadata = {
+   authors: [{ name: SITE.founder }],
+   creator: SITE.founder,
+   publisher: SITE.name,
+-  keywords: [...SITE.keywords],
+   category: "Software",
+-  alternates: {
+-    canonical: "/",
+-  },
+   openGraph: {
+     type: "website",
+     locale: "en_US",
+@@ -44,14 +42,26 @@ export const metadata: Metadata = {
+     card: "summary_large_image",
+     title: SITE.name,
+     description: SITE.shortDescription,
+-    creator: SITE.twitter,
+     images: ["/opengraph-image"],
+   },
+-  robots: {
+-    index: true,
+-    follow: true,
+-    googleBot: { index: true, follow: true, "max-image-preview": "large" },
++  verification: {
++    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
++    other: process.env.BING_SITE_VERIFICATION
++      ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
++      : undefined,
+   },
++  robots:
++    process.env.VERCEL_ENV === "preview"
++      ? NO_INDEX
++      : {
++          index: true,
++          follow: true,
++          googleBot: {
++            index: true,
++            follow: true,
++            "max-image-preview": "large",
++          },
++        },
+   icons: {
+     icon: "/icon.svg",
+   },
+diff --git a/apps/web/app/legal/privacy/page.tsx b/apps/web/app/legal/privacy/page.tsx
+index beecac8..897bf09 100644
+--- a/apps/web/app/legal/privacy/page.tsx
++++ b/apps/web/app/legal/privacy/page.tsx
+@@ -1,14 +1,15 @@
++import { pageMetadata } from "@/lib/seo";
+ import { Container } from "@/components/ui/container";
+ import { MarketingNav } from "@/components/marketing/nav";
+ import { MarketingFooter } from "@/components/marketing/footer";
+ 
+-export const metadata = { title: "Privacy" };
++export const metadata = pageMetadata("/legal/privacy");
+ 
+ export default function PrivacyPage() {
+   return (
+     <>
+       <MarketingNav />
+-      <main id="main-content" className="flex-1">
++      <main id="main-content" className="marketing-page flex-1">
+         <Container className="prose max-w-3xl py-16 text-[var(--color-foreground)]">
+           <h1 className="text-3xl font-semibold tracking-tight">
+             Privacy Policy
+diff --git a/apps/web/app/legal/terms/page.tsx b/apps/web/app/legal/terms/page.tsx
+index 0f9b5d2..f19f19b 100644
+--- a/apps/web/app/legal/terms/page.tsx
++++ b/apps/web/app/legal/terms/page.tsx
+@@ -1,14 +1,15 @@
++import { pageMetadata } from "@/lib/seo";
+ import { Container } from "@/components/ui/container";
+ import { MarketingNav } from "@/components/marketing/nav";
+ import { MarketingFooter } from "@/components/marketing/footer";
+ 
+-export const metadata = { title: "Terms" };
++export const metadata = pageMetadata("/legal/terms");
+ 
+ export default function TermsPage() {
+   return (
+     <>
+       <MarketingNav />
+-      <main id="main-content" className="flex-1">
++      <main id="main-content" className="marketing-page flex-1">
+         <Container className="prose max-w-3xl py-16 text-[var(--color-foreground)]">
+           <h1 className="text-3xl font-semibold tracking-tight">
+             Terms of Service
+diff --git a/apps/web/app/opengraph-image.tsx b/apps/web/app/opengraph-image.tsx
+index 589793d..c56eb24 100644
+--- a/apps/web/app/opengraph-image.tsx
++++ b/apps/web/app/opengraph-image.tsx
+@@ -8,71 +8,72 @@ export const contentType = "image/png";
+ 
+ export default function OgImage() {
+   return new ImageResponse(
+-    (
+-      <div
+-        style={{
+-          width: "100%",
+-          height: "100%",
+-          background: "#0a0a0a",
+-          color: "#fafafa",
+-          display: "flex",
+-          flexDirection: "column",
+-          justifyContent: "space-between",
+-          padding: "80px",
+-          fontFamily: "Inter, system-ui, sans-serif",
+-        }}
+-      >
+-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+-          <div
+-            style={{
+-              width: 36,
+-              height: 36,
+-              borderRadius: 4,
+-              background: "#fafafa",
+-            }}
+-          />
+-          <span style={{ fontSize: 32, fontWeight: 600 }}>{SITE.name}</span>
+-        </div>
+-
+-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+-          <div
+-            style={{
+-              fontSize: 28,
+-              color: "#a1a1aa",
+-              letterSpacing: 1,
+-              textTransform: "uppercase",
+-            }}
+-          >
+-            AI clip maker for long videos
+-          </div>
+-          <div
+-            style={{
+-              fontSize: 72,
+-              fontWeight: 600,
+-              lineHeight: 1.05,
+-              maxWidth: 1000,
+-            }}
+-          >
+-            Turn long videos into
+-            <br />
+-            Shorts, Reels and TikToks.
+-          </div>
+-        </div>
++    <div
++      style={{
++        width: "100%",
++        height: "100%",
++        background: "#0a0a0a",
++        color: "#fafafa",
++        display: "flex",
++        flexDirection: "column",
++        justifyContent: "space-between",
++        padding: "80px",
++        fontFamily: "Inter, system-ui, sans-serif",
++      }}
++    >
++      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
++        <div
++          style={{
++            width: 36,
++            height: 36,
++            borderRadius: 4,
++            background: "#fafafa",
++          }}
++        />
++        <span style={{ fontSize: 32, fontWeight: 600 }}>{SITE.name}</span>
++      </div>
+ 
++      <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+         <div
+           style={{
+-            fontSize: 22,
++            fontSize: 28,
+             color: "#a1a1aa",
++            letterSpacing: 1,
++            textTransform: "uppercase",
++          }}
++        >
++          AI clip maker for long videos
++        </div>
++        <div
++          style={{
++            fontSize: 72,
++            fontWeight: 600,
++            lineHeight: 1.05,
++            maxWidth: 1000,
+             display: "flex",
+-            justifyContent: "space-between",
+-            alignItems: "center",
++            flexDirection: "column",
+           }}
+         >
+-          <span>From {SITE.pricingFromEur}€ / month — EU hosted</span>
+-          <span style={{ color: "#fafafa" }}>clipfactory.app</span>
++          Turn long videos into
++          <br />
++          Shorts, Reels and TikToks.
+         </div>
+       </div>
+-    ),
+-    { ...size }
++
++      <div
++        style={{
++          fontSize: 22,
++          color: "#a1a1aa",
++          display: "flex",
++          flexDirection: "column",
++          gap: "16px",
++          alignItems: "flex-start",
++        }}
++      >
++        <span>Campaign briefs · Captions · Explained clip picks</span>
++        <span style={{ color: "#fafafa" }}>{new URL(SITE.url).hostname}</span>
++      </div>
++    </div>,
++    { ...size },
+   );
+ }
+diff --git a/apps/web/app/page.tsx b/apps/web/app/page.tsx
+index 8a6aaed..a92d323 100644
+--- a/apps/web/app/page.tsx
++++ b/apps/web/app/page.tsx
+@@ -1,52 +1,28 @@
+-import type { Metadata } from "next";
++import { HOME_FAQ } from "@/lib/home-faq";
++import { pageMetadata } from "@/lib/seo";
+ 
+ import {
+   FaqJsonLd,
+   OrganizationJsonLd,
++  WebsiteJsonLd,
+   SoftwareApplicationJsonLd,
+ } from "@/components/marketing/json-ld";
+ import { AppleEditAxis } from "@/components/prototypes/redesign/apple-edit-axis";
+-import { SITE } from "@/lib/site";
+ 
+-export const metadata: Metadata = {
+-  title: `AI clip maker for clip series, Shorts, Reels and TikToks — ${SITE.name}`,
+-  description:
+-    "Turn long videos, podcasts, webinars and interviews into campaign-shaped vertical clips with transcript-grounded evidence, visual context and clear editorial reasoning.",
+-  alternates: { canonical: "/" },
+-  openGraph: {
+-    title: `${SITE.name} — Find the cut the story was hiding`,
+-    description: SITE.longDescription,
+-    url: SITE.url,
+-    siteName: SITE.name,
+-    type: "website",
+-  },
+-};
+-
+-const HOME_FAQ = [
+-  {
+-    q: "Can I turn a long YouTube video into Shorts with AI?",
+-    a: "Yes. Paste a YouTube or Vimeo link, define the campaign audience and goal, and ClipFactory returns vertical clips with captions and an editorial rationale.",
+-  },
+-  {
+-    q: "What makes ClipFactory different from a basic AI clipper?",
+-    a: "ClipFactory maps the whole source, checks what is visible, anchors the selected words to transcript timestamps and ranks each moment against your campaign brief.",
+-  },
+-  {
+-    q: "What sources are supported at launch?",
+-    a: "Public or accessible YouTube and Vimeo URLs. Direct file upload is not part of the current offer.",
+-  },
+-  {
+-    q: "How much does it cost?",
+-    a: "Starter is 29 euros per month and includes 300 credits, sources up to 30 minutes and up to three requested clips per source.",
+-  },
+-];
++export const metadata = pageMetadata("/");
+ 
+ export default function HomePage() {
+   return (
+     <>
+       <OrganizationJsonLd />
++      <WebsiteJsonLd />
+       <SoftwareApplicationJsonLd />
+-      <FaqJsonLd items={HOME_FAQ} />
++      <FaqJsonLd
++        items={HOME_FAQ.map(({ question, answer }) => ({
++          q: question,
++          a: answer,
++        }))}
++      />
+       <AppleEditAxis />
+     </>
+   );
+diff --git a/apps/web/app/pricing/page.tsx b/apps/web/app/pricing/page.tsx
+index dcdadd2..952aac3 100644
+--- a/apps/web/app/pricing/page.tsx
++++ b/apps/web/app/pricing/page.tsx
+@@ -1,4 +1,4 @@
+-import type { Metadata } from "next";
++import { pageMetadata } from "@/lib/seo";
+ import Link from "next/link";
+ import { Check, Minus } from "lucide-react";
+ import { Container } from "@/components/ui/container";
+@@ -7,23 +7,7 @@ import { MarketingNav } from "@/components/marketing/nav";
+ import { MarketingFooter } from "@/components/marketing/footer";
+ import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/marketing/json-ld";
+ 
+-export const metadata: Metadata = {
+-  title: "AI video clipping pricing — 29€/month, no watermark",
+-  description:
+-    "ClipFactory pricing starts at 29€ / month for 300 video minutes. Turn long videos into Shorts, Reels and TikToks with captions, no watermark, EU hosting and simple credits.",
+-  keywords: [
+-    "AI video clipping pricing",
+-    "AI clip maker pricing",
+-    "AI clipping pricing",
+-    "AI clipper price",
+-    "OpusClip alternative price",
+-    "vertical short generator price",
+-    "YouTube to Shorts pricing",
+-    "European AI clipping",
+-    "no watermark AI clipping",
+-  ],
+-  alternates: { canonical: "/pricing" },
+-};
++export const metadata = pageMetadata("/pricing");
+ 
+ const PRICING_FAQ = [
+   {
+@@ -140,7 +124,7 @@ export default function PricingPage() {
+       />
+       <FaqJsonLd items={PRICING_FAQ} />
+       <MarketingNav />
+-      <main id="main-content" className="flex-1">
++      <main id="main-content" className="marketing-page flex-1">
+         <section className="border-b border-[var(--color-border)]">
+           <Container className="max-w-5xl py-20">
+             <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
+diff --git a/apps/web/app/robots.ts b/apps/web/app/robots.ts
+index 68ce129..aa694fc 100644
+--- a/apps/web/app/robots.ts
++++ b/apps/web/app/robots.ts
+@@ -7,10 +7,9 @@ export default function robots(): MetadataRoute.Robots {
+       {
+         userAgent: "*",
+         allow: "/",
+-        disallow: ["/app/", "/admin/", "/auth/", "/api/", "/login"],
++        disallow: ["/app$", "/app/", "/admin$", "/admin/", "/auth/", "/api/"],
+       },
+     ],
+     sitemap: `${SITE.url}/sitemap.xml`,
+-    host: SITE.url,
+   };
+ }
+diff --git a/apps/web/app/sitemap.ts b/apps/web/app/sitemap.ts
+index 5c98f1e..14e699d 100644
+--- a/apps/web/app/sitemap.ts
++++ b/apps/web/app/sitemap.ts
+@@ -1,26 +1,19 @@
+ import type { MetadataRoute } from "next";
+ import { SITE } from "@/lib/site";
++import { PUBLIC_PAGES } from "@/lib/seo";
++import { GUIDES } from "@/lib/guides";
+ 
+ export default function sitemap(): MetadataRoute.Sitemap {
+-  const lastModified = new Date();
+-  const pages = [
+-    { url: "/", priority: 1.0, changeFrequency: "weekly" as const },
+-    { url: "/features", priority: 0.9, changeFrequency: "monthly" as const },
+-    { url: "/pricing", priority: 0.9, changeFrequency: "monthly" as const },
+-    { url: "/vs/opusclip", priority: 0.9, changeFrequency: "monthly" as const },
+-    { url: "/use-cases", priority: 0.8, changeFrequency: "monthly" as const },
+-    { url: "/use-cases/creators", priority: 0.8, changeFrequency: "monthly" as const },
+-    { url: "/use-cases/agencies", priority: 0.8, changeFrequency: "monthly" as const },
+-    { url: "/faq", priority: 0.7, changeFrequency: "monthly" as const },
+-    { url: "/about", priority: 0.6, changeFrequency: "monthly" as const },
+-    { url: "/changelog", priority: 0.5, changeFrequency: "weekly" as const },
+-    { url: "/legal/terms", priority: 0.3, changeFrequency: "yearly" as const },
+-    { url: "/legal/privacy", priority: 0.3, changeFrequency: "yearly" as const },
++  return [
++    ...Object.keys(PUBLIC_PAGES).map((path) => ({
++      url: new URL(path, SITE.url).href,
++    })),
++    { url: `${SITE.url}/guides` },
++    { url: `${SITE.url}/clipping-ia`, lastModified: "2026-09-07" },
++    { url: `${SITE.url}/clipping-tools`, lastModified: "2026-09-07" },
++    ...GUIDES.map((guide) => ({
++      url: `${SITE.url}/guides/${guide.slug}`,
++      lastModified: guide.updatedAt,
++    })),
+   ];
+-  return pages.map((p) => ({
+-    url: `${SITE.url}${p.url}`,
+-    lastModified,
+-    changeFrequency: p.changeFrequency,
+-    priority: p.priority,
+-  }));
+ }
+diff --git a/apps/web/app/use-cases/agencies/page.tsx b/apps/web/app/use-cases/agencies/page.tsx
+index 4b2211e..61118a9 100644
+--- a/apps/web/app/use-cases/agencies/page.tsx
++++ b/apps/web/app/use-cases/agencies/page.tsx
+@@ -1,4 +1,4 @@
+-import type { Metadata } from "next";
++import { pageMetadata } from "@/lib/seo";
+ import Link from "next/link";
+ import {
+   ArrowRight,
+@@ -14,20 +14,7 @@ import { MarketingFooter } from "@/components/marketing/footer";
+ import { ClipMockup } from "@/components/marketing/clip-mockup";
+ import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
+ 
+-export const metadata: Metadata = {
+-  title: "AI video clipping for agencies and content studios",
+-  description:
+-    "Help clients turn long videos into Shorts, Reels and TikToks faster. AI video clipping with client briefs, simple scores, captions, no watermark and predictable video-minute pricing.",
+-  keywords: [
+-    "AI clipping for agencies",
+-    "content agency AI",
+-    "white-label clipping",
+-    "agency video editing AI",
+-    "EU agency AI",
+-    "client video clipping",
+-  ],
+-  alternates: { canonical: "/use-cases/agencies" },
+-};
++export const metadata = pageMetadata("/use-cases/agencies");
+ 
+ const PROBLEMS = [
+   {
+@@ -57,8 +44,8 @@ const SOLUTIONS = [
+   },
+   {
+     icon: ShieldCheck,
+-    title: "EU hosting, predictable billing.",
+-    body: "1 minute of source = 1 credit. EU-hosted infrastructure for procurement-friendly contracts. Pass-through pricing that fits agency margin.",
++    title: "A visible source-minute budget.",
++    body: "1 minute of source = 1 credit. Review the pilot limits and current data-processing arrangements before using client footage.",
+   },
+ ];
+ 
+@@ -68,12 +55,12 @@ export default function AgenciesUseCasePage() {
+       <BreadcrumbJsonLd
+         items={[
+           { name: "Home", href: "/" },
+-          { name: "Use cases", href: "/use-cases/agencies" },
++          { name: "Use cases", href: "/use-cases" },
+           { name: "For agencies", href: "/use-cases/agencies" },
+         ]}
+       />
+       <MarketingNav />
+-      <main id="main-content" className="flex-1">
++      <main id="main-content" className="marketing-page flex-1">
+         {/* Hero */}
+         <section className="border-b border-[var(--color-border)]">
+           <Container className="max-w-5xl py-20">
+diff --git a/apps/web/app/use-cases/creators/page.tsx b/apps/web/app/use-cases/creators/page.tsx
+index 78f62b4..5379847 100644
+--- a/apps/web/app/use-cases/creators/page.tsx
++++ b/apps/web/app/use-cases/creators/page.tsx
+@@ -1,4 +1,4 @@
+-import type { Metadata } from "next";
++import { pageMetadata } from "@/lib/seo";
+ import Link from "next/link";
+ import {
+   ArrowRight,
+@@ -16,20 +16,7 @@ import { ClipMockup } from "@/components/marketing/clip-mockup";
+ import { ExampleArc } from "@/components/marketing/example-arc";
+ import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
+ 
+-export const metadata: Metadata = {
+-  title: "AI clipping for creators and podcasters — turn episodes into Shorts",
+-  description:
+-    "Turn long YouTube videos, podcasts, interviews and webinars into Shorts, Reels and TikToks with AI clipping, captions, simple scores and no watermark.",
+-  keywords: [
+-    "AI clipping for creators",
+-    "AI clipping for podcasters",
+-    "YouTube to Shorts AI",
+-    "podcast to TikTok AI",
+-    "long video to vertical shorts",
+-    "EU AI clipping",
+-  ],
+-  alternates: { canonical: "/use-cases/creators" },
+-};
++export const metadata = pageMetadata("/use-cases/creators");
+ 
+ const STORY = [
+   {
+@@ -62,12 +49,12 @@ export default function CreatorsUseCasePage() {
+       <BreadcrumbJsonLd
+         items={[
+           { name: "Home", href: "/" },
+-          { name: "Use cases", href: "/use-cases/creators" },
++          { name: "Use cases", href: "/use-cases" },
+           { name: "For creators", href: "/use-cases/creators" },
+         ]}
+       />
+       <MarketingNav />
+-      <main id="main-content" className="flex-1">
++      <main id="main-content" className="marketing-page flex-1">
+         {/* Hero */}
+         <section className="border-b border-[var(--color-border)]">
+           <Container className="max-w-5xl py-20">
+diff --git a/apps/web/app/use-cases/page.tsx b/apps/web/app/use-cases/page.tsx
+index 11b0deb..8f0099e 100644
+--- a/apps/web/app/use-cases/page.tsx
++++ b/apps/web/app/use-cases/page.tsx
+@@ -1,4 +1,4 @@
+-import type { Metadata } from "next";
++import { pageMetadata } from "@/lib/seo";
+ import Link from "next/link";
+ import { ArrowRight, Building2, Lightbulb } from "lucide-react";
+ import { Container } from "@/components/ui/container";
+@@ -7,12 +7,7 @@ import { MarketingNav } from "@/components/marketing/nav";
+ import { MarketingFooter } from "@/components/marketing/footer";
+ import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
+ 
+-export const metadata: Metadata = {
+-  title: "AI video clipping use cases — creators, podcasts and agencies",
+-  description:
+-    "Use ClipFactory to turn long videos, podcasts, webinars and client footage into Shorts, Reels and TikToks with AI clipping, captions and no watermark.",
+-  alternates: { canonical: "/use-cases" },
+-};
++export const metadata = pageMetadata("/use-cases");
+ 
+ const CASES = [
+   {
+@@ -39,7 +34,7 @@ export default function UseCasesIndexPage() {
+         ]}
+       />
+       <MarketingNav />
+-      <main id="main-content" className="flex-1">
++      <main id="main-content" className="marketing-page flex-1">
+         <Container className="max-w-5xl py-20">
+           <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
+             Use cases
+diff --git a/apps/web/app/vs/opusclip/page.tsx b/apps/web/app/vs/opusclip/page.tsx
+index 247f7eb..d22ed3b 100644
+--- a/apps/web/app/vs/opusclip/page.tsx
++++ b/apps/web/app/vs/opusclip/page.tsx
+@@ -1,85 +1,33 @@
+-import type { Metadata } from "next";
+ import Link from "next/link";
+-import { ArrowRight, Check, X } from "lucide-react";
+ import { Container } from "@/components/ui/container";
+-import { Button } from "@/components/ui/button";
+ import { MarketingNav } from "@/components/marketing/nav";
+ import { MarketingFooter } from "@/components/marketing/footer";
+-import { ComparisonTable } from "@/components/marketing/comparison-table";
+-import { ClipMockup } from "@/components/marketing/clip-mockup";
+-import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/marketing/json-ld";
++import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
++import { pageMetadata } from "@/lib/seo";
+ 
+-export const metadata: Metadata = {
+-  title: "ClipFactory vs OpusClip — clip series, context and montage",
+-  description:
+-    "Compare ClipFactory with OpusClip for turning long videos into a focused series of Shorts, Reels and TikToks. AI clipping with series goals, visual context, explained picks, montage and EU-first processing.",
+-  keywords: [
+-    "OpusClip alternative",
+-    "ClipFactory vs OpusClip",
+-    "best OpusClip alternative",
+-    "OpusClip vs Vizard",
+-    "AI clipping comparison",
+-    "AI clip maker comparison",
+-    "YouTube to Shorts AI",
+-    "campaign-first AI clipping",
+-    "OpusClip alternative EU",
+-  ],
+-  alternates: { canonical: "/vs/opusclip" },
+-  openGraph: {
+-    title: "ClipFactory vs OpusClip — AI clip maker for Shorts and Reels",
+-    description:
+-      "Side-by-side positioning: basic AI clipping versus explained clip selection with visual context.",
+-    type: "article",
+-  },
+-};
++export const metadata = pageMetadata("/vs/opusclip");
+ 
+-const FAQ = [
+-  {
+-    q: "Is ClipFactory a direct replacement for OpusClip?",
+-    a: "For the core workflow, yes: paste a URL and get vertical clips. The difference is how clips are selected: ClipFactory uses your series goal, audience, the full video and what happens on screen, then explains each pick.",
+-  },
+-  {
+-    q: "Why choose ClipFactory instead of a basic AI clipper?",
+-    a: "If you only want lots of generic clips, a basic tool may be enough. ClipFactory is for creators, podcasters and agencies who want a smaller series of clips that fit a clear objective.",
+-  },
++const COMPARISON = [
+   {
+-    q: "Does ClipFactory have AI B-roll, like OpusClip?",
+-    a: "Not in V1. The first job is to find the right moments in the source video. B-roll, transitions and AI sound design can come later.",
++    topic: "Starting point",
++    clipfactory:
++      "A saved campaign brief: audience, objective, tone and topics to avoid.",
++    opus: "AI clipping with prompts to find specific moments using ClipBasic or ClipAnything.",
++    source: "https://help.opus.pro/docs/article/select-keywords",
+   },
+   {
+-    q: "Can I import my OpusClip projects?",
+-    a: "Not yet. You create a simple brief from scratch. It takes about two minutes: audience, series goal, tone and topics to avoid.",
++    topic: "Visual context",
++    clipfactory:
++      "Visual checks complement the transcript when selecting and reviewing a candidate.",
++    opus: "ClipAnything uses visual, audio and sentiment cues to find moments.",
++    source: "https://www.opus.pro/clipanything",
+   },
+   {
+-    q: "Where is the data stored?",
+-    a: "ClipFactory is designed around EU hosting: database in Frankfurt, storage in Europe and video processing in Germany. If data location matters for client work, verify every vendor's current policy before buying.",
+-  },
+-];
+-
+-const ROWS = [
+-  {
+-    cf: "Uses your audience, series goal, tone and topics to avoid.",
+-    op: "Often focused on fast clip volume first. Context varies by product and plan.",
+-  },
+-  {
+-    cf: "Looks across the whole video, so it can connect a setup at minute 2 with a payoff at minute 12.",
+-    op: "Most clipping tools are strongest on one continuous timestamp.",
+-  },
+-  {
+-    cf: "Explains the score: hook, emotion, visual proof, audience fit and editing difficulty.",
+-    op: "Scoring is typically simpler and less tied to your audience.",
+-  },
+-  {
+-    cf: "Checks the quote and moment before rendering. Fake moments are dropped.",
+-    op: "Check the current vendor docs if verification is important for your workflow.",
+-  },
+-  {
+-    cf: "EU-hosted (Frankfurt / Germany). Source deleted after 14 days, clips after 60.",
+-    op: "Data region and retention depend on vendor policy. Verify before using client footage.",
+-  },
+-  {
+-    cf: "No watermark on any plan.",
+-    op: "Watermark rules depend on the current plan and promotion.",
++    topic: "Editing and publishing",
++    clipfactory:
++      "Review captioned vertical renders, source timestamps and editorial reasons, then download. Publishing and scheduling are manual in the current pilot.",
++    opus: "Its published editor includes caption editing, layouts, reframing and AI B-roll, with publishing and scheduling tools.",
++    source: "https://www.opus.pro/ai-video-editor",
+   },
+ ];
+ 
+@@ -92,164 +40,168 @@ export default function VsOpusClipPage() {
+           { name: "ClipFactory vs OpusClip", href: "/vs/opusclip" },
+         ]}
+       />
+-      <FaqJsonLd items={FAQ} />
+       <MarketingNav />
+-      <main id="main-content" className="flex-1">
+-        {/* Hero */}
+-        <section className="border-b border-[var(--color-border)]">
+-          <Container className="max-w-5xl py-20">
+-            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
+-              Comparison
++      <main id="main-content" className="marketing-page flex-1">
++        <Container className="max-w-5xl py-20">
++          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-foreground)]">
++            Workflow comparison
++          </p>
++          <h1 className="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">
++            ClipFactory vs OpusClip
++          </h1>
++          <p className="mt-6 max-w-3xl text-lg leading-relaxed text-[var(--color-muted-foreground)]">
++            Choosing an AI clipping tool starts with the work you need to
++            finish. ClipFactory is a pilot built around campaign briefs and
++            source-based editorial review. OpusClip describes a broader
++            clipping, editing and publishing workflow.
++          </p>
++          <p className="mt-4 text-sm text-[var(--color-muted-foreground)]">
++            Reviewed 6 September 2026. This comparison uses our current pilot
++            scope and the linked OpusClip product documentation. It is not a
++            performance benchmark. ClipFactory is independent of OpusClip.
++          </p>
++          <section className="mt-12" aria-labelledby="workflow-comparison">
++            <h2 id="workflow-comparison" className="text-2xl font-semibold">
++              Compare the workflow you will actually use
++            </h2>
++            <div
++              className="mt-6 overflow-x-auto rounded-xl border border-[var(--color-border)]"
++              role="region"
++              aria-label="Workflow comparison table"
++              tabIndex={0}
++            >
++              <table className="w-full min-w-[40rem] text-left text-sm leading-relaxed">
++                <caption className="sr-only">
++                  ClipFactory pilot compared with OpusClip's documented workflow
++                </caption>
++                <thead className="bg-[var(--color-muted)]">
++                  <tr>
++                    <th scope="col" className="p-5">
++                      Area
++                    </th>
++                    <th scope="col" className="p-5">
++                      ClipFactory
++                    </th>
++                    <th scope="col" className="p-5">
++                      OpusClip
++                    </th>
++                  </tr>
++                </thead>
++                <tbody>
++                  {COMPARISON.map((row) => (
++                    <tr
++                      key={row.topic}
++                      className="border-t border-[var(--color-border)]"
++                    >
++                      <th scope="row" className="p-5 align-top font-medium">
++                        {row.topic}
++                      </th>
++                      <td className="p-5 align-top text-[var(--color-muted-foreground)]">
++                        {row.clipfactory}
++                      </td>
++                      <td className="p-5 align-top text-[var(--color-muted-foreground)]">
++                        {row.opus}{" "}
++                        <a
++                          className="text-[var(--color-foreground)] underline underline-offset-4"
++                          href={row.source}
++                        >
++                          Source: OpusClip
++                        </a>
++                      </td>
++                    </tr>
++                  ))}
++                </tbody>
++              </table>
++            </div>
++          </section>
++          <section className="mt-12 max-w-3xl">
++            <h2 className="text-2xl font-semibold">
++              When to evaluate ClipFactory
++            </h2>
++            <p className="mt-5 leading-relaxed text-[var(--color-muted-foreground)]">
++              Consider the pilot if you want to keep a campaign brief attached
++              to each source and review why a small set of moments was chosen.
++              Starter accepts accessible YouTube and Vimeo URLs up to 30
++              minutes, with up to three requested clips per job. Quality checks
++              can return fewer clips.
+             </p>
+-            <h1 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">
+-              ClipFactory vs OpusClip
+-            </h1>
+-            <p className="mt-4 max-w-2xl text-lg text-[var(--color-muted-foreground)]">
+-              OpusClip made AI clipping popular. ClipFactory is built for
+-              creators who want fewer random clips and a better series: clips
+-              that understand the full video, the screen, and the objective.
++            <p className="mt-5 leading-relaxed text-[var(--color-muted-foreground)]">
++              The current offer does not include direct file upload, team
++              workspaces, AI B-roll or automatic social publishing. Check the{" "}
++              <Link
++                className="text-[var(--color-foreground)] underline underline-offset-4"
++                href="/faq"
++              >
++                pilot FAQ
++              </Link>{" "}
++              and{" "}
++              <Link
++                className="text-[var(--color-foreground)] underline underline-offset-4"
++                href="/pricing"
++              >
++                pricing
++              </Link>{" "}
++              before choosing it for a client workflow.
+             </p>
+-            <div className="mt-8 flex flex-wrap gap-3">
+-              <Link href="/login">
+-                <Button size="lg">
+-                  Try ClipFactory
+-                  <ArrowRight className="h-4 w-4" />
+-                </Button>
+-              </Link>
+-              <Link href="/pricing">
+-                <Button size="lg" variant="secondary">
+-                  See pricing
+-                </Button>
+-              </Link>
+-            </div>
+-            <p className="mt-3 text-xs text-[var(--color-muted-foreground)]">
+-              No affiliation with OpusClip. Always check each vendor&apos;s
+-              current docs before buying.
++          </section>
++          <section className="mt-12 max-w-3xl">
++            <h2 className="text-2xl font-semibold">
++              When to evaluate OpusClip
++            </h2>
++            <p className="mt-5 leading-relaxed text-[var(--color-muted-foreground)]">
++              Include OpusClip in your evaluation if you need the editing and
++              publishing tools described in its product documentation. Feature
++              access and source limits can depend on the current plan. Review
++              the vendor's live offer rather than assuming that every feature is
++              included in every subscription.
+             </p>
+-          </Container>
+-        </section>
+-
+-        {/* Comparison table — reusable */}
+-        <ComparisonTable />
+-
+-        {/* Side-by-side detail */}
+-        <section className="border-b border-[var(--color-border)]">
+-          <Container className="max-w-5xl py-20">
+-            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
+-              In plain words
++            <p className="mt-5 leading-relaxed text-[var(--color-muted-foreground)]">
++              Visual understanding is not an exclusive ClipFactory feature:
++              OpusClip also describes multimodal clipping. Your own source
++              footage and review requirements are more useful evaluation
++              criteria than a generic claim that one tool produces better clips.
+             </p>
+-            <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
+-              Six things we do differently.
++          </section>
++          <section className="mt-12 max-w-3xl">
++            <h2 className="text-2xl font-semibold">
++              Run the same editorial test in both tools
+             </h2>
+-            <ol className="mt-12 space-y-6">
+-              {ROWS.map((r, i) => (
+-                <li
+-                  key={i}
+-                  className="grid gap-4 rounded-lg border border-[var(--color-border)] p-6 md:grid-cols-2"
+-                >
+-                  <div className="rounded-md border-l-4 border-[var(--color-brand)] bg-[var(--color-brand-soft)]/30 p-4">
+-                    <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
+-                      <Check className="h-4 w-4" /> ClipFactory
+-                    </div>
+-                    <p className="text-sm">{r.cf}</p>
+-                  </div>
+-                  <div className="rounded-md border-l-4 border-[var(--color-border)] bg-[var(--color-muted)] p-4">
+-                    <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-foreground)]">
+-                      <X className="h-4 w-4" /> OpusClip
+-                    </div>
+-                    <p className="text-sm text-[var(--color-muted-foreground)]">
+-                      {r.op}
+-                    </p>
+-                  </div>
+-                </li>
+-              ))}
++            <ol className="mt-6 list-decimal space-y-4 pl-5 leading-relaxed text-[var(--color-muted-foreground)]">
++              <li>
++                Choose one source you can review against the original recording.
++              </li>
++              <li>
++                Write the same audience, objective and topic boundaries for both
++                workflows.
++              </li>
++              <li>
++                Check whether each clip makes sense without the full episode and
++                preserves the speaker's meaning.
++              </li>
++              <li>
++                Inspect captions, speaker changes, vertical framing and the
++                final ending.
++              </li>
++              <li>
++                Record how many clips you would publish and how much manual
++                correction they need.
++              </li>
+             </ol>
+-          </Container>
+-        </section>
+-
+-        {/* Output mockup */}
+-        <section className="border-b border-[var(--color-border)] bg-[var(--color-muted)]">
+-          <Container className="max-w-5xl py-20">
+-            <div className="grid items-center gap-12 md:grid-cols-2">
+-              <div>
+-                <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
+-                  What you ship
+-                </p>
+-                <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
+-                  Each clip explains why it belongs.
+-                </h2>
+-                <p className="mt-4 text-[var(--color-muted-foreground)]">
+-                  No mystery number. Five components, each with a reason. When
+-                  you tell a client why this clip fits the series and another
+-                  one does not, you show the breakdown, not a vibe.
+-                </p>
+-                <Link href="/features" className="mt-6 inline-flex">
+-                  <Button variant="secondary">
+-                    See the full feature list
+-                    <ArrowRight className="h-4 w-4" />
+-                  </Button>
+-                </Link>
+-              </div>
+-              <ClipMockup
+-                title="The reframe that doubled their close rate"
+-                hook="They didn't change the offer. They changed the question."
+-                total={89}
+-                segments={[
+-                  { role: "setup", range: "03:42 → 04:05" },
+-                  { role: "payoff", range: "16:20 → 16:48" },
+-                ]}
+-                scores={[
+-                  { label: "Hook", value: 92 },
+-                  { label: "Emotion", value: 85 },
+-                  { label: "Visual", value: 87 },
+-                  { label: "Fit", value: 94 },
+-                  { label: "Editing", value: 80 },
+-                ]}
+-              />
+-            </div>
+-          </Container>
+-        </section>
+-
+-        {/* FAQ */}
+-        <section className="border-b border-[var(--color-border)]">
+-          <Container className="max-w-3xl py-20">
+-            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
+-              FAQ
++            <p className="mt-6 leading-relaxed text-[var(--color-muted-foreground)]">
++              This is an evaluation method, not a claim that we have run a
++              comparative benchmark. A selection score does not guarantee views
++              or campaign results.
+             </p>
+-            <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
+-              Honest answers about switching.
+-            </h2>
+-            <dl className="mt-10 divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
+-              {FAQ.map((item) => (
+-                <div key={item.q} className="py-6">
+-                  <dt className="text-base font-medium">{item.q}</dt>
+-                  <dd className="mt-2 text-sm text-[var(--color-muted-foreground)]">
+-                    {item.a}
+-                  </dd>
+-                </div>
+-              ))}
+-            </dl>
+-          </Container>
+-        </section>
+-
+-        {/* CTA */}
+-        <section>
+-          <Container className="max-w-3xl py-20 text-center">
+-            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
+-              Try it on the same video you&apos;d ship to OpusClip.
+-            </h2>
+-            <p className="mt-3 text-[var(--color-muted-foreground)]">
+-              Same URL, same long video. Different clip series. Free to start,
+-              29€/mo once you like the picks.
++            <p className="mt-8">
++              <Link
++                className="font-medium underline underline-offset-4"
++                href="/guides/video-clipping-campaign-brief"
++              >
++                Write your evaluation brief →
++              </Link>
+             </p>
+-            <Link href="/login" className="mt-8 inline-flex">
+-              <Button size="lg">
+-                Start clipping
+-                <ArrowRight className="h-4 w-4" />
+-              </Button>
+-            </Link>
+-          </Container>
+-        </section>
++          </section>
++        </Container>
+       </main>
+       <MarketingFooter />
+     </>
+diff --git a/apps/web/components/marketing/footer.tsx b/apps/web/components/marketing/footer.tsx
+index c6a979f..2867e9e 100644
+--- a/apps/web/components/marketing/footer.tsx
++++ b/apps/web/components/marketing/footer.tsx
+@@ -1,142 +1,104 @@
+ import Link from "next/link";
+-import { Github, Mail, Twitter } from "lucide-react";
+-import { Container } from "@/components/ui/container";
++import type { Route } from "next";
++import { MarketingBrand } from "./brand";
+ import { SITE } from "@/lib/site";
+ 
+-const PRODUCT = [
+-  { href: "/features", label: "Features" },
+-  { href: "/pricing", label: "Pricing" },
+-  { href: "/vs/opusclip", label: "vs OpusClip" },
+-  { href: "/changelog", label: "Changelog" },
+-];
+-
+-const USE_CASES = [
+-  { href: "/use-cases/creators", label: "For creators" },
+-  { href: "/use-cases/agencies", label: "For agencies" },
+-  { href: "/faq", label: "FAQ" },
+-];
+-
+-const COMPANY = [
+-  { href: "/about", label: "About" },
+-  { href: `mailto:${SITE.contactEmail}`, label: "Contact" },
+-  { href: "/legal/terms", label: "Terms" },
+-  { href: "/legal/privacy", label: "Privacy" },
+-];
+-
+-export function MarketingFooter() {
++export function MarketingFooter({
++  language = "en",
++}: {
++  language?: "en" | "fr";
++}) {
++  const fr = language === "fr";
++  const groups = fr
++    ? [
++        {
++          title: "Clipping IA",
++          links: [
++            ["/clipping-ia#workflow", "Fonctionnement"],
++            ["/clipping-ia#pricing", "Tarif et limites"],
++            ["/clipping-ia#questions", "Questions fréquentes"],
++          ],
++        },
++        {
++          title: "Ressources en anglais",
++          links: [
++            ["/guides", "Guides de clipping"],
++            ["/clipping-tools", "Comparer les outils"],
++            ["/vs/opusclip", "ClipFactory et OpusClip"],
++          ],
++        },
++        {
++          title: "ClipFactory",
++          links: [
++            ["/about", "À propos (EN)"],
++            ["/legal/terms", "Conditions (EN)"],
++            ["/legal/privacy", "Confidentialité (EN)"],
++          ],
++        },
++      ]
++    : [
++        {
++          title: "Product",
++          links: [
++            ["/features", "Features"],
++            ["/pricing", "Pricing"],
++            ["/use-cases", "Use cases"],
++            ["/faq", "FAQ"],
++          ],
++        },
++        {
++          title: "Learn",
++          links: [
++            ["/guides", "Clipping guides"],
++            ["/clipping-tools", "Clipping tools"],
++            ["/vs/opusclip", "Compare OpusClip"],
++            ["/clipping-ia", "Clipping IA · Français"],
++          ],
++        },
++        {
++          title: "Company",
++          links: [
++            ["/about", "About"],
++            ["/changelog", "Changelog"],
++            ["/legal/terms", "Terms"],
++            ["/legal/privacy", "Privacy"],
++          ],
++        },
++      ];
+   return (
+-    <footer className="border-t border-[var(--color-border)] bg-[#08080a] py-20 text-sm text-[var(--color-muted-foreground)]">
+-      <Container className="grid gap-12 md:grid-cols-12">
+-        {/* Brand + tagline */}
+-        <div className="md:col-span-4">
+-          <Link
+-            href="/"
+-            className="flex items-center gap-2 text-base font-semibold text-[var(--color-foreground)]"
+-          >
+-            <span
+-              className="relative inline-flex h-5 w-5 items-center justify-center rounded-[0.5rem] border border-[var(--color-border)] bg-[var(--color-muted)]"
+-              aria-hidden
+-            >
+-              <span className="h-2.5 w-1 rounded-full bg-[var(--color-brand)]" />
+-            </span>
+-            {SITE.name}
+-          </Link>
+-          <p className="mt-4 max-w-xs leading-relaxed">
+-            AI video clipping for creators, podcasts and agencies. Long videos
+-            in, focused clip series out.
++    <footer className="marketing-footer" lang={language}>
++      <div className="marketing-footer-inner">
++        <div>
++          <MarketingBrand />
++          <p>
++            {fr
++              ? "La source, le brief et chaque coupe.\nToute l’histoire reste liée."
++              : "The source. The brief. Every cut.\nThe whole story, kept in sync."}
+           </p>
+-          <div className="mt-6 flex items-center gap-3">
+-            <a
+-              href={`mailto:${SITE.contactEmail}`}
+-              aria-label="Email"
+-              className="inline-flex h-9 w-9 items-center justify-center rounded-[0.875rem] border border-[var(--color-border)] transition-[border-color,color,transform] duration-150 ease-out hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+-            >
+-              <Mail className="h-4 w-4" />
+-            </a>
+-            <a
+-              href="https://twitter.com/clipfactoryapp"
+-              aria-label="Twitter"
+-              rel="noreferrer"
+-              target="_blank"
+-              className="inline-flex h-9 w-9 items-center justify-center rounded-[0.875rem] border border-[var(--color-border)] transition-[border-color,color,transform] duration-150 ease-out hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+-            >
+-              <Twitter className="h-4 w-4" />
+-            </a>
+-            <a
+-              href="https://github.com/demeauxa8-collab/clipfactory-saas"
+-              aria-label="GitHub"
+-              rel="noreferrer"
+-              target="_blank"
+-              className="inline-flex h-9 w-9 items-center justify-center rounded-[0.875rem] border border-[var(--color-border)] transition-[border-color,color,transform] duration-150 ease-out hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
+-            >
+-              <Github className="h-4 w-4" />
+-            </a>
+-          </div>
+-        </div>
+-
+-        {/* Columns */}
+-        <div className="md:col-span-2">
+-          <FooterCol title="Product" items={PRODUCT} />
+-        </div>
+-        <div className="md:col-span-2">
+-          <FooterCol title="Use cases" items={USE_CASES} />
+-        </div>
+-        <div className="md:col-span-2">
+-          <FooterCol title="Company" items={COMPANY} />
+-        </div>
+-
+-        {/* Newsletter */}
+-        <div className="md:col-span-2">
+-          <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-foreground)]">
+-            Updates
+-          </h4>
+-          <p className="text-xs leading-relaxed">
+-            New features, lessons learned shipping a one-person SaaS. One email,
+-            never spam.
+-          </p>
+-          <a
+-            href={`mailto:${SITE.contactEmail}?subject=Subscribe%20to%20updates`}
+-            className="mt-4 inline-flex items-center justify-center rounded-full border border-[var(--color-brand)] bg-[var(--color-brand-soft)] px-4 py-2 text-xs font-medium text-[var(--color-brand)] transition-colors hover:bg-[var(--color-brand)] hover:text-[var(--color-brand-foreground)]"
+-          >
+-            Get product updates
++          <a href={`mailto:${SITE.contactEmail}`}>
++            {fr ? "Nous contacter" : "Get in touch"}
+           </a>
+         </div>
+-      </Container>
+-
+-      <Container className="mt-12 flex flex-col items-start justify-between gap-2 border-t border-[var(--color-border)] pt-6 text-xs md:flex-row">
+-        <p>
+-          © {new Date().getFullYear()} {SITE.name}. All rights reserved.
+-        </p>
+-        <p>Made with care in France · EU-hosted infrastructure</p>
+-      </Container>
++        <nav
++          aria-label={fr ? "Pied de page" : "Footer navigation"}
++          className="marketing-footer-links"
++        >
++          {groups.map((group) => (
++            <div key={group.title}>
++              <h2>{group.title}</h2>
++              {group.links.map(([href, label]) => (
++                <Link key={href} href={href as Route}>
++                  {label}
++                </Link>
++              ))}
++            </div>
++          ))}
++        </nav>
++      </div>
++      <div className="marketing-footer-bottom">
++        <span>© {new Date().getFullYear()} ClipFactory</span>
++        <span>{fr ? "Conçu en France." : "Made in France."}</span>
++      </div>
+     </footer>
+   );
+ }
+-
+-function FooterCol({
+-  title,
+-  items,
+-}: {
+-  title: string;
+-  items: readonly { href: string; label: string }[];
+-}) {
+-  return (
+-    <>
+-      <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-foreground)]">
+-        {title}
+-      </h4>
+-      <ul className="space-y-2">
+-        {items.map((it) => (
+-          <li key={it.href}>
+-            <Link
+-              href={it.href as never}
+-              className="hover:text-[var(--color-brand)]"
+-            >
+-              {it.label}
+-            </Link>
+-          </li>
+-        ))}
+-      </ul>
+-    </>
+-  );
+-}
+diff --git a/apps/web/components/marketing/json-ld.tsx b/apps/web/components/marketing/json-ld.tsx
+index b25825a..314378f 100644
+--- a/apps/web/components/marketing/json-ld.tsx
++++ b/apps/web/components/marketing/json-ld.tsx
+@@ -6,8 +6,8 @@ export function OrganizationJsonLd() {
+     "@type": "Organization",
+     name: SITE.name,
+     url: SITE.url,
+-    logo: `${SITE.url}/opengraph-image`,
+-    sameAs: [`https://twitter.com/${SITE.twitter.replace("@", "")}`],
++    "@id": `${SITE.url}/#organization`,
++    logo: `${SITE.url}/icon.svg`,
+     founder: { "@type": "Person", name: SITE.founder },
+     contactPoint: [
+       {
+@@ -20,7 +20,9 @@ export function OrganizationJsonLd() {
+   return (
+     <script
+       type="application/ld+json"
+-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
++      dangerouslySetInnerHTML={{
++        __html: JSON.stringify(data).replace(/</g, "\\u003c"),
++      }}
+     />
+   );
+ }
+@@ -29,6 +31,8 @@ export function SoftwareApplicationJsonLd() {
+   const data = {
+     "@context": "https://schema.org",
+     "@type": "SoftwareApplication",
++    "@id": `${SITE.url}/#software`,
++    url: SITE.url,
+     name: SITE.name,
+     applicationCategory: "MultimediaApplication",
+     operatingSystem: "Web",
+@@ -37,12 +41,16 @@ export function SoftwareApplicationJsonLd() {
+       "@type": "Offer",
+       price: SITE.pricingFromEur.toString(),
+       priceCurrency: "EUR",
++      url: `${SITE.url}/pricing`,
++      description: "Starter monthly subscription: 300 source-video credits.",
+     },
+   };
+   return (
+     <script
+       type="application/ld+json"
+-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
++      dangerouslySetInnerHTML={{
++        __html: JSON.stringify(data).replace(/</g, "\\u003c"),
++      }}
+     />
+   );
+ }
+@@ -60,7 +68,9 @@ export function FaqJsonLd({ items }: { items: { q: string; a: string }[] }) {
+   return (
+     <script
+       type="application/ld+json"
+-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
++      dangerouslySetInnerHTML={{
++        __html: JSON.stringify(data).replace(/</g, "\\u003c"),
++      }}
+     />
+   );
+ }
+@@ -83,7 +93,29 @@ export function BreadcrumbJsonLd({
+   return (
+     <script
+       type="application/ld+json"
+-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
++      dangerouslySetInnerHTML={{
++        __html: JSON.stringify(data).replace(/</g, "\\u003c"),
++      }}
++    />
++  );
++}
++
++export function WebsiteJsonLd() {
++  const data = {
++    "@context": "https://schema.org",
++    "@type": "WebSite",
++    "@id": `${SITE.url}/#website`,
++    url: SITE.url,
++    name: SITE.name,
++    inLanguage: "en",
++    publisher: { "@id": `${SITE.url}/#organization` },
++  };
++  return (
++    <script
++      type="application/ld+json"
++      dangerouslySetInnerHTML={{
++        __html: JSON.stringify(data).replace(/</g, "\\u003c"),
++      }}
+     />
+   );
+ }
+diff --git a/apps/web/components/marketing/nav.tsx b/apps/web/components/marketing/nav.tsx
+index 1ed70ff..6c61088 100644
+--- a/apps/web/components/marketing/nav.tsx
++++ b/apps/web/components/marketing/nav.tsx
+@@ -1,45 +1,120 @@
++"use client";
++
+ import Link from "next/link";
+-import { Container } from "@/components/ui/container";
+-import { Button } from "@/components/ui/button";
+-import { NAV_PRIMARY, SITE } from "@/lib/site";
++import type { Route } from "next";
++import { usePathname } from "next/navigation";
++import { ArrowUpRight, Menu, X } from "lucide-react";
++import { useEffect, useRef, useState } from "react";
++import { MarketingBrand } from "./brand";
+ 
+-export function MarketingNav() {
++export function MarketingNav({ language = "en" }: { language?: "en" | "fr" }) {
++  const pathname = usePathname();
++  const [open, setOpen] = useState(false);
++  const trigger = useRef<HTMLButtonElement>(null);
++  const fr = language === "fr";
++  const links = fr
++    ? [
++        { href: "/clipping-ia", label: "Clipping IA" },
++        { href: "#workflow", label: "Comment ça marche" },
++        { href: "#pricing", label: "Tarif" },
++        { href: "#questions", label: "Questions" },
++      ]
++    : [
++        { href: "/features", label: "Features" },
++        { href: "/pricing", label: "Pricing" },
++        { href: "/guides", label: "Guides" },
++        { href: "/clipping-tools", label: "Clipping tools" },
++      ];
++  useEffect(() => {
++    setOpen(false);
++  }, [pathname]);
+   return (
+-    <header className="sticky top-0 z-40 w-full border-b border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-background)_72%,transparent)] backdrop-blur-xl [backdrop-filter:saturate(180%)_blur(20px)]">
+-      <Container className="flex h-16 items-center justify-between">
+-        <Link
+-          href="/"
+-          className="flex items-center gap-2 font-semibold tracking-tight"
++    <header
++      className="marketing-nav"
++      lang={language}
++      onKeyDown={(event) => {
++        if (event.key === "Escape" && open) {
++          setOpen(false);
++          trigger.current?.focus();
++        }
++      }}
++    >
++      <div className="marketing-nav-bar">
++        <MarketingBrand />
++        <nav
++          aria-label={fr ? "Navigation principale" : "Main navigation"}
++          className="marketing-nav-links"
+         >
+-          <span
+-            className="relative inline-flex h-5 w-5 items-center justify-center rounded-[0.5rem] border border-[var(--color-border)] bg-[var(--color-muted)]"
+-            aria-hidden
+-          >
+-            <span className="h-2.5 w-1 rounded-full bg-[var(--color-brand)]" />
+-          </span>
+-          <span className="text-base">{SITE.name}</span>
+-        </Link>
+-        <nav className="flex items-center gap-1">
+-          {NAV_PRIMARY.map((item) => (
++          {links.map(({ href, label }) => (
+             <Link
+-              key={item.href}
+-              href={item.href as never}
+-              className="hidden h-9 items-center rounded-full px-3.5 text-sm text-[var(--color-muted-foreground)] transition-[background-color,color,transform] duration-150 ease-out hover:-translate-y-0.5 hover:bg-[var(--color-muted)] hover:text-[var(--color-foreground)] md:inline-flex"
++              key={href}
++              href={href as Route}
++              aria-current={
++                pathname === href || pathname.startsWith(`${href}/`)
++                  ? "page"
++                  : undefined
++              }
+             >
+-              {item.label}
++              {label}
+             </Link>
+           ))}
+-          <span className="mx-2 hidden h-5 w-px bg-[var(--color-border)] md:inline-block" />
+-          <Link href="/login">
+-            <Button variant="ghost" size="sm">
+-              Sign in
+-            </Button>
++        </nav>
++        <div className="marketing-nav-actions">
++          <Link className="marketing-sign-in" href="/login">
++            {fr ? "Connexion" : "Sign in"}
++          </Link>
++          <Link
++            className="marketing-nav-cta"
++            href="/login?next=/app/campaigns/new"
++          >
++            {fr ? "Créer un clip" : "Start a campaign"}
++            <ArrowUpRight aria-hidden="true" size={14} />
+           </Link>
+-          <Link href="/login?next=/app/campaigns/new">
+-            <Button size="sm">Start clipping</Button>
++          <button
++            ref={trigger}
++            className="marketing-menu-toggle"
++            type="button"
++            aria-expanded={open}
++            aria-controls="marketing-mobile-menu"
++            aria-label={
++              fr
++                ? open
++                  ? "Fermer le menu"
++                  : "Ouvrir le menu"
++                : open
++                  ? "Close menu"
++                  : "Open menu"
++            }
++            onClick={() => setOpen(!open)}
++          >
++            {open ? <X size={20} /> : <Menu size={20} />}
++          </button>
++        </div>
++      </div>
++      <nav
++        id="marketing-mobile-menu"
++        hidden={!open}
++        className="marketing-mobile-menu"
++        aria-label={fr ? "Navigation mobile" : "Mobile navigation"}
++      >
++        {links.map(({ href, label }) => (
++          <Link
++            key={href}
++            href={href as Route}
++            aria-current={
++              pathname === href || pathname.startsWith(`${href}/`)
++                ? "page"
++                : undefined
++            }
++            onClick={() => setOpen(false)}
++          >
++            {label}
+           </Link>
+-        </nav>
+-      </Container>
++        ))}
++        <Link href="/login" onClick={() => setOpen(false)}>
++          {fr ? "Connexion" : "Sign in"}
++        </Link>
++      </nav>
+     </header>
+   );
+ }
+diff --git a/apps/web/components/prototypes/redesign/apple-edit-axis.tsx b/apps/web/components/prototypes/redesign/apple-edit-axis.tsx
+index 990ab3c..463af9b 100644
+--- a/apps/web/components/prototypes/redesign/apple-edit-axis.tsx
++++ b/apps/web/components/prototypes/redesign/apple-edit-axis.tsx
+@@ -614,12 +614,12 @@ export function AppleEditAxis() {
+             }}
+           >
+             <div className={styles.productEyebrow}>
+-              <span /> Campaign Lens <small>Example analysis</small>
++              <span /> AI video clipping <small>Example analysis</small>
+             </div>
+             <h1 id="edit-axis-title">Find the cut the story was hiding.</h1>
+             <p>
+-              Scrub the source. The frame, transcript-grounded words and
+-              campaign reason stay locked to the same moment.
++              Turn YouTube and Vimeo videos into Shorts, Reels and TikToks.
++              Set your campaign goal, then review captioned cuts and the reason behind each pick.
+             </p>
+             <div className={styles.heroActions}>
+               <Link className={styles.primaryCta} href={startHref}>
+diff --git a/apps/web/components/prototypes/redesign/edit-axis-story.tsx b/apps/web/components/prototypes/redesign/edit-axis-story.tsx
+index a3dc1e5..4c0f63e 100644
+--- a/apps/web/components/prototypes/redesign/edit-axis-story.tsx
++++ b/apps/web/components/prototypes/redesign/edit-axis-story.tsx
+@@ -1,5 +1,9 @@
+ "use client";
+ 
++import { MarketingFooter } from "@/components/marketing/footer";
++
++import { HOME_FAQ as FAQ } from "@/lib/home-faq";
++
+ import {
+   AlertCircle,
+   ArrowRight,
+@@ -107,38 +111,7 @@ const WORKFLOW = [
+   },
+ ] as const;
+ 
+-const FAQ = [
+-  {
+-    question: "Which sources can I use?",
+-    answer:
+-      "Starter currently accepts public or accessible YouTube and Vimeo URLs. Direct file upload is not part of the current offer.",
+-  },
+-  {
+-    question: "What does a score mean?",
+-    answer:
+-      "It ranks a moment for the campaign brief you supplied. It is a decision aid, not a promise that a clip will go viral.",
+-  },
+-  {
+-    question: "How many clips will I receive?",
+-    answer:
+-      "You can request up to three clips per job. Quality checks and deduplication can intentionally return fewer when the source does not support three distinct cuts.",
+-  },
+-  {
+-    question: "How do credits work?",
+-    answer:
+-      "Starter includes 300 credits each month. The source duration is read before credit use is confirmed; sources can be up to 30 minutes and one job can process at a time.",
+-  },
+-  {
+-    question: "What is included in the export?",
+-    answer:
+-      "A vertical render with burned captions, the selected source segments, a campaign-fit rationale and a download without a watermark.",
+-  },
+-  {
+-    question: "What happens when processing fails?",
+-    answer:
+-      "A failed analysis is named explicitly and no delivery is implied. If no moment clears the quality floor, ClipFactory tells you instead of padding the result with a weak clip.",
+-  },
+-] as const;
++
+ 
+ function formatTime(seconds: number) {
+   const minutes = Math.floor(seconds / 60);
+@@ -1202,35 +1175,7 @@ function ClosingSection({
+         </div>
+       </section>
+ 
+-      <footer className={styles.footer}>
+-        <Link href="/" aria-label="ClipFactory home">
+-          <Wordmark />
+-        </Link>
+-        <div className={styles.footerNav}>
+-          <div>
+-            <span>Product</span>
+-            <a href="#story">How it works</a>
+-            <a href="#campaign-v6">Features</a>
+-            <a href="#pricing">Pricing</a>
+-          </div>
+-          <div>
+-            <span>Support</span>
+-            <a href="#faq-v6">FAQ</a>
+-            <Link href="/about">About</Link>
+-            <Link href={signInHref}>Sign in</Link>
+-          </div>
+-          <div>
+-            <span>Legal</span>
+-            <Link href="/legal/terms">Terms</Link>
+-            <Link href="/legal/privacy">Privacy</Link>
+-          </div>
+-        </div>
+-        <div className={styles.footerNote}>
+-          <Clock3 />
+-          <span>The whole story, kept in sync.</span>
+-          <small>© {new Date().getFullYear()} ClipFactory</small>
+-        </div>
+-      </footer>
++      <MarketingFooter />
+     </>
+   );
+ }
+diff --git a/apps/web/lib/site.ts b/apps/web/lib/site.ts
+index 6766c61..1984a11 100644
+--- a/apps/web/lib/site.ts
++++ b/apps/web/lib/site.ts
+@@ -1,5 +1,8 @@
+ export const SITE = {
+-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://clipfactory.app",
++  url: new URL(
++    process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
++      "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app",
++  ).origin,
+   name: "ClipFactory",
+   legalName: "ClipFactory",
+   shortDescription:
+@@ -7,42 +10,10 @@ export const SITE = {
+   longDescription:
+     "ClipFactory is an AI video clipping tool that turns long videos into a focused series of short vertical clips for TikTok, Instagram Reels and YouTube Shorts. Paste a YouTube or Vimeo link, explain who the clips are for and what the series should achieve, and ClipFactory finds strong moments, checks what happens on screen, connects moments when the edit needs it, adds captions and gives each clip a simple score.",
+   tagline: "Long video in. Clip series out.",
+-  twitter: "@clipfactoryapp",
+   contactEmail: "hello@clipfactory.app",
+   founder: "Augustin Demeaux",
+   pricingFromEur: 29,
+   freeTrialDays: 0,
+-  keywords: [
+-    "AI clipping tool",
+-    "AI clip maker",
+-    "AI video clip maker",
+-    "AI video clipping",
+-    "AI shorts generator",
+-    "AI montage tool",
+-    "AI vision video clipping",
+-    "context-aware AI clipper",
+-    "YouTube Shorts generator",
+-    "AI clipping for marketing campaigns",
+-    "YouTube to Shorts AI",
+-    "podcast to shorts AI",
+-    "webinar to shorts AI",
+-    "interview to shorts AI",
+-    "long video to shorts",
+-    "AI viral clip generator",
+-    "AI video editing for creators",
+-    "AI shorts for agencies",
+-    "explainable AI clipping score",
+-    "vertical short generator",
+-    "TikTok Reels Shorts generator",
+-    "AI clip from long video",
+-    "EU hosted AI clipping",
+-    "campaign brief AI editor",
+-    "narrative arcs AI clipping",
+-    "multi-segment AI clipping",
+-    "story-first AI shorts",
+-    "AI montage long video",
+-    "automatic vertical clip",
+-  ],
+ } as const;
+ 
+ export const NAV_PRIMARY = [
+@@ -50,5 +21,5 @@ export const NAV_PRIMARY = [
+   { href: "/use-cases", label: "Use cases" },
+   { href: "/pricing", label: "Pricing" },
+   { href: "/vs/opusclip", label: "vs OpusClip" },
+-  { href: "/about", label: "About" },
++  { href: "/guides", label: "Guides" },
+ ] as const;
+diff --git a/apps/web/next.config.ts b/apps/web/next.config.ts
+index fc979bf..e8d40af 100644
+--- a/apps/web/next.config.ts
++++ b/apps/web/next.config.ts
+@@ -31,6 +31,17 @@ const config: NextConfig = {
+   typedRoutes: true,
+   async headers() {
+     return [
++      ...[
++        "/app/:path*",
++        "/admin/:path*",
++        "/auth/:path*",
++        "/api/:path*",
++        "/login",
++        "/preview/:path*",
++      ].map((source) => ({
++        source,
++        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
++      })),
+       {
+         source: "/(.*)",
+         headers: [
+diff --git a/docs/handoff-codex.md b/docs/handoff-codex.md
+index ed0282f..159bde9 100644
+--- a/docs/handoff-codex.md
++++ b/docs/handoff-codex.md
+@@ -1,5 +1,16 @@
++> Mise à jour SEO / UI du 8 septembre 2026 : les 18 pages publiques sont en ligne sur le déploiement `dpl_Eij1NPuT8pPADkb9gGvWexECmtU3`. Navigation et pied de page alignés sur Edit Axis ; nouvelles pages `/clipping-ia` (français) et `/clipping-tools` (anglais). Travail conservé dans `/Users/augustindemeaux/clipfactory-seo`, branche `codex/seo-vercel-2026-09-06`, sans commit/push. Rapport actuel : `artifacts/seo/rapport-seo.md`. Un déploiement automatique depuis l'ancien `main` peut remplacer cette version : intégrer le chantier au flux Git autorisé avant de redéployer une autre branche.
++
+ # Handoff Codex — ClipFactory SaaS V1
+ 
++## SEO — intervention du 6 septembre 2026
++
++Le chantier `codex/seo-vercel-2026-09-06` part de la refonte réellement publiée, dans `/Users/augustindemeaux/clipfactory-seo`. L'adresse canonique est désormais celle de la propriété Search Console validée : `https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app`. Le domaine a été rattaché à la production pour enlever le `noindex` ajouté par Vercel ; le fichier Google existant est conservé.
++
++Publication vérifiée : `dpl_9bDmkjGEnfFgFmh6J245Ufp21h3J` (READY). Audit HTTP/HTML : 16/16 pages publiques. Lighthouse mobile public : accueil 96/100 en performance et 100/100 dans les autres catégories ; guides 100/100 partout. Aucun commit ni push effectué. Soumission du sitemap dans Search Console non réalisée par l’agent sans session Google.
++
++16 pages publiques : 12 existantes corrigées et 4 pages de guides. Référence d'exploitation : [seo.md](seo.md). Résultats détaillés : `artifacts/seo`. Les contrôles SEO ne valident pas le backend vidéo ni la facturation. Préserver le fichier `public/google9773389826078f2e.html` et intégrer la branche SEO au flux Git autorisé avant tout futur déploiement automatique de `main`.
++
++
+ > **Pour Codex (ou tout autre agent) qui reprend ce projet sans contexte.**
+ > Tout ce qu'il faut savoir tient dans ce doc + les docs cités ci-dessous.
+ 
+diff --git a/docs/seo.md b/docs/seo.md
+index e74be56..cf62a5f 100644
+--- a/docs/seo.md
++++ b/docs/seo.md
+@@ -1,70 +1,150 @@
+-# SEO
++# SEO ClipFactory — configuration et exploitation
+ 
+-> Public site SEO setup. Implemented in V1, ready for indexing on first deploy.
++Mise à jour : 8 septembre 2026.
+ 
+-## Strategy
++## État vérifié de la publication
+ 
+-Long-tail organic, no paid yet. The site targets two intents:
++Publié et contrôlé le 8 septembre 2026 : déploiement `dpl_Eij1NPuT8pPADkb9gGvWexECmtU3`, statut READY. Audit HTTP/HTML en ligne : 18/18 pages validées, 0 erreur sur les contrôles définis. Captures inspectées à 390 et 1440 px. Les mesures Lighthouse publiques de la version du 6 septembre restent archivées ; les nouvelles mesures portent le suffixe `-refresh`. Voir le rapport pour les scores de la version actuelle.
+ 
+-1. **"AI clipping tool"** — competitive but high intent. We don't try to outrank Opus / Klap; we position with "campaign-first" as the differentiator.
+-2. **"clip YouTube into shorts"** style queries — long tail, easier to rank. Each marketing page targets one cluster.
++Le fichier Google préexistant est conservé. Soumission du sitemap dans le compte Google : non effectuée par l’agent, faute de session Google accessible. Rapport : `artifacts/seo/rapport-seo.md`.
+ 
+-## Page targets
++## Adresse de référence
+ 
+-| URL | Primary keyword cluster |
+-| --- | --- |
+-| `/` | "campaign-first AI clipping", "AI shorts from long video" |
+-| `/features` | "story arcs in AI clipper", "explained virality score" |
+-| `/pricing` | "AI clipping pricing", "clipping per minute" |
+-| `/faq` | long-tail support intent — feeds Google "People also ask" via JSON-LD FAQPage |
+-| `/about` | brand / trust |
+-| `/changelog` | freshness signal (Google rewards updates) |
++Le SaaS utilise **https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app** : cette adresse correspond à la propriété Search Console validée par Augustin. Le domaine est ajouté aux domaines de production du projet Vercel `clipfactory-saas` (`prj_vYB0eqRzdMemio88Ebc4ojyXdl7e`).
+ 
+-## What's in place
++Au début de l'intervention, cette adresse était un alias avec `X-Robots-Tag: noindex`. Le rattachement au projet comme domaine de production a retiré ce blocage. `clipfactory.app` sert une autre landing ; il n'est plus utilisé comme adresse canonique du SaaS. Aucun achat de domaine ni changement DNS Cloudflare n'est nécessaire pour ce SEO.
+ 
+-### Per-page metadata
++`NEXT_PUBLIC_SITE_URL` est configurée dans Vercel pour Production et Preview. `apps/web/lib/site.ts` normalise cette valeur en origine HTTPS ; son défaut est l'adresse de production ci-dessus. Une adresse temporaire de déploiement ne doit pas remplacer cette valeur.
+ 
+-Every page exports a `Metadata` object with `title`, `description`, `alternates.canonical`. The root layout (`apps/web/app/layout.tsx`) sets the defaults: `metadataBase`, `template title`, `keywords`, `robots`, `openGraph`, `twitter`, `themeColor`.
++Le fichier public `apps/web/public/google9773389826078f2e.html` conserve la validation Google déjà réalisée par Augustin. Il doit rester accessible sans connexion ni redirection vers un autre domaine. Les variables facultatives `GOOGLE_SITE_VERIFICATION` et `BING_SITE_VERIFICATION` permettent également une validation par balise HTML, mais elles ne sont pas nécessaires à la validation actuelle par fichier.
+ 
+-### sitemap + robots
++## Périmètre livré
+ 
+-- `apps/web/app/sitemap.ts` → emits `/sitemap.xml` listing 8 URLs with priority and changeFrequency.
+-- `apps/web/app/robots.ts` → emits `/robots.txt` with allow `/`, disallow `/app/`, `/admin/`, `/auth/`, `/api/`, `/login`. Points to the sitemap.
++- 12 pages publiques existantes avec titres, descriptions, URL canoniques, Open Graph et cartes Twitter propres à chaque page.
++- Un index `/guides` et trois guides complets pré-rendus : YouTube vers Shorts, sélection d'extraits de podcast, rédaction du brief de campagne.
++- 18 URL publiques dans `/sitemap.xml`, toutes sur la même origine.
++- `robots.txt` annonce ce sitemap ; les pages privées restent protégées par l'authentification et/ou `noindex` selon leur rôle.
++- `X-Robots-Tag: noindex, nofollow` sur les routes d'application, d'administration, d'authentification, d'API, de connexion et de démonstration. Les pages de connexion et de démonstration restent explorables pour que Google puisse lire `noindex`.
++- Les déploiements Preview ont également une métadonnée `noindex` explicite. Ne pas promouvoir un build Preview en production sans reconstruire avec l'environnement Production.
++- Une image de partage 1200 × 630 fonctionnelle, avec l'adresse canonique actuelle.
++- Données structurées Organization, WebSite, SoftwareApplication, BreadcrumbList, Article et FAQPage uniquement lorsque le contenu correspondant existe. La FAQ de la landing et son JSON-LD utilisent la même source.
++- Aucun avis, note utilisateur, résultat de campagne ou volume de recherche inventé. Les scores illustratifs du produit ne sont pas des avis clients.
++- Le comparatif OpusClip cite les fonctionnalités documentées par OpusClip et explicite les limites du pilote ClipFactory. Il ne constitue pas un benchmark de qualité.
++- Liens vers le dépôt GitHub privé et le compte social non vérifié retirés du pied de page public. Hiérarchie des titres et contraste du bouton du pied de page corrigés.
+ 
+-### Open Graph image
++## Intentions de recherche
+ 
+-Dynamic edge-runtime OG image at `/opengraph-image` (1200×630, PNG). Generated by `apps/web/app/opengraph-image.tsx` using `next/og`. Referenced as the default OG and Twitter card image.
++Les regroupements suivants sont des choix éditoriaux, pas des volumes ou difficultés mesurés avec un outil de mots-clés.
+ 
+-### Structured data (JSON-LD)
++| Page | Intention principale | Rôle |
++| --- | --- | --- |
++| `/` | AI video clipping tool, AI clip maker, long video to shorts | Présentation du produit et du brief de campagne |
++| `/features` | AI video clipping features, captions, campaign scoring | Explication de la sélection et de la revue des clips |
++| `/pricing` | AI clipping pricing, source-video credits | Offre Starter et limites |
++| `/use-cases` | AI clipping use cases | Orientation vers les usages |
++| `/use-cases/creators` | AI clipping for creators and podcasters | Usage créateur |
++| `/use-cases/agencies` | AI clipping for agencies | Brief et revue pour les clients |
++| `/vs/opusclip` | ClipFactory vs OpusClip, OpusClip alternative | Comparaison documentée des workflows |
++| `/faq` | sources, crédits, annulation, qualité des clips | Réponses aux questions produit |
++| `/about` | ClipFactory, projet, équipe | Identité du projet |
++| `/changelog` | ClipFactory updates | Historique produit, sans promesse de gain SEO dû à la fraîcheur |
++| `/legal/terms` | ClipFactory terms | Conditions existantes |
++| `/legal/privacy` | ClipFactory privacy | Notice existante |
++| `/clipping-ia` | clipping IA, outil de clipping vidéo, découpage vidéo IA | Page française complète : définition, méthode, brief et limites du pilote |
++| `/clipping-tools` | AI clipping tools, video clipping tools comparison | Comparaison documentée de quatre workflows et grille CSV téléchargeable |
++| `/guides` | video clipping guides | Point d'entrée éditorial |
++| `/guides/youtube-video-to-shorts` | how to turn a YouTube video into Shorts | Méthode de sélection, cadrage et revue des sous-titres |
++| `/guides/podcast-clips-for-social-media` | how to choose podcast clips for social media | Idées complètes, contexte et série de clips |
++| `/guides/video-clipping-campaign-brief` | AI video clipping brief | Objectif, audience et exemple de brief adaptable |
+ 
+-Defined in `apps/web/components/marketing/json-ld.tsx`:
++La page `/clipping-ia` possède un contenu, une navigation et un pied de page en français, un conteneur `lang=fr`, une métadonnée Open Graph `fr_FR` et un schéma `inLanguage: fr`. Le document racine et le produit restent en anglais ; les liens vers les ressources anglaises sont signalés. Cette page n'est pas une traduction équivalente de l'accueil ou du comparatif : aucun `hreflang` fictif ne les associe. Une future traduction complète de pages équivalentes devra ajouter les liens réciproques appropriés. Google détermine la langue à partir du contenu visible, selon sa documentation sur les sites multilingues.
+ 
+-- `OrganizationJsonLd` — on the landing.
+-- `SoftwareApplicationJsonLd` — on the landing.
+-- `BreadcrumbJsonLd` — on `/about`, `/features`, `/pricing`, `/faq`, `/changelog`.
+-- `FaqJsonLd` — on `/faq` (15 Q/A items). Feeds the FAQ rich result on Google.
++## Cohérence visuelle des pages publiques
+ 
+-### Site config (single source of truth)
++Le chrome reprend la landing canonique Edit Axis : marque à trois lames, navigation flottante, typographie système et actions bleues. `components/marketing/nav.tsx` et `footer.tsx` remplacent les anciens composants ; le pied de page est aussi utilisé par la landing. Le menu mobile se ferme au choix d'un lien ou avec Échap, qui rend le focus au bouton.
+ 
+-`apps/web/lib/site.ts` exports `SITE` (url, name, descriptions, twitter handle, contact email, founder name, pricing) and `NAV_PRIMARY` for the marketing nav. Everywhere else imports from here. Change once, propagates to nav, footer, metadata, OG image, JSON-LD.
++`app/marketing.css` applique les tokens du projet aux pages publiques. Les guides et nouvelles pages utilisent une largeur éditoriale, un sommaire latéral sur ordinateur et des lignes de lecture ; aucune dépendance visuelle externe n'a été ajoutée. Les contrôles sont effectués à 390 px et 1440 px. Le tableau comparatif défile horizontalement dans sa propre région accessible au clavier.
+ 
+-## Env requirement
++## Travail de positionnement et limites
+ 
+-`NEXT_PUBLIC_SITE_URL` — default `https://clipfactory.app`. Override in `apps/web/.env.local` if deploying to a preview domain.
++La cible large « clipping » mélange des intentions (vidéo sociale, capture gaming, autres usages). La landing précise désormais « AI video clipping tool » dans son titre SEO. Les pages `/clipping-ia` et `/clipping-tools` traitent deux besoins distincts avec un contenu substantiel. Les trois guides approfondissent les sources et la revue éditoriale. Le pied de page et l'index des guides relient cet ensemble.
+ 
+-## To do after first deploy
++Aucun classement, volume de recherche, trafic, backlink ou gain de conversion n'a été inventé. Les comparaisons reflètent les pages officielles d'OpusClip, Vizard et Descript consultées le 7 septembre 2026 ; il ne s'agit pas de tests comparatifs de qualité. La grille CSV disponible sur `/resources/clipping-tools-worksheet.csv` fournit les colonnes à remplir avec ses propres observations.
+ 
+-1. **Google Search Console** — verify ownership (DNS TXT or HTML file), submit `/sitemap.xml`.
+-2. **Bing Webmaster Tools** — same routine.
+-3. **Index check** — `site:clipfactory.app` on Google a week after deploy.
+-4. **Lighthouse** — run on each marketing page, target ≥ 95 on SEO and ≥ 90 on Performance.
+-5. **Schema validator** — paste `/` HTML into `https://validator.schema.org/` to confirm Organization + SoftwareApplication parse cleanly.
+-6. **Open Graph debugger** — Facebook Sharing Debugger, Twitter Card Validator, LinkedIn Post Inspector.
++La suite se mesure dans Search Console : indexation des pages ciblées, impressions, requêtes, clics, pays et pages d'entrée, en comparant des périodes équivalentes. Un site techniquement accessible ne prouve ni son indexation effective ni sa position. Les démonstrations réelles du produit et les références externes pertinentes pourront ensuite renforcer sa visibilité ; aucun message externe ni achat de lien n'a été effectué.
+ 
+-## V2 ideas (not in V1)
++Sources : [Google — sites multilingues](https://developers.google.com/search/docs/specialty/international/managing-multi-regional-sites), [Google — guide de démarrage SEO](https://developers.google.com/search/docs/fundamentals/seo-starter-guide), [OpusClip](https://www.opus.pro/clipanything), [Vizard](https://vizard.ai/), [Descript](https://www.descript.com/clips).
+ 
+-- Locale-aware metadata (`fr_FR` for `/fr/*` routes when we open the FR market).
+-- Per-page custom OG image with the page title burnt-in.
+-- Blog with at least 1 post per month for freshness.
+-- Internal linking audit (Ahrefs/Screaming Frog) once we have 30+ pages.
+-- Schema.org Review / Product / Offer markup once we have testimonials.
++## Vérification reproductible
++
++Depuis la racine du dépôt :
++
++```bash
++npm ci --prefix apps/web
++npm run build --prefix apps/web
++npm run start --prefix apps/web -- --hostname 127.0.0.1 --port 3107
++```
++
++Puis, dans un autre terminal :
++
++```bash
++python3 scripts/seo-audit.py http://127.0.0.1:3107 \
++  --canonical-origin https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app \
++  --out artifacts/seo/local.json
++```
++
++Pour le site public :
++
++```bash
++SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/seo-audit.py \
++  https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app \
++  --canonical-origin https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app \
++  --out artifacts/seo/production.json
++```
++
++`SSL_CERT_FILE` désigne le magasin de certificats système sur ce Mac ; la vérification TLS reste active. Sur un autre système, utiliser son magasin de certificats habituel.
++
++Le script contrôle les codes HTTP, sitemap, canonical, titres/descriptions uniques, H1, langue, balises robots, Open Graph/Twitter, JSON-LD, concordance FAQ/HTML, liens internes, ancres, routes privées/de démonstration, vraies 404, fichier Google et ressources de partage. Il ne prouve ni l'indexation Google, ni le fonctionnement de la chaîne vidéo ou du paiement.
++
++Les captures à 390 px et 1440 px et les rapports Lighthouse sont conservés dans `artifacts/seo`. Les mesures Lighthouse sont des tests de laboratoire ; elles ne remplacent pas les données utilisateurs réelles de Search Console/CrUX.
++
++## Mise en ligne sans perdre la configuration
++
++Le chantier SEO part du code réellement publié de `redesign/ui-ux-lab` : commit UI `4d8b50d`, puis commit documentaire `acd9a61`. Le code de `main` contient une autre version de la landing. Répertoire de travail : `/Users/augustindemeaux/clipfactory-seo`, branche `codex/seo-vercel-2026-09-06`.
++
++Le déploiement CLI se fait depuis la racine, avec le projet Vercel configuré sur `apps/web`. `.vercelignore` exclut les rapports, documents, autres services et variables locales de l'envoi.
++
++```bash
++vercel deploy --prod --skip-domain --yes
++# Inspecter et contrôler le déploiement préparé avant la promotion.
++vercel promote <deployment-url> --yes
++```
++
++La promotion doit utiliser un build créé avec `--prod` : il contient la configuration d'indexation de production. Garder le fichier Google dans tout futur déploiement. Les modifications SEO doivent être intégrées au flux Git autorisé avant qu'un déploiement automatique de `main` ne remplace le travail ; aucun commit ou push n'est implicite dans la publication CLI.
++
++## Search Console : après la publication
++
++Propriété : `https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/`.
++
++1. Dans **Sitemaps**, soumettre `sitemap.xml` et vérifier son statut. La simple présence d'un sitemap dans le site ne signifie pas qu'il a déjà été soumis depuis le compte Google.
++2. Dans **Inspection de l'URL**, tester l'accueil en direct et demander son indexation, puis les trois guides. Il n'est pas nécessaire de répéter la demande chaque jour.
++3. Lire les exclusions réelles dans **Indexation des pages**. Les pages privées et de démonstration exclues par `noindex` sont attendues ; les pages publiques ne doivent pas l'être.
++4. Utiliser **Performances** pour distinguer marque et requêtes génériques, puis comparer impressions, clics, pages d'entrée et inscriptions réellement attribuables à ces visites.
++
++L'accès à la propriété Google dépend de la session du propriétaire. Une URL de console partagée ne donne pas accès au compte dans le navigateur de l'agent. Ne pas déclarer le sitemap soumis ou les pages indexées sans résultat observé dans Search Console.
++
++## Entretien éditorial
++
++Mettre à jour une page lorsqu'une fonctionnalité, une limite ou son explication change. Les dates `lastModified` des guides correspondent à leurs changements éditoriaux ; les pages sans date fiable n'en inventent pas à chaque build. Google ignore les champs de sitemap `priority` et `changefreq`.
++
++Prioriser ensuite les questions issues des utilisateurs et des requêtes observées : problèmes de cadrage, erreurs de sous-titres, utilisation du brief et exemples de clips issus de sources autorisées. Toute étude de cas doit préciser la source, la méthode et les mesures réellement observées. Éviter les séries de pages presque identiques, les promesses de viralité et les faux comparatifs.
++
++## Références
++
++- [Conditions techniques Google](https://developers.google.com/search/docs/essentials/technical)
++- [Sitemaps et dates de modification](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap)
++- [Règles des données structurées](https://developers.google.com/search/docs/appearance/structured-data/sd-policies)
++- [Restrictions des résultats enrichis FAQ](https://developers.google.com/search/blog/2023/08/howto-faq-changes) : le balisage FAQ ne promet pas un résultat enrichi pour un SaaS.
++- [Métadonnées Next.js](https://nextjs.org/docs/app/api-reference/functions/generate-metadata)
++- [Gestion des versions Vercel et du contenu dupliqué](https://vercel.com/kb/guide/avoiding-duplicate-content-with-vercel-app-urls)
++- [OpusClip ClipAnything](https://www.opus.pro/clipanything), [prompts](https://help.opus.pro/docs/article/select-keywords), [éditeur](https://www.opus.pro/ai-video-editor)
+diff --git a/.vercelignore b/.vercelignore
+new file mode 100644
+index 0000000..302b219
+--- /dev/null
++++ b/.vercelignore
+@@ -0,0 +1,9 @@
++artifacts/
++scripts/
++docs/
++apps/api/
++apps/worker/
++apps/e2e/
++.claude/
++**/.env.local
++**/*.tsbuildinfo
+diff --git a/apps/web/app/clipping-ia/page.tsx b/apps/web/app/clipping-ia/page.tsx
+new file mode 100644
+index 0000000..ba75c20
+--- /dev/null
++++ b/apps/web/app/clipping-ia/page.tsx
+@@ -0,0 +1,293 @@
++import Link from "next/link";
++import { ArrowUpRight } from "lucide-react";
++import { MarketingNav } from "@/components/marketing/nav";
++import { MarketingFooter } from "@/components/marketing/footer";
++import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
++import { createPageMetadata } from "@/lib/seo";
++import { SITE } from "@/lib/site";
++
++const meta = createPageMetadata(
++  "/clipping-ia",
++  "Clipping IA : vos vidéos en Shorts, Reels et TikTok",
++  "ClipFactory transforme vos vidéos YouTube et Vimeo en clips verticaux sous-titrés. Définissez votre campagne, puis choisissez les extraits qui servent votre message.",
++);
++export const metadata = {
++  ...meta,
++  openGraph: { ...meta.openGraph, locale: "fr_FR" },
++};
++const contents = [
++  ["definition", "Comprendre le clipping IA"],
++  ["workflow", "De la source au clip"],
++  ["example", "Un brief concret"],
++  ["review", "Valider un extrait"],
++  ["pricing", "Tarif et limites"],
++  ["questions", "Questions fréquentes"],
++];
++
++export default function AIClippingPage() {
++  const data = {
++    "@context": "https://schema.org",
++    "@type": "WebPage",
++    name: "Clipping IA avec ClipFactory",
++    inLanguage: "fr",
++    url: `${SITE.url}/clipping-ia`,
++    description: meta.description,
++    about: {
++      "@type": "SoftwareApplication",
++      name: "ClipFactory",
++      applicationCategory: "MultimediaApplication",
++      operatingSystem: "Web",
++    },
++  };
++  return (
++    <div lang="fr">
++      <script
++        type="application/ld+json"
++        dangerouslySetInnerHTML={{
++          __html: JSON.stringify(data).replace(/</g, "\\u003c"),
++        }}
++      />
++      <BreadcrumbJsonLd
++        items={[
++          { name: "ClipFactory", href: "/" },
++          { name: "Clipping IA", href: "/clipping-ia" },
++        ]}
++      />
++      <MarketingNav language="fr" />
++      <main id="main-content" className="marketing-page">
++        <div className="editorial-wrap">
++          <header className="editorial-hero">
++            <p className="editorial-eyebrow">Clipping IA · ClipFactory</p>
++            <h1>
++              Clipping IA.
++              <br />
++              Gardez le sens de la vidéo.
++            </h1>
++            <p>
++              Transformez vos vidéos YouTube et Vimeo en Shorts, Reels et TikTok
++              sous-titrés. Donnez une intention à votre campagne, puis revoyez
++              les extraits et la raison de chaque sélection.
++            </p>
++            <div className="editorial-actions">
++              <Link
++                className="editorial-action"
++                href="/login?next=/app/campaigns/new"
++              >
++                Créer ma campagne <ArrowUpRight size={16} aria-hidden="true" />
++              </Link>
++              <a className="editorial-text-link" href="#workflow">
++                Voir le fonctionnement
++              </a>
++            </div>
++          </header>
++          <div className="editorial-grid">
++            <nav className="editorial-toc" aria-label="Dans cette page">
++              <p>La source reste au centre.</p>
++              {contents.map(([id, label]) => (
++                <a key={id} href={`#${id}`}>
++                  {label}
++                </a>
++              ))}
++            </nav>
++            <div className="editorial-body">
++              <section id="definition">
++                <h2>Qu’est-ce que le clipping IA ?</h2>
++                <p>
++                  Le clipping vidéo consiste à extraire des passages d’une vidéo
++                  longue pour créer des contenus courts. Le clipping IA ajoute
++                  une aide à la sélection et à la préparation du montage :
++                  repérer un sujet, proposer une coupe, adapter le format et
++                  préparer les sous-titres.
++                </p>
++                <p>
++                  Un extrait utile doit rester compréhensible lorsqu’on découvre
++                  la vidéo sans avoir vu le reste. Une phrase marquante perd sa
++                  valeur si le spectateur ne sait pas de quoi elle parle. Le
++                  travail consiste donc à garder assez de contexte pour que le
++                  début, la preuve et la conclusion tiennent ensemble.
++                </p>
++                <p>
++                  ClipFactory organise ce travail autour d’un brief de campagne.
++                  Vous choisissez un public et un objectif avant de juger les
++                  propositions. Un score de sélection aide à examiner un
++                  candidat ; il ne prédit pas le nombre de vues.
++                </p>
++              </section>
++              <section id="workflow">
++                <h2>De votre vidéo au clip vertical.</h2>
++                <ol>
++                  <li>
++                    <strong>Définissez la campagne.</strong> Précisez le public,
++                    le message à faire passer, le ton et les sujets à éviter.
++                    Une campagne de démonstration produit ne cherche pas les
++                    mêmes moments qu’un récit de fondateur.
++                  </li>
++                  <li>
++                    <strong>Ajoutez la source.</strong> Utilisez une URL YouTube
++                    ou Vimeo accessible et une vidéo que vous êtes autorisé à
++                    exploiter. Vérifiez sa durée avant de lancer le traitement.
++                  </li>
++                  <li>
++                    <strong>Examinez les propositions.</strong> Comparez
++                    l’extrait à son contexte dans la source. Regardez où
++                    commence la coupe, ce que l’image montre et pourquoi le
++                    passage convient au brief.
++                  </li>
++                  <li>
++                    <strong>Validez le rendu.</strong> Relisez les sous-titres
++                    et regardez la vidéo verticale jusqu’à la fin avant de la
++                    publier sur la plateforme choisie.
++                  </li>
++                </ol>
++                <p>
++                  Ce parcours convient notamment aux interviews, démonstrations
++                  et podcasts vidéo. Pour un épisode qui dépasse la durée
++                  acceptée, préparez un segment cohérent dans la limite du
++                  pilote au lieu de lancer la totalité de l’enregistrement.
++                </p>
++              </section>
++              <section id="example">
++                <h2>Un brief précis change ce qu’on cherche.</h2>
++                <p>
++                  « Fais des clips viraux » donne peu de critères pour choisir.
++                  Un brief concret indique ce que le spectateur doit comprendre
++                  et ce que la vidéo doit montrer. Voici un exemple de consigne
++                  éditoriale, à adapter à votre propre source :
++                </p>
++                <div className="editorial-note">
++                  <p>
++                    <strong>Public :</strong> les responsables de petites
++                    équipes de création.
++                  </p>
++                  <p>
++                    <strong>Objectif :</strong> montrer comment un brief évite
++                    les allers-retours de montage.
++                  </p>
++                  <p>
++                    <strong>À chercher :</strong> une difficulté précise, une
++                    démonstration à l’écran et une conclusion compréhensible
++                    seule.
++                  </p>
++                  <p>
++                    <strong>À éviter :</strong> la présentation générale de
++                    l’entreprise et les promesses sans preuve dans la vidéo.
++                  </p>
++                </div>
++                <p>
++                  On peut ensuite écarter un passage spectaculaire qui ne répond
++                  pas à ce besoin. Le bon extrait est celui qui porte le message
++                  avec assez de contexte et une image pertinente, même s’il
++                  n’est pas le moment le plus bruyant de la source.
++                </p>
++              </section>
++              <section id="review">
++                <h2>Avant de publier, vérifiez le sens.</h2>
++                <ul>
++                  <li>
++                    <strong>Le début :</strong> comprend-on le sujet dès les
++                    premières phrases, sans un pronom qui renvoie à une scène
++                    absente ?
++                  </li>
++                  <li>
++                    <strong>La coupe :</strong> les conditions, réserves et
++                    négations du locuteur sont-elles conservées ?
++                  </li>
++                  <li>
++                    <strong>Le cadrage :</strong> le visage, le produit ou la
++                    preuve restent-ils visibles en vertical ?
++                  </li>
++                  <li>
++                    <strong>Les sous-titres :</strong> les noms propres, les
++                    chiffres et les termes métier correspondent-ils à l’audio ?
++                  </li>
++                  <li>
++                    <strong>La fin :</strong> l’idée se termine-t-elle vraiment,
++                    sans une phrase interrompue ou une conclusion ajoutée par le
++                    montage ?
++                  </li>
++                </ul>
++                <p>
++                  Pour comparer deux propositions, regardez-les sans le reste de
++                  la vidéo. Si l’une demande une longue explication avant d’être
++                  comprise, reprenez les limites de l’extrait ou choisissez un
++                  autre moment.
++                </p>
++              </section>
++              <section id="pricing">
++                <h2>Un pilote avec des limites claires.</h2>
++                <p>
++                  Le forfait Starter est proposé à{" "}
++                  <strong>29 € par mois pour 300 crédits</strong>. Un crédit
++                  correspond à une minute de vidéo source. Le pilote accepte les
++                  sources jusqu’à 30 minutes et jusqu’à 3 clips demandés par
++                  traitement, avec sous-titres et sans filigrane.
++                </p>
++                <p>
++                  Par exemple, une source de 20 minutes représente 20 crédits.
++                  Trois traitements de cette durée représentent 60 crédits de
++                  source. Le nombre de clips exploitables dépend du contenu et
++                  des contrôles de qualité ; demander trois clips ne garantit
++                  pas trois bons moments.
++                </p>
++                <p>
++                  Consultez les{" "}
++                  <Link href="/pricing">conditions du forfait en anglais</Link>{" "}
++                  avant de vous abonner. L’interface de création de campagne est
++                  actuellement en anglais. Cette page présente le fonctionnement
++                  en français.
++                </p>
++              </section>
++              <section id="questions">
++                <h2>Questions sur le clipping IA.</h2>
++                <h3>Quelle différence avec un logiciel de montage ?</h3>
++                <p>
++                  Un éditeur classique vous donne une timeline pour construire
++                  manuellement le montage. Un outil de clipping IA vous aide à
++                  trouver et préparer des extraits à partir d’une source longue.
++                  Le choix dépend du travail à automatiser et du contrôle
++                  nécessaire sur chaque coupe.
++                </p>
++                <h3>Le clipping IA garantit-il des vues ?</h3>
++                <p>
++                  Non. Le sujet, le public, le compte qui publie et la réception
++                  réelle du contenu influencent le résultat. Un score éditorial
++                  sert à comparer les propositions, pas à garantir la viralité.
++                </p>
++                <h3>Peut-on utiliser n’importe quelle vidéo YouTube ?</h3>
++                <p>
++                  La disponibilité d’un lien ne remplace pas l’autorisation
++                  d’exploiter son contenu. Utilisez vos propres sources ou
++                  celles pour lesquelles vous disposez des autorisations
++                  nécessaires. Une vidéo privée ou inaccessible peut également
++                  empêcher le traitement.
++                </p>
++                <h3>Comment choisir un outil de clipping ?</h3>
++                <p>
++                  Comparez les outils avec la même source et le même objectif.
++                  Mesurez les corrections nécessaires, la qualité des
++                  sous-titres, le respect du contexte et le coût des minutes
++                  traitées. Notre{" "}
++                  <Link href="/clipping-tools">
++                    guide des clipping tools en anglais
++                  </Link>{" "}
++                  propose une grille de comparaison et des liens vers les
++                  documentations des éditeurs.
++                </p>
++                <div className="editorial-actions">
++                  <Link
++                    className="editorial-action"
++                    href="/login?next=/app/campaigns/new"
++                  >
++                    Préparer ma première campagne{" "}
++                    <ArrowUpRight size={16} aria-hidden="true" />
++                  </Link>
++                </div>
++              </section>
++            </div>
++          </div>
++        </div>
++      </main>
++      <MarketingFooter language="fr" />
++    </div>
++  );
++}
+diff --git a/apps/web/app/clipping-tools/page.tsx b/apps/web/app/clipping-tools/page.tsx
+new file mode 100644
+index 0000000..f6037ff
+--- /dev/null
++++ b/apps/web/app/clipping-tools/page.tsx
+@@ -0,0 +1,385 @@
++import Link from "next/link";
++import { ArrowUpRight, Download } from "lucide-react";
++import { MarketingNav } from "@/components/marketing/nav";
++import { MarketingFooter } from "@/components/marketing/footer";
++import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
++import { createPageMetadata } from "@/lib/seo";
++import { SITE } from "@/lib/site";
++
++export const metadata = createPageMetadata(
++  "/clipping-tools",
++  "AI Video Clipping Tools: Compare Workflows & Choose",
++  "Compare ClipFactory, OpusClip, Vizard and Descript by clipping workflow. Use a practical checklist and a downloadable worksheet to evaluate your own source video.",
++  true,
++);
++const sections = [
++  ["workflow", "Choose the workflow"],
++  ["compare", "Compare four tools"],
++  ["test", "Run your own comparison"],
++  ["cost", "Measure the real cost"],
++  ["fit", "Where ClipFactory fits"],
++  ["questions", "Common questions"],
++];
++
++export default function ClippingToolsPage() {
++  const data = {
++    "@context": "https://schema.org",
++    "@type": "Article",
++    headline: "AI video clipping tools: compare workflows and choose",
++    description: metadata.description,
++    mainEntityOfPage: `${SITE.url}/clipping-tools`,
++    inLanguage: "en",
++    datePublished: "2026-09-07",
++    dateModified: "2026-09-07",
++    author: {
++      "@type": "Organization",
++      name: "ClipFactory",
++      url: `${SITE.url}/about`,
++    },
++    publisher: { "@type": "Organization", name: "ClipFactory", url: SITE.url },
++  };
++  return (
++    <>
++      <script
++        type="application/ld+json"
++        dangerouslySetInnerHTML={{
++          __html: JSON.stringify(data).replace(/</g, "\\u003c"),
++        }}
++      />
++      <BreadcrumbJsonLd
++        items={[
++          { name: "Home", href: "/" },
++          { name: "Clipping tools", href: "/clipping-tools" },
++        ]}
++      />
++      <MarketingNav />
++      <main id="main-content" className="marketing-page">
++        <div className="editorial-wrap">
++          <header className="editorial-hero">
++            <p className="editorial-eyebrow">AI video clipping tools</p>
++            <h1>
++              AI clipping tools.
++              <br />
++              Find your workflow.
++            </h1>
++            <p>
++              Compare clipping tools by what you need to find, fix and deliver.
++              A useful short keeps its context. A useful tool makes that easier
++              to check.
++            </p>
++            <p className="!text-sm">
++              By{" "}
++              <Link href="/about" className="underline underline-offset-4">
++                ClipFactory
++              </Link>{" "}
++              · Updated <time dateTime="2026-09-07">7 September 2026</time>
++            </p>
++            <div className="editorial-actions">
++              <a className="editorial-action" href="#compare">
++                Compare the workflows{" "}
++                <ArrowUpRight size={16} aria-hidden="true" />
++              </a>
++              <a
++                className="editorial-text-link"
++                href="/resources/clipping-tools-worksheet.csv"
++                download
++              >
++                Download the comparison worksheet
++              </a>
++            </div>
++          </header>
++          <div className="editorial-grid">
++            <nav className="editorial-toc" aria-label="In this guide">
++              <p>A practical buying guide</p>
++              {sections.map(([id, label]) => (
++                <a key={id} href={`#${id}`}>
++                  {label}
++                </a>
++              ))}
++            </nav>
++            <article className="editorial-body">
++              <section id="workflow">
++                <h2>What should a clipping tool do for you?</h2>
++                <p>
++                  Video clipping tools turn portions of a longer recording into
++                  shorter edits. AI clipping tools can assist with finding
++                  moments, selecting boundaries, preparing captions and
++                  reframing. The useful starting point is the part of your
++                  current workflow that takes the most attention.
++                </p>
++                <p>
++                  If finding moments is the bottleneck, examine selection and
++                  source navigation. If your clips already exist, caption
++                  correction and editing control may matter more. If several
++                  people review client work, check how previews and decisions
++                  move between them.
++                </p>
++                <p>
++                  Separate social video clipping from gameplay capture.
++                  Recording the last moments of a game and finding a complete
++                  idea in a podcast are different jobs. This guide focuses on
++                  repurposing recorded videos into Shorts, Reels and TikTok
++                  clips.
++                </p>
++              </section>
++              <section id="compare">
++                <h2>Four tools. Different starting points.</h2>
++                <p>
++                  This guide is published by ClipFactory. The descriptions below
++                  summarize each vendor’s public materials, checked on 7
++                  September 2026. They are not results from a comparative
++                  performance test, and the table does not rank output quality.
++                </p>
++                <div
++                  className="editorial-table"
++                  role="region"
++                  aria-label="Clipping tools workflow comparison"
++                  tabIndex={0}
++                >
++                  <table>
++                    <thead>
++                      <tr>
++                        <th scope="col">Tool</th>
++                        <th scope="col">Published workflow</th>
++                        <th scope="col">What to test with your source</th>
++                      </tr>
++                    </thead>
++                    <tbody>
++                      <tr>
++                        <th scope="row">
++                          <Link href="/features">ClipFactory</Link>
++                        </th>
++                        <td>
++                          Campaign brief, source video and review of selected
++                          clips with editorial reasons.
++                        </td>
++                        <td>
++                          Does the brief make the proposed clips more useful for
++                          your audience? Check the current pilot limits.
++                        </td>
++                      </tr>
++                      <tr>
++                        <th scope="row">
++                          <a href="https://www.opus.pro/clipanything">
++                            OpusClip
++                          </a>
++                        </th>
++                        <td>
++                          ClipAnything offers automatic selection and custom
++                          prompts for finding moments in a video.
++                        </td>
++                        <td>
++                          Can your prompt locate the scene or idea you want,
++                          with enough surrounding context?
++                        </td>
++                      </tr>
++                      <tr>
++                        <th scope="row">
++                          <a href="https://vizard.ai/">Vizard</a>
++                        </th>
++                        <td>
++                          AI highlights, vertical reframing, text-based editing
++                          and team preview sharing.
++                        </td>
++                        <td>
++                          How much reframing and transcript correction does your
++                          material need? Try the review workflow with a
++                          teammate.
++                        </td>
++                      </tr>
++                      <tr>
++                        <th scope="row">
++                          <a href="https://www.descript.com/clips">Descript</a>
++                        </th>
++                        <td>
++                          Create Clips suggests moments from a recording,
++                          followed by refinement in its video editor.
++                        </td>
++                        <td>
++                          Does editing the full recording and its short clips in
++                          one environment fit your process?
++                        </td>
++                      </tr>
++                    </tbody>
++                  </table>
++                </div>
++                <p>
++                  Features, allowances and availability can change. Follow the
++                  vendor links for the current details. For a closer look at two
++                  approaches, read{" "}
++                  <Link href="/vs/opusclip">ClipFactory vs OpusClip</Link>.
++                </p>
++              </section>
++              <section id="test">
++                <h2>Use the same source. Keep the same brief.</h2>
++                <p>
++                  Pick a recording you know well and can use in each service.
++                  Write down the audience, the intended takeaway and a few
++                  passages you would consider publishing. Keep this reference
++                  separate from the tool’s suggestions so you can notice both
++                  missed moments and useful surprises.
++                </p>
++                <ol>
++                  <li>
++                    <strong>Hold the input steady.</strong> Use the same source
++                    segment, language, objective and requested format. Record
++                    any differences the tools require.
++                  </li>
++                  <li>
++                    <strong>Watch each candidate without context.</strong> Does
++                    it establish the subject, preserve the speaker’s meaning and
++                    reach a complete ending?
++                  </li>
++                  <li>
++                    <strong>Inspect the vertical frame.</strong> Check the face,
++                    product, slide or demonstration that carries the meaning. A
++                    centered face is not always the important evidence.
++                  </li>
++                  <li>
++                    <strong>Correct the captions.</strong> Count the corrections
++                    to names, numbers and specialist terms. Check timing and
++                    readability on a phone.
++                  </li>
++                  <li>
++                    <strong>Time the review and repair.</strong> Include the
++                    work needed to reach a version you would publish. Keep
++                    processing wait time separate from active editing time.
++                  </li>
++                  <li>
++                    <strong>Save your decision.</strong> Mark each clip
++                    accepted, needs edits or rejected. Add a short reason that
++                    another editor could understand.
++                  </li>
++                </ol>
++                <div className="editorial-note">
++                  <p>
++                    <strong>A reusable worksheet.</strong> Record your source,
++                    tool, review minutes, caption corrections, framing issues
++                    and decision in a CSV. It contains column headings only, so
++                    every result comes from your own evaluation.
++                  </p>
++                  <p>
++                    <a href="/resources/clipping-tools-worksheet.csv" download>
++                      <Download
++                        className="inline mr-2"
++                        size={16}
++                        aria-hidden="true"
++                      />
++                      Download the clipping tools worksheet
++                    </a>
++                  </p>
++                </div>
++                <p>
++                  One test source cannot establish a universal winner. Repeat
++                  the comparison with the kinds of footage you actually publish:
++                  an interview, a screen demonstration or an episode with
++                  several speakers.
++                </p>
++              </section>
++              <section id="cost">
++                <h2>Measure the cost of an accepted clip.</h2>
++                <p>
++                  Source minutes, AI credits, output limits and editor seats
++                  describe different allowances. Check what consumes the
++                  allowance and whether retries, exports or additional reviewers
++                  change your bill. A long list of generated clips is not useful
++                  if most need to be rebuilt.
++                </p>
++                <p>
++                  A practical calculation is{" "}
++                  <strong>
++                    (tool spend allocated to the job + active review and editing
++                    cost) ÷ accepted clips
++                  </strong>
++                  . Use your own hourly cost for the editing part and record the
++                  source duration beside the result. If no clip is acceptable,
++                  record that outcome instead of dividing by zero.
++                </p>
++                <p>
++                  For ClipFactory, Starter is €29 per month with 300
++                  source-minute credits. The current pilot accepts sources up to
++                  30 minutes and up to 3 requested clips per job. See{" "}
++                  <Link href="/pricing">pricing and limits</Link> before
++                  comparing it with a service designed for longer recordings or
++                  higher output volumes.
++                </p>
++              </section>
++              <section id="fit">
++                <h2>Where ClipFactory fits.</h2>
++                <p>
++                  ClipFactory starts with a campaign: who should watch, what
++                  they should understand and what the edit should avoid. It is
++                  intended for creators and teams who want to connect their clip
++                  decisions back to that brief and the original source.
++                </p>
++                <p>
++                  The current service is a pilot. Evaluate it with an
++                  appropriate YouTube or Vimeo source and judge the returned
++                  clips yourself. A reasoned selection score is a review aid,
++                  not evidence that a clip will go viral.
++                </p>
++                <p>
++                  To prepare a fair test, use our{" "}
++                  <Link href="/guides/video-clipping-campaign-brief">
++                    campaign brief guide
++                  </Link>
++                  . For specific footage, start with{" "}
++                  <Link href="/guides/youtube-video-to-shorts">
++                    YouTube videos to Shorts
++                  </Link>{" "}
++                  or{" "}
++                  <Link href="/guides/podcast-clips-for-social-media">
++                    podcast clips for social media
++                  </Link>
++                  .
++                </p>
++              </section>
++              <section id="questions">
++                <h2>Questions worth asking before you choose.</h2>
++                <h3>What is the best AI clipping tool?</h3>
++                <p>
++                  The answer depends on your sources and review process. Compare
++                  complete, publishable edits from the same recording, then
++                  consider the editing effort, limits and cost. A product list
++                  alone cannot settle that decision.
++                </p>
++                <h3>Do I still need to review AI clips?</h3>
++                <p>
++                  Yes. Check the source meaning, cut boundaries, framing and
++                  captions. A confident title or selection score does not
++                  establish that the edit faithfully represents the recording.
++                </p>
++                <h3>Should I choose a free clipping tool?</h3>
++                <p>
++                  A free allowance can help you evaluate a workflow. Before
++                  relying on it for publishing, check source limits, export
++                  quality, watermarks and the conditions that apply when the
++                  allowance is used up.
++                </p>
++                <h3>Where can I read about clipping in French?</h3>
++                <p>
++                  Our{" "}
++                  <Link href="/clipping-ia" hrefLang="fr">
++                    clipping IA page
++                  </Link>{" "}
++                  explains the workflow, a sample campaign brief and the current
++                  ClipFactory pilot in French.
++                </p>
++                <div className="editorial-actions">
++                  <Link
++                    className="editorial-action"
++                    href="/login?next=/app/campaigns/new"
++                  >
++                    Try your source in ClipFactory{" "}
++                    <ArrowUpRight size={16} aria-hidden="true" />
++                  </Link>
++                </div>
++              </section>
++            </article>
++          </div>
++        </div>
++      </main>
++      <MarketingFooter />
++    </>
++  );
++}
+diff --git a/apps/web/app/guides/[slug]/page.tsx b/apps/web/app/guides/[slug]/page.tsx
+new file mode 100644
+index 0000000..145d213
+--- /dev/null
++++ b/apps/web/app/guides/[slug]/page.tsx
+@@ -0,0 +1,169 @@
++import Link from "next/link";
++import { notFound } from "next/navigation";
++import type { Route } from "next";
++import { MarketingNav } from "@/components/marketing/nav";
++import { MarketingFooter } from "@/components/marketing/footer";
++import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
++import { GUIDES } from "@/lib/guides";
++import { SITE } from "@/lib/site";
++import { createPageMetadata } from "@/lib/seo";
++
++export const dynamicParams = false;
++export function generateStaticParams() {
++  return GUIDES.map(({ slug }) => ({ slug }));
++}
++
++export async function generateMetadata({
++  params,
++}: {
++  params: Promise<{ slug: string }>;
++}) {
++  const { slug } = await params;
++  const guide = GUIDES.find((item) => item.slug === slug);
++  if (!guide) notFound();
++  return createPageMetadata(
++    `/guides/${guide.slug}`,
++    guide.title,
++    guide.description,
++    true,
++  );
++}
++
++export default async function GuidePage({
++  params,
++}: {
++  params: Promise<{ slug: string }>;
++}) {
++  const { slug } = await params;
++  const guide = GUIDES.find((item) => item.slug === slug);
++  if (!guide) notFound();
++  const url = `${SITE.url}/guides/${guide.slug}`;
++  const data = {
++    "@context": "https://schema.org",
++    "@type": "Article",
++    headline: guide.title,
++    description: guide.description,
++    mainEntityOfPage: url,
++    datePublished: guide.updatedAt,
++    dateModified: guide.updatedAt,
++    inLanguage: "en",
++    author: {
++      "@type": "Organization",
++      name: "ClipFactory",
++      url: `${SITE.url}/about`,
++    },
++    publisher: { "@type": "Organization", name: SITE.name, url: SITE.url },
++  };
++  return (
++    <>
++      <script
++        type="application/ld+json"
++        dangerouslySetInnerHTML={{
++          __html: JSON.stringify(data).replace(/</g, "\\u003c"),
++        }}
++      />
++      <BreadcrumbJsonLd
++        items={[
++          { name: "Home", href: "/" },
++          { name: "Clipping guides", href: "/guides" },
++          { name: guide.title, href: `/guides/${guide.slug}` },
++        ]}
++      />
++      <MarketingNav />
++      <main id="main-content" className="marketing-page flex-1">
++        <div className="editorial-wrap">
++          <nav
++            aria-label="Breadcrumb"
++            className="text-sm text-[var(--color-muted-foreground)]"
++          >
++            <Link href="/guides" className="underline underline-offset-4">
++              Clipping guides
++            </Link>
++            <span aria-hidden="true"> / </span>
++            {guide.category}
++          </nav>
++          <article>
++            <header className="editorial-hero mt-8">
++              <h1 className="text-4xl font-semibold leading-tight tracking-tight md:text-5xl">
++                {guide.title}
++              </h1>
++              <p className="!text-sm text-[var(--color-muted-foreground)]">
++                By{" "}
++                <Link className="underline underline-offset-4" href="/about">
++                  ClipFactory
++                </Link>{" "}
++                · Updated{" "}
++                <time dateTime={guide.updatedAt}>6 September 2026</time>
++              </p>
++              <p className="mt-8 text-lg leading-relaxed">{guide.intro}</p>
++            </header>
++            <div className="editorial-grid">
++              <nav aria-label="In this guide" className="editorial-toc">
++                <p className="text-sm font-semibold">In this guide</p>
++                <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-[var(--color-muted-foreground)]">
++                  {guide.sections.map((section, index) => (
++                    <li key={section.title}>
++                      <a
++                        className="underline underline-offset-4 hover:text-[var(--color-foreground)]"
++                        href={`#section-${index + 1}`}
++                      >
++                        {section.title}
++                      </a>
++                    </li>
++                  ))}
++                </ol>
++              </nav>
++              <div className="editorial-body">
++                {guide.sections.map((section, index) => (
++                  <section
++                    key={section.title}
++                    id={`section-${index + 1}`}
++                    className="scroll-mt-24"
++                  >
++                    <h2 className="text-2xl font-semibold leading-tight">
++                      {section.title}
++                    </h2>
++                    {section.paragraphs.map((paragraph) => (
++                      <p
++                        key={paragraph}
++                        className="mt-5 leading-relaxed text-[var(--color-muted-foreground)]"
++                      >
++                        {paragraph}
++                      </p>
++                    ))}
++                    {section.checklist && (
++                      <ul className="mt-6 list-disc space-y-3 pl-5 leading-relaxed">
++                        {section.checklist.map((item) => (
++                          <li key={item}>{item}</li>
++                        ))}
++                      </ul>
++                    )}
++                  </section>
++                ))}
++              </div>
++            </div>
++          </article>
++          <aside
++            aria-label="Related guides and product information"
++            className="mt-12 border-t border-[var(--color-border)] pt-8"
++          >
++            <h2 className="text-xl font-semibold">Continue with your source</h2>
++            <ul className="mt-5 space-y-3">
++              {guide.related.map((link) => (
++                <li key={link.href}>
++                  <Link
++                    className="underline underline-offset-4"
++                    href={link.href as Route}
++                  >
++                    {link.label}
++                  </Link>
++                </li>
++              ))}
++            </ul>
++          </aside>
++        </div>
++      </main>
++      <MarketingFooter />
++    </>
++  );
++}
+diff --git a/apps/web/app/guides/page.tsx b/apps/web/app/guides/page.tsx
+new file mode 100644
+index 0000000..90d4cee
+--- /dev/null
++++ b/apps/web/app/guides/page.tsx
+@@ -0,0 +1,72 @@
++import Link from "next/link";
++import { ArrowUpRight } from "lucide-react";
++import { MarketingNav } from "@/components/marketing/nav";
++import { MarketingFooter } from "@/components/marketing/footer";
++import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
++import { GUIDES } from "@/lib/guides";
++import { createPageMetadata } from "@/lib/seo";
++import type { Route } from "next";
++
++export const metadata = createPageMetadata(
++  "/guides",
++  "Video Clipping Guides for Creators & Agencies",
++  "Practical guides to turning YouTube videos and podcasts into short clips. Choose complete moments, review captions and write a useful campaign brief.",
++);
++
++export default function GuidesPage() {
++  return (
++    <>
++      <BreadcrumbJsonLd
++        items={[
++          { name: "Home", href: "/" },
++          { name: "Clipping guides", href: "/guides" },
++        ]}
++      />
++      <MarketingNav />
++      <main id="main-content" className="marketing-page">
++        <div className="editorial-wrap">
++          <header className="editorial-hero">
++            <p className="editorial-eyebrow">The editing notebook</p>
++            <h1>
++              Good clips start
++              <br />
++              before the cut.
++            </h1>
++            <p>
++              Practical video clipping guides. Find the complete thought, keep
++              the source in view, and give every short a reason to exist.
++            </p>
++          </header>
++          <div className="editorial-rows">
++            {GUIDES.map((guide, index) => (
++              <Link
++                key={guide.slug}
++                href={`/guides/${guide.slug}` as Route}
++                className="editorial-row"
++              >
++                <span className="editorial-row-label">
++                  0{index + 1} / {guide.category}
++                </span>
++                <div>
++                  <h2>{guide.title}</h2>
++                  <p>{guide.description}</p>
++                </div>
++                <ArrowUpRight size={20} aria-hidden="true" />
++              </Link>
++            ))}
++          </div>
++          <div className="editorial-actions">
++            <Link className="editorial-action" href="/clipping-tools">
++              Choose a clipping tool{" "}
++              <ArrowUpRight size={16} aria-hidden="true" />
++            </Link>
++            <Link className="editorial-text-link" href="/clipping-ia" lang="fr">
++              Découvrir le clipping IA en français
++            </Link>
++          </div>
++        </div>
++      </main>
++      <MarketingFooter />
++    </>
++  );
++}
+diff --git a/apps/web/app/marketing.css b/apps/web/app/marketing.css
+new file mode 100644
+index 0000000..9af1c13
+--- /dev/null
++++ b/apps/web/app/marketing.css
+@@ -0,0 +1,477 @@
++/* Shared public chrome follows the canonical Edit Axis landing. */
++.marketing-nav,
++.marketing-footer,
++.marketing-page {
++  font-family:
++    system-ui,
++    -apple-system,
++    BlinkMacSystemFont,
++    "SF Pro Display",
++    "SF Pro Text",
++    sans-serif;
++  color: var(--color-foreground);
++}
++.marketing-nav {
++  position: sticky;
++  top: 14px;
++  z-index: 40;
++  margin: 14px 18px 0;
++  border: 1px solid var(--color-border);
++  border-radius: 19px;
++  background: color-mix(in srgb, var(--color-muted) 94%, transparent);
++  box-shadow: var(--shadow-sm);
++  backdrop-filter: blur(26px) saturate(145%);
++}
++.marketing-nav-bar {
++  min-height: 52px;
++  padding: 6px 7px 6px 16px;
++  display: grid;
++  grid-template-columns: 1fr auto 1fr;
++  align-items: center;
++  gap: 16px;
++}
++.marketing-brand {
++  display: inline-flex;
++  align-items: center;
++  gap: 10px;
++  width: max-content;
++  font-size: 0.82rem;
++  font-weight: 650;
++  letter-spacing: -0.015em;
++  color: var(--color-foreground) !important;
++}
++.marketing-brand-mark {
++  position: relative;
++  display: inline-block;
++  width: 21px;
++  height: 21px;
++}
++.marketing-brand-mark span {
++  position: absolute;
++  top: 3px;
++  bottom: 3px;
++  width: 5px;
++  border-radius: 1.5px;
++  background: currentColor;
++  transform-origin: 50% 100%;
++}
++.marketing-brand-mark span:nth-child(1) {
++  left: 2px;
++  transform: rotate(-8deg);
++}
++.marketing-brand-mark span:nth-child(2) {
++  left: 8px;
++}
++.marketing-brand-mark span:nth-child(3) {
++  left: 14px;
++  transform: rotate(8deg);
++}
++.marketing-nav-links,
++.marketing-nav-actions {
++  display: flex;
++  align-items: center;
++  gap: 8px;
++  font-size: 0.75rem;
++  font-weight: 550;
++}
++.marketing-nav-actions {
++  justify-content: flex-end;
++}
++.marketing-nav-links a,
++.marketing-sign-in {
++  padding: 12px;
++  color: var(--color-muted-foreground);
++  border-radius: var(--radius-sm);
++}
++.marketing-nav a[aria-current="page"] {
++  color: var(--color-foreground);
++  background: var(--color-muted);
++}
++.marketing-nav-cta {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  gap: 8px;
++  min-height: 38px;
++  padding: 0 16px;
++  border-radius: 999px;
++  background: var(--color-foreground);
++  color: var(--color-background) !important;
++  white-space: nowrap;
++}
++.marketing-menu-toggle {
++  display: none;
++  width: 44px;
++  height: 44px;
++  align-items: center;
++  justify-content: center;
++  border-radius: var(--radius-sm);
++}
++.marketing-mobile-menu:not([hidden]) {
++  display: grid;
++  padding: 8px 16px 16px;
++  border-top: 1px solid var(--color-border);
++}
++.marketing-mobile-menu a {
++  padding: 14px 8px;
++  border-radius: var(--radius-sm);
++  font-size: 0.875rem;
++}
++.marketing-nav :focus-visible,
++.marketing-footer :focus-visible,
++.marketing-page :focus-visible {
++  outline: 2px solid var(--color-ring);
++  outline-offset: 4px;
++}
++.marketing-page {
++  flex: 1;
++}
++.marketing-page h1 {
++  font-size: clamp(2.5rem, 5vw, 4.5rem);
++  font-weight: 650;
++  line-height: 1.04;
++  letter-spacing: -0.045em;
++  text-wrap: balance;
++}
++.marketing-page h2 {
++  letter-spacing: -0.025em;
++  text-wrap: balance;
++}
++.marketing-page p {
++  text-wrap: pretty;
++}
++.marketing-page section[id] {
++  scroll-margin-top: 100px;
++}
++.marketing-footer {
++  padding: 64px max(24px, calc((100vw - 1360px) / 2)) 24px;
++  border-top: 1px solid var(--color-border);
++  background: var(--color-background);
++}
++.marketing-footer-inner {
++  display: grid;
++  grid-template-columns: 1fr auto;
++  gap: 64px;
++}
++.marketing-footer-inner p {
++  max-width: 260px;
++  margin: 24px 0 16px;
++  white-space: pre-line;
++  color: var(--color-muted-foreground);
++  font-size: 0.875rem;
++  line-height: 1.6;
++}
++.marketing-footer a {
++  color: var(--color-muted-foreground);
++  font-size: 0.8125rem;
++}
++.marketing-footer-links {
++  display: grid;
++  grid-template-columns: repeat(3, minmax(120px, 1fr));
++  gap: 64px;
++}
++.marketing-footer-links > div {
++  display: flex;
++  flex-direction: column;
++  align-items: flex-start;
++  gap: 12px;
++}
++.marketing-footer-links h2 {
++  font-size: 0.75rem;
++  font-weight: 550;
++  margin-bottom: 8px;
++}
++.marketing-footer-bottom {
++  display: flex;
++  justify-content: space-between;
++  margin-top: 48px;
++  padding-top: 24px;
++  border-top: 1px solid var(--color-border);
++  font-size: 0.75rem;
++  color: var(--color-muted-foreground);
++}
++.editorial-wrap {
++  max-width: 1200px;
++  margin: auto;
++  padding: 96px 32px;
++}
++.editorial-eyebrow {
++  display: flex;
++  align-items: center;
++  gap: 10px;
++  font-size: 0.8125rem;
++  font-weight: 550;
++  color: var(--color-muted-foreground);
++}
++.editorial-eyebrow::before {
++  content: "";
++  width: 6px;
++  height: 6px;
++  border-radius: 50%;
++  background: var(--color-brand);
++}
++.editorial-hero {
++  max-width: 850px;
++}
++.editorial-hero h1 {
++  margin-top: 24px;
++}
++.editorial-hero > p:not(.editorial-eyebrow) {
++  margin-top: 24px;
++  max-width: 640px;
++  font-size: 1.125rem;
++  line-height: 1.6;
++  color: var(--color-muted-foreground);
++}
++.editorial-actions {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 24px;
++  align-items: center;
++  margin-top: 32px;
++}
++.editorial-action {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  gap: 12px;
++  min-height: 48px;
++  padding: 0 24px;
++  background: var(--color-brand);
++  border-radius: 999px;
++  color: white;
++  font-weight: 600;
++  font-size: 0.875rem;
++}
++.editorial-text-link {
++  text-decoration: underline;
++  text-underline-offset: 4px;
++  font-size: 0.875rem;
++}
++.editorial-grid {
++  display: grid;
++  grid-template-columns: 220px minmax(0, 1fr);
++  gap: 80px;
++  margin-top: 80px;
++  border-top: 1px solid var(--color-border);
++  padding-top: 48px;
++}
++.editorial-toc {
++  position: sticky;
++  top: 100px;
++  align-self: start;
++}
++.editorial-toc p {
++  font-size: 0.75rem;
++  color: var(--color-muted-foreground);
++  margin-bottom: 16px;
++}
++.editorial-toc a {
++  display: block;
++  padding: 10px 0;
++  font-size: 0.875rem;
++  color: var(--color-muted-foreground);
++}
++.editorial-body {
++  max-width: 720px;
++  min-width: 0;
++}
++.editorial-body section + section {
++  margin-top: 64px;
++}
++.editorial-body h2 {
++  font-size: 2rem;
++  font-weight: 600;
++  line-height: 1.15;
++}
++.editorial-body h3 {
++  font-size: 1.25rem;
++  font-weight: 600;
++  margin-top: 32px;
++}
++.editorial-body p,
++.editorial-body ul,
++.editorial-body ol {
++  margin-top: 20px;
++  line-height: 1.7;
++  color: var(--color-muted-foreground);
++}
++.editorial-body ul,
++.editorial-body ol {
++  padding-left: 24px;
++}
++.editorial-body ul {
++  list-style: disc;
++}
++.editorial-body ol {
++  list-style: decimal;
++}
++.editorial-body li + li {
++  margin-top: 12px;
++}
++.editorial-body strong {
++  font-weight: 550;
++  color: var(--color-foreground);
++}
++.editorial-body a {
++  text-decoration: underline;
++  text-underline-offset: 4px;
++}
++.editorial-note {
++  padding: 24px;
++  border-left: 2px solid var(--color-brand);
++  background: var(--color-muted);
++  margin-top: 24px;
++}
++.editorial-note p:first-child {
++  margin-top: 0;
++}
++.editorial-rows {
++  margin-top: 64px;
++  border-top: 1px solid var(--color-border);
++}
++.editorial-row {
++  display: grid;
++  grid-template-columns: 170px minmax(0, 1fr) 32px;
++  gap: 32px;
++  padding: 40px 0;
++  border-bottom: 1px solid var(--color-border);
++}
++.editorial-row-label {
++  font-size: 0.75rem;
++  color: var(--color-muted-foreground);
++  padding-top: 8px;
++}
++.editorial-row h2 {
++  font-size: clamp(1.5rem, 3vw, 2rem);
++  line-height: 1.2;
++  font-weight: 600;
++}
++.editorial-row p {
++  max-width: 650px;
++  margin-top: 16px;
++  line-height: 1.6;
++  color: var(--color-muted-foreground);
++}
++.editorial-row > svg {
++  margin-top: 8px;
++}
++.editorial-table {
++  overflow-x: auto;
++  margin-top: 24px;
++  border: 1px solid var(--color-border);
++  border-radius: var(--radius-md);
++}
++.editorial-table table {
++  width: 100%;
++  min-width: 560px;
++  text-align: left;
++  font-size: 0.875rem;
++  line-height: 1.6;
++}
++.editorial-table th,
++.editorial-table td {
++  padding: 20px;
++  vertical-align: top;
++  border-bottom: 1px solid var(--color-border);
++}
++.editorial-table th {
++  background: var(--color-muted);
++  font-weight: 600;
++}
++.editorial-table td {
++  color: var(--color-muted-foreground);
++}
++@media (hover: hover) {
++  .marketing-nav-links a:hover,
++  .marketing-footer a:hover,
++  .editorial-toc a:hover {
++    color: var(--color-foreground);
++  }
++  .editorial-row:hover h2 {
++    text-decoration: underline;
++    text-underline-offset: 6px;
++  }
++  .marketing-nav-cta:hover {
++    opacity: 0.9;
++  }
++  .editorial-action:hover {
++    background: var(--color-brand-hover, #0066cc);
++  }
++}
++@media (max-width: 900px) {
++  .marketing-nav-bar {
++    grid-template-columns: 1fr auto;
++  }
++  .marketing-nav-links,
++  .marketing-sign-in {
++    display: none;
++  }
++  .marketing-menu-toggle {
++    display: inline-flex;
++  }
++  .marketing-footer-inner {
++    grid-template-columns: 1fr;
++    gap: 40px;
++  }
++  .marketing-footer-links {
++    gap: 24px;
++  }
++  .editorial-grid {
++    grid-template-columns: 1fr;
++    gap: 40px;
++  }
++  .editorial-toc {
++    position: static;
++    border-bottom: 1px solid var(--color-border);
++    padding-bottom: 24px;
++  }
++}
++@media (max-width: 600px) {
++  .marketing-nav {
++    margin: 12px 12px 0;
++    top: 12px;
++  }
++  .marketing-nav-bar {
++    padding: 4px 4px 4px 12px;
++    gap: 4px;
++  }
++  .marketing-nav-actions {
++    gap: 0;
++  }
++  .marketing-nav-cta {
++    padding: 0 12px;
++    font-size: 0.6875rem;
++  }
++  .marketing-nav-cta svg {
++    display: none;
++  }
++  .marketing-footer {
++    padding-top: 48px;
++  }
++  .marketing-footer-links {
++    grid-template-columns: repeat(2, minmax(0, 1fr));
++    gap: 32px 24px;
++  }
++  .editorial-wrap {
++    padding: 64px 24px;
++  }
++  .editorial-grid {
++    margin-top: 48px;
++    padding-top: 32px;
++  }
++  .editorial-body h2 {
++    font-size: 1.75rem;
++  }
++  .editorial-row {
++    grid-template-columns: minmax(0, 1fr) 24px;
++    gap: 12px;
++    padding: 32px 0;
++  }
++  .editorial-row-label {
++    grid-column: 1 / -1;
++  }
++  .editorial-row p {
++    font-size: 0.9375rem;
++  }
++}
+diff --git a/apps/web/app/preview/layout.tsx b/apps/web/app/preview/layout.tsx
+new file mode 100644
+index 0000000..aac5a2e
+--- /dev/null
++++ b/apps/web/app/preview/layout.tsx
+@@ -0,0 +1,11 @@
++import { NO_INDEX } from "@/lib/seo";
++
++export const metadata = { robots: NO_INDEX };
++
++export default function PreviewLayout({
++  children,
++}: {
++  children: React.ReactNode;
++}) {
++  return children;
++}
+diff --git a/apps/web/components/marketing/brand.tsx b/apps/web/components/marketing/brand.tsx
+new file mode 100644
+index 0000000..c0b1464
+--- /dev/null
++++ b/apps/web/components/marketing/brand.tsx
+@@ -0,0 +1,14 @@
++import Link from "next/link";
++
++export function MarketingBrand() {
++  return (
++    <Link href="/" className="marketing-brand" aria-label="ClipFactory home">
++      <span className="marketing-brand-mark" aria-hidden="true">
++        <span />
++        <span />
++        <span />
++      </span>
++      <span>ClipFactory</span>
++    </Link>
++  );
++}
+diff --git a/apps/web/lib/guides.ts b/apps/web/lib/guides.ts
+new file mode 100644
+index 0000000..a708ee5
+--- /dev/null
++++ b/apps/web/lib/guides.ts
+@@ -0,0 +1,221 @@
++export type Guide = {
++  slug: string;
++  title: string;
++  description: string;
++  updatedAt: string;
++  category: string;
++  intro: string;
++  sections: { title: string; paragraphs: string[]; checklist?: string[] }[];
++  related: { label: string; href: string }[];
++};
++
++export const GUIDES: Guide[] = [
++  {
++    slug: "youtube-video-to-shorts",
++    title: "How to turn a YouTube video into Shorts",
++    description:
++      "A practical workflow for choosing complete moments from a long YouTube video, checking the vertical crop, reviewing captions and preparing a short clip series.",
++    updatedAt: "2026-09-06",
++    category: "Source to short",
++    intro:
++      "Start with a moment that makes sense to someone who has never seen your channel. A useful Short answers one question or delivers one complete idea. The job is to keep that idea intact as you shorten the source and change the frame.",
++    sections: [
++      {
++        title: "Choose the audience before the timestamp",
++        paragraphs: [
++          "Write down who should watch the clip and what they should understand by the end. An interview about starting a business could produce a lesson for first-time founders, a product demonstration for buyers or a story about a difficult decision. Those are different briefs, even when the source is the same.",
++          "For example: ‘Help first-time founders understand why the first launch failed. Keep the tone direct. Show the specific mistake and what changed. Leave out fundraising advice.’ This gives you a way to reject an entertaining moment that does not serve the series.",
++        ],
++      },
++      {
++        title: "Find a beginning and an ending that belong together",
++        paragraphs: [
++          "Look for a concrete question, an unexpected observation or a visible action. Then find the sentence or image that resolves it. Read the candidate excerpt without the previous minute: pronouns such as ‘this’ and ‘they’ often reveal missing context.",
++          "A continuous excerpt is easiest to review. If the explanation and its supporting example are separated, a multi-moment edit may help, provided that the connection preserves what the speaker meant. Do not join a question to an unrelated answer just because the result sounds more dramatic.",
++        ],
++      },
++      {
++        title: "Check the image before you commit to a vertical cut",
++        paragraphs: [
++          "A strong transcript is only half the decision. Inspect what the audience needs to see: a second speaker, a slide, a product or a hand gesture. A vertical crop can remove the very detail that makes the statement convincing.",
++          "Watch each candidate on a phone-sized screen. If a key demonstration becomes unreadable, choose another moment or finish that section in an editor that can preserve the wider view. Treat automatic framing as something to review.",
++        ],
++      },
++      {
++        title: "Review captions against the source",
++        paragraphs: [
++          "Listen to the clip while reading every caption. Pay particular attention to names, numbers, technical terms and negation. A missed ‘not’ can reverse the meaning even when the rest of the text looks correct.",
++          "Check the final edit, not only the transcript. When source moments are joined, the captions need to follow the new sequence. Leave enough space around the text for the platform interface and make sure it does not cover the face or demonstration.",
++        ],
++      },
++      {
++        title: "Use ClipFactory for candidate selection and review",
++        paragraphs: [
++          "In the ClipFactory pilot, create a campaign brief and provide an accessible YouTube or Vimeo URL. Starter supports sources up to 30 minutes and lets you request up to three clips per job. The selection process can return fewer clips when the source does not support enough distinct, verified moments.",
++          "Review the delivered preview, selected source timestamps and explanation before downloading. A selection score helps compare candidates for your brief; it does not predict views. Publishing and scheduling remain manual in the current offer.",
++        ],
++      },
++      {
++        title: "Give every clip one final editorial check",
++        paragraphs: [
++          "Before posting, watch the short once with sound and once without. Keep the clip only if the opening is understandable, the ending delivers what the opening promises, and the image and captions support the same idea.",
++        ],
++        checklist: [
++          "The first sentence makes sense without the original episode.",
++          "The edit preserves the speaker's meaning.",
++          "The vertical frame retains the essential visual evidence.",
++          "Names, numbers and caption timing have been checked.",
++          "The clip has a distinct purpose within the series.",
++        ],
++      },
++    ],
++    related: [
++      { label: "Clipping for creators", href: "/use-cases/creators" },
++      {
++        label: "Write a campaign brief",
++        href: "/guides/video-clipping-campaign-brief",
++      },
++      { label: "Source limits and pricing", href: "/pricing" },
++    ],
++  },
++  {
++    slug: "podcast-clips-for-social-media",
++    title: "How to choose podcast clips for social media",
++    description:
++      "Build a podcast clip series with distinct ideas, enough context and a clear ending. Use a practical selection checklist for interviews and video podcasts.",
++    updatedAt: "2026-09-06",
++    category: "Editorial selection",
++    intro:
++      "An episode can contain several useful short clips without every clip repeating its biggest quote. Plan a small series in which each moment does a different job: introduce a problem, show an example or explain a decision.",
++    sections: [
++      {
++        title: "Build a short list around complete ideas",
++        paragraphs: [
++          "While reviewing the episode, note candidate questions and answers rather than collecting isolated punchlines. A listener arriving from a feed needs enough context to understand who is speaking, what is at stake and why the answer matters.",
++          "For a founder interview, one candidate might explain an early mistake, another might demonstrate the workaround, and a third might challenge a common assumption. Label them by the idea they deliver. If two labels say essentially the same thing, you probably have duplicates.",
++        ],
++      },
++      {
++        title: "Use the question when the answer needs it",
++        paragraphs: [
++          "Some answers are self-contained. Others begin with ‘exactly’, ‘because of that’ or ‘three years later’. Removing the question can make the clip shorter while making it harder to understand. Keep a brief piece of the question or select a different opening from the answer.",
++          "Read the first two sentences to someone unfamiliar with the episode. If you need to explain the missing premise, the opening still needs work. Do not repair it with an invented quote or a caption that changes the guest's position.",
++        ],
++      },
++      {
++        title: "Distinguish tension from exaggeration",
++        paragraphs: [
++          "A useful opening can be specific without being sensational. ‘We lost our first customer after the handover’ creates a question the rest of the clip can answer. A title claiming the whole business collapsed would introduce a claim the source may not support.",
++          "Keep uncertainty and qualifications when they change the meaning. ‘This helped in our test’ is different from ‘this works for everyone’. The strongest candidate is one whose evidence survives the shorter edit.",
++        ],
++      },
++      {
++        title: "Watch speaker changes and reactions",
++        paragraphs: [
++          "A two-person video podcast can switch between close-ups, a wide shot and the listener's reaction. Check whether the proposed vertical crop keeps the active speaker visible. A reaction can support the story, but a random reaction shot can create a misleading impression.",
++          "Keep a deliberate ending: a resolved example, a clear takeaway or a completed answer. If the source ends mid-thought, extend the candidate or reject it. Avoid filling a target duration with unrelated material.",
++        ],
++      },
++      {
++        title: "Turn your candidates into a coherent series",
++        paragraphs: [
++          "Give each selected clip a one-sentence purpose and compare them side by side. One can explain the problem, one can show the practical method, and one can cover a limitation. Each should stand alone, since viewers may encounter the clips in any order.",
++          "In ClipFactory, use the campaign brief to specify the audience, tone, objective and topics to avoid. Supply the video podcast through an accessible YouTube or Vimeo URL. Direct audio-file upload is outside the current offer; the pilot accepts video sources up to 30 minutes.",
++        ],
++      },
++      {
++        title: "Review the series before publishing",
++        paragraphs: [
++          "ClipFactory returns candidate clips with source timestamps and editorial reasons. Use them as the starting point for your own review. A high score is not a guarantee of reach, and requesting three clips does not guarantee that three distinct moments will pass the checks.",
++        ],
++        checklist: [
++          "Each clip delivers a different complete idea.",
++          "The guest's qualifications and context remain intact.",
++          "The opening does not depend on an unseen question.",
++          "Speaker changes and caption timing work in the final frame.",
++          "Titles describe what the clip actually contains.",
++          "Publishing order is useful, but each clip also stands alone.",
++        ],
++      },
++    ],
++    related: [
++      { label: "Creator and podcast workflow", href: "/use-cases/creators" },
++      {
++        label: "Turn YouTube videos into Shorts",
++        href: "/guides/youtube-video-to-shorts",
++      },
++      { label: "How clip selection works", href: "/features" },
++    ],
++  },
++  {
++    slug: "video-clipping-campaign-brief",
++    title: "How to write a brief for AI video clipping",
++    description:
++      "Use a concrete campaign brief to guide AI clip selection. Define your audience, objective, tone and boundaries, with an example you can adapt to your next video.",
++    updatedAt: "2026-09-06",
++    category: "Campaign planning",
++    intro:
++      "‘Find the best clips’ leaves the most important decision unanswered: best for whom? A campaign brief makes the selection criteria explicit so that you can judge the output against the same objective you gave the tool.",
++    sections: [
++      {
++        title: "Name a specific audience and its starting point",
++        paragraphs: [
++          "Choose the viewer's situation, not just a demographic. ‘People interested in business’ is broad. ‘Solo founders preparing their first customer demo’ tells you what knowledge the clip can assume and which problems deserve attention.",
++          "Include what the audience already knows. A specialist audience may understand an acronym that would lose a first-time viewer. This helps you decide whether a technically strong passage is ready to stand alone or needs too much explanation for a short.",
++        ],
++      },
++      {
++        title: "Give the series one primary objective",
++        paragraphs: [
++          "Choose what the series should help the viewer do or understand. Useful objectives include explaining a product decision, showing a specific method or answering a recurring objection. ‘Get views’ describes an outcome, but it does not explain which source moments belong in the series.",
++          "For example, a webinar may contain a product tour and a long discussion of the market. If the objective is to show how the product solves one workflow problem, a compelling market quote can still be the wrong clip.",
++        ],
++      },
++      {
++        title: "Describe tone through choices",
++        paragraphs: [
++          "Words such as ‘engaging’ and ‘professional’ are difficult to evaluate. Translate tone into instructions: keep the speaker's plain language, prefer a concrete example over a slogan, retain relevant uncertainty, and avoid an alarmist headline.",
++          "A hook example should describe a pattern you want to find in the source. ‘Open on the constraint, then show the workaround’ gives editorial direction. It does not authorize a tool to invent a sentence the speaker never said.",
++        ],
++      },
++      {
++        title: "Set boundaries that can reject a candidate",
++        paragraphs: [
++          "List subjects, claims or details that should stay out of the series. For a product campaign, that might include internal revenue figures, a roadmap announcement or a customer name. Review the source yourself when those boundaries matter; an automated check can miss context.",
++          "Also define what makes a candidate incomplete: an answer without its question, a demonstration whose evidence falls outside the crop, or an ending that stops before the result. A useful brief provides reasons to say no.",
++        ],
++      },
++      {
++        title: "An example brief to adapt",
++        paragraphs: [
++          "Audience: solo founders preparing a first product demo. Objective: help them understand why showing one complete workflow is more useful than listing features. Tone: direct and practical, keeping the speaker's qualifications. Prefer: a mistake followed by the concrete change. Avoid: fundraising advice, revenue numbers and claims of guaranteed conversion.",
++          "Hook direction: begin with the problem the speaker actually encountered, then show the evidence for the decision. Each clip should deliver one complete lesson and make sense to someone who has not watched the full interview.",
++          "This is an illustrative brief, not a claim about a particular video or a measured campaign result. Adapt it to what your source actually contains.",
++        ],
++      },
++      {
++        title: "Evaluate the output against the brief",
++        paragraphs: [
++          "In ClipFactory, the campaign keeps the audience, objective, tone and boundaries attached to the source. Review the selected words, timestamps and reason for each delivered clip. Ask whether the result follows the brief and remains faithful to the source.",
++          "A recorded thumbs-up or thumbs-down is feedback for review. It does not silently retrain the system. If the output misses the objective, revise the brief explicitly before the next source or job.",
++        ],
++        checklist: [
++          "The intended viewer is specific.",
++          "The objective can guide a real editorial choice.",
++          "Tone instructions describe observable choices.",
++          "The brief includes topics and claims to avoid.",
++          "The hook pattern can be found in the source.",
++          "Each candidate can be accepted or rejected against these criteria.",
++        ],
++      },
++    ],
++    related: [
++      { label: "Campaign clipping features", href: "/features" },
++      { label: "Clipping for agencies", href: "/use-cases/agencies" },
++      {
++        label: "Choose podcast moments",
++        href: "/guides/podcast-clips-for-social-media",
++      },
++    ],
++  },
++];
+diff --git a/apps/web/lib/home-faq.ts b/apps/web/lib/home-faq.ts
+new file mode 100644
+index 0000000..5cffb69
+--- /dev/null
++++ b/apps/web/lib/home-faq.ts
+@@ -0,0 +1,32 @@
++export const HOME_FAQ = [
++  {
++    question: "Which sources can I use?",
++    answer:
++      "Starter currently accepts public or accessible YouTube and Vimeo URLs. Direct file upload is not part of the current offer.",
++  },
++  {
++    question: "What does a score mean?",
++    answer:
++      "It ranks a moment for the campaign brief you supplied. It is a decision aid, not a promise that a clip will go viral.",
++  },
++  {
++    question: "How many clips will I receive?",
++    answer:
++      "You can request up to three clips per job. Quality checks and deduplication can intentionally return fewer when the source does not support three distinct cuts.",
++  },
++  {
++    question: "How do credits work?",
++    answer:
++      "Starter includes 300 credits each month. The source duration is read before credit use is confirmed; sources can be up to 30 minutes and one job can process at a time.",
++  },
++  {
++    question: "What is included in the export?",
++    answer:
++      "A vertical render with burned captions, the selected source segments, a campaign-fit rationale and a download without a watermark.",
++  },
++  {
++    question: "What happens when processing fails?",
++    answer:
++      "A failed analysis is named explicitly and no delivery is implied. If no moment clears the quality floor, ClipFactory tells you instead of padding the result with a weak clip.",
++  },
++] as const;
+diff --git a/apps/web/lib/seo.ts b/apps/web/lib/seo.ts
+new file mode 100644
+index 0000000..3b313a4
+--- /dev/null
++++ b/apps/web/lib/seo.ts
+@@ -0,0 +1,115 @@
++import type { Metadata } from "next";
++import { SITE } from "@/lib/site";
++
++export const PUBLIC_PAGES = {
++  "/": {
++    title: "AI Video Clipping Tool for Shorts, Reels & TikTok",
++    description:
++      "Turn YouTube and Vimeo videos into vertical clips with captions. Set your campaign audience and goal, then review each cut and the reason it was selected.",
++  },
++  "/features": {
++    title: "AI Video Clipping, Captions & Campaign Scoring",
++    description:
++      "Explore ClipFactory's campaign briefs, source context, multi-moment edits and captions. Review the selected timestamps and the reason behind each short clip.",
++  },
++  "/pricing": {
++    title: "AI Video Clipping Pricing — Starter €29/month",
++    description:
++      "Starter includes 300 source-video credits per month for €29. Sources up to 30 minutes, up to 3 requested clips per job, captions and no watermark.",
++  },
++  "/faq": {
++    title: "AI Clipping FAQ — Sources, Credits & Clip Quality",
++    description:
++      "Answers about ClipFactory's YouTube and Vimeo sources, pricing, video credits, captions, clip quality, cancellation and current pilot limitations.",
++  },
++  "/about": {
++    title: "About ClipFactory — Campaign-Based Video Clipping",
++    description:
++      "Meet the independent project behind ClipFactory. Learn why campaign briefs, source timestamps and clear editorial reasons shape our approach to AI video clipping.",
++  },
++  "/changelog": {
++    title: "Changelog — ClipFactory Product Updates",
++    description:
++      "Follow ClipFactory development: campaign briefs, clip selection, captions and the editing workflow. Read the scope and limitations of each product update.",
++  },
++  "/use-cases": {
++    title: "AI Clipping for Creators, Podcasts & Agencies",
++    description:
++      "Explore ways to turn interviews, video podcasts and webinars into short clips. Plan each series around an audience, a campaign goal and the source material.",
++  },
++  "/use-cases/creators": {
++    title: "AI Video Clipping for Creators & Podcasters",
++    description:
++      "Create a focused clip series from a YouTube or Vimeo video. Review captioned vertical cuts, source timestamps and editorial reasons before you publish.",
++  },
++  "/use-cases/agencies": {
++    title: "AI Video Clipping for Agencies & Content Teams",
++    description:
++      "Organize client videos around a campaign brief. Review short clips with captions, source evidence and explained scores, with source-minute pricing.",
++  },
++  "/vs/opusclip": {
++    title: "ClipFactory vs OpusClip — Compare the Workflows",
++    description:
++      "Compare ClipFactory's campaign-based review workflow with OpusClip's published clipping and editing tools. See the tradeoffs and a practical evaluation checklist.",
++  },
++  "/legal/terms": {
++    title: "Terms of Service",
++    description:
++      "Read ClipFactory's terms for the pilot service, accounts, source content, subscriptions and acceptable use before creating a campaign.",
++  },
++  "/legal/privacy": {
++    title: "Privacy Notice",
++    description:
++      "Read how ClipFactory handles account information, source videos and generated clips, including pilot limitations and requests for access or deletion.",
++  },
++} as const;
++
++export const NO_INDEX: Metadata["robots"] = {
++  index: false,
++  follow: false,
++  googleBot: { index: false, follow: false },
++};
++
++export function createPageMetadata(
++  path: string,
++  title: string,
++  description: string,
++  article = false,
++): Metadata {
++  const fullTitle = title.includes(SITE.name)
++    ? title
++    : `${title} | ${SITE.name}`;
++  const url = new URL(path, SITE.url).href;
++  return {
++    title: { absolute: fullTitle },
++    description,
++    alternates: { canonical: url },
++    openGraph: {
++      type: article ? "article" : "website",
++      locale: "en_US",
++      url,
++      title: fullTitle,
++      description,
++      siteName: SITE.name,
++      images: [
++        {
++          url: `${SITE.url}/opengraph-image`,
++          width: 1200,
++          height: 630,
++          alt: "ClipFactory — AI clip maker for long videos",
++        },
++      ],
++    },
++    twitter: {
++      card: "summary_large_image",
++      title: fullTitle,
++      description,
++      images: [`${SITE.url}/opengraph-image`],
++    },
++  };
++}
++
++export function pageMetadata(path: keyof typeof PUBLIC_PAGES): Metadata {
++  const page = PUBLIC_PAGES[path];
++  return createPageMetadata(path, page.title, page.description);
++}
+diff --git a/apps/web/public/google9773389826078f2e.html b/apps/web/public/google9773389826078f2e.html
+new file mode 100644
+index 0000000..1d686a1
+--- /dev/null
++++ b/apps/web/public/google9773389826078f2e.html
+@@ -0,0 +1 @@
++google-site-verification: google9773389826078f2e.html
+\ No newline at end of file
+diff --git a/apps/web/public/resources/clipping-tools-worksheet.csv b/apps/web/public/resources/clipping-tools-worksheet.csv
+new file mode 100644
+index 0000000..5f5ac47
+--- /dev/null
++++ b/apps/web/public/resources/clipping-tools-worksheet.csv
+@@ -0,0 +1 @@
++source_name,source_duration_minutes,campaign_audience,campaign_objective,tool,clip_reference,context_preserved,complete_ending,caption_corrections,framing_issues,processing_wait_minutes,active_review_minutes,active_editing_minutes,decision,decision_reason,allocated_tool_cost,currency
+diff --git a/scripts/seo-audit.py b/scripts/seo-audit.py
+new file mode 100644
+index 0000000..814754c
+--- /dev/null
++++ b/scripts/seo-audit.py
+@@ -0,0 +1,139 @@
++#!/usr/bin/env python3
++"""Audit the HTTP and server-rendered SEO contract without third-party packages."""
++import argparse
++import concurrent.futures
++import datetime
++from html.parser import HTMLParser
++import json
++import http.client
++from pathlib import Path
++import re
++import sys
++import urllib.error
++import urllib.parse
++import urllib.request
++import xml.etree.ElementTree as ET
++
++class Page(HTMLParser):
++    def __init__(self):
++        super().__init__(); self.meta = {}; self.canonicals = []; self.links = []; self.ids = set()
++        self.title = ''; self.h1 = []; self.json_ld = []; self.errors = []; self.visible = []
++        self.current_h1 = None; self.in_title = False; self.script = None; self.hidden_depth = 0
++    def handle_starttag(self, tag, attrs):
++        attrs = dict(attrs)
++        if attrs.get('id'): self.ids.add(attrs['id'])
++        if tag == 'html': self.lang = attrs.get('lang')
++        if tag == 'title': self.in_title = True
++        if tag == 'meta': self.meta[attrs.get('name', attrs.get('property', ''))] = attrs.get('content', '')
++        if tag == 'link' and attrs.get('rel') == 'canonical': self.canonicals.append(attrs.get('href'))
++        if tag == 'a' and attrs.get('href'): self.links.append(attrs['href'])
++        if tag == 'h1': self.current_h1 = ''
++        if tag in ('script', 'style'): self.hidden_depth += 1
++        if tag == 'script' and attrs.get('type') == 'application/ld+json': self.script = ''
++    def handle_endtag(self, tag):
++        if tag == 'title': self.in_title = False
++        if tag == 'h1' and self.current_h1 is not None:
++            self.h1.append(self.current_h1.strip()); self.current_h1 = None
++        if tag == 'script' and self.script is not None:
++            try: self.json_ld.append(json.loads(self.script))
++            except ValueError as error: self.errors.append(f'Invalid JSON-LD: {error}')
++            self.script = None
++        if tag in ('script', 'style'): self.hidden_depth = max(0, self.hidden_depth - 1)
++    def handle_data(self, text):
++        if self.in_title: self.title += text
++        if self.current_h1 is not None: self.current_h1 += text
++        if self.script is not None: self.script += text
++        if not self.hidden_depth: self.visible.append(text)
++
++def fetch(url):
++    request = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'})
++    try:
++        with urllib.request.urlopen(request, timeout=30) as response:
++            return response.status, dict(response.headers.items()), response.read(), response.url
++    except urllib.error.HTTPError as error:
++        return error.code, dict(error.headers.items()), error.read(), error.url
++    except (OSError, http.client.HTTPException) as error:
++        return 0, {}, str(error).encode(), url
++
++def main():
++    parser = argparse.ArgumentParser(); parser.add_argument('base'); parser.add_argument('--canonical-origin', required=True)
++    parser.add_argument('--out', required=True); parser.add_argument('--allow-deployment-noindex', action='store_true'); args = parser.parse_args()
++    base = args.base.rstrip('/'); origin = args.canonical_origin.rstrip('/'); problems = []
++    status, _, sitemap_body, _ = fetch(base + '/sitemap.xml')
++    if status != 200: raise RuntimeError(f'Sitemap HTTP {status}')
++    sitemap = ET.fromstring(sitemap_body); locs = [item.text for item in sitemap.findall('.//{*}loc')]
++    if not locs or len(locs) != len(set(locs)): problems.append('Empty or duplicate sitemap URLs')
++    if any(not url.startswith(origin + '/') for url in locs): problems.append('Sitemap references the wrong origin')
++    paths = [urllib.parse.urlparse(url).path or '/' for url in locs]
++    _, _, robots_body, _ = fetch(base + '/robots.txt'); robots = robots_body.decode()
++    if f'Sitemap: {origin}/sitemap.xml' not in robots: problems.append('robots.txt sitemap URL mismatch')
++    if re.search(r'^Disallow:\s*/\s*$', robots, re.M): problems.append('robots.txt blocks the entire site')
++    rows = []; documents = {}
++    def audit(path):
++        status, headers, body, final_url = fetch(base + path); headers = {key.lower(): value for key, value in headers.items()}
++        page = Page(); page.feed(body.decode('utf-8')); errors = page.errors[:]
++        expected = origin + path
++        if status != 200: errors.append(f'HTTP {status}')
++        if len(page.canonicals) != 1 or page.canonicals[0].rstrip('/') != expected.rstrip('/'): errors.append('Canonical mismatch')
++        if not page.title.strip(): errors.append('Missing title')
++        if not page.meta.get('description'): errors.append('Missing description')
++        if len(page.h1) != 1: errors.append(f'Expected one H1, got {len(page.h1)}')
++        if not getattr(page, 'lang', None): errors.append('Missing HTML language')
++        for key in ('robots', 'googlebot'):
++            if 'noindex' in page.meta.get(key, '').lower(): errors.append(f'{key} blocks indexing')
++        if 'noindex' in headers.get('x-robots-tag', '').lower() and not args.allow_deployment_noindex: errors.append('HTTP X-Robots-Tag blocks indexing')
++        if page.meta.get('og:url', '').rstrip('/') != expected.rstrip('/'): errors.append('Open Graph URL mismatch')
++        for key in ('og:title','og:description','twitter:title','twitter:description','og:image','twitter:image'):
++            if not page.meta.get(key): errors.append(f'Missing {key}')
++        for key in ('og:image', 'twitter:image'):
++            if not page.meta.get(key, '').startswith(origin + '/'): errors.append(f'{key} origin mismatch')
++        visible = ' '.join(' '.join(page.visible).split())
++        for data in page.json_ld:
++            if data.get('@type') == 'FAQPage':
++                for question in data.get('mainEntity', []):
++                    if ' '.join(question['name'].split()) not in visible: errors.append('FAQ question not present in server HTML')
++                    if ' '.join(question['acceptedAnswer']['text'].split()) not in visible: errors.append('FAQ answer not present in server HTML')
++        return path, page, {'path':path, 'status':status, 'title':page.title.strip(), 'description':page.meta.get('description'), 'canonical':page.canonicals, 'h1':page.h1, 'schema_types':[data.get('@type') for data in page.json_ld], 'errors':errors}
++    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
++        for path, page, row in pool.map(audit, paths): documents[path] = page; rows.append(row)
++    for key in ('title','description'):
++        seen = {}
++        for row in rows:
++            value = row[key]
++            if value in seen: problems.append(f'Duplicate {key}: {seen[value]} and {row["path"]}')
++            seen[value] = row['path']
++    internal_targets = set(); incoming = set()
++    for path, page in documents.items():
++        for href in page.links:
++            url = urllib.parse.urlparse(urllib.parse.urljoin(origin + path, href))
++            if url.netloc != urllib.parse.urlparse(origin).netloc: continue
++            target = url.path or '/'; internal_targets.add(target)
++            if target != path: incoming.add(target)
++            if url.fragment and target in documents and url.fragment not in documents[target].ids:
++                problems.append(f'Broken fragment on {path}: {href}')
++    for path in paths:
++        if path != '/' and path not in incoming: problems.append(f'No internal incoming link: {path}')
++    extra_checks = []
++    for path in sorted(internal_targets - set(paths)):
++        if path.startswith(('/app','/admin','/auth')): continue
++        status, _, _, _ = fetch(base + path)
++        extra_checks.append({'path':path,'status':status})
++        if status >= 400: problems.append(f'Internal link HTTP {status}: {path}')
++    for path in ['/login','/preview','/preview/journey']:
++        status, headers, body, _ = fetch(base + path); headers = {key.lower():value for key,value in headers.items()}
++        page = Page(); page.feed(body.decode('utf-8'))
++        if 'noindex' not in headers.get('x-robots-tag','') and 'noindex' not in page.meta.get('robots',''): problems.append(f'Private/demo route lacks noindex: {path}')
++    status, _, verification, _ = fetch(base + '/google9773389826078f2e.html')
++    if status != 200 or verification.decode().strip() != 'google-site-verification: google9773389826078f2e.html': problems.append('Google verification file missing or invalid')
++    for path in ['/seo-check-missing-page-404','/guides/seo-check-missing-guide-404']:
++        status, _, _, _ = fetch(base + path)
++        if status != 404: problems.append(f'Missing page must return 404: {path} -> {status}')
++    for path in ['/opengraph-image','/icon.svg']:
++        status, headers, body, _ = fetch(base + path)
++        if status != 200 or not body: problems.append(f'Share asset is unavailable: {path}')
++    problems.extend(f'{row["path"]}: {error}' for row in rows for error in row['errors'])
++    result = {'checked_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'base':base,'canonical_origin':origin,'page_count':len(rows),'pages':rows,'extra_internal_links':extra_checks,'errors':problems,'passed':not problems}
++    Path(args.out).parent.mkdir(parents=True,exist_ok=True); Path(args.out).write_text(json.dumps(result,ensure_ascii=False,indent=2))
++    print(json.dumps({'pages':len(rows),'passed':not problems,'errors':problems,'report':args.out},ensure_ascii=False,indent=2))
++    return 0 if not problems else 1
++if __name__ == '__main__': sys.exit(main())

@@ -1,3 +1,5 @@
+export const metadata = { robots: NO_INDEX };
+import { NO_INDEX } from "@/lib/seo";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LogOut } from "lucide-react";

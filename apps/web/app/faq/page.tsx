@@ -1,15 +1,10 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Container } from "@/components/ui/container";
 import { MarketingNav } from "@/components/marketing/nav";
 import { MarketingFooter } from "@/components/marketing/footer";
 import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/marketing/json-ld";
 
-export const metadata: Metadata = {
-  title: "AI clip maker FAQ — pricing, YouTube Shorts, Reels and TikToks",
-  description:
-    "Common questions about ClipFactory: AI video clipping, pricing, YouTube and Vimeo support, privacy, cancellation, watermarks and clip quality.",
-  alternates: { canonical: "/faq" },
-};
+export const metadata = pageMetadata("/faq");
 
 const FAQ: { q: string; a: string }[] = [
   {
@@ -85,7 +80,7 @@ export default function FaqPage() {
       />
       <FaqJsonLd items={FAQ} />
       <MarketingNav />
-      <main id="main-content" className="flex-1">
+      <main id="main-content" className="marketing-page flex-1">
         <Container className="max-w-3xl py-20">
           <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">
             FAQ

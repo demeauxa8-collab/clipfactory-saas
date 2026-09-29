@@ -1,0 +1,314 @@
+{
+  "checked_at": "2026-09-08T07:07:35.019354+00:00",
+  "base": "https://clipfactory-saas-gn2ozq40n-demeauxa8-1591s-projects.vercel.app",
+  "canonical_origin": "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app",
+  "page_count": 18,
+  "pages": [
+    {
+      "path": "/",
+      "status": 200,
+      "title": "AI Video Clipping Tool for Shorts, Reels & TikTok | ClipFactory",
+      "description": "Turn YouTube and Vimeo videos into vertical clips with captions. Set your campaign audience and goal, then review each cut and the reason it was selected.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app"
+      ],
+      "h1": [
+        "Find the cut the story was hiding."
+      ],
+      "schema_types": [
+        "Organization",
+        "WebSite",
+        "SoftwareApplication",
+        "FAQPage"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/features",
+      "status": 200,
+      "title": "AI Video Clipping, Captions & Campaign Scoring | ClipFactoryFrom long video to publish-ready vertical shorts",
+      "description": "Explore ClipFactory's campaign briefs, source context, multi-moment edits and captions. Review the selected timestamps and the reason behind each short clip.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/features"
+      ],
+      "h1": [
+        "Turn one long video into a series of clips that make sense."
+      ],
+      "schema_types": [
+        "BreadcrumbList"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/pricing",
+      "status": 200,
+      "title": "AI Video Clipping Pricing — Starter €29/month | ClipFactory",
+      "description": "Starter includes 300 source-video credits per month for €29. Sources up to 30 minutes, up to 3 requested clips per job, captions and no watermark.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/pricing"
+      ],
+      "h1": [
+        "Pricing for turning long videos into short clips."
+      ],
+      "schema_types": [
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/faq",
+      "status": 200,
+      "title": "AI Clipping FAQ — Sources, Credits & Clip Quality | ClipFactory",
+      "description": "Answers about ClipFactory's YouTube and Vimeo sources, pricing, video credits, captions, clip quality, cancellation and current pilot limitations.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/faq"
+      ],
+      "h1": [
+        "Common questions about AI video clipping."
+      ],
+      "schema_types": [
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/about",
+      "status": 200,
+      "title": "About ClipFactory — Campaign-Based Video Clipping",
+      "description": "Meet the independent project behind ClipFactory. Learn why campaign briefs, source timestamps and clear editorial reasons shape our approach to AI video clipping.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/about"
+      ],
+      "h1": [
+        "AI video clipping built for people who post every week."
+      ],
+      "schema_types": [
+        "BreadcrumbList"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/changelog",
+      "status": 200,
+      "title": "Changelog — ClipFactory Product Updates",
+      "description": "Follow ClipFactory development: campaign briefs, clip selection, captions and the editing workflow. Read the scope and limitations of each product update.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/changelog"
+      ],
+      "h1": [
+        "What's new."
+      ],
+      "schema_types": [
+        "BreadcrumbList"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/use-cases",
+      "status": 200,
+      "title": "AI Clipping for Creators, Podcasts & Agencies | ClipFactory",
+      "description": "Explore ways to turn interviews, video podcasts and webinars into short clips. Plan each series around an audience, a campaign goal and the source material.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/use-cases"
+      ],
+      "h1": [
+        "AI video clipping for creators and agencies."
+      ],
+      "schema_types": [
+        "BreadcrumbList"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/use-cases/creators",
+      "status": 200,
+      "title": "AI Video Clipping for Creators & Podcasters | ClipFactory",
+      "description": "Create a focused clip series from a YouTube or Vimeo video. Review captioned vertical cuts, source timestamps and editorial reasons before you publish.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/use-cases/creators"
+      ],
+      "h1": [
+        "Turn long videos and podcasts into Shorts, Reels and TikToks."
+      ],
+      "schema_types": [
+        "BreadcrumbList"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/use-cases/agencies",
+      "status": 200,
+      "title": "AI Video Clipping for Agencies & Content Teams | ClipFactory",
+      "description": "Organize client videos around a campaign brief. Review short clips with captions, source evidence and explained scores, with source-minute pricing.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/use-cases/agencies"
+      ],
+      "h1": [
+        "Turn client videos into short clips faster."
+      ],
+      "schema_types": [
+        "BreadcrumbList"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/vs/opusclip",
+      "status": 200,
+      "title": "ClipFactory vs OpusClip — Compare the Workflows",
+      "description": "Compare ClipFactory's campaign-based review workflow with OpusClip's published clipping and editing tools. See the tradeoffs and a practical evaluation checklist.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/vs/opusclip"
+      ],
+      "h1": [
+        "ClipFactory vs OpusClip"
+      ],
+      "schema_types": [
+        "BreadcrumbList"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/legal/terms",
+      "status": 200,
+      "title": "Terms of Service | ClipFactory",
+      "description": "Read ClipFactory's terms for the pilot service, accounts, source content, subscriptions and acceptable use before creating a campaign.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/legal/terms"
+      ],
+      "h1": [
+        "Terms of Service"
+      ],
+      "schema_types": [],
+      "errors": []
+    },
+    {
+      "path": "/legal/privacy",
+      "status": 200,
+      "title": "Privacy Notice | ClipFactory",
+      "description": "Read how ClipFactory handles account information, source videos and generated clips, including pilot limitations and requests for access or deletion.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/legal/privacy"
+      ],
+      "h1": [
+        "Privacy Policy"
+      ],
+      "schema_types": [],
+      "errors": []
+    },
+    {
+      "path": "/guides",
+      "status": 200,
+      "title": "Video Clipping Guides for Creators & Agencies | ClipFactory",
+      "description": "Practical guides to turning YouTube videos and podcasts into short clips. Choose complete moments, review captions and write a useful campaign brief.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/guides"
+      ],
+      "h1": [
+        "Good clips startbefore the cut."
+      ],
+      "schema_types": [
+        "BreadcrumbList"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/clipping-ia",
+      "status": 200,
+      "title": "Clipping IA : vos vidéos en Shorts, Reels et TikTok | ClipFactory",
+      "description": "ClipFactory transforme vos vidéos YouTube et Vimeo en clips verticaux sous-titrés. Définissez votre campagne, puis choisissez les extraits qui servent votre message.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/clipping-ia"
+      ],
+      "h1": [
+        "Clipping IA.Gardez le sens de la vidéo."
+      ],
+      "schema_types": [
+        "WebPage",
+        "BreadcrumbList"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/clipping-tools",
+      "status": 200,
+      "title": "AI Video Clipping Tools: Compare Workflows & Choose | ClipFactory",
+      "description": "Compare ClipFactory, OpusClip, Vizard and Descript by clipping workflow. Use a practical checklist and a downloadable worksheet to evaluate your own source video.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/clipping-tools"
+      ],
+      "h1": [
+        "AI clipping tools.Find your workflow."
+      ],
+      "schema_types": [
+        "Article",
+        "BreadcrumbList"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/guides/youtube-video-to-shorts",
+      "status": 200,
+      "title": "How to turn a YouTube video into Shorts | ClipFactory",
+      "description": "A practical workflow for choosing complete moments from a long YouTube video, checking the vertical crop, reviewing captions and preparing a short clip series.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/guides/youtube-video-to-shorts"
+      ],
+      "h1": [
+        "How to turn a YouTube video into Shorts"
+      ],
+      "schema_types": [
+        "Article",
+        "BreadcrumbList"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/guides/podcast-clips-for-social-media",
+      "status": 200,
+      "title": "How to choose podcast clips for social media | ClipFactory",
+      "description": "Build a podcast clip series with distinct ideas, enough context and a clear ending. Use a practical selection checklist for interviews and video podcasts.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/guides/podcast-clips-for-social-media"
+      ],
+      "h1": [
+        "How to choose podcast clips for social media"
+      ],
+      "schema_types": [
+        "Article",
+        "BreadcrumbList"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/guides/video-clipping-campaign-brief",
+      "status": 200,
+      "title": "How to write a brief for AI video clipping | ClipFactory",
+      "description": "Use a concrete campaign brief to guide AI clip selection. Define your audience, objective, tone and boundaries, with an example you can adapt to your next video.",
+      "canonical": [
+        "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/guides/video-clipping-campaign-brief"
+      ],
+      "h1": [
+        "How to write a brief for AI video clipping"
+      ],
+      "schema_types": [
+        "Article",
+        "BreadcrumbList"
+      ],
+      "errors": []
+    }
+  ],
+  "extra_internal_links": [
+    {
+      "path": "/login",
+      "status": 200
+    },
+    {
+      "path": "/resources/clipping-tools-worksheet.csv",
+      "status": 200
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

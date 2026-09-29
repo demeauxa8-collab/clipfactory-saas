@@ -1,0 +1,9 @@
+artifacts/
+scripts/
+docs/
+apps/api/
+apps/worker/
+apps/e2e/
+.claude/
+**/.env.local
+**/*.tsbuildinfo

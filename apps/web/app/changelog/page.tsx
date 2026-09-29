@@ -1,14 +1,10 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Container } from "@/components/ui/container";
 import { MarketingNav } from "@/components/marketing/nav";
 import { MarketingFooter } from "@/components/marketing/footer";
 import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
 
-export const metadata: Metadata = {
-  title: "Changelog",
-  description: "What's new in ClipFactory.",
-  alternates: { canonical: "/changelog" },
-};
+export const metadata = pageMetadata("/changelog");
 
 const ENTRIES: { date: string; title: string; body: string[] }[] = [
   {
@@ -43,7 +39,7 @@ export default function ChangelogPage() {
         ]}
       />
       <MarketingNav />
-      <main id="main-content" className="flex-1">
+      <main id="main-content" className="marketing-page flex-1">
         <Container className="max-w-3xl py-20">
           <p className="text-xs uppercase tracking-wider text-[var(--color-muted-foreground)]">
             Changelog

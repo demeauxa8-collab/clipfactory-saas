@@ -1,0 +1,22 @@
+[
+  {
+    "path": "/clipping-ia",
+    "viewport": 1440,
+    "result": "\"{\\\"width\\\":1440,\\\"documentWidth\\\":1440,\\\"h1\\\":\\\"Clipping IA.\\\\nGardez le sens de la vid\u00e9o.\\\",\\\"mainLanguage\\\":\\\"fr\\\"}\""
+  },
+  {
+    "path": "/clipping-ia",
+    "viewport": 390,
+    "result": "\"{\\\"width\\\":390,\\\"documentWidth\\\":390,\\\"h1\\\":\\\"Clipping IA.\\\\nGardez le sens de la vid\u00e9o.\\\",\\\"mainLanguage\\\":\\\"fr\\\"}\""
+  },
+  {
+    "path": "/clipping-tools",
+    "viewport": 1440,
+    "result": "\"{\\\"width\\\":1440,\\\"documentWidth\\\":1440,\\\"h1\\\":\\\"AI clipping tools.\\\\nFind your workflow.\\\",\\\"mainLanguage\\\":\\\"en\\\"}\""
+  },
+  {
+    "path": "/clipping-tools",
+    "viewport": 390,
+    "result": "\"{\\\"width\\\":390,\\\"documentWidth\\\":390,\\\"h1\\\":\\\"AI clipping tools.\\\\nFind your workflow.\\\",\\\"mainLanguage\\\":\\\"en\\\"}\""
+  }
+]

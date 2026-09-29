@@ -1,0 +1,69 @@
+{
+  "checked_at": "2026-09-12T14:07:35.700289+00:00",
+  "property": "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/",
+  "chrome_search_console_tabs_found": true,
+  "sitemaps_page_opened": true,
+  "sitemap_submitted_by_agent": false,
+  "indexing_requested_by_agent": false,
+  "blocking_condition": "On 2026-09-12, Google Search Console again rejected the clipping-ia indexing request with daily quota exceeded. No accepted request is confirmed.",
+  "public_audit": "production-follow-up.json",
+  "target_sitemap": "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app/sitemap.xml",
+  "mcp_chrome_tested": true,
+  "mac_session_locked": false,
+  "latest_public_audit": "production-2026-09-12.json",
+  "targeted_404_retry": "404-recheck-2026-09-11.json",
+  "mcp_chrome_connected": true,
+  "sitemap_already_submitted": true,
+  "sitemap_submission_date": "2026-09-08",
+  "sitemap_last_read": "2026-09-11",
+  "sitemap_status": "Opération effectuée",
+  "sitemap_discovered_pages": 18,
+  "indexing_request_attempted_by_agent": true,
+  "indexing_request_accepted_by_google": false,
+  "clipping_ia_index_status": "Not indexed: URL unknown to Google",
+  "coverage_report": "Data processing; Google asks to check again in about a day.",
+  "inspected_pages": {
+    "/": {
+      "indexed": false,
+      "reason": "Google ne reconnaît pas cette URL",
+      "last_crawl": null
+    },
+    "/clipping-ia": {
+      "indexed": false,
+      "reason": "Google ne reconnaît pas cette URL",
+      "last_crawl": null,
+      "checked_on": "2026-09-12"
+    },
+    "/clipping-tools": {
+      "indexed": false,
+      "reason": "Google ne reconnaît pas cette URL",
+      "last_crawl": null,
+      "checked_on": "2026-09-12"
+    }
+  },
+  "performance": {
+    "search_type": "Web",
+    "selected_period": "3 months",
+    "available_data_from": "2026-09-05",
+    "available_data_to": "2026-09-08",
+    "clicks": 0,
+    "impressions": 0,
+    "ranking": null,
+    "checked_on": "2026-09-11"
+  },
+  "retry_2026_09_12": {
+    "url": "/clipping-ia",
+    "attempted": true,
+    "accepted": false,
+    "result": "Quota dépassé",
+    "google_message": "Désolé, nous n’avons pas pu traiter cette demande, car vous avez dépassé votre quota quotidien. Veuillez réessayer de l’envoyer demain."
+  },
+  "last_verified_live_test": {
+    "date": "2026-09-11",
+    "path": "/clipping-tools",
+    "google_access": true,
+    "indexable": true,
+    "valid_breadcrumb_items": 1
+  },
+  "coverage_report_checked_on": "2026-09-11"
+}

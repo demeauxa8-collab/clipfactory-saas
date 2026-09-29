@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -14,20 +14,7 @@ import { MarketingFooter } from "@/components/marketing/footer";
 import { ClipMockup } from "@/components/marketing/clip-mockup";
 import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
 
-export const metadata: Metadata = {
-  title: "AI video clipping for agencies and content studios",
-  description:
-    "Help clients turn long videos into Shorts, Reels and TikToks faster. AI video clipping with client briefs, simple scores, captions, no watermark and predictable video-minute pricing.",
-  keywords: [
-    "AI clipping for agencies",
-    "content agency AI",
-    "white-label clipping",
-    "agency video editing AI",
-    "EU agency AI",
-    "client video clipping",
-  ],
-  alternates: { canonical: "/use-cases/agencies" },
-};
+export const metadata = pageMetadata("/use-cases/agencies");
 
 const PROBLEMS = [
   {
@@ -57,8 +44,8 @@ const SOLUTIONS = [
   },
   {
     icon: ShieldCheck,
-    title: "EU hosting, predictable billing.",
-    body: "1 minute of source = 1 credit. EU-hosted infrastructure for procurement-friendly contracts. Pass-through pricing that fits agency margin.",
+    title: "A visible source-minute budget.",
+    body: "1 minute of source = 1 credit. Review the pilot limits and current data-processing arrangements before using client footage.",
   },
 ];
 
@@ -68,12 +55,12 @@ export default function AgenciesUseCasePage() {
       <BreadcrumbJsonLd
         items={[
           { name: "Home", href: "/" },
-          { name: "Use cases", href: "/use-cases/agencies" },
+          { name: "Use cases", href: "/use-cases" },
           { name: "For agencies", href: "/use-cases/agencies" },
         ]}
       />
       <MarketingNav />
-      <main id="main-content" className="flex-1">
+      <main id="main-content" className="marketing-page flex-1">
         {/* Hero */}
         <section className="border-b border-[var(--color-border)]">
           <Container className="max-w-5xl py-20">

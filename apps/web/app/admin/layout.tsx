@@ -1,10 +1,11 @@
+import { NO_INDEX } from "@/lib/seo";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export const metadata = { title: "Admin" };
+export const metadata = { title: "Admin", robots: NO_INDEX };
 
 const NAV = [
   { href: "/admin", label: "Overview" },

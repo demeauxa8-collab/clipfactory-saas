@@ -1,0 +1,15 @@
+{
+  "menu_open": "\"true\"",
+  "escape": "\"{\\\"expanded\\\":\\\"false\\\",\\\"focus\\\":\\\"marketing-mobile-menu\\\"}\"",
+  "navigation": "\"{\\\"path\\\":\\\"/guides\\\",\\\"expanded\\\":\\\"false\\\"}\"",
+  "tools-table-mobile": "\"{\\\"width\\\":390,\\\"documentWidth\\\":390}\"",
+  "tools-table-desktop": "\"{\\\"width\\\":1440,\\\"documentWidth\\\":1440}\"",
+  "footer-mobile": "\"{\\\"width\\\":390,\\\"documentWidth\\\":390}\"",
+  "footer-desktop": "\"{\\\"width\\\":1440,\\\"documentWidth\\\":1440}\"",
+  "home-footer-mobile": "\"{\\\"width\\\":390,\\\"documentWidth\\\":390}\"",
+  "home-footer-desktop": "\"{\\\"width\\\":1440,\\\"documentWidth\\\":1440}\"",
+  "pricing-mobile": "\"{\\\"width\\\":390,\\\"documentWidth\\\":390}\"",
+  "pricing-desktop": "\"{\\\"width\\\":1440,\\\"documentWidth\\\":1440}\"",
+  "features-mobile": "\"{\\\"width\\\":390,\\\"documentWidth\\\":390}\"",
+  "features-desktop": "\"{\\\"width\\\":1440,\\\"documentWidth\\\":1440}\""
+}

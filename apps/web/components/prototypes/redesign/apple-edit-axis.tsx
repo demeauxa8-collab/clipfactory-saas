@@ -614,12 +614,12 @@ export function AppleEditAxis() {
             }}
           >
             <div className={styles.productEyebrow}>
-              <span /> Campaign Lens <small>Example analysis</small>
+              <span /> AI video clipping <small>Example analysis</small>
             </div>
             <h1 id="edit-axis-title">Find the cut the story was hiding.</h1>
             <p>
-              Scrub the source. The frame, transcript-grounded words and
-              campaign reason stay locked to the same moment.
+              Turn YouTube and Vimeo videos into Shorts, Reels and TikToks.
+              Set your campaign goal, then review captioned cuts and the reason behind each pick.
             </p>
             <div className={styles.heroActions}>
               <Link className={styles.primaryCta} href={startHref}>

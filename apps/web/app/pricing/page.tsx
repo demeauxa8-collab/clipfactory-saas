@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { Check, Minus } from "lucide-react";
 import { Container } from "@/components/ui/container";
@@ -7,23 +7,7 @@ import { MarketingNav } from "@/components/marketing/nav";
 import { MarketingFooter } from "@/components/marketing/footer";
 import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/marketing/json-ld";
 
-export const metadata: Metadata = {
-  title: "AI video clipping pricing — 29€/month, no watermark",
-  description:
-    "ClipFactory pricing starts at 29€ / month for 300 video minutes. Turn long videos into Shorts, Reels and TikToks with captions, no watermark, EU hosting and simple credits.",
-  keywords: [
-    "AI video clipping pricing",
-    "AI clip maker pricing",
-    "AI clipping pricing",
-    "AI clipper price",
-    "OpusClip alternative price",
-    "vertical short generator price",
-    "YouTube to Shorts pricing",
-    "European AI clipping",
-    "no watermark AI clipping",
-  ],
-  alternates: { canonical: "/pricing" },
-};
+export const metadata = pageMetadata("/pricing");
 
 const PRICING_FAQ = [
   {
@@ -140,7 +124,7 @@ export default function PricingPage() {
       />
       <FaqJsonLd items={PRICING_FAQ} />
       <MarketingNav />
-      <main id="main-content" className="flex-1">
+      <main id="main-content" className="marketing-page flex-1">
         <section className="border-b border-[var(--color-border)]">
           <Container className="max-w-5xl py-20">
             <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">

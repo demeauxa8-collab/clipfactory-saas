@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowRight, Building2, Lightbulb } from "lucide-react";
 import { Container } from "@/components/ui/container";
@@ -7,12 +7,7 @@ import { MarketingNav } from "@/components/marketing/nav";
 import { MarketingFooter } from "@/components/marketing/footer";
 import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
 
-export const metadata: Metadata = {
-  title: "AI video clipping use cases — creators, podcasts and agencies",
-  description:
-    "Use ClipFactory to turn long videos, podcasts, webinars and client footage into Shorts, Reels and TikToks with AI clipping, captions and no watermark.",
-  alternates: { canonical: "/use-cases" },
-};
+export const metadata = pageMetadata("/use-cases");
 
 const CASES = [
   {
@@ -39,7 +34,7 @@ export default function UseCasesIndexPage() {
         ]}
       />
       <MarketingNav />
-      <main id="main-content" className="flex-1">
+      <main id="main-content" className="marketing-page flex-1">
         <Container className="max-w-5xl py-20">
           <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
             Use cases

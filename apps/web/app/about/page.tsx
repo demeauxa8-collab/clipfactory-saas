@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowRight, Github, Mail, MapPin, ShieldCheck } from "lucide-react";
 import { Container } from "@/components/ui/container";
@@ -8,20 +8,7 @@ import { MarketingFooter } from "@/components/marketing/footer";
 import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
 import { SITE } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "About ClipFactory — AI video clipping for creators",
-  description: `Why ${SITE.name} exists, who builds it, and what we promise to creators, podcasters and agencies turning long videos into short clips.`,
-  keywords: [
-    "ClipFactory founders",
-    "AX Studio",
-    "independent AI SaaS",
-    "EU AI clipping",
-    "AI video clipping",
-    "AI clip maker",
-    "long video to shorts",
-  ],
-  alternates: { canonical: "/about" },
-};
+export const metadata = pageMetadata("/about");
 
 const PROMISES = [
   {
@@ -83,7 +70,7 @@ export default function AboutPage() {
         ]}
       />
       <MarketingNav />
-      <main id="main-content" className="flex-1">
+      <main id="main-content" className="marketing-page flex-1">
         {/* Intro */}
         <section className="border-b border-[var(--color-border)]">
           <Container className="max-w-3xl py-20">

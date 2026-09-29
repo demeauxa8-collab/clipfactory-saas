@@ -1,5 +1,8 @@
 export const SITE = {
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://clipfactory.app",
+  url: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
+      "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app",
+  ).origin,
   name: "ClipFactory",
   legalName: "ClipFactory",
   shortDescription:
@@ -7,42 +10,10 @@ export const SITE = {
   longDescription:
     "ClipFactory is an AI video clipping tool that turns long videos into a focused series of short vertical clips for TikTok, Instagram Reels and YouTube Shorts. Paste a YouTube or Vimeo link, explain who the clips are for and what the series should achieve, and ClipFactory finds strong moments, checks what happens on screen, connects moments when the edit needs it, adds captions and gives each clip a simple score.",
   tagline: "Long video in. Clip series out.",
-  twitter: "@clipfactoryapp",
   contactEmail: "hello@clipfactory.app",
   founder: "Augustin Demeaux",
   pricingFromEur: 29,
   freeTrialDays: 0,
-  keywords: [
-    "AI clipping tool",
-    "AI clip maker",
-    "AI video clip maker",
-    "AI video clipping",
-    "AI shorts generator",
-    "AI montage tool",
-    "AI vision video clipping",
-    "context-aware AI clipper",
-    "YouTube Shorts generator",
-    "AI clipping for marketing campaigns",
-    "YouTube to Shorts AI",
-    "podcast to shorts AI",
-    "webinar to shorts AI",
-    "interview to shorts AI",
-    "long video to shorts",
-    "AI viral clip generator",
-    "AI video editing for creators",
-    "AI shorts for agencies",
-    "explainable AI clipping score",
-    "vertical short generator",
-    "TikTok Reels Shorts generator",
-    "AI clip from long video",
-    "EU hosted AI clipping",
-    "campaign brief AI editor",
-    "narrative arcs AI clipping",
-    "multi-segment AI clipping",
-    "story-first AI shorts",
-    "AI montage long video",
-    "automatic vertical clip",
-  ],
 } as const;
 
 export const NAV_PRIMARY = [
@@ -50,5 +21,5 @@ export const NAV_PRIMARY = [
   { href: "/use-cases", label: "Use cases" },
   { href: "/pricing", label: "Pricing" },
   { href: "/vs/opusclip", label: "vs OpusClip" },
-  { href: "/about", label: "About" },
+  { href: "/guides", label: "Guides" },
 ] as const;

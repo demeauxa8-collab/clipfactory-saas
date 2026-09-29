@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
@@ -18,25 +18,7 @@ import {
   Target,
 } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "AI clip maker features — clip series, montage and video context",
-  description:
-    "How ClipFactory uses a clip series goal, full-video context, vision checks and multi-part montage to turn long videos into Shorts, Reels and TikToks with captions and simple scores.",
-  keywords: [
-    "AI clipping features",
-    "AI clip maker features",
-    "YouTube Shorts generator features",
-    "long video to shorts AI",
-    "AI montage tool",
-    "AI vision video clipping",
-    "context-aware AI clipper",
-    "story arcs AI clipping",
-    "explained AI clip score",
-    "vertical shorts generator",
-    "EU hosted AI",
-  ],
-  alternates: { canonical: "/features" },
-};
+export const metadata = pageMetadata("/features");
 
 const FEATURES = [
   {
@@ -132,7 +114,7 @@ export default function FeaturesPage() {
         ]}
       />
       <MarketingNav />
-      <main id="main-content" className="flex-1">
+      <main id="main-content" className="marketing-page flex-1">
         {/* Intro */}
         <section className="border-b border-[var(--color-border)]">
           <Container className="max-w-5xl py-20">

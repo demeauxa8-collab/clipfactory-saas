@@ -1,14 +1,15 @@
+import { pageMetadata } from "@/lib/seo";
 import { Container } from "@/components/ui/container";
 import { MarketingNav } from "@/components/marketing/nav";
 import { MarketingFooter } from "@/components/marketing/footer";
 
-export const metadata = { title: "Terms" };
+export const metadata = pageMetadata("/legal/terms");
 
 export default function TermsPage() {
   return (
     <>
       <MarketingNav />
-      <main id="main-content" className="flex-1">
+      <main id="main-content" className="marketing-page flex-1">
         <Container className="prose max-w-3xl py-16 text-[var(--color-foreground)]">
           <h1 className="text-3xl font-semibold tracking-tight">
             Terms of Service

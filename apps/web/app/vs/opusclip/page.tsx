@@ -1,85 +1,33 @@
-import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Check, X } from "lucide-react";
 import { Container } from "@/components/ui/container";
-import { Button } from "@/components/ui/button";
 import { MarketingNav } from "@/components/marketing/nav";
 import { MarketingFooter } from "@/components/marketing/footer";
-import { ComparisonTable } from "@/components/marketing/comparison-table";
-import { ClipMockup } from "@/components/marketing/clip-mockup";
-import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/marketing/json-ld";
+import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "ClipFactory vs OpusClip — clip series, context and montage",
-  description:
-    "Compare ClipFactory with OpusClip for turning long videos into a focused series of Shorts, Reels and TikToks. AI clipping with series goals, visual context, explained picks, montage and EU-first processing.",
-  keywords: [
-    "OpusClip alternative",
-    "ClipFactory vs OpusClip",
-    "best OpusClip alternative",
-    "OpusClip vs Vizard",
-    "AI clipping comparison",
-    "AI clip maker comparison",
-    "YouTube to Shorts AI",
-    "campaign-first AI clipping",
-    "OpusClip alternative EU",
-  ],
-  alternates: { canonical: "/vs/opusclip" },
-  openGraph: {
-    title: "ClipFactory vs OpusClip — AI clip maker for Shorts and Reels",
-    description:
-      "Side-by-side positioning: basic AI clipping versus explained clip selection with visual context.",
-    type: "article",
-  },
-};
+export const metadata = pageMetadata("/vs/opusclip");
 
-const FAQ = [
+const COMPARISON = [
   {
-    q: "Is ClipFactory a direct replacement for OpusClip?",
-    a: "For the core workflow, yes: paste a URL and get vertical clips. The difference is how clips are selected: ClipFactory uses your series goal, audience, the full video and what happens on screen, then explains each pick.",
+    topic: "Starting point",
+    clipfactory:
+      "A saved campaign brief: audience, objective, tone and topics to avoid.",
+    opus: "AI clipping with prompts to find specific moments using ClipBasic or ClipAnything.",
+    source: "https://help.opus.pro/docs/article/select-keywords",
   },
   {
-    q: "Why choose ClipFactory instead of a basic AI clipper?",
-    a: "If you only want lots of generic clips, a basic tool may be enough. ClipFactory is for creators, podcasters and agencies who want a smaller series of clips that fit a clear objective.",
+    topic: "Visual context",
+    clipfactory:
+      "Visual checks complement the transcript when selecting and reviewing a candidate.",
+    opus: "ClipAnything uses visual, audio and sentiment cues to find moments.",
+    source: "https://www.opus.pro/clipanything",
   },
   {
-    q: "Does ClipFactory have AI B-roll, like OpusClip?",
-    a: "Not in V1. The first job is to find the right moments in the source video. B-roll, transitions and AI sound design can come later.",
-  },
-  {
-    q: "Can I import my OpusClip projects?",
-    a: "Not yet. You create a simple brief from scratch. It takes about two minutes: audience, series goal, tone and topics to avoid.",
-  },
-  {
-    q: "Where is the data stored?",
-    a: "ClipFactory is designed around EU hosting: database in Frankfurt, storage in Europe and video processing in Germany. If data location matters for client work, verify every vendor's current policy before buying.",
-  },
-];
-
-const ROWS = [
-  {
-    cf: "Uses your audience, series goal, tone and topics to avoid.",
-    op: "Often focused on fast clip volume first. Context varies by product and plan.",
-  },
-  {
-    cf: "Looks across the whole video, so it can connect a setup at minute 2 with a payoff at minute 12.",
-    op: "Most clipping tools are strongest on one continuous timestamp.",
-  },
-  {
-    cf: "Explains the score: hook, emotion, visual proof, audience fit and editing difficulty.",
-    op: "Scoring is typically simpler and less tied to your audience.",
-  },
-  {
-    cf: "Checks the quote and moment before rendering. Fake moments are dropped.",
-    op: "Check the current vendor docs if verification is important for your workflow.",
-  },
-  {
-    cf: "EU-hosted (Frankfurt / Germany). Source deleted after 14 days, clips after 60.",
-    op: "Data region and retention depend on vendor policy. Verify before using client footage.",
-  },
-  {
-    cf: "No watermark on any plan.",
-    op: "Watermark rules depend on the current plan and promotion.",
+    topic: "Editing and publishing",
+    clipfactory:
+      "Review captioned vertical renders, source timestamps and editorial reasons, then download. Publishing and scheduling are manual in the current pilot.",
+    opus: "Its published editor includes caption editing, layouts, reframing and AI B-roll, with publishing and scheduling tools.",
+    source: "https://www.opus.pro/ai-video-editor",
   },
 ];
 
@@ -92,164 +40,168 @@ export default function VsOpusClipPage() {
           { name: "ClipFactory vs OpusClip", href: "/vs/opusclip" },
         ]}
       />
-      <FaqJsonLd items={FAQ} />
       <MarketingNav />
-      <main id="main-content" className="flex-1">
-        {/* Hero */}
-        <section className="border-b border-[var(--color-border)]">
-          <Container className="max-w-5xl py-20">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
-              Comparison
-            </p>
-            <h1 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">
-              ClipFactory vs OpusClip
-            </h1>
-            <p className="mt-4 max-w-2xl text-lg text-[var(--color-muted-foreground)]">
-              OpusClip made AI clipping popular. ClipFactory is built for
-              creators who want fewer random clips and a better series: clips
-              that understand the full video, the screen, and the objective.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/login">
-                <Button size="lg">
-                  Try ClipFactory
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-              <Link href="/pricing">
-                <Button size="lg" variant="secondary">
-                  See pricing
-                </Button>
-              </Link>
-            </div>
-            <p className="mt-3 text-xs text-[var(--color-muted-foreground)]">
-              No affiliation with OpusClip. Always check each vendor&apos;s
-              current docs before buying.
-            </p>
-          </Container>
-        </section>
-
-        {/* Comparison table — reusable */}
-        <ComparisonTable />
-
-        {/* Side-by-side detail */}
-        <section className="border-b border-[var(--color-border)]">
-          <Container className="max-w-5xl py-20">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
-              In plain words
-            </p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-              Six things we do differently.
+      <main id="main-content" className="marketing-page flex-1">
+        <Container className="max-w-5xl py-20">
+          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-foreground)]">
+            Workflow comparison
+          </p>
+          <h1 className="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">
+            ClipFactory vs OpusClip
+          </h1>
+          <p className="mt-6 max-w-3xl text-lg leading-relaxed text-[var(--color-muted-foreground)]">
+            Choosing an AI clipping tool starts with the work you need to
+            finish. ClipFactory is a pilot built around campaign briefs and
+            source-based editorial review. OpusClip describes a broader
+            clipping, editing and publishing workflow.
+          </p>
+          <p className="mt-4 text-sm text-[var(--color-muted-foreground)]">
+            Reviewed 6 September 2026. This comparison uses our current pilot
+            scope and the linked OpusClip product documentation. It is not a
+            performance benchmark. ClipFactory is independent of OpusClip.
+          </p>
+          <section className="mt-12" aria-labelledby="workflow-comparison">
+            <h2 id="workflow-comparison" className="text-2xl font-semibold">
+              Compare the workflow you will actually use
             </h2>
-            <ol className="mt-12 space-y-6">
-              {ROWS.map((r, i) => (
-                <li
-                  key={i}
-                  className="grid gap-4 rounded-lg border border-[var(--color-border)] p-6 md:grid-cols-2"
-                >
-                  <div className="rounded-md border-l-4 border-[var(--color-brand)] bg-[var(--color-brand-soft)]/30 p-4">
-                    <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
-                      <Check className="h-4 w-4" /> ClipFactory
-                    </div>
-                    <p className="text-sm">{r.cf}</p>
-                  </div>
-                  <div className="rounded-md border-l-4 border-[var(--color-border)] bg-[var(--color-muted)] p-4">
-                    <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-foreground)]">
-                      <X className="h-4 w-4" /> OpusClip
-                    </div>
-                    <p className="text-sm text-[var(--color-muted-foreground)]">
-                      {r.op}
-                    </p>
-                  </div>
-                </li>
-              ))}
+            <div
+              className="mt-6 overflow-x-auto rounded-xl border border-[var(--color-border)]"
+              role="region"
+              aria-label="Workflow comparison table"
+              tabIndex={0}
+            >
+              <table className="w-full min-w-[40rem] text-left text-sm leading-relaxed">
+                <caption className="sr-only">
+                  ClipFactory pilot compared with OpusClip's documented workflow
+                </caption>
+                <thead className="bg-[var(--color-muted)]">
+                  <tr>
+                    <th scope="col" className="p-5">
+                      Area
+                    </th>
+                    <th scope="col" className="p-5">
+                      ClipFactory
+                    </th>
+                    <th scope="col" className="p-5">
+                      OpusClip
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISON.map((row) => (
+                    <tr
+                      key={row.topic}
+                      className="border-t border-[var(--color-border)]"
+                    >
+                      <th scope="row" className="p-5 align-top font-medium">
+                        {row.topic}
+                      </th>
+                      <td className="p-5 align-top text-[var(--color-muted-foreground)]">
+                        {row.clipfactory}
+                      </td>
+                      <td className="p-5 align-top text-[var(--color-muted-foreground)]">
+                        {row.opus}{" "}
+                        <a
+                          className="text-[var(--color-foreground)] underline underline-offset-4"
+                          href={row.source}
+                        >
+                          Source: OpusClip
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+          <section className="mt-12 max-w-3xl">
+            <h2 className="text-2xl font-semibold">
+              When to evaluate ClipFactory
+            </h2>
+            <p className="mt-5 leading-relaxed text-[var(--color-muted-foreground)]">
+              Consider the pilot if you want to keep a campaign brief attached
+              to each source and review why a small set of moments was chosen.
+              Starter accepts accessible YouTube and Vimeo URLs up to 30
+              minutes, with up to three requested clips per job. Quality checks
+              can return fewer clips.
+            </p>
+            <p className="mt-5 leading-relaxed text-[var(--color-muted-foreground)]">
+              The current offer does not include direct file upload, team
+              workspaces, AI B-roll or automatic social publishing. Check the{" "}
+              <Link
+                className="text-[var(--color-foreground)] underline underline-offset-4"
+                href="/faq"
+              >
+                pilot FAQ
+              </Link>{" "}
+              and{" "}
+              <Link
+                className="text-[var(--color-foreground)] underline underline-offset-4"
+                href="/pricing"
+              >
+                pricing
+              </Link>{" "}
+              before choosing it for a client workflow.
+            </p>
+          </section>
+          <section className="mt-12 max-w-3xl">
+            <h2 className="text-2xl font-semibold">
+              When to evaluate OpusClip
+            </h2>
+            <p className="mt-5 leading-relaxed text-[var(--color-muted-foreground)]">
+              Include OpusClip in your evaluation if you need the editing and
+              publishing tools described in its product documentation. Feature
+              access and source limits can depend on the current plan. Review
+              the vendor's live offer rather than assuming that every feature is
+              included in every subscription.
+            </p>
+            <p className="mt-5 leading-relaxed text-[var(--color-muted-foreground)]">
+              Visual understanding is not an exclusive ClipFactory feature:
+              OpusClip also describes multimodal clipping. Your own source
+              footage and review requirements are more useful evaluation
+              criteria than a generic claim that one tool produces better clips.
+            </p>
+          </section>
+          <section className="mt-12 max-w-3xl">
+            <h2 className="text-2xl font-semibold">
+              Run the same editorial test in both tools
+            </h2>
+            <ol className="mt-6 list-decimal space-y-4 pl-5 leading-relaxed text-[var(--color-muted-foreground)]">
+              <li>
+                Choose one source you can review against the original recording.
+              </li>
+              <li>
+                Write the same audience, objective and topic boundaries for both
+                workflows.
+              </li>
+              <li>
+                Check whether each clip makes sense without the full episode and
+                preserves the speaker's meaning.
+              </li>
+              <li>
+                Inspect captions, speaker changes, vertical framing and the
+                final ending.
+              </li>
+              <li>
+                Record how many clips you would publish and how much manual
+                correction they need.
+              </li>
             </ol>
-          </Container>
-        </section>
-
-        {/* Output mockup */}
-        <section className="border-b border-[var(--color-border)] bg-[var(--color-muted)]">
-          <Container className="max-w-5xl py-20">
-            <div className="grid items-center gap-12 md:grid-cols-2">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
-                  What you ship
-                </p>
-                <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-                  Each clip explains why it belongs.
-                </h2>
-                <p className="mt-4 text-[var(--color-muted-foreground)]">
-                  No mystery number. Five components, each with a reason. When
-                  you tell a client why this clip fits the series and another
-                  one does not, you show the breakdown, not a vibe.
-                </p>
-                <Link href="/features" className="mt-6 inline-flex">
-                  <Button variant="secondary">
-                    See the full feature list
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-              </div>
-              <ClipMockup
-                title="The reframe that doubled their close rate"
-                hook="They didn't change the offer. They changed the question."
-                total={89}
-                segments={[
-                  { role: "setup", range: "03:42 → 04:05" },
-                  { role: "payoff", range: "16:20 → 16:48" },
-                ]}
-                scores={[
-                  { label: "Hook", value: 92 },
-                  { label: "Emotion", value: 85 },
-                  { label: "Visual", value: 87 },
-                  { label: "Fit", value: 94 },
-                  { label: "Editing", value: 80 },
-                ]}
-              />
-            </div>
-          </Container>
-        </section>
-
-        {/* FAQ */}
-        <section className="border-b border-[var(--color-border)]">
-          <Container className="max-w-3xl py-20">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
-              FAQ
+            <p className="mt-6 leading-relaxed text-[var(--color-muted-foreground)]">
+              This is an evaluation method, not a claim that we have run a
+              comparative benchmark. A selection score does not guarantee views
+              or campaign results.
             </p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-              Honest answers about switching.
-            </h2>
-            <dl className="mt-10 divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
-              {FAQ.map((item) => (
-                <div key={item.q} className="py-6">
-                  <dt className="text-base font-medium">{item.q}</dt>
-                  <dd className="mt-2 text-sm text-[var(--color-muted-foreground)]">
-                    {item.a}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </Container>
-        </section>
-
-        {/* CTA */}
-        <section>
-          <Container className="max-w-3xl py-20 text-center">
-            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
-              Try it on the same video you&apos;d ship to OpusClip.
-            </h2>
-            <p className="mt-3 text-[var(--color-muted-foreground)]">
-              Same URL, same long video. Different clip series. Free to start,
-              29€/mo once you like the picks.
+            <p className="mt-8">
+              <Link
+                className="font-medium underline underline-offset-4"
+                href="/guides/video-clipping-campaign-brief"
+              >
+                Write your evaluation brief →
+              </Link>
             </p>
-            <Link href="/login" className="mt-8 inline-flex">
-              <Button size="lg">
-                Start clipping
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </Container>
-        </section>
+          </section>
+        </Container>
       </main>
       <MarketingFooter />
     </>

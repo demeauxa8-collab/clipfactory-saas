@@ -1,0 +1,364 @@
+{
+  "checked_at": "2026-09-06T15:18:03.151763+00:00",
+  "base": "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app",
+  "canonical_origin": "https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app",
+  "page_count": 12,
+  "pages": [
+    {
+      "path": "/",
+      "status": 200,
+      "title": "AI clip maker for clip series, Shorts, Reels and TikToks — ClipFactory",
+      "description": "Turn long videos, podcasts, webinars and interviews into campaign-shaped vertical clips with transcript-grounded evidence, visual context and clear editorial reasoning.",
+      "canonical": [
+        "https://clipfactory.app"
+      ],
+      "h1": [
+        "Find the cut the story was hiding."
+      ],
+      "schema_types": [
+        "Organization",
+        "SoftwareApplication",
+        "FAQPage"
+      ],
+      "errors": [
+        "Canonical mismatch",
+        "HTTP X-Robots-Tag blocks indexing",
+        "Open Graph URL mismatch",
+        "og:image origin mismatch",
+        "twitter:image origin mismatch",
+        "FAQ question not present in server HTML",
+        "FAQ answer not present in server HTML",
+        "FAQ question not present in server HTML",
+        "FAQ answer not present in server HTML",
+        "FAQ question not present in server HTML",
+        "FAQ answer not present in server HTML",
+        "FAQ question not present in server HTML",
+        "FAQ answer not present in server HTML"
+      ]
+    },
+    {
+      "path": "/features",
+      "status": 200,
+      "title": "AI clip maker features — clip series, montage and video context · ClipFactoryFrom long video to publish-ready vertical shorts",
+      "description": "How ClipFactory uses a clip series goal, full-video context, vision checks and multi-part montage to turn long videos into Shorts, Reels and TikToks with captions and simple scores.",
+      "canonical": [
+        "https://clipfactory.app/features"
+      ],
+      "h1": [
+        "Turn one long video into a series of clips that make sense."
+      ],
+      "schema_types": [
+        "BreadcrumbList"
+      ],
+      "errors": [
+        "Canonical mismatch",
+        "HTTP X-Robots-Tag blocks indexing",
+        "Open Graph URL mismatch",
+        "og:image origin mismatch",
+        "twitter:image origin mismatch"
+      ]
+    },
+    {
+      "path": "/pricing",
+      "status": 200,
+      "title": "AI video clipping pricing — 29€/month, no watermark · ClipFactory",
+      "description": "ClipFactory pricing starts at 29€ / month for 300 video minutes. Turn long videos into Shorts, Reels and TikToks with captions, no watermark, EU hosting and simple credits.",
+      "canonical": [
+        "https://clipfactory.app/pricing"
+      ],
+      "h1": [
+        "Pricing for turning long videos into short clips."
+      ],
+      "schema_types": [
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "errors": [
+        "Canonical mismatch",
+        "HTTP X-Robots-Tag blocks indexing",
+        "Open Graph URL mismatch",
+        "og:image origin mismatch",
+        "twitter:image origin mismatch"
+      ]
+    },
+    {
+      "path": "/vs/opusclip",
+      "status": 200,
+      "title": "ClipFactory vs OpusClip — clip series, context and montage · ClipFactory",
+      "description": "Compare ClipFactory with OpusClip for turning long videos into a focused series of Shorts, Reels and TikToks. AI clipping with series goals, visual context, explained picks, montage and EU-first processing.",
+      "canonical": [
+        "https://clipfactory.app/vs/opusclip"
+      ],
+      "h1": [
+        "ClipFactory vs OpusClip"
+      ],
+      "schema_types": [
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "errors": [
+        "Canonical mismatch",
+        "HTTP X-Robots-Tag blocks indexing",
+        "Open Graph URL mismatch",
+        "Missing og:image",
+        "og:image origin mismatch",
+        "twitter:image origin mismatch"
+      ]
+    },
+    {
+      "path": "/use-cases",
+      "status": 200,
+      "title": "AI video clipping use cases — creators, podcasts and agencies · ClipFactory",
+      "description": "Use ClipFactory to turn long videos, podcasts, webinars and client footage into Shorts, Reels and TikToks with AI clipping, captions and no watermark.",
+      "canonical": [
+        "https://clipfactory.app/use-cases"
+      ],
+      "h1": [
+        "AI video clipping for creators and agencies."
+      ],
+      "schema_types": [
+        "BreadcrumbList"
+      ],
+      "errors": [
+        "Canonical mismatch",
+        "HTTP X-Robots-Tag blocks indexing",
+        "Open Graph URL mismatch",
+        "og:image origin mismatch",
+        "twitter:image origin mismatch"
+      ]
+    },
+    {
+      "path": "/use-cases/creators",
+      "status": 200,
+      "title": "AI clipping for creators and podcasters — turn episodes into Shorts · ClipFactory",
+      "description": "Turn long YouTube videos, podcasts, interviews and webinars into Shorts, Reels and TikToks with AI clipping, captions, simple scores and no watermark.",
+      "canonical": [
+        "https://clipfactory.app/use-cases/creators"
+      ],
+      "h1": [
+        "Turn long videos and podcasts into Shorts, Reels and TikToks."
+      ],
+      "schema_types": [
+        "BreadcrumbList"
+      ],
+      "errors": [
+        "Canonical mismatch",
+        "HTTP X-Robots-Tag blocks indexing",
+        "Open Graph URL mismatch",
+        "og:image origin mismatch",
+        "twitter:image origin mismatch"
+      ]
+    },
+    {
+      "path": "/use-cases/agencies",
+      "status": 200,
+      "title": "AI video clipping for agencies and content studios · ClipFactory",
+      "description": "Help clients turn long videos into Shorts, Reels and TikToks faster. AI video clipping with client briefs, simple scores, captions, no watermark and predictable video-minute pricing.",
+      "canonical": [
+        "https://clipfactory.app/use-cases/agencies"
+      ],
+      "h1": [
+        "Turn client videos into short clips faster."
+      ],
+      "schema_types": [
+        "BreadcrumbList"
+      ],
+      "errors": [
+        "Canonical mismatch",
+        "HTTP X-Robots-Tag blocks indexing",
+        "Open Graph URL mismatch",
+        "og:image origin mismatch",
+        "twitter:image origin mismatch"
+      ]
+    },
+    {
+      "path": "/faq",
+      "status": 200,
+      "title": "AI clip maker FAQ — pricing, YouTube Shorts, Reels and TikToks · ClipFactory",
+      "description": "Common questions about ClipFactory: AI video clipping, pricing, YouTube and Vimeo support, privacy, cancellation, watermarks and clip quality.",
+      "canonical": [
+        "https://clipfactory.app/faq"
+      ],
+      "h1": [
+        "Common questions about AI video clipping."
+      ],
+      "schema_types": [
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "errors": [
+        "Canonical mismatch",
+        "HTTP X-Robots-Tag blocks indexing",
+        "Open Graph URL mismatch",
+        "og:image origin mismatch",
+        "twitter:image origin mismatch"
+      ]
+    },
+    {
+      "path": "/about",
+      "status": 200,
+      "title": "About ClipFactory — AI video clipping for creators · ClipFactory",
+      "description": "Why ClipFactory exists, who builds it, and what we promise to creators, podcasters and agencies turning long videos into short clips.",
+      "canonical": [
+        "https://clipfactory.app/about"
+      ],
+      "h1": [
+        "AI video clipping built for people who post every week."
+      ],
+      "schema_types": [
+        "BreadcrumbList"
+      ],
+      "errors": [
+        "Canonical mismatch",
+        "HTTP X-Robots-Tag blocks indexing",
+        "Open Graph URL mismatch",
+        "og:image origin mismatch",
+        "twitter:image origin mismatch"
+      ]
+    },
+    {
+      "path": "/changelog",
+      "status": 200,
+      "title": "Changelog · ClipFactory",
+      "description": "What's new in ClipFactory.",
+      "canonical": [
+        "https://clipfactory.app/changelog"
+      ],
+      "h1": [
+        "What's new."
+      ],
+      "schema_types": [
+        "BreadcrumbList"
+      ],
+      "errors": [
+        "Canonical mismatch",
+        "HTTP X-Robots-Tag blocks indexing",
+        "Open Graph URL mismatch",
+        "og:image origin mismatch",
+        "twitter:image origin mismatch"
+      ]
+    },
+    {
+      "path": "/legal/terms",
+      "status": 200,
+      "title": "Terms · ClipFactory",
+      "description": "AI clip maker for creators. Turn long YouTube videos, podcasts, webinars and interviews into a focused series of Shorts, Reels and TikToks.",
+      "canonical": [
+        "https://clipfactory.app"
+      ],
+      "h1": [
+        "Terms of Service"
+      ],
+      "schema_types": [],
+      "errors": [
+        "Canonical mismatch",
+        "HTTP X-Robots-Tag blocks indexing",
+        "Open Graph URL mismatch",
+        "og:image origin mismatch",
+        "twitter:image origin mismatch"
+      ]
+    },
+    {
+      "path": "/legal/privacy",
+      "status": 200,
+      "title": "Privacy · ClipFactory",
+      "description": "AI clip maker for creators. Turn long YouTube videos, podcasts, webinars and interviews into a focused series of Shorts, Reels and TikToks.",
+      "canonical": [
+        "https://clipfactory.app"
+      ],
+      "h1": [
+        "Privacy Policy"
+      ],
+      "schema_types": [],
+      "errors": [
+        "Canonical mismatch",
+        "HTTP X-Robots-Tag blocks indexing",
+        "Open Graph URL mismatch",
+        "og:image origin mismatch",
+        "twitter:image origin mismatch"
+      ]
+    }
+  ],
+  "extra_internal_links": [
+    {
+      "path": "/login",
+      "status": 200
+    }
+  ],
+  "errors": [
+    "Sitemap references the wrong origin",
+    "robots.txt sitemap URL mismatch",
+    "Duplicate description: /legal/terms and /legal/privacy",
+    "Share asset is unavailable: /opengraph-image",
+    "/: Canonical mismatch",
+    "/: HTTP X-Robots-Tag blocks indexing",
+    "/: Open Graph URL mismatch",
+    "/: og:image origin mismatch",
+    "/: twitter:image origin mismatch",
+    "/: FAQ question not present in server HTML",
+    "/: FAQ answer not present in server HTML",
+    "/: FAQ question not present in server HTML",
+    "/: FAQ answer not present in server HTML",
+    "/: FAQ question not present in server HTML",
+    "/: FAQ answer not present in server HTML",
+    "/: FAQ question not present in server HTML",
+    "/: FAQ answer not present in server HTML",
+    "/features: Canonical mismatch",
+    "/features: HTTP X-Robots-Tag blocks indexing",
+    "/features: Open Graph URL mismatch",
+    "/features: og:image origin mismatch",
+    "/features: twitter:image origin mismatch",
+    "/pricing: Canonical mismatch",
+    "/pricing: HTTP X-Robots-Tag blocks indexing",
+    "/pricing: Open Graph URL mismatch",
+    "/pricing: og:image origin mismatch",
+    "/pricing: twitter:image origin mismatch",
+    "/vs/opusclip: Canonical mismatch",
+    "/vs/opusclip: HTTP X-Robots-Tag blocks indexing",
+    "/vs/opusclip: Open Graph URL mismatch",
+    "/vs/opusclip: Missing og:image",
+    "/vs/opusclip: og:image origin mismatch",
+    "/vs/opusclip: twitter:image origin mismatch",
+    "/use-cases: Canonical mismatch",
+    "/use-cases: HTTP X-Robots-Tag blocks indexing",
+    "/use-cases: Open Graph URL mismatch",
+    "/use-cases: og:image origin mismatch",
+    "/use-cases: twitter:image origin mismatch",
+    "/use-cases/creators: Canonical mismatch",
+    "/use-cases/creators: HTTP X-Robots-Tag blocks indexing",
+    "/use-cases/creators: Open Graph URL mismatch",
+    "/use-cases/creators: og:image origin mismatch",
+    "/use-cases/creators: twitter:image origin mismatch",
+    "/use-cases/agencies: Canonical mismatch",
+    "/use-cases/agencies: HTTP X-Robots-Tag blocks indexing",
+    "/use-cases/agencies: Open Graph URL mismatch",
+    "/use-cases/agencies: og:image origin mismatch",
+    "/use-cases/agencies: twitter:image origin mismatch",
+    "/faq: Canonical mismatch",
+    "/faq: HTTP X-Robots-Tag blocks indexing",
+    "/faq: Open Graph URL mismatch",
+    "/faq: og:image origin mismatch",
+    "/faq: twitter:image origin mismatch",
+    "/about: Canonical mismatch",
+    "/about: HTTP X-Robots-Tag blocks indexing",
+    "/about: Open Graph URL mismatch",
+    "/about: og:image origin mismatch",
+    "/about: twitter:image origin mismatch",
+    "/changelog: Canonical mismatch",
+    "/changelog: HTTP X-Robots-Tag blocks indexing",
+    "/changelog: Open Graph URL mismatch",
+    "/changelog: og:image origin mismatch",
+    "/changelog: twitter:image origin mismatch",
+    "/legal/terms: Canonical mismatch",
+    "/legal/terms: HTTP X-Robots-Tag blocks indexing",
+    "/legal/terms: Open Graph URL mismatch",
+    "/legal/terms: og:image origin mismatch",
+    "/legal/terms: twitter:image origin mismatch",
+    "/legal/privacy: Canonical mismatch",
+    "/legal/privacy: HTTP X-Robots-Tag blocks indexing",
+    "/legal/privacy: Open Graph URL mismatch",
+    "/legal/privacy: og:image origin mismatch",
+    "/legal/privacy: twitter:image origin mismatch"
+  ],
+  "passed": false
+}

@@ -1,4 +1,15 @@
+> Mise à jour SEO / UI du 8 septembre 2026 : les 18 pages publiques sont en ligne sur le déploiement `dpl_Eij1NPuT8pPADkb9gGvWexECmtU3`. Navigation et pied de page alignés sur Edit Axis ; nouvelles pages `/clipping-ia` (français) et `/clipping-tools` (anglais). Travail conservé dans `/Users/augustindemeaux/clipfactory-seo`, branche `codex/seo-vercel-2026-09-06`, sans commit/push. Rapport actuel : `artifacts/seo/rapport-seo.md`. Un déploiement automatique depuis l'ancien `main` peut remplacer cette version : intégrer le chantier au flux Git autorisé avant de redéployer une autre branche.
+
 # Handoff Codex — ClipFactory SaaS V1
+
+## SEO — intervention du 6 septembre 2026
+
+Le chantier `codex/seo-vercel-2026-09-06` part de la refonte réellement publiée, dans `/Users/augustindemeaux/clipfactory-seo`. L'adresse canonique est désormais celle de la propriété Search Console validée : `https://clipfactory-saas-demeauxa8-1591s-projects.vercel.app`. Le domaine a été rattaché à la production pour enlever le `noindex` ajouté par Vercel ; le fichier Google existant est conservé.
+
+Publication vérifiée : `dpl_9bDmkjGEnfFgFmh6J245Ufp21h3J` (READY). Audit HTTP/HTML : 16/16 pages publiques. Lighthouse mobile public : accueil 96/100 en performance et 100/100 dans les autres catégories ; guides 100/100 partout. Aucun commit ni push effectué. Soumission du sitemap dans Search Console non réalisée par l’agent sans session Google.
+
+16 pages publiques : 12 existantes corrigées et 4 pages de guides. Référence d'exploitation : [seo.md](seo.md). Résultats détaillés : `artifacts/seo`. Les contrôles SEO ne valident pas le backend vidéo ni la facturation. Préserver le fichier `public/google9773389826078f2e.html` et intégrer la branche SEO au flux Git autorisé avant tout futur déploiement automatique de `main`.
+
 
 > **Pour Codex (ou tout autre agent) qui reprend ce projet sans contexte.**
 > Tout ce qu'il faut savoir tient dans ce doc + les docs cités ci-dessous.

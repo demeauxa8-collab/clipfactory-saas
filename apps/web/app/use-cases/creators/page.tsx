@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -16,20 +16,7 @@ import { ClipMockup } from "@/components/marketing/clip-mockup";
 import { ExampleArc } from "@/components/marketing/example-arc";
 import { BreadcrumbJsonLd } from "@/components/marketing/json-ld";
 
-export const metadata: Metadata = {
-  title: "AI clipping for creators and podcasters — turn episodes into Shorts",
-  description:
-    "Turn long YouTube videos, podcasts, interviews and webinars into Shorts, Reels and TikToks with AI clipping, captions, simple scores and no watermark.",
-  keywords: [
-    "AI clipping for creators",
-    "AI clipping for podcasters",
-    "YouTube to Shorts AI",
-    "podcast to TikTok AI",
-    "long video to vertical shorts",
-    "EU AI clipping",
-  ],
-  alternates: { canonical: "/use-cases/creators" },
-};
+export const metadata = pageMetadata("/use-cases/creators");
 
 const STORY = [
   {
@@ -62,12 +49,12 @@ export default function CreatorsUseCasePage() {
       <BreadcrumbJsonLd
         items={[
           { name: "Home", href: "/" },
-          { name: "Use cases", href: "/use-cases/creators" },
+          { name: "Use cases", href: "/use-cases" },
           { name: "For creators", href: "/use-cases/creators" },
         ]}
       />
       <MarketingNav />
-      <main id="main-content" className="flex-1">
+      <main id="main-content" className="marketing-page flex-1">
         {/* Hero */}
         <section className="border-b border-[var(--color-border)]">
           <Container className="max-w-5xl py-20">

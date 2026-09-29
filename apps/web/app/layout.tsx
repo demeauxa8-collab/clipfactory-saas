@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { SITE } from "@/lib/site";
+import { NO_INDEX } from "@/lib/seo";
 import { Analytics } from "@/components/analytics";
 import "./globals.css";
 import "./product.css";
+import "./marketing.css";
 
 // Inter is the cross-platform fallback behind San Francisco (set in globals.css).
 // The former Fraunces serif display is dropped — clean SF sans only, Apple-style.
@@ -24,11 +26,7 @@ export const metadata: Metadata = {
   authors: [{ name: SITE.founder }],
   creator: SITE.founder,
   publisher: SITE.name,
-  keywords: [...SITE.keywords],
   category: "Software",
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -44,14 +42,26 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE.name,
     description: SITE.shortDescription,
-    creator: SITE.twitter,
     images: ["/opengraph-image"],
   },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+    other: process.env.BING_SITE_VERIFICATION
+      ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
+      : undefined,
   },
+  robots:
+    process.env.VERCEL_ENV === "preview"
+      ? NO_INDEX
+      : {
+          index: true,
+          follow: true,
+          googleBot: {
+            index: true,
+            follow: true,
+            "max-image-preview": "large",
+          },
+        },
   icons: {
     icon: "/icon.svg",
   },

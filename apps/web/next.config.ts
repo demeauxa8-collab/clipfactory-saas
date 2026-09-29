@@ -31,6 +31,17 @@ const config: NextConfig = {
   typedRoutes: true,
   async headers() {
     return [
+      ...[
+        "/app/:path*",
+        "/admin/:path*",
+        "/auth/:path*",
+        "/api/:path*",
+        "/login",
+        "/preview/:path*",
+      ].map((source) => ({
+        source,
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      })),
       {
         source: "/(.*)",
         headers: [

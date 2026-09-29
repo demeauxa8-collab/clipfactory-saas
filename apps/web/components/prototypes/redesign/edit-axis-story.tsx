@@ -1,5 +1,9 @@
 "use client";
 
+import { MarketingFooter } from "@/components/marketing/footer";
+
+import { HOME_FAQ as FAQ } from "@/lib/home-faq";
+
 import {
   AlertCircle,
   ArrowRight,
@@ -107,38 +111,7 @@ const WORKFLOW = [
   },
 ] as const;
 
-const FAQ = [
-  {
-    question: "Which sources can I use?",
-    answer:
-      "Starter currently accepts public or accessible YouTube and Vimeo URLs. Direct file upload is not part of the current offer.",
-  },
-  {
-    question: "What does a score mean?",
-    answer:
-      "It ranks a moment for the campaign brief you supplied. It is a decision aid, not a promise that a clip will go viral.",
-  },
-  {
-    question: "How many clips will I receive?",
-    answer:
-      "You can request up to three clips per job. Quality checks and deduplication can intentionally return fewer when the source does not support three distinct cuts.",
-  },
-  {
-    question: "How do credits work?",
-    answer:
-      "Starter includes 300 credits each month. The source duration is read before credit use is confirmed; sources can be up to 30 minutes and one job can process at a time.",
-  },
-  {
-    question: "What is included in the export?",
-    answer:
-      "A vertical render with burned captions, the selected source segments, a campaign-fit rationale and a download without a watermark.",
-  },
-  {
-    question: "What happens when processing fails?",
-    answer:
-      "A failed analysis is named explicitly and no delivery is implied. If no moment clears the quality floor, ClipFactory tells you instead of padding the result with a weak clip.",
-  },
-] as const;
+
 
 function formatTime(seconds: number) {
   const minutes = Math.floor(seconds / 60);
@@ -1202,35 +1175,7 @@ function ClosingSection({
         </div>
       </section>
 
-      <footer className={styles.footer}>
-        <Link href="/" aria-label="ClipFactory home">
-          <Wordmark />
-        </Link>
-        <div className={styles.footerNav}>
-          <div>
-            <span>Product</span>
-            <a href="#story">How it works</a>
-            <a href="#campaign-v6">Features</a>
-            <a href="#pricing">Pricing</a>
-          </div>
-          <div>
-            <span>Support</span>
-            <a href="#faq-v6">FAQ</a>
-            <Link href="/about">About</Link>
-            <Link href={signInHref}>Sign in</Link>
-          </div>
-          <div>
-            <span>Legal</span>
-            <Link href="/legal/terms">Terms</Link>
-            <Link href="/legal/privacy">Privacy</Link>
-          </div>
-        </div>
-        <div className={styles.footerNote}>
-          <Clock3 />
-          <span>The whole story, kept in sync.</span>
-          <small>© {new Date().getFullYear()} ClipFactory</small>
-        </div>
-      </footer>
+      <MarketingFooter />
     </>
   );
 }
