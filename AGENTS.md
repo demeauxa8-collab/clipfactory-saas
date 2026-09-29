@@ -27,7 +27,7 @@ Fondateur : Augustin (designer / product, ne code pas ligne à ligne). Parle-lui
 4. **Jamais de push sur `main`, de force-push ou de merge par un agent.** Une branche par sujet, PR en brouillon ; Augustin merge.
 5. **Pas de migration ni d'écriture en base de prod** sans demande explicite. Le schéma de prod inclut déjà `20260907150016_restrict_client_job_and_profile_writes` (appliquée le 29/09).
 6. **Modèles : une seule source de vérité** (`apps/worker/models.lock.toml`, lu par `settings.py` ; surcharge possible par variable d'environnement). Aucun modèle par défaut ne doit pointer vers un modèle qui expire (OpenRouter : `qwen3-vl-32b-instruct` le 09/10/2026, `gemini-2.5-flash` le 20/10/2026). Un modèle ne change que s'il **gagne au banc de test**, pas sur une annonce.
-7. **Tester les modèles par groupes** : une stack complète par groupe, la même campagne de A à Z, et on juge les clips produits (pas de choix sur un banc d'étape isolée). Plan : `docs/model-test-plan.md`.
+7. **Tester les modèles par groupes** : une stack complète par groupe, la même campagne de A à Z, et on juge les clips produits (pas de choix sur un banc d'étape isolée). Toujours sur le pipeline à sa meilleure version, figé sous un tag `pipeline-vtest-…` ; jamais un changement de pipeline et de modèle dans la même comparaison. Plan : `docs/model-test-plan.md`.
 8. **Tester comme un vrai client** : Augustin lance les jobs depuis le site ; l'agent regarde les logs. Pas d'insertion manuelle en base pour « aider » un test.
 9. **Pas d'abonnement ChatGPT/Codex comme moteur du SaaS** : le SaaS utilise des clés API (OpenRouter, OpenAI, Anthropic).
 10. **Pas de code spéculatif.** Ce qui n'est pas branché au runner et mesuré n'est pas « fait ».

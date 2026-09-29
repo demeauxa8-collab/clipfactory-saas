@@ -1,6 +1,8 @@
 # Plan de test des modèles — par groupes, campagne de A à Z
 
-> Statut : **préparé, pas lancé.** Le test démarre quand le backend tourne de façon fiable sur le Mac Studio M1 Max (`docs/mac-studio-backend.md` terminé, `doctor.sh` vert, un vrai job réussi depuis le site).
+> Statut : **préparé, pas lancé.** Deux conditions avant de démarrer :
+> 1. **Backend fiable** sur le Mac Studio M1 Max (`docs/mac-studio-backend.md` terminé, `doctor.sh` vert, un vrai job réussi depuis le site).
+> 2. **Pipeline à sa meilleure version**, figée sous un tag (section suivante). Comparer des modèles sur un moteur incomplet ne dit rien.
 > Rédigé le 2026-09-29.
 
 ## La méthode (décision d'Augustin)
@@ -8,6 +10,28 @@
 On ne choisit pas un modèle sur un score d'étape isolée. On compose des **groupes** — une stack complète (transcription + sélection des moments + vision) — et on lance **la même campagne de A à Z** avec chaque groupe, avec le vrai code du pipeline. Puis on **regarde les clips** : quels moments ont été choisis, comment ils sont coupés et montés. Un modèle excellent seul peut donner de mauvais clips une fois enchaîné.
 
 Les bancs par étape servent seulement à **éliminer d'avance** les modèles cassés. C'est déjà fait pour la transcription (29/09, 2 min FR) : deepgram, assemblyai, gpt-transcribe, gpt-4o-mini-transcribe, chirp-3, muse-voice, voxtral-small, qwen3-asr-flash ne renvoient **pas** de timestamps au mot via OpenRouter → exclus.
+
+## Condition 2 : le pipeline à sa meilleure version (tag `pipeline-vtest`)
+
+Tous les groupes tournent sur **exactement le même code**, taggé `pipeline-vtest-AAAA-MM-JJ`. Ce tag n'est posé que quand toutes les cases ci-dessous sont cochées et que les tests sont verts. Le plan de finition détaillé (étapes 0 à 7, critères de sortie, estimations) est dans le document privé « Second Brain, Director et montage multi-segments : inventaire et plan de finition » (`~/data clips/docs-prives/`).
+
+| Brique | Meilleure version visée | État au 29/09 |
+|---|---|---|
+| Ancrage / bornes / vérif | `boundaries` strict + `verify` par couverture | ✅ PR #8 |
+| Moteur de rendu | `clip_render` → EDL V2 (`edl`, `edl_render`, `edl_captions`), QC média | ✅ PR #8 (branché) |
+| Crédits / cycle de vie des jobs | réservation atomique, jeton de tentative, séries | ✅ PR #8 |
+| Transcription | backend enfichable (API ou MLX local) + correctif durée nulle | ⏳ correctif ✅ PR #8 ; MLX = runbook Mac Studio §6 |
+| Fins et ouvertures | sous-ensemble fins/ouvertures de `editorial_reflex_qc` en post-ancrage ; contrôle promesse → payoff | ❌ étape 1 |
+| Montage multi-segments | `duration_seconds` juste, `link_reason` / `campaign_fit_reason` persistés, `snap failed` instrumenté | ❌ étape 1 |
+| Second Brain de campagne | version légère : raisons de rejet (liste fermée), feedback de campagne relu, exemples bons/mauvais injectés dans la sélection et le juge, règles de craft (contenu des 29 notes) par tags | ❌ étape 2 |
+| Juge de clip | `clip_judge` calibré sur 40 clips notés par Augustin, d'abord en observation | ⏳ code ✅ PR #8 (désactivé) ; calibration ❌ étapes 0 et 3 |
+| Cadrage | crop piloté par la vision deep (`face_center_x`), zéro bande noire | ❌ étape 4 |
+| Opérations de montage | trim des silences, punch-in sur le chiffre ou la chute, profil de sortie par plateforme, texte-hook vérifié, cold open typé — chacune retenue seulement si elle gagne en A/B | ❌ étape 5 |
+| Director | passe de réparation bornée (1 passe, 2 variantes max), déclenchée seulement par un échec du QC ou du juge | ❌ étape 6 |
+
+Minimum pour poser le tag : **étapes 0 à 4**. Les étapes 5 et 6 peuvent entrer si elles sont finies ; sinon on teste sans, et elles repassent en A/B plus tard sur le groupe gagnant.
+
+**Règle d'ordre** : on fige le pipeline → on compare les groupes de modèles → on ré-ajuste les prompts pour le groupe gagnant (et seulement lui). On ne mélange jamais un changement de pipeline et un changement de modèle dans la même comparaison.
 
 ## Les groupes
 
@@ -61,6 +85,7 @@ Estimation : 0,05 à 0,20 $ par job selon le groupe → 5 groupes × 4 jobs ≈ 
 ## À préparer avant le jour J (sans rien lancer)
 
 - [ ] Backend fiable sur le M1 Max (`docs/mac-studio-backend.md`).
+- [ ] Pipeline à sa meilleure version, tag `pipeline-vtest-…` posé (condition 2).
 - [ ] Les 5 fichiers de groupes `ops/model-groups/g0…g4.toml` (format de `models.lock.toml`).
 - [ ] Manifeste de job complet (vérifier ce que le runner écrit déjà ; ajouter le modèle réellement utilisé par étape).
 - [ ] Le backend ASR local (`mlx_whisper`) pour G4 — prévu dans le runbook Mac Studio.
