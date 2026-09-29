@@ -11,6 +11,7 @@ ran.
 
 from __future__ import annotations
 
+import asyncio
 import ipaddress
 import json
 import math
@@ -18,6 +19,7 @@ import os
 import shutil
 import socket
 import time
+from dataclasses import asdict
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -57,15 +59,27 @@ from .boundaries import (
     filter_arcs_by_duration,
     snap_arc_segments,
 )
-from .captions import FACE_CROP_MARGIN_V, FIT_BLUR_MARGIN_V, write_ass_for_montage
+from .clip_render import (
+    ClipRejected,
+    file_sha256,
+    prepare_candidate_edit,
+    render_prepared_candidate,
+)
 from .ffmpeg import (
     FFmpegError,
     detect_black_open_for_segments,
     fetch_audience_heatmap,
     probe_duration_seconds,
-    render_montage_clip,
-    validate_rendered_clip,
     yt_dlp_download,
+)
+from .job_artifacts import checkpoint_job
+from .job_state import (
+    JobStateError,
+    billable_minutes,
+    claim_job,
+    confirm_reservation,
+    fail_job,
+    reserve_credits,
 )
 from .score import (
     HOOK_OPENING_WINDOW_SECONDS,
@@ -220,21 +234,27 @@ async def _set_status(
     job_id: str,
     status: str,
     *,
+    token: str,
     current_step: str | None = None,
 ) -> None:
-    await conn.execute(
+    updated = await conn.fetchval(
         """
         update jobs
            set status = $1,
                current_step = coalesce($3, current_step),
                started_at = case when started_at is null then now() else started_at end,
                updated_at = now()
-         where id = $2
+         where id = $2 and worker_id = $4
+           and status in ('downloading', 'transcribing', 'analyzing', 'rendering')
+        returning id
         """,
         status,
         job_id,
         current_step,
+        token,
     )
+    if updated is None:
+        raise JobStateError("job_ownership_lost", "The active attempt was replaced or terminated.")
 
 
 async def _mark_failed(
@@ -242,118 +262,15 @@ async def _mark_failed(
     *,
     job_id: str,
     user_id: str,
+    token: str,
     code: str,
     step: str,
     message: str,
-    refund_credits: int,
 ) -> None:
     async with pool.acquire() as conn:
-        async with conn.transaction():
-            job = await conn.fetchrow(
-                "select status from jobs where id = $1 and user_id = $2 for update",
-                job_id,
-                user_id,
-            )
-            if job is None or job["status"] in {"completed", "failed", "canceled"}:
-                return
-            ledger = await conn.fetchrow(
-                "select coalesce(sum(delta), 0)::int as net from credit_ledger where job_id = $1",
-                job_id,
-            )
-            # A source that fails before its initial debit must not mint credits.
-            outstanding_debit = max(0, -int(ledger["net"])) if ledger else 0
-            await conn.execute(
-                """
-                update jobs
-                   set status = 'failed',
-                       error_code = $1,
-                       error_message = $2,
-                       failed_step = $3,
-                       finished_at = now(),
-                       updated_at = now()
-                 where id = $4
-                """,
-                code,
-                message,
-                step,
-                job_id,
-            )
-            refund = min(refund_credits, outstanding_debit)
-            if refund > 0:
-                await conn.execute(
-                    """
-                    insert into credit_ledger (user_id, delta, reason, job_id, note)
-                    values ($1, $2, 'job_refund', $3, $4)
-                    """,
-                    user_id,
-                    refund,
-                    job_id,
-                    f"refund {step}: {message[:200]}",
-                )
-
-
-async def _get_credit_balance(conn: asyncpg.Connection, user_id: str) -> int:
-    row = await conn.fetchrow(
-        "select coalesce(sum(delta), 0)::int as balance from credit_ledger where user_id = $1",
-        user_id,
-    )
-    return int(row["balance"]) if row else 0
-
-
-async def _initial_debit(
-    conn: asyncpg.Connection,
-    *,
-    job_id: str,
-    user_id: str,
-    estimated: int,
-) -> None:
-    if estimated <= 0:
-        return
-    await conn.execute(
-        """
-        insert into credit_ledger (user_id, delta, reason, job_id, note)
-        values ($1, $2, 'job_debit', $3, $4)
-        """,
-        user_id,
-        -int(estimated),
-        job_id,
-        "initial debit on dequeue",
-    )
-
-
-async def _settle_credits(
-    conn: asyncpg.Connection,
-    *,
-    job_id: str,
-    user_id: str,
-    minutes: int,
-    estimated: int,
-) -> int:
-    target_debit = max(1, minutes)
-    delta = target_debit - estimated
-    if delta > 0:
-        await conn.execute(
-            """
-            insert into credit_ledger (user_id, delta, reason, job_id, note)
-            values ($1, $2, 'job_debit', $3, $4)
-            """,
-            user_id,
-            -delta,
-            job_id,
-            f"debit {delta} extra credits after probe",
+        await fail_job(
+            conn, job_id=job_id, user_id=user_id, token=token, code=code, step=step, message=message
         )
-    elif delta < 0:
-        await conn.execute(
-            """
-            insert into credit_ledger (user_id, delta, reason, job_id, note)
-            values ($1, $2, 'job_refund', $3, $4)
-            """,
-            user_id,
-            -delta,
-            job_id,
-            "refund overestimated credits",
-        )
-    return target_debit
 
 
 def _provider_pair() -> tuple[LLMProvider, LLMProvider | None]:
@@ -557,6 +474,7 @@ def _log_anchor_report(report: AnchorReport, *, label: str) -> None:
         payoffs_extended=report.payoffs_extended,
         payoffs_out_of_reach=report.payoffs_out_of_reach,
         payoffs_unmatched=report.payoffs_unmatched,
+        unresolved_drops=report.arcs_dropped_unresolved,
     )
     if report.segments_unmatched:
         log.warning(
@@ -592,7 +510,7 @@ async def _guard_black_open(
     cand: MontageCandidate,
     candidate_idx: int,
     log_ctx,
-) -> None:
+) -> bool:
     """Kill clips whose segments open on a black frame (the judges measured one
     opening on 0.833 s of black). For EVERY segment, detect black over its first
     1.5 s; if it covers that segment's very start, advance the start past the
@@ -601,7 +519,7 @@ async def _guard_black_open(
     segment never shifts another segment's window.
     """
     if ctx.transcript is None or not ctx.source_path or not cand.segments:
-        return
+        return False
     seg_tuples = [(s.start, s.end) for s in cand.segments]
     per_segment_intervals = await detect_black_open_for_segments(
         ctx.source_path, seg_tuples, window_seconds=_BLACK_GUARD_WINDOW_SECONDS
@@ -615,6 +533,16 @@ async def _guard_black_open(
         if opening is None:
             continue
         black_end = seg.start + opening[1]
+        if any(
+            w.end > seg.start and w.start < black_end and w.word.strip()
+            for w in ctx.transcript.words
+        ):
+            # Moving past black may also remove the spoken hook or a negation.
+            # Reject the candidate instead of silently changing its meaning.
+            log_ctx.warning(
+                "pipeline.black_open_contains_speech", candidate_idx=candidate_idx, seg_idx=seg_idx
+            )
+            return False
         new_start = black_end
         for w in ctx.transcript.words:
             if w.start >= black_end:
@@ -622,7 +550,7 @@ async def _guard_black_open(
                 break
         # Never collapse the window or push the start past the end.
         if new_start <= seg.start + 0.02 or new_start >= seg.end - 1.0:
-            continue
+            return False
         old_start = seg.start
         seg.start = new_start
         log_ctx.info(
@@ -633,6 +561,7 @@ async def _guard_black_open(
             new_start=round(new_start, 3),
             black_seconds=round(opening[1] - opening[0], 3),
         )
+    return True
 
 
 # =============================================================
@@ -645,81 +574,81 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
     log_ctx = log.bind(job_id=job_id)
     log_ctx.info("pipeline.start")
 
-    # --- Load job + campaign + plan
+    # Atomically own this delivery before clearing files, billing or doing work.
     async with pool.acquire() as conn:
-        job_row = await conn.fetchrow(
-            """
-            select j.id, j.user_id, j.campaign_id, j.source_url, j.target_clip_count,
-                   j.credits_estimated, p.max_video_minutes
-              from jobs j
-              join subscriptions s on s.user_id = j.user_id
-                and s.status in ('trialing', 'active')
-              join plan_definitions p on p.code = s.plan_code
-             where j.id = $1
-             limit 1
-            """,
-            job_id,
-        )
-        if job_row is None:
-            log_ctx.error("pipeline.no_job_or_subscription")
-            return
-
-        campaign_row = None
-        if job_row["campaign_id"]:
-            campaign_row = await conn.fetchrow(
-                """
-                select name, audience, niche, tone, goal, avoid_topics, example_hooks
-                  from campaigns where id = $1
-                """,
-                job_row["campaign_id"],
-            )
-
+        job_row = await claim_job(conn, job_id)
+    if job_row is None:
+        log_ctx.info("pipeline.delivery_skipped", reason="not_queued")
+        return
     user_id = str(job_row["user_id"])
-    estimated_credits = int(job_row["credits_estimated"])
-    max_minutes = int(job_row["max_video_minutes"])
-    workdir = os.path.join(settings.worker_tmp_dir, job_id)
-    Path(workdir).mkdir(parents=True, exist_ok=True)
-
-    # Idempotent re-runs: clear any clips from a previous attempt so re-processing
-    # this job never hits the (job_id, idx) unique constraint.
-    async with pool.acquire() as conn:
-        await conn.execute("delete from clips where job_id = $1", job_id)
-
+    token = job_row["worker_id"]
+    workdir = os.path.join(settings.worker_tmp_dir, job_id, token)
     ctx = JobContext(
         job_id=job_id,
         user_id=user_id,
-        campaign=dict(campaign_row) if campaign_row else {},
+        campaign={},
         source_url=job_row["source_url"],
         target_clip_count=int(job_row["target_clip_count"]),
         workdir=workdir,
-    )
-
-    primary, fallback = _provider_pair()
-    ctx.primary_provider = primary.name
-
-    analytics.fire_and_forget(
-        analytics.track(
-            pool,
-            event_name="job_started",
-            user_id=user_id,
-            properties={
-                "job_id": job_id,
-                "campaign_id": str(job_row["campaign_id"]) if job_row["campaign_id"] else None,
-                "target_clip_count": ctx.target_clip_count,
-                "primary_provider": ctx.primary_provider,
-            },
-        )
+        run_token=token,
     )
 
     try:
+        Path(workdir).mkdir(parents=True, exist_ok=True)
+        async with pool.acquire() as conn:
+            plan = await conn.fetchrow(
+                """select p.max_video_minutes, p.max_clips_per_video
+                   from subscriptions s join plan_definitions p on p.code = s.plan_code
+                   where s.user_id = $1 and s.status in ('trialing', 'active')
+                   order by s.current_period_end desc nulls last, s.created_at desc limit 1""",
+                user_id,
+            )
+            if plan is None:
+                raise PipelineFailure("no_active_subscription", "check_plan", "No active plan.")
+            if ctx.target_clip_count > int(plan["max_clips_per_video"]):
+                raise PipelineFailure(
+                    "clip_count_exceeded", "check_plan", "Clip count exceeds plan."
+                )
+            max_minutes = int(plan["max_video_minutes"])
+            if job_row["campaign_id"]:
+                campaign = await conn.fetchrow(
+                    """select name, audience, niche, tone, goal, avoid_topics, example_hooks
+                       from campaigns where id = $1 and user_id = $2""",
+                    job_row["campaign_id"],
+                    user_id,
+                )
+                if campaign is None:
+                    raise PipelineFailure(
+                        "campaign_not_found", "check_campaign", "No owned campaign."
+                    )
+                ctx.campaign = dict(campaign)
+            await conn.execute("delete from clips where job_id = $1", job_id)
+        primary, fallback = _provider_pair()
+        ctx.primary_provider = primary.name
+        analytics.fire_and_forget(
+            analytics.track(
+                pool,
+                event_name="job_started",
+                user_id=user_id,
+                properties={
+                    "job_id": job_id,
+                    "target_clip_count": ctx.target_clip_count,
+                    "primary_provider": ctx.primary_provider,
+                },
+            )
+        )
         # Step 1 — validate
         async with pool.acquire() as conn:
-            await _set_status(conn, job_id, "downloading", current_step="validate_url")
+            await _set_status(
+                conn, job_id, token=token, status="downloading", current_step="validate_url"
+            )
         await _validate_url(ctx.source_url)
 
         # Step 2 — download
         async with pool.acquire() as conn:
-            await _set_status(conn, job_id, "downloading", current_step="download")
+            await _set_status(
+                conn, job_id, token=token, status="downloading", current_step="download"
+            )
         try:
             ctx.source_path = await yt_dlp_download(ctx.source_url, workdir)
         except FFmpegError as exc:
@@ -743,62 +672,59 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
 
         # Step 3 — probe
         async with pool.acquire() as conn:
-            await _set_status(conn, job_id, "downloading", current_step="probe")
+            await _set_status(conn, job_id, token=token, status="downloading", current_step="probe")
         try:
             dur = await probe_duration_seconds(ctx.source_path)
-            ctx.duration_seconds = round(dur)
         except FFmpegError as exc:
             raise PipelineFailure("probe_failed", "probe", str(exc)) from exc
 
-        # Step 4 — plan check + credit check
-        if ctx.duration_seconds and ctx.duration_seconds > max_minutes * 60:
-            raise PipelineFailure(
-                "video_too_long",
-                "check_plan_max",
-                f"Video is {ctx.duration_seconds}s, plan max is {max_minutes * 60}s.",
-            )
-        minutes = max(1, math.ceil((ctx.duration_seconds or 0) / 60))
+        # Reserve measured duration atomically before any paid analysis.
+        minutes = billable_minutes(dur, max_minutes)
+        ctx.duration_seconds = math.ceil(dur)
         async with pool.acquire() as conn:
-            balance = await _get_credit_balance(conn, user_id)
-        if balance < minutes:
-            raise PipelineFailure(
-                "insufficient_credits",
-                "check_credits",
-                f"Video needs {minutes} credits, current balance is {balance}.",
+            await reserve_credits(
+                conn, job_id=job_id, user_id=user_id, token=token, minutes=minutes
             )
-
-        # Step 5 — initial debit
-        async with pool.acquire() as conn:
-            async with conn.transaction():
-                await _initial_debit(
-                    conn, job_id=job_id, user_id=user_id, estimated=estimated_credits
-                )
 
         # Step 6 — upload source (best-effort)
         try:
-            ctx.source_r2_key = f"sources/{user_id}/{job_id}.mp4"
-            ctx.storage_bytes += upload_file(ctx.source_path, ctx.source_r2_key)
+            ctx.source_r2_key = f"sources/{user_id}/{job_id}/{token}.mp4"
+            ctx.storage_bytes += await asyncio.to_thread(
+                upload_file, ctx.source_path, ctx.source_r2_key
+            )
         except Exception as exc:
             log_ctx.warning("pipeline.source_upload_failed", err=str(exc))
             ctx.source_r2_key = None
 
         async with pool.acquire() as conn:
             await conn.execute(
-                "update jobs set source_r2_key = $1, duration_seconds = $2 where id = $3",
+                """update jobs set source_r2_key = $1, duration_seconds = $2
+                   where id = $3 and worker_id = $4 and status = 'downloading'""",
                 ctx.source_r2_key,
                 ctx.duration_seconds,
                 job_id,
+                token,
             )
 
         # Step 7 — transcribe
         async with pool.acquire() as conn:
-            await _set_status(conn, job_id, "transcribing", current_step="transcribe")
+            await _set_status(
+                conn, job_id, token=token, status="transcribing", current_step="transcribe"
+            )
         ctx.transcript = await transcribe(ctx.source_path)
         ctx.transcription_cost_cents = round(minutes * settings.cost_transcribe_cents_per_min)
+        source_digest = await asyncio.to_thread(file_sha256, ctx.source_path)
+        await checkpoint_job(
+            ctx,
+            "transcript",
+            {"source_sha256": source_digest, "transcript": asdict(ctx.transcript)},
+        )
 
         # Step 8-12 — select arcs (story or simple)
         async with pool.acquire() as conn:
-            await _set_status(conn, job_id, "analyzing", current_step="select_arcs")
+            await _set_status(
+                conn, job_id, token=token, status="analyzing", current_step="select_arcs"
+            )
         story_mode = is_long_video(ctx.duration_seconds, settings.story_pipeline_threshold_seconds)
         if story_mode:
             arcs = await _run_story_path(ctx=ctx, primary=primary, fallback=fallback, pool=pool)
@@ -812,7 +738,9 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
 
         # Step 13-14 — deep vision on top arcs (cap)
         async with pool.acquire() as conn:
-            await _set_status(conn, job_id, "analyzing", current_step="deep_vision")
+            await _set_status(
+                conn, job_id, token=token, status="analyzing", current_step="deep_vision"
+            )
         # Diversity BEFORE the cap: deep vision is the expensive call, so it is
         # never spent on an arc that is a rerun of a better one. Ranking also
         # weighs the campaign fit, not retention alone.
@@ -862,7 +790,18 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
             candidates.append(candidate)
 
         # Pick top N
-        ctx.montage_candidates = rank_and_pick(candidates, ctx.target_clip_count)
+        # Keep the bounded, diverse reserve. A rejected first render must not
+        # prevent an already-scored valid candidate from filling the batch.
+        ctx.montage_candidates = rank_and_pick(candidates, len(candidates))
+        await checkpoint_job(
+            ctx,
+            "selection",
+            {
+                "source_sha256": source_digest,
+                "candidates": [asdict(candidate) for candidate in ctx.montage_candidates],
+                "video_map": json.loads(_video_map_json(ctx)) if ctx.video_map else None,
+            },
+        )
         multi_count = sum(1 for c in ctx.montage_candidates if len(c.segments) > 1)
         log_ctx.info(
             "pipeline.montage_mix",
@@ -882,129 +821,70 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                     title=(cand.title or "")[:80],
                     audience_percentile=cand.score_breakdown.get("audience"),
                     score_total=cand.score_total,
-                    window=[
-                        [round(s.start, 1), round(s.end, 1)] for s in cand.segments
-                    ],
+                    window=[[round(s.start, 1), round(s.end, 1)] for s in cand.segments],
                 )
 
         # Step 15-16 — render + captions + upload + save
         async with pool.acquire() as conn:
-            await _set_status(conn, job_id, "rendering", current_step="render")
+            await _set_status(conn, job_id, token=token, status="rendering", current_step="render")
 
         render_start = time.monotonic()
         clips_saved = 0
+        render_outcomes = []
         for candidate_idx, cand in enumerate(ctx.montage_candidates):
+            if clips_saved >= ctx.target_clip_count:
+                break
             out_clip = os.path.join(workdir, f"clip_{candidate_idx}.mp4")
-            ass_path = os.path.join(workdir, f"clip_{candidate_idx}.ass")
-
-            # ORDER MATTERS (per-segment montage): the black-open guard may move a
-            # segment's start; framing/transitions then read the FINAL windows;
-            # excerpts and captions describe those same windows.
-            await _guard_black_open(
-                ctx=ctx, cand=cand, candidate_idx=candidate_idx, log_ctx=log_ctx
-            )
-            framings = _framing_for_candidate(
-                ctx, cand, candidate_idx=candidate_idx, log_ctx=log_ctx
-            )
-            transitions = _transitions_for_candidate(
-                cand, candidate_idx=candidate_idx, log_ctx=log_ctx
-            )
-            _rebuild_excerpts(ctx, cand)
-
-            # Per-segment caption margin follows each segment's framing: face-crop
-            # sits captions higher (400), fit-blur lower under the letterbox (620).
-            # The global margin_v (style default) mirrors the first segment.
-            margins_per_segment = [
-                FACE_CROP_MARGIN_V if mode == "face_crop" else FIT_BLUR_MARGIN_V
-                for mode, _cx in framings
-            ]
-
-            # Always burn our captions: creator burned-ins are sparse emphasis
-            # keywords, not full subtitles, and a caption-less clip loses
-            # retention (vision.burned_captions is kept as data only).
-            has_captions = write_ass_for_montage(
-                transcript=ctx.transcript,
-                segments=cand.segments,
-                out_path=ass_path,
-                # The single-pass render engine uses a non-overlapping audio
-                # joint fade, so audio, video and captions share the same
-                # concatenated timeline (within the source frame duration).
-                # No per-joint caption offset remains.
-                audio_crossfade_seconds=0.0,
-                margin_v=margins_per_segment[0],
-                margins_per_segment=margins_per_segment,
-            )
-            seg_tuples = [(s.start, s.end) for s in cand.segments]
-
             try:
-                rendered_dur = await render_montage_clip(
-                    source=ctx.source_path or "",
-                    segments=seg_tuples,
-                    out_path=out_clip,
-                    workdir=os.path.join(workdir, f"render_{candidate_idx}"),
-                    subtitles_path=ass_path if has_captions else None,
-                    framings=framings,
-                    transitions=transitions,
+                if not await _guard_black_open(
+                    ctx=ctx, cand=cand, candidate_idx=candidate_idx, log_ctx=log_ctx
+                ):
+                    raise ClipRejected("unsafe_black_opening")
+                framings = _framing_for_candidate(
+                    ctx, cand, candidate_idx=candidate_idx, log_ctx=log_ctx
                 )
-            except FFmpegError:
-                # Retry without subtitles (keep framing/transitions — face-crop is
-                # valid on 16:9 sources; the burn-in escaping is the usual failure).
-                try:
-                    rendered_dur = await render_montage_clip(
-                        source=ctx.source_path or "",
-                        segments=seg_tuples,
-                        out_path=out_clip,
-                        workdir=os.path.join(workdir, f"render_{candidate_idx}"),
-                        subtitles_path=None,
-                        framings=framings,
-                        transitions=transitions,
-                    )
-                except FFmpegError:
-                    if not any(mode == "face_crop" for mode, _cx in framings):
-                        raise
-                    # Last resort: a crop filter itself failed — fall back to the
-                    # always-valid fit-blur framing on every segment (and plain
-                    # cuts) rather than losing the whole job.
-                    log_ctx.warning(
-                        "pipeline.face_crop_render_failed",
-                        candidate_idx=candidate_idx,
-                    )
-                    rendered_dur = await render_montage_clip(
-                        source=ctx.source_path or "",
-                        segments=seg_tuples,
-                        out_path=out_clip,
-                        workdir=os.path.join(workdir, f"render_{candidate_idx}"),
-                        subtitles_path=None,
-                        framings=None,
-                        transitions=None,
-                    )
-
-            qc = await validate_rendered_clip(
-                path=out_clip,
-                expected_duration_seconds=rendered_dur,
-            )
-            if not qc.ok:
+                prepared = prepare_candidate_edit(
+                    cand,
+                    ctx.transcript,
+                    source_duration_seconds=dur,
+                    framings=framings,
+                )
+                delivered = await render_prepared_candidate(
+                    prepared=prepared,
+                    source=ctx.source_path or "",
+                    transcript=ctx.transcript,
+                    out_path=out_clip,
+                    source_sha256=source_digest,
+                )
+            except (ClipRejected, FFmpegError) as exc:
+                render_outcomes.append(
+                    {
+                        "candidate_index": candidate_idx,
+                        "status": "rejected",
+                        "reason": str(exc),
+                        "title": cand.title,
+                    }
+                )
                 log_ctx.warning(
-                    "pipeline.render_qc_failed",
-                    candidate_idx=candidate_idx,
-                    problems=qc.problems,
-                    duration=qc.duration_seconds,
-                    expected=qc.expected_duration_seconds,
-                    mean_volume_db=qc.mean_volume_db,
-                    mid_frame_luma=qc.mid_frame_luma,
+                    "pipeline.candidate_rejected", candidate_idx=candidate_idx, reason=str(exc)
                 )
                 continue
+            rendered_dur = delivered.rendered_duration_seconds
 
             clip_idx = clips_saved
-            clip_key = f"clips/{user_id}/{job_id}/{clip_idx}.mp4"
-            bytes_uploaded = upload_file(out_clip, clip_key)
+            clip_key = f"clips/{user_id}/{job_id}/{token}/{clip_idx}.mp4"
+            bytes_uploaded = await asyncio.to_thread(upload_file, out_clip, clip_key)
+            manifest_key = clip_key.removesuffix(".mp4") + ".manifest.json"
+            ctx.storage_bytes += await asyncio.to_thread(
+                upload_file, delivered.manifest_path, manifest_key, "application/json"
+            )
             ctx.storage_bytes += bytes_uploaded
 
             first_seg = cand.segments[0]
             last_seg = cand.segments[-1]
 
             async with pool.acquire() as conn:
-                await conn.execute(
+                saved = await conn.fetchval(
                     """
                     insert into clips
                       (job_id, user_id, idx, title, hook_text, rationale,
@@ -1012,12 +892,14 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                        start_seconds, end_seconds, score_total, score_breakdown,
                        segments, rendered_duration_seconds,
                        r2_key, bytes, width, height)
-                    values
-                      ($1, $2, $3, $4, $5, $6,
+                    select
+                       $1, $2, $3, $4, $5, $6,
                        $7, $8,
                        $9, $10, $11, $12::jsonb,
                        $13::jsonb, $14,
-                       $15, $16, 1080, 1920)
+                       $15, $16, 1080, 1920
+                    from jobs where id = $1 and worker_id = $17 and status = 'rendering'
+                    returning id
                     """,
                     job_id,
                     user_id,
@@ -1035,10 +917,32 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                     round(rendered_dur, 3),
                     clip_key,
                     bytes_uploaded,
+                    token,
                 )
+                if saved is None:
+                    raise JobStateError("job_ownership_lost", "Cannot publish a replaced attempt.")
             clips_saved += 1
+            render_outcomes.append(
+                {
+                    "candidate_index": candidate_idx,
+                    "status": "delivered",
+                    "clip_index": clip_idx,
+                    "manifest_key": manifest_key,
+                    "duration_seconds": rendered_dur,
+                }
+            )
 
         ctx.render_seconds = int(time.monotonic() - render_start)
+        await checkpoint_job(
+            ctx,
+            "render_outcomes",
+            {
+                "source_sha256": source_digest,
+                "requested_clips": ctx.target_clip_count,
+                "delivered_clips": clips_saved,
+                "outcomes": render_outcomes,
+            },
+        )
         if clips_saved == 0:
             raise PipelineFailure(
                 "render_qc_failed",
@@ -1049,12 +953,12 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
         # Step 17 — finalize
         async with pool.acquire() as conn:
             async with conn.transaction():
-                final_debit = await _settle_credits(
+                final_debit = await confirm_reservation(
                     conn,
                     job_id=job_id,
                     user_id=user_id,
                     minutes=minutes,
-                    estimated=estimated_credits,
+                    token=token,
                 )
                 total_cost_cents = (
                     (ctx.transcription_cost_cents or 0)
@@ -1081,7 +985,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                            video_map = $12::jsonb,
                            finished_at = now(),
                            updated_at = now()
-                     where id = $13
+                     where id = $13 and worker_id = $14 and status = 'rendering'
                     """,
                     int(final_debit),
                     int(ctx.transcription_cost_cents or 0),
@@ -1096,6 +1000,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                     ctx.fallback_used,
                     _video_map_json(ctx),
                     job_id,
+                    token,
                 )
         log_ctx.info(
             "pipeline.completed",
@@ -1121,7 +1026,20 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
             )
         )
 
-    except PipelineFailure as exc:
+    except asyncio.CancelledError:
+        await asyncio.shield(
+            _mark_failed(
+                pool,
+                job_id=job_id,
+                user_id=user_id,
+                token=token,
+                code="worker_interrupted",
+                step="interrupted",
+                message="Worker attempt was canceled.",
+            )
+        )
+        raise
+    except (PipelineFailure, JobStateError) as exc:
         log_ctx.error("pipeline.failed", step=exc.step, code=exc.code, err=exc.message)
         await _mark_failed(
             pool,
@@ -1130,7 +1048,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
             code=exc.code,
             step=exc.step,
             message=exc.message,
-            refund_credits=estimated_credits,
+            token=token,
         )
         analytics.fire_and_forget(
             analytics.track(
@@ -1149,7 +1067,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
             code="internal_error",
             step="unknown",
             message=str(exc)[:500],
-            refund_credits=estimated_credits,
+            token=token,
         )
         analytics.fire_and_forget(
             analytics.track(
@@ -1180,7 +1098,9 @@ async def _run_story_path(
 
     # 8. Video map
     async with pool.acquire() as conn:
-        await _set_status(conn, ctx.job_id, "analyzing", current_step="video_map")
+        await _set_status(
+            conn, ctx.job_id, token=ctx.run_token, status="analyzing", current_step="video_map"
+        )
     used_provider, (video_map, frames_used, tokens) = await _call_with_fallback(
         primary,
         fallback,
@@ -1205,7 +1125,9 @@ async def _run_story_path(
 
     # 9. Story arcs (text)
     async with pool.acquire() as conn:
-        await _set_status(conn, ctx.job_id, "analyzing", current_step="story_arcs")
+        await _set_status(
+            conn, ctx.job_id, token=ctx.run_token, status="analyzing", current_step="story_arcs"
+        )
     lines = transcript_to_timestamped_lines(ctx.transcript)
     used_provider, (arcs, tokens2) = await _call_with_fallback(
         primary,
@@ -1239,21 +1161,28 @@ async def _run_story_path(
     # somewhere in a padded window, so a window drifting several seconds off the
     # quoted line still scores 1.0 and goes to render as-is.
     async with pool.acquire() as conn:
-        await _set_status(conn, ctx.job_id, "analyzing", current_step="anchor_arcs")
-    arcs, anchor_report = anchor_arcs_to_transcript(arcs, ctx.transcript)
+        await _set_status(
+            conn, ctx.job_id, token=ctx.run_token, status="analyzing", current_step="anchor_arcs"
+        )
+    arcs, anchor_report = anchor_arcs_to_transcript(arcs, ctx.transcript, strict=True)
     _log_anchor_report(anchor_report, label="")
 
     # 10. Verify (anti-hallucination)
     async with pool.acquire() as conn:
-        await _set_status(conn, ctx.job_id, "analyzing", current_step="verify_arcs")
+        await _set_status(
+            conn, ctx.job_id, token=ctx.run_token, status="analyzing", current_step="verify_arcs"
+        )
     kept, dropped = verify_arcs(ctx.transcript, arcs)
     log.info("pipeline.verify", kept=len(kept), dropped=dropped)
     async with pool.acquire() as conn:
-        await _set_status(conn, ctx.job_id, "analyzing", current_step="snap_segments")
+        await _set_status(
+            conn, ctx.job_id, token=ctx.run_token, status="analyzing", current_step="snap_segments"
+        )
     snapped, snap_report = snap_arc_segments(
         kept,
         ctx.transcript.words,
         sentences=ctx.transcript.sentences,
+        safe_padding=True,
         min_duration_seconds=MIN_SEGMENT_SECONDS,
         max_duration_seconds=MAX_SEGMENT_SECONDS,
     )
@@ -1324,17 +1253,21 @@ async def _run_simple_path(
         ctx.transcript,
         min_segment_seconds=MIN_SIMPLE_SEGMENT_SECONDS,
         max_segment_seconds=MAX_SIMPLE_SEGMENT_SECONDS,
+        strict=True,
     )
     _log_anchor_report(anchor_report, label="_simple")
 
     kept, dropped = verify_arcs(ctx.transcript, arcs)
     log.info("pipeline.verify_simple", kept=len(kept), dropped=dropped)
     async with pool.acquire() as conn:
-        await _set_status(conn, ctx.job_id, "analyzing", current_step="snap_segments")
+        await _set_status(
+            conn, ctx.job_id, token=ctx.run_token, status="analyzing", current_step="snap_segments"
+        )
     snapped, snap_report = snap_arc_segments(
         kept,
         ctx.transcript.words,
         sentences=ctx.transcript.sentences,
+        safe_padding=True,
         min_duration_seconds=MIN_SIMPLE_SEGMENT_SECONDS,
         max_duration_seconds=MAX_SIMPLE_SEGMENT_SECONDS,
         end_extension_max_duration=MAX_SIMPLE_SEGMENT_SECONDS,

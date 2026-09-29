@@ -4,6 +4,8 @@ import asyncio
 import json
 import logging
 import signal
+from contextlib import suppress
+from uuid import UUID
 
 import redis.asyncio as redis_async
 import structlog
@@ -32,45 +34,74 @@ def _configure_logging(level: str) -> None:
     )
 
 
+async def _run_until_stop(pool, job_id: str, stop_event: asyncio.Event) -> None:
+    job = asyncio.create_task(run_job(pool, job_id))
+    stopping = asyncio.create_task(stop_event.wait())
+    try:
+        done, _ = await asyncio.wait({job, stopping}, return_when=asyncio.FIRST_COMPLETED)
+        if job in done:
+            await job
+        else:
+            job.cancel()
+            with suppress(asyncio.CancelledError):
+                await job
+    finally:
+        # Cancellation must reach the pipeline's refund handler and its child
+        # process cleanup before connections are closed.
+        for task in (job, stopping):
+            if not task.done():
+                task.cancel()
+                with suppress(asyncio.CancelledError):
+                    await task
+
+
 async def _worker_loop(stop_event: asyncio.Event) -> None:
     settings = get_settings()
     pool = get_pool()
     client = redis_async.from_url(settings.redis_url, decode_responses=True)
-    log.info("worker.ready", concurrency=settings.worker_concurrency)
-
-    while not stop_event.is_set():
-        try:
-            series_job_id = await claim_next_series_job(pool)
-        except Exception as exc:
-            log.warning("worker.series_claim.error", err=str(exc))
-            series_job_id = None
-        if series_job_id:
+    log.info("worker.ready", concurrency=1)
+    try:
+        while not stop_event.is_set():
+            # Series sources are ordered and claimed in Postgres (SKIP LOCKED),
+            # ahead of the Redis queue for ordinary single-source jobs.
             try:
-                await run_job(pool, series_job_id)
+                series_job_id = await claim_next_series_job(pool)
             except Exception as exc:
-                log.exception("worker.run_job.crash", job_id=series_job_id, err=str(exc))
-            continue
+                log.warning("worker.series_claim.error", error_type=type(exc).__name__)
+                series_job_id = None
+            if series_job_id:
+                try:
+                    await _run_until_stop(pool, series_job_id, stop_event)
+                except Exception as exc:
+                    log.exception("worker.run_job.crash", job_id=series_job_id, err=str(exc))
+                continue
 
-        try:
-            result = await client.blpop(JOBS_QUEUE_KEY, timeout=settings.worker_poll_interval)
-        except Exception as exc:
-            log.warning("worker.queue.error", err=str(exc))
-            await asyncio.sleep(2)
-            continue
-        if result is None:
-            continue
-        _, raw = result
-        try:
-            payload = json.loads(raw)
-            job_id = payload["job_id"]
-        except (ValueError, KeyError) as exc:
-            log.warning("worker.bad_payload", raw=raw, err=str(exc))
-            continue
-
-        try:
-            await run_job(pool, job_id)
-        except Exception as exc:
-            log.exception("worker.run_job.crash", job_id=job_id, err=str(exc))
+            try:
+                result = await client.blpop(JOBS_QUEUE_KEY, timeout=settings.worker_poll_interval)
+            except Exception as exc:
+                log.warning("worker.queue.error", err=str(exc))
+                await asyncio.sleep(2)
+                continue
+            if result is None:
+                continue
+            _, raw = result
+            if stop_event.is_set():
+                await client.lpush(JOBS_QUEUE_KEY, raw)
+                break
+            try:
+                payload = json.loads(raw)
+                if not isinstance(payload, dict) or not isinstance(payload.get("job_id"), str):
+                    raise ValueError("expected a job_id string")
+                job_id = str(UUID(payload["job_id"]))
+            except (ValueError, KeyError, TypeError) as exc:
+                log.warning("worker.bad_payload", error_type=type(exc).__name__)
+                continue
+            try:
+                await _run_until_stop(pool, job_id, stop_event)
+            except Exception as exc:
+                log.exception("worker.run_job.crash", job_id=job_id, err=str(exc))
+    finally:
+        await client.aclose()
 
 
 async def main() -> None:

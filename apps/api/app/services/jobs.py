@@ -94,8 +94,8 @@ async def create_job(
     user_id: str,
     payload: JobCreate,
 ) -> JobOut:
-    # V1: we don't probe the URL before queueing. Charge the cheapest plausible
-    # bucket (1 credit) up front; the worker debits the real duration after probe.
+    # Display estimate only. The worker reserves the measured duration atomically;
+    # no credits are debited merely by creating a queued job.
     estimated = 1
 
     async with conn.transaction():
@@ -146,7 +146,25 @@ async def create_job(
             estimated,
         )
 
-    await queue_svc.enqueue_job(str(row["id"]))
+    try:
+        await queue_svc.enqueue_job(str(row["id"]))
+    except Exception as exc:
+        # A successful push with a lost response may already be owned by a worker.
+        # Only a still-queued job can be failed here; it has no debit to refund.
+        failed = await conn.fetchval(
+            """update jobs set status = 'failed', error_code = 'queue_unavailable',
+                   error_message = 'Job could not be queued. Please try again.',
+                   failed_step = 'enqueue', credits_charged = 0,
+                   finished_at = now(), updated_at = now()
+               where id = $1 and status = 'queued' returning id""",
+            row["id"],
+        )
+        if failed is not None:
+            log.warning("job.enqueue_failed", job_id=str(row["id"]), error_type=type(exc).__name__)
+            raise JobError(
+                "queue_unavailable", "Job could not be queued. Please try again."
+            ) from exc
+        row = await conn.fetchrow(f"select {_JOB_COLUMNS} from jobs where id = $1", row["id"])
     return _row_to_job_out(row)
 
 
