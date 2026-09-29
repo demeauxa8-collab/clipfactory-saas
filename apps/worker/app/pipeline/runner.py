@@ -59,6 +59,7 @@ from .boundaries import (
     filter_arcs_by_duration,
     snap_arc_segments,
 )
+from .clip_judge import judge_clip
 from .clip_render import (
     ClipRejected,
     file_sha256,
@@ -271,6 +272,32 @@ async def _mark_failed(
         await fail_job(
             conn, job_id=job_id, user_id=user_id, token=token, code=code, step=step, message=message
         )
+
+
+async def _advisory_clip_verdict(clip_path: str, *, log_ctx) -> dict | None:
+    """Optional native-video judge (CLIP_JUDGE_ENABLED). Never blocks delivery."""
+    settings = get_settings()
+    if not settings.clip_judge_enabled or not settings.openrouter_api_key:
+        return None
+    try:
+        verdict = await judge_clip(
+            clip_path,
+            provider=OpenRouterProvider(),
+            model=settings.clip_judge_model,
+            max_video_mb=settings.clip_judge_max_video_mb,
+        )
+    except Exception as exc:
+        log_ctx.warning("pipeline.clip_judge_failed", error_type=type(exc).__name__)
+        return None
+    log_ctx.info(
+        "pipeline.clip_judge",
+        publishable=verdict.publishable,
+        hook_0_3s=verdict.hook_0_3s,
+        cut_mid_sentence=verdict.cut_mid_sentence,
+        framing_ok=verdict.framing_ok,
+        caption_overlap=verdict.caption_overlap,
+    )
+    return verdict.as_dict()
 
 
 def _provider_pair() -> tuple[LLMProvider, LLMProvider | None]:
@@ -870,6 +897,11 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                 )
                 continue
             rendered_dur = delivered.rendered_duration_seconds
+            verdict = await _advisory_clip_verdict(out_clip, log_ctx=log_ctx)
+            if verdict is not None:
+                ctx.analysis_tokens += int(verdict.get("tokens_in", 0)) + int(
+                    verdict.get("tokens_out", 0)
+                )
 
             clip_idx = clips_saved
             clip_key = f"clips/{user_id}/{job_id}/{token}/{clip_idx}.mp4"
@@ -929,6 +961,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                     "clip_index": clip_idx,
                     "manifest_key": manifest_key,
                     "duration_seconds": rendered_dur,
+                    "judge": verdict,
                 }
             )
 

@@ -261,3 +261,39 @@ class OpenRouterProvider(LLMProvider):
         return await self._post_and_extract(
             _apply_model_profile(body, model), model, "vision parse"
         )
+
+    async def video_json(
+        self,
+        *,
+        model: str,
+        system: str,
+        user_text: str,
+        video_mp4: bytes,
+        max_tokens: int = 1024,
+        temperature: float = 0.0,
+    ) -> LLMCallResult:
+        """Native video input (e.g. Gemini) as an inline mp4 data URL."""
+        b64 = base64.b64encode(video_mp4).decode("ascii")
+        body: dict[str, Any] = {
+            "model": model,
+            "max_tokens": max_tokens,
+            "temperature": temperature,
+            "reasoning": {"max_tokens": 0},
+            "response_format": {"type": "json_object"},
+            "messages": [
+                {"role": "system", "content": system},
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "video_url",
+                            "video_url": {"url": f"data:video/mp4;base64,{b64}"},
+                        },
+                        {"type": "text", "text": user_text},
+                    ],
+                },
+            ],
+        }
+        return await self._post_and_extract(
+            _apply_model_profile(body, model), model, "video parse"
+        )
