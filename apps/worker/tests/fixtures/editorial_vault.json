@@ -1,0 +1,663 @@
+{
+  "notes": [
+    {
+      "id": "principle_readable_proof_hold",
+      "type": "principle",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "high",
+      "title": "Readable proof hold",
+      "content": "Hold a visual proof long enough for a viewer to understand what it demonstrates.",
+      "tags": [
+        "proof",
+        "readability",
+        "screen"
+      ],
+      "source_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "technique_screen_focus",
+      "type": "technique",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "high",
+      "title": "Screen focus",
+      "content": "Crop to the relevant dashboard area before showing a numeric proof.",
+      "tags": [
+        "crop",
+        "proof",
+        "screen"
+      ],
+      "source_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "pattern_claim_proof",
+      "type": "pattern",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "high",
+      "title": "Claim then proof",
+      "content": "Make a specific claim and immediately establish it with readable evidence.",
+      "tags": [
+        "claim",
+        "proof"
+      ],
+      "source_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "problem_unreadable_dashboard",
+      "type": "problem",
+      "vault": "global",
+      "status": "validated",
+      "confidence": "medium",
+      "title": "Unreadable dashboard",
+      "content": "A fast dashboard cut cannot establish a conversion proof.",
+      "tags": [
+        "dashboard",
+        "proof",
+        "readability"
+      ],
+      "source_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "counterexample_unverified_dashboard",
+      "type": "counterexample",
+      "vault": "global",
+      "status": "validated",
+      "confidence": "high",
+      "title": "Unverified dashboard is not proof",
+      "content": "Do not frame an unverified dashboard as evidence, even if it is readable.",
+      "tags": [
+        "counterexample",
+        "proof",
+        "verification"
+      ],
+      "source_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "example_readable_conversion_proof",
+      "type": "example",
+      "vault": "global",
+      "status": "validated",
+      "confidence": "high",
+      "title": "Readable conversion proof",
+      "content": "A screen focus with a clear conversion number resolved the viewer objection.",
+      "tags": [
+        "conversion",
+        "example",
+        "proof"
+      ],
+      "source_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "principle_hook_question",
+      "type": "principle",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "high",
+      "title": "Hook with a question",
+      "content": "Open on the question the viewer already has before introducing context.",
+      "tags": [
+        "hook",
+        "question"
+      ],
+      "source_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "policy_proof_before_claim",
+      "type": "policy",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "high",
+      "title": "Use evidence before broad claims",
+      "content": "For skeptical audiences, establish a verified proof before expanding the claim.",
+      "tags": [
+        "claim",
+        "policy",
+        "proof"
+      ],
+      "source_refs": [
+        {
+          "note_id": "principle_readable_proof_hold",
+          "role": "evidence"
+        },
+        {
+          "note_id": "pattern_claim_proof",
+          "role": "derived_from"
+        }
+      ],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "audience_acme_founders",
+      "type": "audience",
+      "vault": "campaign",
+      "status": "validated",
+      "confidence": "high",
+      "title": "Acme founder audience",
+      "content": "Acme founders are skeptical of broad growth promises and want concrete proof.",
+      "tags": [
+        "acme",
+        "founders",
+        "proof"
+      ],
+      "source_refs": [],
+      "campaign_id": "campaign_acme",
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "objection_acme_results_not_real",
+      "type": "objection",
+      "vault": "campaign",
+      "status": "validated",
+      "confidence": "high",
+      "title": "Acme results are not real",
+      "content": "The audience asks whether the reported conversion result is real.",
+      "tags": [
+        "acme",
+        "objection",
+        "results"
+      ],
+      "source_refs": [],
+      "campaign_id": "campaign_acme",
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "offer_acme_build_credibility",
+      "type": "offer",
+      "vault": "campaign",
+      "status": "curated",
+      "confidence": "high",
+      "title": "Acme credibility objective",
+      "content": "Build credibility for Acme by showing verified conversion evidence before the offer.",
+      "tags": [
+        "acme",
+        "credibility",
+        "goal"
+      ],
+      "source_refs": [],
+      "campaign_id": "campaign_acme",
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "claim_acme_conversion_ten",
+      "type": "claim",
+      "vault": "campaign",
+      "status": "validated",
+      "confidence": "high",
+      "title": "Acme conversion reached ten percent",
+      "content": "The approved campaign claim is that the tested traffic converted at ten percent.",
+      "tags": [
+        "acme",
+        "claim",
+        "conversion"
+      ],
+      "source_refs": [],
+      "campaign_id": "campaign_acme",
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "proof_acme_dashboard_export",
+      "type": "proof",
+      "vault": "campaign",
+      "status": "validated",
+      "confidence": "high",
+      "title": "Acme dashboard export",
+      "content": "A verified dashboard export supports the approved ten percent conversion claim.",
+      "tags": [
+        "acme",
+        "conversion",
+        "proof"
+      ],
+      "source_refs": [
+        {
+          "note_id": "claim_acme_conversion_ten",
+          "role": "evidence"
+        }
+      ],
+      "campaign_id": "campaign_acme",
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "learning_acme_proof_clip",
+      "type": "learning",
+      "vault": "campaign",
+      "status": "validated",
+      "confidence": "medium",
+      "title": "Acme proof clip learning",
+      "content": "The proof-first clip held attention in a limited campaign test; it remains a learning, not a policy.",
+      "tags": [
+        "acme",
+        "learning",
+        "proof"
+      ],
+      "source_refs": [
+        {
+          "note_id": "proof_acme_dashboard_export",
+          "role": "evidence"
+        }
+      ],
+      "campaign_id": "campaign_acme",
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "hypothesis_acme_question_hook",
+      "type": "hypothesis",
+      "vault": "campaign",
+      "status": "hypothesis",
+      "confidence": "low",
+      "title": "Acme question hook hypothesis",
+      "content": "A question hook may make skeptical viewers stay for the dashboard proof.",
+      "tags": [
+        "acme",
+        "hook",
+        "hypothesis"
+      ],
+      "source_refs": [],
+      "campaign_id": "campaign_acme",
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "audience_beta_creators",
+      "type": "audience",
+      "vault": "campaign",
+      "status": "validated",
+      "confidence": "high",
+      "title": "Beta creator audience",
+      "content": "Beta creators want fast setup and do not share Acme founder objections.",
+      "tags": [
+        "beta",
+        "creators",
+        "setup"
+      ],
+      "source_refs": [],
+      "campaign_id": "campaign_beta",
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "offer_beta_fast_setup",
+      "type": "offer",
+      "vault": "campaign",
+      "status": "curated",
+      "confidence": "high",
+      "title": "Beta fast setup objective",
+      "content": "Promote Beta fast setup with an approved creator workflow demonstration.",
+      "tags": [
+        "beta",
+        "goal",
+        "setup"
+      ],
+      "source_refs": [],
+      "campaign_id": "campaign_beta",
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "claim_beta_setup_minutes",
+      "type": "claim",
+      "vault": "campaign",
+      "status": "deprecated",
+      "confidence": "low",
+      "title": "Beta setup in minutes",
+      "content": "An old setup duration claim was withdrawn and must not be proposed.",
+      "tags": [
+        "beta",
+        "claim",
+        "deprecated"
+      ],
+      "source_refs": [],
+      "campaign_id": "campaign_beta",
+      "source_id": null,
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "source_acme_launch_claim",
+      "type": "source_moment",
+      "vault": "source",
+      "status": "raw_source",
+      "confidence": "high",
+      "title": "Acme source conversion claim",
+      "content": "The speaker says the campaign converted at ten percent.",
+      "tags": [
+        "acme",
+        "claim",
+        "source"
+      ],
+      "source_refs": [],
+      "graph_refs": [
+        {
+          "kind": "source_moment",
+          "evidence_id": "moment_acme_claim"
+        }
+      ],
+      "campaign_id": "campaign_acme",
+      "source_id": "source_acme_launch",
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1
+    },
+    {
+      "id": "source_acme_launch_dashboard",
+      "type": "source_moment",
+      "vault": "source",
+      "status": "raw_source",
+      "confidence": "high",
+      "title": "Acme source dashboard proof",
+      "content": "The source shows a readable dashboard with the conversion result.",
+      "tags": [
+        "acme",
+        "dashboard",
+        "proof"
+      ],
+      "source_refs": [
+        {
+          "note_id": "source_acme_launch_claim",
+          "role": "related"
+        }
+      ],
+      "graph_refs": [
+        {
+          "kind": "visual_beat",
+          "evidence_id": "visual_acme_dashboard"
+        },
+        {
+          "kind": "source_moment",
+          "evidence_id": "moment_acme_dashboard"
+        }
+      ],
+      "campaign_id": "campaign_acme",
+      "source_id": "source_acme_launch",
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1
+    },
+    {
+      "id": "source_acme_launch_payoff",
+      "type": "source_moment",
+      "vault": "source",
+      "status": "raw_source",
+      "confidence": "medium",
+      "title": "Acme source payoff",
+      "content": "The speaker explains why the conversion result changed the launch plan.",
+      "tags": [
+        "acme",
+        "payoff",
+        "source"
+      ],
+      "source_refs": [
+        {
+          "note_id": "source_acme_launch_dashboard",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [
+        {
+          "kind": "audio_beat",
+          "evidence_id": "audio_acme_payoff"
+        },
+        {
+          "kind": "source_moment",
+          "evidence_id": "moment_acme_payoff"
+        }
+      ],
+      "campaign_id": "campaign_acme",
+      "source_id": "source_acme_launch",
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1
+    },
+    {
+      "id": "source_acme_launch_observation",
+      "type": "observation",
+      "vault": "source",
+      "status": "observation",
+      "confidence": "medium",
+      "title": "Acme dashboard is readable",
+      "content": "The dashboard number remains readable after a focused crop candidate.",
+      "tags": [
+        "acme",
+        "observation",
+        "readability"
+      ],
+      "source_refs": [
+        {
+          "note_id": "source_acme_launch_dashboard",
+          "role": "evidence"
+        }
+      ],
+      "campaign_id": "campaign_acme",
+      "source_id": "source_acme_launch",
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1,
+      "graph_refs": []
+    },
+    {
+      "id": "source_beta_demo_setup",
+      "type": "source_moment",
+      "vault": "source",
+      "status": "raw_source",
+      "confidence": "high",
+      "title": "Beta source setup demonstration",
+      "content": "The Beta source demonstrates the creator workflow setup.",
+      "tags": [
+        "beta",
+        "setup",
+        "source"
+      ],
+      "source_refs": [],
+      "graph_refs": [
+        {
+          "kind": "source_moment",
+          "evidence_id": "moment_beta_setup"
+        }
+      ],
+      "campaign_id": "campaign_beta",
+      "source_id": "source_beta_demo",
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1
+    },
+    {
+      "id": "source_beta_demo_reaction",
+      "type": "source_moment",
+      "vault": "source",
+      "status": "raw_source",
+      "confidence": "medium",
+      "title": "Beta source creator reaction",
+      "content": "The creator reacts to the setup flow in the Beta video.",
+      "tags": [
+        "beta",
+        "reaction",
+        "source"
+      ],
+      "source_refs": [
+        {
+          "note_id": "source_beta_demo_setup",
+          "role": "related"
+        }
+      ],
+      "graph_refs": [
+        {
+          "kind": "source_moment",
+          "evidence_id": "moment_beta_reaction"
+        }
+      ],
+      "campaign_id": "campaign_beta",
+      "source_id": "source_beta_demo",
+      "created_at": "2026-08-09",
+      "updated_at": "2026-08-09",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "source_id": "principle_readable_proof_hold",
+      "target_id": "problem_unreadable_dashboard",
+      "relation": "repairs",
+      "provenance": []
+    },
+    {
+      "source_id": "technique_screen_focus",
+      "target_id": "principle_readable_proof_hold",
+      "relation": "supports",
+      "provenance": []
+    },
+    {
+      "source_id": "pattern_claim_proof",
+      "target_id": "principle_readable_proof_hold",
+      "relation": "requires",
+      "provenance": []
+    },
+    {
+      "source_id": "counterexample_unverified_dashboard",
+      "target_id": "pattern_claim_proof",
+      "relation": "contradicts",
+      "provenance": []
+    },
+    {
+      "source_id": "example_readable_conversion_proof",
+      "target_id": "pattern_claim_proof",
+      "relation": "supports",
+      "provenance": []
+    },
+    {
+      "source_id": "policy_proof_before_claim",
+      "target_id": "pattern_claim_proof",
+      "relation": "derived_from",
+      "provenance": [
+        {
+          "note_id": "principle_readable_proof_hold",
+          "role": "evidence"
+        }
+      ]
+    },
+    {
+      "source_id": "proof_acme_dashboard_export",
+      "target_id": "claim_acme_conversion_ten",
+      "relation": "proves",
+      "provenance": []
+    },
+    {
+      "source_id": "proof_acme_dashboard_export",
+      "target_id": "objection_acme_results_not_real",
+      "relation": "answers",
+      "provenance": []
+    },
+    {
+      "source_id": "learning_acme_proof_clip",
+      "target_id": "offer_acme_build_credibility",
+      "relation": "performs_for",
+      "provenance": []
+    },
+    {
+      "source_id": "source_acme_launch_dashboard",
+      "target_id": "source_acme_launch_claim",
+      "relation": "proves",
+      "provenance": []
+    },
+    {
+      "source_id": "source_acme_launch_dashboard",
+      "target_id": "proof_acme_dashboard_export",
+      "relation": "supports",
+      "provenance": []
+    },
+    {
+      "source_id": "source_acme_launch_payoff",
+      "target_id": "source_acme_launch_dashboard",
+      "relation": "answers",
+      "provenance": []
+    },
+    {
+      "source_id": "source_beta_demo_reaction",
+      "target_id": "source_beta_demo_setup",
+      "relation": "supports",
+      "provenance": []
+    }
+  ]
+}

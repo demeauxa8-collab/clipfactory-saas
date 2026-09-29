@@ -1,0 +1,34 @@
+[
+  {
+    "path": "/Users/augustindemeaux/clipfactory-clipping-quality/apps/worker/app/pipeline/runner.py",
+    "sha256": "4d060457b8268013ba88210943afb68b87982a2f9e58ab2e5905dd5e31289e0a"
+  },
+  {
+    "path": "/Users/augustindemeaux/clipfactory-clipping-quality/apps/worker/app/pipeline/clip_render.py",
+    "sha256": "ecd3081c383d7dd6a4f9bfd9bc229af1a3fdb3e0623d469295bf9070d8d3871c"
+  },
+  {
+    "path": "/Users/augustindemeaux/clipfactory-clipping-quality/apps/worker/app/pipeline/editorial_beats.py",
+    "sha256": "1a2676b137cbc36ab07a85bf404fd74cdb612de32a4a4465ed37b614206192d8"
+  },
+  {
+    "path": "/Users/augustindemeaux/clipfactory-clipping-quality/apps/worker/app/pipeline/editorial_director.py",
+    "sha256": "8096d88b78d750209abefa73b8ef3de3f9363fd7c377f5bc72c9cf804d242cc6"
+  },
+  {
+    "path": "/Users/augustindemeaux/clipfactory-clipping-quality/apps/worker/app/pipeline/editorial_reflex_qc.py",
+    "sha256": "269e6457f32eaefc687ae053995e1bd0ea84e634cf4080525498093db4db29ae"
+  },
+  {
+    "path": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp/apps/worker/app/pipeline/editorial_director_v22.py",
+    "sha256": "180a1571acb75db5559514541aa149b833ca2adfdb6b2593d727f4249a81d945"
+  },
+  {
+    "path": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp/apps/worker/app/pipeline/editorial_context_authority.py",
+    "sha256": "e287d711a5ff3047bb6c354d6362e624355e833ac36cebfdb91080d41817e804"
+  },
+  {
+    "path": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp/apps/worker/app/pipeline/context_intelligence.py",
+    "sha256": "a9041313d9d21d49eb81655e96a903083b41951775a0e22b1f5abb0a401e81bb"
+  }
+]

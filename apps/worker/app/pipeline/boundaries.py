@@ -26,6 +26,7 @@ words. Taking the widest N% of gaps degrades gracefully on any source.
 
 from __future__ import annotations
 
+import math
 from collections.abc import Sequence
 from dataclasses import dataclass, replace
 from difflib import SequenceMatcher
@@ -52,24 +53,24 @@ TRAILING_QUOTES = "\"')]}»”’"  # noqa: RUF001 (curly quotes are intentional
 # segment: a 4s setup segment is perfectly legal inside a 3-segment arc.
 MIN_SEGMENT_SECONDS = 3.0
 MAX_SEGMENT_SECONDS = 30.0
-MIN_CLIP_SECONDS = 12.0     # arc total — matches the prompt's "12s hard floor"
+MIN_CLIP_SECONDS = 12.0  # arc total — matches the prompt's "12s hard floor"
 MAX_CLIP_SECONDS = 60.0
 
 # --- Boundary detection (gap fallback) --------------------------------------
-GAP_TOP_FRACTION = 0.12     # the widest 12% of inter-word gaps are boundaries
-MAX_PHRASE_SECONDS = 12.0   # split anything longer at its widest internal gap
+GAP_TOP_FRACTION = 0.12  # the widest 12% of inter-word gaps are boundaries
+MAX_PHRASE_SECONDS = 12.0  # split anything longer at its widest internal gap
 
 # --- Padding around a snapped/anchored window -------------------------------
-PREROLL_SECONDS = 0.12            # breathing room before the first word
-PADDING_SECONDS = 0.22            # let the last word finish before the cut
+PREROLL_SECONDS = 0.12  # breathing room before the first word
+PADDING_SECONDS = 0.22  # let the last word finish before the cut
 # A start sitting within this much of a word's end is adjacent to it, not inside
 # it. Without this, the pre-roll of an anchored start falls into the tail of the
 # previous word and the snapper "helpfully" adds that word back in.
 MIDWORD_TOLERANCE_SECONDS = PREROLL_SECONDS
 
 # --- End search -------------------------------------------------------------
-END_BACK_SLACK_SECONDS = 0.5      # accept a phrase-end this far before the end
-END_EXTENSION_SECONDS = 8.0       # allow extending this far past the end
+END_BACK_SLACK_SECONDS = 0.5  # accept a phrase-end this far before the end
+END_EXTENSION_SECONDS = 8.0  # allow extending this far past the end
 END_EXTENSION_MAX_DURATION = 45.0  # ...as long as the raw span stays under this
 
 # --- Final duration guard on a snapped segment ------------------------------
@@ -77,14 +78,14 @@ END_EXTENSION_MAX_DURATION = 45.0  # ...as long as the raw span stays under this
 # 3-segment arc is legal, and rejecting it was one reason the snap gave up.
 MIN_DURATION_SECONDS = MIN_SEGMENT_SECONDS
 MAX_DURATION_SECONDS = 50.0
-MIN_RETAINED_FRACTION = 0.6       # a snap that drops 40% of the window is wrong
+MIN_RETAINED_FRACTION = 0.6  # a snap that drops 40% of the window is wrong
 
 # --- Anchoring --------------------------------------------------------------
-ANCHOR_TOLERANCE_SECONDS = 15.0   # observed drift peaks at 8.1s; keep headroom
-ANCHOR_MIN_RATIO = 0.72           # fuzzy-match confidence to move a start
-ANCHOR_HEAD_WORDS = 8             # how many quoted words identify the opening
-ANCHOR_MIN_SHIFT_SECONDS = 0.05   # below this, the declared start was fine
-PAYOFF_LOOKAHEAD_SECONDS = 20.0   # how far past the end we hunt for the payoff
+ANCHOR_TOLERANCE_SECONDS = 15.0  # observed drift peaks at 8.1s; keep headroom
+ANCHOR_MIN_RATIO = 0.72  # fuzzy-match confidence to move a start
+ANCHOR_HEAD_WORDS = 8  # how many quoted words identify the opening
+ANCHOR_MIN_SHIFT_SECONDS = 0.05  # below this, the declared start was fine
+PAYOFF_LOOKAHEAD_SECONDS = 20.0  # how far past the end we hunt for the payoff
 
 # (first_word_index, last_word_index) into the sorted word list
 Phrase = tuple[int, int]
@@ -115,6 +116,7 @@ class AnchorReport:
     payoffs_extended: int
     payoffs_out_of_reach: int
     payoffs_unmatched: int
+    arcs_dropped_unresolved: int = 0
 
     @property
     def mean_drift_seconds(self) -> float:
@@ -454,6 +456,7 @@ def anchor_arcs_to_transcript(
     payoff_lookahead_seconds: float = PAYOFF_LOOKAHEAD_SECONDS,
     min_segment_seconds: float = MIN_SEGMENT_SECONDS,
     max_segment_seconds: float = MAX_SEGMENT_SECONDS,
+    strict: bool = False,
 ) -> tuple[list[StoryArc], AnchorReport]:
     """Re-cut every segment on the words the model actually quoted.
 
@@ -473,10 +476,12 @@ def anchor_arcs_to_transcript(
     under ``max_segment_seconds`` — rule #1 of the prompt is that the clip must
     land.
     """
+    # Legacy fixture tools can inspect unresolved proposals. The job runner uses
+    # strict mode: missing evidence must never become an executable time range.
     words = _sorted_words(transcript.words)
     normalized = [_normalize(w.word) for w in words]
     if not words:
-        return list(arcs), AnchorReport(
+        return ([] if strict else list(arcs)), AnchorReport(
             arcs_seen=len(arcs),
             segments_seen=sum(len(a.segments) for a in arcs),
             segments_anchored=0,
@@ -492,6 +497,7 @@ def anchor_arcs_to_transcript(
             payoffs_extended=0,
             payoffs_out_of_reach=0,
             payoffs_unmatched=0,
+            arcs_dropped_unresolved=len(arcs) if strict else 0,
         )
     transcript_end = words[-1].end
 
@@ -502,9 +508,11 @@ def anchor_arcs_to_transcript(
     missing_explicit_anchors = anchor_conflicts = 0
     payoffs_extended = payoffs_out_of_reach = payoffs_unmatched = 0
     out: list[StoryArc] = []
+    unresolved_drops = 0
 
     for arc in arcs:
         segments: list[ArcSegmentSpec] = []
+        unresolved = False
         for idx, segment in enumerate(arc.segments):
             seen += 1
             if not (segment.start_anchor and segment.end_anchor):
@@ -519,6 +527,7 @@ def anchor_arcs_to_transcript(
                 head_words=head_words,
             )
             if found is None:
+                unresolved = True
                 unmatched += 1
                 log.warning(
                     "boundaries.anchor_not_found",
@@ -531,15 +540,15 @@ def anchor_arcs_to_transcript(
                 continue
 
             word_idx, ratio, explicit_start = found
+            if segment.start_anchor and not explicit_start:
+                unresolved = True
             new_start = max(0.0, words[word_idx].start - preroll_seconds)
             shift = new_start - segment.start
             # A fuzzy/excerpt match may keep a sub-threshold coarse timestamp
             # to avoid needless jitter. An explicit model-selected word anchor
             # is different: even 40ms can move a 30fps cut by one frame, so it
             # must remain authoritative whenever the two values are not equal.
-            if abs(shift) <= 1e-6 or (
-                not explicit_start and abs(shift) < ANCHOR_MIN_SHIFT_SECONDS
-            ):
+            if abs(shift) <= 1e-6 or (not explicit_start and abs(shift) < ANCHOR_MIN_SHIFT_SECONDS):
                 segments.append(
                     replace(segment, start_anchor_resolved=explicit_start)
                     if explicit_start
@@ -562,7 +571,7 @@ def anchor_arcs_to_transcript(
             if new_end > max_end:
                 new_end = max_end
                 recovered_start = max(0.0, new_end - duration)
-                if recovered_start < new_start:
+                if recovered_start < new_start and not explicit_start:
                     log.info(
                         "boundaries.anchor_end_clamped",
                         title=arc.title[:60],
@@ -595,6 +604,8 @@ def anchor_arcs_to_transcript(
         for idx, segment in enumerate(segments):
             end_query = _normalize(segment.end_anchor or "")
             if len(end_query) < 8:
+                if segment.end_anchor:
+                    unresolved = True
                 continue
             # Search around the LLM's original coarse end. Start anchoring may
             # translate the working window by several seconds; that translation
@@ -610,6 +621,7 @@ def anchor_arcs_to_transcript(
                 min_ratio=min_ratio,
             )
             if found_end is None:
+                unresolved = True
                 ends_unmatched += 1
                 log.warning(
                     "boundaries.end_anchor_not_found",
@@ -626,6 +638,7 @@ def anchor_arcs_to_transcript(
             )
             duration = anchored_end - segment.start
             if duration < min_segment_seconds or duration > max_segment_seconds:
+                unresolved = True
                 ends_unmatched += 1
                 log.warning(
                     "boundaries.end_anchor_out_of_bounds",
@@ -668,8 +681,11 @@ def anchor_arcs_to_transcript(
             )
             if found_payoff is None:
                 payoffs_unmatched += 1
+                unresolved = True
             else:
-                _first, last_idx, _ratio = found_payoff
+                first_idx, last_idx, _ratio = found_payoff
+                if words[first_idx].start < last.start - 1e-6:
+                    unresolved = True
                 needed_end = words[last_idx].end + padding_seconds
                 if needed_end > last.end + 1e-6:
                     if last.end_anchor_resolved:
@@ -694,6 +710,7 @@ def anchor_arcs_to_transcript(
                         segments[-1] = replace(last, end=needed_end)
                     else:
                         payoffs_out_of_reach += 1
+                        unresolved = True
                         log.warning(
                             "boundaries.payoff_out_of_reach",
                             title=arc.title[:60],
@@ -701,7 +718,10 @@ def anchor_arcs_to_transcript(
                             needed_end=round(needed_end, 2),
                         )
 
-        if not drop_for_anchor_conflict:
+        if strict and unresolved:
+            unresolved_drops += 1
+            log.warning("boundaries.unresolved_arc_drop", title=arc.title[:60])
+        elif not drop_for_anchor_conflict:
             out.append(replace(arc, segments=segments))
 
     report = AnchorReport(
@@ -718,6 +738,7 @@ def anchor_arcs_to_transcript(
         payoffs_extended=payoffs_extended,
         payoffs_out_of_reach=payoffs_out_of_reach,
         payoffs_unmatched=payoffs_unmatched,
+        arcs_dropped_unresolved=unresolved_drops,
     )
     log.info(
         "boundaries.anchor_report",
@@ -760,8 +781,11 @@ def filter_arcs_by_duration(
     for arc in arcs:
         durations = [segment.end - segment.start for segment in arc.segments]
         if not durations or any(
-            duration < min_segment_seconds or duration > max_segment_seconds
-            for duration in durations
+            not math.isfinite(segment.start)
+            or not math.isfinite(segment.end)
+            or segment.start < 0
+            or not min_segment_seconds <= duration <= max_segment_seconds
+            for segment, duration in zip(arc.segments, durations, strict=True)
         ):
             dropped_segment += 1
             log.warning(
@@ -957,6 +981,7 @@ def snap_arc_segments(
     min_duration_seconds: float = MIN_DURATION_SECONDS,
     max_duration_seconds: float = MAX_DURATION_SECONDS,
     min_retained_fraction: float = MIN_RETAINED_FRACTION,
+    safe_padding: bool = False,
 ) -> tuple[list[StoryArc], SnapReport]:
     index = build_phrase_index(words, sentences)
     snapped_arcs: list[StoryArc] = []
@@ -974,13 +999,13 @@ def snap_arc_segments(
                 start, end, seg_failed = _snap_with_index(
                     index,
                     segment.start,
-                segment.end,
-                preroll_seconds=preroll_seconds,
-                padding_seconds=padding_seconds,
-                end_back_slack_seconds=end_back_slack_seconds,
-                end_extension_seconds=end_extension_seconds,
-                end_extension_max_duration=end_extension_max_duration,
-                min_duration_seconds=min_duration_seconds,
+                    segment.end,
+                    preroll_seconds=preroll_seconds,
+                    padding_seconds=padding_seconds,
+                    end_back_slack_seconds=end_back_slack_seconds,
+                    end_extension_seconds=end_extension_seconds,
+                    end_extension_max_duration=end_extension_max_duration,
+                    min_duration_seconds=min_duration_seconds,
                     max_duration_seconds=max_duration_seconds,
                     min_retained_fraction=min_retained_fraction,
                 )
@@ -988,6 +1013,22 @@ def snap_arc_segments(
                     start = segment.start
                 if segment.end_anchor_resolved:
                     end = segment.end
+            if safe_padding and not seg_failed:
+                # Pre/post-roll is allowed in silence, never in a neighbouring
+                # word. Keep the selected complete words and remove only the
+                # partial word accidentally touched by the padding.
+                selected = [w for w in index.words if start <= w.start and w.end <= end]
+                previous_start, previous_end = start, end
+                for word in index.words:
+                    if word.start < start < word.end:
+                        start = word.end
+                    if word.start < end < word.end:
+                        end = word.start
+                if any(w.start < start - 0.001 or w.end > end + 0.001 for w in selected):
+                    # Overlapping ASR words can make silent padding impossible.
+                    # Leave the unsafe range for the render gate to reject;
+                    # never silently remove a previously complete selected word.
+                    start, end, seg_failed = previous_start, previous_end, True
             if seg_failed:
                 failed += 1
             if abs(start - segment.start) > 0.001 or abs(end - segment.end) > 0.001:

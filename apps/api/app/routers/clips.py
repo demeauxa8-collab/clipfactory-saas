@@ -18,7 +18,8 @@ async def download_clip(
     pool = get_pool()
     async with pool.acquire() as conn:
         row = await conn.fetchrow(
-            "select r2_key from clips where id = $1 and user_id = $2",
+            """select c.r2_key from clips c join jobs j on j.id = c.job_id
+               where c.id = $1 and c.user_id = $2 and j.status = 'completed'""",
             clip_id,
             user.user_id,
         )

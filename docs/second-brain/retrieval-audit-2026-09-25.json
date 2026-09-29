@@ -1,0 +1,51 @@
+{
+  "audit_date": "2026-09-25",
+  "scope": "local_real_candidate_0_no_model_call",
+  "candidate_title": "Le secret des 2000€ de bénéfice en 24h avec Google Ads",
+  "source_files_sha256": {
+    "/Users/augustindemeaux/clipfactory-data/bench/fixture_2221f645-ed0e-47b2-8201-417d7c517a39.json": "1e70791ea39fc65c392428344be500ef87b018666e9f8146a8d837c34d4a6b2d",
+    "/Users/augustindemeaux/clipfactory-data/bench/craft-refs/transcript_with_sentences.json": "c0621cf87117321dd4a9baf5defb7b6af29e52f23ccc30d67109e6119f71e8cb",
+    "/Users/augustindemeaux/clipfactory-data/full-stack-run-2026-09-12/shared-candidates.json": "e500e05842533e6ef7695597e0a7f8a179bdc9ebcaa0031c0d14ca407ced8726"
+  },
+  "vault_notes": 29,
+  "risk_relations": 10,
+  "checks": [
+    {
+      "question_kind": "hook",
+      "goal": "Create a clear relevant hook with a real curiosity gap, not a confusing dependent opening",
+      "retrieval_status": "ready",
+      "selected_global_pair": [
+        "curiosity_gap",
+        "curiosity_confusion"
+      ],
+      "present_in_director_context": true,
+      "context_chars": 3630,
+      "context_digest": "e0bc07a5340e00c2101a376e11fc8894362b256e5bf2ca54774b76e3eb65d07f"
+    },
+    {
+      "question_kind": "continuity",
+      "goal": "Build tension from real stakes and obstacles with progressive revelation",
+      "retrieval_status": "ready",
+      "selected_global_pair": [
+        "tension_stakes",
+        "tension_fabrication"
+      ],
+      "present_in_director_context": true,
+      "context_chars": 3560,
+      "context_digest": "4c98b3ee00a1947b94ab77b83770922d817d946dab90503d618ed8aa3138ed8f"
+    },
+    {
+      "question_kind": "payoff",
+      "goal": "Match the title promise with proof and a satisfying answer before the close",
+      "retrieval_status": "ready",
+      "selected_global_pair": [
+        "promise_payoff",
+        "promise_mismatch"
+      ],
+      "present_in_director_context": true,
+      "context_chars": 3649,
+      "context_digest": "f83b113ba01591ef92c4c9c65f0c4e994ebdc57c0db63d4565a8c8c8ae9fd32c"
+    }
+  ],
+  "limit": "Retrieval and Director context reachability only; no new render or audience-retention measurement."
+}

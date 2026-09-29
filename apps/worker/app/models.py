@@ -318,6 +318,7 @@ class JobContext:
     source_url: str
     target_clip_count: int
     workdir: str
+    run_token: str = ""
 
     # Filled as the pipeline progresses
     source_path: str | None = None

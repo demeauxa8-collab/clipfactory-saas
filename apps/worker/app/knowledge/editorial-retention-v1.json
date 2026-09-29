@@ -1,0 +1,913 @@
+{
+  "notes": [
+    {
+      "id": "src_gap",
+      "type": "asset",
+      "vault": "global",
+      "status": "raw_source",
+      "confidence": "medium",
+      "title": "The psychology of curiosity: A review and reinterpretation",
+      "content": "Curiosity can arise from an identifiable gap in knowledge. A psychological theory, not a measured short-video retention effect.",
+      "version": 1,
+      "tags": [],
+      "source_refs": [],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "src_curiosity",
+      "type": "asset",
+      "vault": "global",
+      "status": "raw_source",
+      "confidence": "medium",
+      "title": "States of curiosity modulate hippocampus-dependent learning via the dopaminergic circuit",
+      "content": "High curiosity was associated with better memory for trivia answers and incidental material. Memory in laboratory tasks is not feed retention or conversion; no dopamine editing recipe follows.",
+      "version": 1,
+      "tags": [],
+      "source_refs": [],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "src_tension",
+      "type": "asset",
+      "vault": "global",
+      "status": "raw_source",
+      "confidence": "medium",
+      "title": "Toward a general psychological model of tension and suspense",
+      "content": "Tension involves anticipation of significant outcomes under conflict or uncertainty. The model is theoretical and domain-general; it gives no optimal cut frequency or reveal time.",
+      "version": 1,
+      "tags": [],
+      "source_refs": [],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "src_spoilers",
+      "type": "asset",
+      "vault": "global",
+      "status": "raw_source",
+      "confidence": "medium",
+      "title": "Spoiler alert: How narrative film captures attention",
+      "content": "In a film task, knowing the ending did not restore the viewers secondary goal performance. A narrative-attention task, not a test of short-feed retention; revealing an outcome need not destroy all interest.",
+      "version": 1,
+      "tags": [],
+      "source_refs": [],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "src_tiktok",
+      "type": "asset",
+      "vault": "global",
+      "status": "raw_source",
+      "confidence": "medium",
+      "title": "Creative Codes: 6 principles for creating on TikTok",
+      "content": "TikTok recommends hook, body and close, early value, vertical production and useful audiovisual cues. Advertising guidance. The cited six-second figure concerns ad recall impact, not the proportion of viewers retained.",
+      "version": 1,
+      "tags": [],
+      "source_refs": [],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "src_yt_retention",
+      "type": "asset",
+      "vault": "global",
+      "status": "raw_source",
+      "confidence": "medium",
+      "title": "Measure key moments for audience retention",
+      "content": "Interpret retention dips and spikes with context; a spike can reflect confusion and repeated viewing. Highlighted key-moment features have eligibility limits; the 30-second intro measure is not a universal Shorts rule.",
+      "version": 1,
+      "tags": [],
+      "source_refs": [],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "src_yt_shorts",
+      "type": "asset",
+      "vault": "global",
+      "status": "raw_source",
+      "confidence": "medium",
+      "title": "Content tab analytics tips - Shorts",
+      "content": "Shorts analytics separates choosing to view from swiping away and advises comparisons within format. Platform-defined denominators and traffic mix matter. Raw views alone do not measure hook quality.",
+      "version": 1,
+      "tags": [],
+      "source_refs": [],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "src_yt_value",
+      "type": "asset",
+      "vault": "global",
+      "status": "raw_source",
+      "confidence": "medium",
+      "title": "On YouTubes recommendation system",
+      "content": "YouTube describes multiple signals including watch time, surveys and sharing. A dated system explanation, not a current ranking formula or a guarantee of distribution.",
+      "version": 1,
+      "tags": [],
+      "source_refs": [],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "src_local_run",
+      "type": "asset",
+      "vault": "global",
+      "status": "raw_source",
+      "confidence": "medium",
+      "title": "Local clipping comparison on one retained source",
+      "content": "Complete endings improved while title alignment, dependent openings and small proof screens remained problems. One source used for development, no audience experiment and no measured retention uplift.",
+      "version": 1,
+      "tags": [],
+      "source_refs": [],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "hook_relevance",
+      "type": "principle",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Hook relevance",
+      "content": "Editing hypothesis: make the subject and viewer benefit clear at entry. Use a concrete source-supported promise; test it with cold viewers.",
+      "version": 1,
+      "tags": [
+        "editorial_hypothesis",
+        "hook",
+        "relevance",
+        "subject"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_gap",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_local_run",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "hook_context_loss",
+      "type": "problem",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Hook relevance - failure scenario",
+      "content": "A striking opening with an unexplained this, that or result can lose its meaning outside the original video. Attention alone does not establish relevance.",
+      "version": 1,
+      "tags": [
+        "authored_counterexample",
+        "hook",
+        "relevance",
+        "subject"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_gap",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_local_run",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "curiosity_gap",
+      "type": "principle",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Specific curiosity gap",
+      "content": "Theory-informed hypothesis: give enough context to identify one missing answer. Make the question understandable before delaying its resolution.",
+      "version": 1,
+      "tags": [
+        "curiosity",
+        "editorial_hypothesis",
+        "gap",
+        "question"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_gap",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_curiosity",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "curiosity_confusion",
+      "type": "problem",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Specific curiosity gap - failure scenario",
+      "content": "Hiding the subject or stacking unexplained questions creates confusion. A knowledge gap requires some knowledge, not maximum obscurity.",
+      "version": 1,
+      "tags": [
+        "authored_counterexample",
+        "curiosity",
+        "gap",
+        "question"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_gap",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_curiosity",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "tension_stakes",
+      "type": "principle",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Tension and stakes",
+      "content": "Theory-informed hypothesis: show an actual goal, obstacle and meaningful possible outcome. Let the source establish stakes before asking viewers to anticipate.",
+      "version": 1,
+      "tags": [
+        "anticipation",
+        "editorial_hypothesis",
+        "obstacle",
+        "stakes",
+        "tension"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_tension",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "tension_fabrication",
+      "type": "problem",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Tension and stakes - failure scenario",
+      "content": "Invented deadlines, exaggerated danger or removed qualifications create false stakes. Music and urgent wording cannot supply missing source evidence.",
+      "version": 1,
+      "tags": [
+        "anticipation",
+        "authored_counterexample",
+        "obstacle",
+        "stakes",
+        "tension"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_tension",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "progress_reveal",
+      "type": "principle",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Progress and reveal",
+      "content": "Editing hypothesis: advance the question with a useful clue, attempt or consequence. Resolve a promise before opening another; do not delay only to add length.",
+      "version": 1,
+      "tags": [
+        "clue",
+        "editorial_hypothesis",
+        "progress",
+        "reveal",
+        "tension"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_tension",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_spoilers",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "progress_stalling",
+      "type": "problem",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Progress and reveal - failure scenario",
+      "content": "Repeated teasers without new information stall the story. Showing a result early can leave a worthwhile how or why question; suspense need not hide every outcome.",
+      "version": 1,
+      "tags": [
+        "authored_counterexample",
+        "clue",
+        "progress",
+        "reveal",
+        "tension"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_tension",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_spoilers",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "promise_payoff",
+      "type": "principle",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Promise and payoff",
+      "content": "Editing hypothesis: check the final cut against its opening and title. Keep the promised explanation, proof and qualifications through a complete ending.",
+      "version": 1,
+      "tags": [
+        "editorial_hypothesis",
+        "ending",
+        "payoff",
+        "promise",
+        "title"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_local_run",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_yt_retention",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "promise_mismatch",
+      "type": "problem",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Promise and payoff - failure scenario",
+      "content": "A tighter cut can remove the promised mechanism or next step. A title about Google is unsupported by a final excerpt that retains only a revenue claim.",
+      "version": 1,
+      "tags": [
+        "authored_counterexample",
+        "ending",
+        "payoff",
+        "promise",
+        "title"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_local_run",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_yt_retention",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "rhythm_meaning",
+      "type": "principle",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Rhythm follows meaning",
+      "content": "Editing hypothesis: cut when evidence, action or meaning changes; hold what needs reading. Test pacing by comprehension, not a fixed effects-per-second recipe.",
+      "version": 1,
+      "tags": [
+        "cuts",
+        "editorial_hypothesis",
+        "pacing",
+        "rhythm"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_tiktok",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_local_run",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "rhythm_overload",
+      "type": "problem",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Rhythm follows meaning - failure scenario",
+      "content": "Arbitrary zooms, dense captions or constant cuts can compete with the evidence. No source here establishes one universal cut interval for short clips.",
+      "version": 1,
+      "tags": [
+        "authored_counterexample",
+        "cuts",
+        "pacing",
+        "rhythm"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_tiktok",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_local_run",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "proof_readable",
+      "type": "principle",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Readable proof",
+      "content": "Editing hypothesis: make the claim and its evidence interpretable at phone size. Preserve units and sample limits; crop only with verified visual support.",
+      "version": 1,
+      "tags": [
+        "editorial_hypothesis",
+        "evidence",
+        "proof",
+        "readability"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_local_run",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "proof_ambiguity",
+      "type": "problem",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Readable proof - failure scenario",
+      "content": "A tiny dashboard or a missing percent sign weakens interpretation. Removing the small-sample qualification can change what the speaker actually established.",
+      "version": 1,
+      "tags": [
+        "authored_counterexample",
+        "evidence",
+        "proof",
+        "readability"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_local_run",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "early_value",
+      "type": "principle",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Early value and mechanism",
+      "content": "Platform-informed hypothesis: communicate value early. Try an honest result-first opening when the rest of the clip explains the mechanism or meaningful limitation.",
+      "version": 1,
+      "tags": [
+        "early",
+        "editorial_hypothesis",
+        "hook",
+        "mechanism",
+        "value"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_tiktok",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_spoilers",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "early_value_overclaim",
+      "type": "problem",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Early value and mechanism - failure scenario",
+      "content": "The TikTok six-second ad-recall claim is not a universal retention threshold. A borrowed surprising outcome is not a substitute for a supported mechanism.",
+      "version": 1,
+      "tags": [
+        "authored_counterexample",
+        "early",
+        "hook",
+        "mechanism",
+        "value"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_tiktok",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_spoilers",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "retention_diagnosis",
+      "type": "principle",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Retention diagnosis",
+      "content": "Measurement guidance: separate view choice, conditional retention and satisfaction. Compare similar lengths and audiences; inspect whether rewatching reflects confusion.",
+      "version": 1,
+      "tags": [
+        "comparison",
+        "editorial_hypothesis",
+        "measurement",
+        "retention"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_yt_shorts",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_yt_retention",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "retention_metric_trap",
+      "type": "problem",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Retention diagnosis - failure scenario",
+      "content": "More loops or a higher completion percentage on a shorter clip do not by themselves prove better content. Different denominators and traffic mixes break comparisons.",
+      "version": 1,
+      "tags": [
+        "authored_counterexample",
+        "comparison",
+        "measurement",
+        "retention"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_yt_shorts",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_yt_retention",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "satisfying_close",
+      "type": "principle",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Satisfying close",
+      "content": "Editing hypothesis: deliver a useful answer before a relevant next action. Judge the value received as well as time watched; keep the ending understandable on its own.",
+      "version": 1,
+      "tags": [
+        "close",
+        "cta",
+        "editorial_hypothesis",
+        "satisfaction"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_yt_value",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_local_run",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "close_without_answer",
+      "type": "problem",
+      "vault": "global",
+      "status": "curated",
+      "confidence": "medium",
+      "title": "Satisfying close - failure scenario",
+      "content": "A forced loop, withheld answer or unrelated call to action can increase time without resolving the promise. Watch time alone is not a satisfaction measure.",
+      "version": 1,
+      "tags": [
+        "authored_counterexample",
+        "close",
+        "cta",
+        "satisfaction"
+      ],
+      "source_refs": [
+        {
+          "note_id": "src_yt_value",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_local_run",
+          "role": "derived_from"
+        }
+      ],
+      "graph_refs": [],
+      "campaign_id": null,
+      "source_id": null,
+      "created_at": "2026-09-13",
+      "updated_at": "2026-09-13"
+    }
+  ],
+  "relations": [
+    {
+      "source_id": "hook_context_loss",
+      "target_id": "hook_relevance",
+      "relation": "risks",
+      "provenance": [
+        {
+          "note_id": "src_gap",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_local_run",
+          "role": "derived_from"
+        }
+      ]
+    },
+    {
+      "source_id": "curiosity_confusion",
+      "target_id": "curiosity_gap",
+      "relation": "risks",
+      "provenance": [
+        {
+          "note_id": "src_gap",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_curiosity",
+          "role": "derived_from"
+        }
+      ]
+    },
+    {
+      "source_id": "tension_fabrication",
+      "target_id": "tension_stakes",
+      "relation": "risks",
+      "provenance": [
+        {
+          "note_id": "src_tension",
+          "role": "derived_from"
+        }
+      ]
+    },
+    {
+      "source_id": "progress_stalling",
+      "target_id": "progress_reveal",
+      "relation": "risks",
+      "provenance": [
+        {
+          "note_id": "src_tension",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_spoilers",
+          "role": "derived_from"
+        }
+      ]
+    },
+    {
+      "source_id": "promise_mismatch",
+      "target_id": "promise_payoff",
+      "relation": "risks",
+      "provenance": [
+        {
+          "note_id": "src_local_run",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_yt_retention",
+          "role": "derived_from"
+        }
+      ]
+    },
+    {
+      "source_id": "rhythm_overload",
+      "target_id": "rhythm_meaning",
+      "relation": "risks",
+      "provenance": [
+        {
+          "note_id": "src_tiktok",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_local_run",
+          "role": "derived_from"
+        }
+      ]
+    },
+    {
+      "source_id": "proof_ambiguity",
+      "target_id": "proof_readable",
+      "relation": "risks",
+      "provenance": [
+        {
+          "note_id": "src_local_run",
+          "role": "derived_from"
+        }
+      ]
+    },
+    {
+      "source_id": "early_value_overclaim",
+      "target_id": "early_value",
+      "relation": "risks",
+      "provenance": [
+        {
+          "note_id": "src_tiktok",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_spoilers",
+          "role": "derived_from"
+        }
+      ]
+    },
+    {
+      "source_id": "retention_metric_trap",
+      "target_id": "retention_diagnosis",
+      "relation": "risks",
+      "provenance": [
+        {
+          "note_id": "src_yt_shorts",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_yt_retention",
+          "role": "derived_from"
+        }
+      ]
+    },
+    {
+      "source_id": "close_without_answer",
+      "target_id": "satisfying_close",
+      "relation": "risks",
+      "provenance": [
+        {
+          "note_id": "src_yt_value",
+          "role": "derived_from"
+        },
+        {
+          "note_id": "src_local_run",
+          "role": "derived_from"
+        }
+      ]
+    }
+  ]
+}

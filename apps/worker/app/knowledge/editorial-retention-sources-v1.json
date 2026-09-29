@@ -1,0 +1,106 @@
+{
+  "schema_version": "1.0",
+  "pack_id": "editorial_retention_v1",
+  "reviewed_at": "2026-09-13",
+  "sources": [
+    {
+      "note_id": "src_gap",
+      "title": "The psychology of curiosity: A review and reinterpretation",
+      "author": "George Loewenstein",
+      "published_at": "1994",
+      "reference": "https://www.cmu.edu/dietrich/sds/docs/loewenstein/PsychofCuriosity.pdf",
+      "evidence_kind": "theoretical_review",
+      "summary": "Curiosity can arise from an identifiable gap in knowledge.",
+      "limitations": "A psychological theory, not a measured short-video retention effect.",
+      "retrieved_at": "2026-09-13"
+    },
+    {
+      "note_id": "src_curiosity",
+      "title": "States of curiosity modulate hippocampus-dependent learning via the dopaminergic circuit",
+      "author": "Gruber, Gelman and Ranganath",
+      "published_at": "2014",
+      "reference": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4252494/",
+      "evidence_kind": "laboratory_experiment",
+      "summary": "High curiosity was associated with better memory for trivia answers and incidental material.",
+      "limitations": "Memory in laboratory tasks is not feed retention or conversion; no dopamine editing recipe follows.",
+      "retrieved_at": "2026-09-13"
+    },
+    {
+      "note_id": "src_tension",
+      "title": "Toward a general psychological model of tension and suspense",
+      "author": "Lehne and Koelsch",
+      "published_at": "2015",
+      "reference": "https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2015.00079/full",
+      "evidence_kind": "theoretical_model",
+      "summary": "Tension involves anticipation of significant outcomes under conflict or uncertainty.",
+      "limitations": "The model is theoretical and domain-general; it gives no optimal cut frequency or reveal time.",
+      "retrieved_at": "2026-09-13"
+    },
+    {
+      "note_id": "src_spoilers",
+      "title": "Spoiler alert: How narrative film captures attention",
+      "author": "Cohen and colleagues",
+      "published_at": "2023",
+      "reference": "https://onlinelibrary.wiley.com/doi/10.1002/acp.4070",
+      "evidence_kind": "laboratory_experiment",
+      "summary": "In a film task, knowing the ending did not restore the viewers secondary goal performance.",
+      "limitations": "A narrative-attention task, not a test of short-feed retention; revealing an outcome need not destroy all interest.",
+      "retrieved_at": "2026-09-13"
+    },
+    {
+      "note_id": "src_tiktok",
+      "title": "Creative Codes: 6 principles for creating on TikTok",
+      "author": "TikTok for Business",
+      "published_at": null,
+      "reference": "https://ads.tiktok.com/business/en/blog/creative-best-practices-top-performing-ads/",
+      "evidence_kind": "platform_ad_guidance",
+      "summary": "TikTok recommends hook, body and close, early value, vertical production and useful audiovisual cues.",
+      "limitations": "Advertising guidance. The cited six-second figure concerns ad recall impact, not the proportion of viewers retained.",
+      "retrieved_at": "2026-09-13"
+    },
+    {
+      "note_id": "src_yt_retention",
+      "title": "Measure key moments for audience retention",
+      "author": "YouTube Help",
+      "published_at": null,
+      "reference": "https://support.google.com/youtube/answer/9314415?hl=en",
+      "evidence_kind": "platform_measurement_documentation",
+      "summary": "Interpret retention dips and spikes with context; a spike can reflect confusion and repeated viewing.",
+      "limitations": "Highlighted key-moment features have eligibility limits; the 30-second intro measure is not a universal Shorts rule.",
+      "retrieved_at": "2026-09-13"
+    },
+    {
+      "note_id": "src_yt_shorts",
+      "title": "Content tab analytics tips - Shorts",
+      "author": "YouTube Help",
+      "published_at": null,
+      "reference": "https://support.google.com/youtube/answer/12942217?co=YOUTUBE._YTVideoType%3Dshorts&hl=en",
+      "evidence_kind": "platform_measurement_documentation",
+      "summary": "Shorts analytics separates choosing to view from swiping away and advises comparisons within format.",
+      "limitations": "Platform-defined denominators and traffic mix matter. Raw views alone do not measure hook quality.",
+      "retrieved_at": "2026-09-13"
+    },
+    {
+      "note_id": "src_yt_value",
+      "title": "On YouTubes recommendation system",
+      "author": "Cristos Goodrow, YouTube",
+      "published_at": "2021-09-15",
+      "reference": "https://blog.youtube/inside-youtube/on-youtubes-recommendation-system/",
+      "evidence_kind": "historical_platform_explanation",
+      "summary": "YouTube describes multiple signals including watch time, surveys and sharing.",
+      "limitations": "A dated system explanation, not a current ranking formula or a guarantee of distribution.",
+      "retrieved_at": "2026-09-13"
+    },
+    {
+      "note_id": "src_local_run",
+      "title": "Local clipping comparison on one retained source",
+      "author": "ClipFactory local benchmark",
+      "published_at": "2026-09-12",
+      "reference": "/Users/augustindemeaux/clipfactory-data/full-stack-run-2026-09-12/REPORT.md",
+      "evidence_kind": "local_pilot_observation",
+      "summary": "Complete endings improved while title alignment, dependent openings and small proof screens remained problems.",
+      "limitations": "One source used for development, no audience experiment and no measured retention uplift.",
+      "retrieved_at": "2026-09-13"
+    }
+  ]
+}
