@@ -103,3 +103,57 @@ async def test_retries_and_failed_usage_are_bounded(monkeypatch):
     assert len(requests) == 3
     assert sleeper.await_count == 2
     assert error.value.tokens_in + error.value.tokens_out == 60
+
+
+async def call_model(provider, model, max_tokens=512):
+    return await provider.chat_json(
+        model=model, system="Return JSON.", user="Test", max_tokens=max_tokens
+    )
+
+
+async def test_locked_reasoning_model_gets_output_floor(monkeypatch):
+    provider, requests, _ = client(monkeypatch, [httpx.Response(200, json=response())])
+    await call_model(provider, "google/gemini-3.8-flash", max_tokens=512)
+    assert requests[0]["max_tokens"] >= 6000
+    assert requests[0]["reasoning"] == {"max_tokens": 0}
+
+
+async def test_reasoning_refusal_keeps_the_output_floor(monkeypatch):
+    provider, requests, _ = client(
+        monkeypatch,
+        [
+            httpx.Response(400, text="Reasoning is mandatory for this endpoint"),
+            httpx.Response(200, json=response()),
+        ],
+    )
+    await call_model(provider, "google/gemini-3.8-flash", max_tokens=512)
+    assert "reasoning" not in requests[1]
+    assert requests[1]["max_tokens"] >= 6000
+
+
+async def test_truncated_json_is_detected_and_retried_with_a_larger_budget(monkeypatch):
+    truncated = {
+        "choices": [{"message": {"content": '{"arcs": [{"sta'}, "finish_reason": "length"}],
+        "usage": {"prompt_tokens": 10, "completion_tokens": 2048},
+    }
+    provider, requests, _ = client(
+        monkeypatch,
+        [httpx.Response(200, json=truncated), httpx.Response(200, json=response())],
+    )
+    result = await call(provider)
+    assert result.payload == {"ok": True}
+    assert [r["max_tokens"] for r in requests] == [2048, 4096]
+
+
+async def test_truncation_never_parses_a_complete_looking_fragment(monkeypatch):
+    # A cut answer can still be valid JSON (e.g. an early-closed object): the
+    # finish_reason, not the parser, decides.
+    cut = {
+        "choices": [{"message": {"content": '{"ok": true}'}, "finish_reason": "length"}],
+        "usage": {},
+    }
+    provider, requests, _ = client(monkeypatch, [httpx.Response(200, json=cut)] * 3)
+    with pytest.raises(ProviderError) as error:
+        await call(provider)
+    assert error.value.kind == "truncated"
+    assert len(requests) == 3

@@ -8,20 +8,39 @@ from typing import Any
 import httpx
 import structlog
 
+from ..models_lock import model_profile
 from ..settings import get_settings
 from ._jsonparse import extract_json
 from .base import ImageInput, LLMCallResult, LLMProvider, ProviderError
 
 log = structlog.get_logger()
 
+# Ceiling for the automatic budget increase after a truncated answer.
+MAX_OUTPUT_TOKENS = 32_000
+
+
+def _apply_model_profile(body: dict[str, Any], model: str) -> dict[str, Any]:
+    """Output floor and reasoning budget from models.lock.toml, per model.
+
+    A reasoning model needs headroom: its thinking tokens count against
+    max_tokens, and a too-small budget truncates the JSON. Reasoning is sent
+    disabled (or capped) when the lock says so; a model that refuses gets the
+    field removed by the retry loop while keeping this floor.
+    """
+    profile = model_profile(model)
+    body["max_tokens"] = max(int(body["max_tokens"]), profile.min_output_tokens)
+    if profile.reasoning_max_tokens is None:
+        body.pop("reasoning", None)
+    else:
+        body["reasoning"] = {"max_tokens": profile.reasoning_max_tokens}
+    return body
+
 
 class OpenRouterProvider(LLMProvider):
     """OpenAI-compatible HTTP client for OpenRouter.
 
-    Used for:
-      - Text: DeepSeek V3.2 (story arcs, segment selection)
-      - Vision deep: Gemini 2.5 Flash (top arcs verification)
-      - Vision cheap: Qwen3-VL Flash (global video map)
+    Serves the text, vision-deep, vision-cheap and clip-judge stages; which
+    model each stage uses comes from models.lock.toml via settings.
     """
 
     name = "openrouter"
@@ -88,6 +107,10 @@ class OpenRouterProvider(LLMProvider):
         choices = data.get("choices") or []
         if not choices:
             raise ProviderError("no choices in response", kind="empty")
+        if choices[0].get("finish_reason") == "length":
+            # Output budget exhausted (often by reasoning tokens): the JSON is
+            # cut. Retry with a larger budget instead of parsing a fragment.
+            raise ProviderError("response truncated (finish_reason=length)", kind="truncated")
         msg = choices[0].get("message") or {}
         content = msg.get("content")
         if isinstance(content, list):
@@ -146,6 +169,13 @@ class OpenRouterProvider(LLMProvider):
                 if reasoning_refused:
                     body.pop("reasoning")
                     log.info("openrouter.reasoning_required", model=model)
+                elif isinstance(exc, ProviderError) and exc.kind == "truncated":
+                    body["max_tokens"] = min(
+                        MAX_OUTPUT_TOKENS, max(int(body.get("max_tokens") or 0) * 2, 1024)
+                    )
+                    log.info(
+                        "openrouter.truncated_retry", model=model, max_tokens=body["max_tokens"]
+                    )
                 elif isinstance(exc, ProviderError) and exc.status_code is not None:
                     if exc.status_code not in {408, 409, 429} and not (
                         isinstance(exc.status_code, int) and 500 <= exc.status_code <= 599
@@ -187,7 +217,7 @@ class OpenRouterProvider(LLMProvider):
                 {"role": "user", "content": user},
             ],
         }
-        return await self._post_and_extract(body, model, "parse")
+        return await self._post_and_extract(_apply_model_profile(body, model), model, "parse")
 
     async def vision_json(
         self,
@@ -228,4 +258,6 @@ class OpenRouterProvider(LLMProvider):
                 {"role": "user", "content": content},
             ],
         }
-        return await self._post_and_extract(body, model, "vision parse")
+        return await self._post_and_extract(
+            _apply_model_profile(body, model), model, "vision parse"
+        )

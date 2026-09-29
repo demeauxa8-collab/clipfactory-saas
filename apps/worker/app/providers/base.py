@@ -20,7 +20,7 @@ class ProviderError(RuntimeError):
         retry_after: float | None = None,
     ) -> None:
         super().__init__(message)
-        self.kind = kind  # "http" | "parse" | "empty" | "timeout" | "unknown"
+        self.kind = kind  # "http" | "parse" | "empty" | "timeout" | "truncated" | "unknown"
         self.status_code = status_code
         self.retry_after = retry_after
         self.tokens_in = 0
