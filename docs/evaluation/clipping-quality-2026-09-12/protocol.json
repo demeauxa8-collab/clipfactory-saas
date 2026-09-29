@@ -1,0 +1,138 @@
+{
+  "schema_version": "1.0",
+  "status": "prepared_not_executed",
+  "baseline": {
+    "label": "R0_compiled_current",
+    "report": "/Users/augustindemeaux/clipfactory-data/quality-run-2026-09-05/delivery-verified/report.json",
+    "code_sha256": "8eeb06d01c817152d96469d3aebd04b8ca44c1e17394870075ca2ad9a1c16c40",
+    "source_count": 1,
+    "render_count": 7,
+    "proposal_origin": "captured_not_regenerated",
+    "framing": "fit_blur_forced"
+  },
+  "corpus_target": {
+    "sources": 20,
+    "development_sources": 10,
+    "heldout_sources": 10,
+    "sources_per_stratum": 4,
+    "strata": [
+      "solo_explanation",
+      "multi_speaker_interview",
+      "screen_demo",
+      "narrative_vlog",
+      "live_or_noisy_source"
+    ],
+    "split_unit": "source_and_creator_group",
+    "requested_clips_per_source": 3,
+    "status": "one_development_source_available_remaining_uncollected"
+  },
+  "primary_metrics": [
+    "publishable_slots_over_requested_slots",
+    "critical_failure_slots_over_requested_slots",
+    "pairwise_preference_by_source",
+    "usable_distinct_topics_per_source",
+    "repair_minutes_per_requested_slot"
+  ],
+  "secondary_metrics": [
+    "candidate_pool_coverage_against_annotated_moments",
+    "selected_useful_moments_at_k",
+    "caption_and_proof_readability",
+    "cost_per_publishable_clip",
+    "latency_p50_p95"
+  ],
+  "review": {
+    "raters_target": 2,
+    "mode": "blind_randomized_pairwise_with_ties",
+    "stages": [
+      "clip_only_with_campaign_brief",
+      "source_context_audit",
+      "pairwise_comparison"
+    ],
+    "scale": {
+      "0": "unusable",
+      "1": "major_repair",
+      "2": "noticeable_repair",
+      "3": "publishable",
+      "4": "strong"
+    },
+    "criteria": [
+      "hook",
+      "self_containment",
+      "closure",
+      "source_faithfulness",
+      "visual_readability",
+      "caption_readability",
+      "pacing",
+      "campaign_fit"
+    ],
+    "verdicts": [
+      "publish",
+      "minor_repair",
+      "major_repair",
+      "reject",
+      "not_assessable"
+    ],
+    "critical_flags": [
+      "meaning_changed",
+      "unsupported_title_promise",
+      "missing_essential_context",
+      "cut_spoken_word",
+      "required_proof_unreadable",
+      "missing_required_captions"
+    ],
+    "unrated_value": null,
+    "llm_judge_role": "triage_only_until_calibrated_against_humans"
+  },
+  "decision_policy": {
+    "status": "provisional_freeze_before_comparison",
+    "technical_gate": "all_delivered_outputs_pass_existing_qc",
+    "critical_gate": "no_new_critical_regression_on_frozen_cases",
+    "publishable_rate_target_gain_percentage_points": 15,
+    "pairwise_preference_target": 0.6,
+    "ties": "report_separately_never_drop_silently",
+    "uncertainty": "cluster_by_source_and_creator_report_interval_no_generalization_from_one_source",
+    "cost_and_latency": "measure_separately_choose_pareto_tradeoff_no_unapproved_paid_run"
+  },
+  "experiments": [
+    {
+      "id": "E1",
+      "change": "semantic_entry_exit_and_title_alignment",
+      "fixed": "source_transcript_candidate_pool_framing_models",
+      "budget": "one_repair_pass_max_two_alternatives_per_candidate",
+      "status": "planned"
+    },
+    {
+      "id": "E2",
+      "change": "candidate_ranking_and_diversity",
+      "fixed": "candidate_pool_renderer_and_E1_policy",
+      "status": "planned"
+    },
+    {
+      "id": "E3",
+      "change": "director_2_1_with_validated_beat_graph_and_reflex_qc",
+      "fixed": "candidate_pool_campaign_renderer_framing_effects_disabled",
+      "status": "planned"
+    },
+    {
+      "id": "E4",
+      "change": "director_2_2_verified_context_vs_2_1",
+      "fixed": "pool_graph_renderer_and_equivalent_compute_budget",
+      "dependency": "VerifiedEditorialContext_and_authority_dependency_closure",
+      "status": "planned"
+    },
+    {
+      "id": "E5",
+      "change": "proof_aware_framing_and_caption_placement",
+      "fixed": "selected_words_order_audio_timeline",
+      "status": "planned"
+    },
+    {
+      "id": "E6",
+      "change": "candidate_discovery_model_or_prompt",
+      "fixed": "source_transcript_downstream_ranker_renderer_and_budget",
+      "status": "planned"
+    }
+  ],
+  "publication": "none",
+  "paid_calls_launched": false
+}

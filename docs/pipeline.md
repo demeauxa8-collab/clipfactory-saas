@@ -1,315 +1,106 @@
-# Pipeline V1 — story-first
+# Pipeline de clipping — contrat d'exécution
 
-Source de vérité du worker. Le code dans `apps/worker/` doit suivre exactement ce qui est ici. Modifications de logique passent par un update de ce doc avant de toucher au code.
+Mis à jour le 12 septembre 2026 pour `codex/clipping-quality-2026-09-05`. Ce document décrit le code local, pas un déploiement confirmé. L'ancienne spécification est conservée dans `pipeline-v1-archive-2026-09-05.md`. Les mesures et limites sont dans `clipping-quality-run-2026-09-05.md`.
 
-> **Décision majeure (2026-05-22)** : abandon de la pipeline single-window au profit d'une pipeline **story-first** qui peut produire un clip composé de plusieurs segments éloignés dans la vidéo source. Voir `docs/global-video-understanding.md` pour la justification produit. Cette pipeline-ci est la spec d'exécution.
+## Contrat central
 
----
+Le sélecteur propose des passages et cite le transcript. L'ancrage retrouve les mots cités. Le compilateur EDL dérive ensuite les fenêtres source, les images de sortie et les occurrences de mots. FFmpeg reçoit seulement le plan compilé et validé. Les sous-titres, les segments sauvegardés et le contrôle qualité utilisent ce même plan.
 
-## Modèle de données : clip = liste de segments
-
-Un clip n'est plus `{start, end}`. C'est une **liste ordonnée de segments** :
-
-```json
-{
-  "title": "Il achete une Lambo... et la detruit 10 min apres",
-  "hook": "Il venait juste d'acheter cette Lamborghini.",
-  "segments": [
-    { "role": "setup",    "start": 118.4, "end": 135.0 },
-    { "role": "payoff",   "start": 752.0, "end": 779.0 }
-  ],
-  "rationale": "Contraste fort entre achat recent et accident."
-}
+```mermaid
+flowchart LR
+    A[Source et transcription horodatée] --> B[Sélection et citations]
+    B --> C[Ancrage et vérification]
+    C --> D[Réserve classée et vision]
+    D --> E[Identifiants de mots]
+    E --> F[Compilation EDL]
+    F --> G[Sous-titres et FFmpeg]
+    G --> H[Contrôles du MP4]
+    H --> I[Manifeste et publication]
 ```
 
-Cas dégénéré : `len(segments) == 1` → comportement single-window équivalent à l'ancienne V1.
+Un score élevé ne permet pas de contourner une frontière invalide, un sous-titre impossible à afficher ou un rendu qui échoue au contrôle technique. Un candidat rejeté laisse sa place au suivant dans la réserve déjà analysée.
 
-Contraintes produit :
+## Admission, tentative et crédits
 
-| Règle | Valeur |
-| --- | ---: |
-| Segments min | 1 |
-| Segments max | 3 |
-| Durée min segment | 3 s |
-| Durée max segment | 30 s |
-| Durée totale clip | 12-60 s |
-| Premier segment | doit poser contexte/hook |
-| Dernier segment | doit contenir payoff/preuve visuelle |
+1. L'API verrouille le profil pendant la vérification de l'abonnement, de la campagne, du nombre de jobs actifs et du solde. Elle crée un job `queued`, puis l'envoie dans Redis. `credits_estimated=1` est une estimation d'affichage, sans débit à ce stade.
+2. Un échec d'enqueue ne peut faire échouer qu'un job encore `queued`. Si le worker l'a déjà pris malgré une réponse Redis perdue, l'API retourne son état courant.
+3. Le worker réclame atomiquement `queued → downloading`, avec un UUID de tentative dans `worker_id`. Une livraison dupliquée, terminale ou déjà active est ignorée avant toute modification de fichiers.
+4. Après téléchargement et ffprobe, le worker compare la durée réelle à la limite du plan, puis réserve `ceil(durée réelle / 60)` crédits avant l'analyse payante. Exemple : `120.01 s → 3 crédits`. Un solde insuffisant arrête le job.
+5. Les transactions de crédits verrouillent toujours profil puis job. La réservation tient compte du débit net réellement inscrit au ledger. L'achèvement vérifie cette réservation dans la même transaction que `completed`.
+6. Un échec rembourse au plus le débit net réel, une seule fois, et supprime les clips intermédiaires en base. Un échec avant débit n'invente aucun crédit. Une tentative périmée ne peut ni publier ni rembourser le job.
 
----
+La machine d'état exécutée est `queued → downloading → transcribing → analyzing → rendering → completed | failed`. L'arrêt contrôlé annule la pipeline, attend son remboursement et ferme ensuite les connexions. Un processus traite un seul job à la fois ; `WORKER_CONCURRENCY` n'active pas de pool parallèle.
 
-## Deux chemins, choisi sur la durée
+## Analyse de la source
 
-```
-duration_seconds
-   < 300 (5 min)       →  PIPELINE SIMPLE   (12 étapes, single-window)
-   ≥ 300              →  PIPELINE STORY    (16 étapes, multi-segments possible)
-```
+Le worker valide l'URL et ses redirections, télécharge la source, mesure sa durée et tente de conserver une copie. Une heatmap d'audience disponible est un signal facultatif ; son absence ne bloque pas le job.
 
-Pas de feature flag. Le `run_job()` décide à l'étape 4 quel chemin prendre selon la durée mesurée. Les deux chemins partagent le **même format de sortie** (`clips.segments jsonb`), donc tout en aval (render, upload, DB) est commun.
+La transcription utilise `OPENAI_TRANSCRIBE_MODEL`, avec `whisper-1` comme valeur par défaut du code. Elle conserve mots horodatés et phrases ASR. Ces timestamps sont la référence temporelle du moteur ; leur exactitude acoustique n'est pas garantie par les contrôles de code.
 
----
+Deux chemins partagent la suite : sélection de fenêtres sous le seuil configuré, ou carte vidéo et arcs de plusieurs segments au-delà. Le seuil par défaut vaut 300 secondes ; le routage utilise actuellement la durée entière arrondie au supérieur dans le contexte du job. Les modèles restent configurables dans `app/settings.py` ; ce run n'a pas revalidé leur disponibilité commerciale par des appels payants.
 
-## Lifecycle status `jobs.status`
+L'ancrage strict exige les citations nécessaires au début, à la fin et au payoff lorsqu'il est demandé. Une ancre explicite à la fin de la source ne recule pas artificiellement pour conserver la durée d'une proposition erronée. Les durées sont vérifiées après ancrage et ajustement des frontières.
 
-```
-queued
-  → downloading      (étapes 1-3)
-  → transcribing     (étape 4)
-  → analyzing        (étapes 5-10)
-  → rendering        (étapes 11-14)
-  → completed | failed | canceled
-```
+La vérification textuelle accepte une citation exacte dans sa fenêtre. Pour une citation longue approchée, elle exige au moins 85 % de couverture de la citation et 65 % du passage source apparié. Les courtes citations exigent un appariement exact. Des nombres ou négations manquants dans le passage apparié entraînent le rejet. Ce contrôle vérifie le support textuel ; il ne prouve ni la vérité d'un titre ni l'autonomie narrative du clip.
 
-`current_step` est plus fin et reflète l'étape exacte (`validate_url`, `video_map`, `verify_arcs`, `render_montage`, etc.).
+## Réserve et compilation
 
----
+Le chemin actif présélectionne au plus cinq arcs diversifiés pour la vision approfondie. Il conserve cette réserve entière après classement, puis rend les candidats jusqu'au nombre demandé ou à son épuisement. Le benchmark hors ligne peut examiner sept propositions sans augmenter ce plafond du worker.
 
-## Pipeline simple (vidéos < 5 min)
+Le garde contre une ouverture noire peut retirer du vide avant la parole. Si cela amputerait la parole, il rejette le candidat. L'adaptateur `clip_render.py` sélectionne ensuite les mots entièrement contenus dans chaque segment et rejette une frontière coupant substantiellement un mot voisin, avec une tolérance ASR de 25 ms.
 
-| # | Étape | Détail |
-| ---: | --- | --- |
-| 1 | validate_url | scheme http/https, host dans whitelist (`youtube.com`, `youtu.be`, `vimeo.com`) |
-| 2 | download | yt-dlp `bv*[height<=720]+ba/best` mp4 |
-| 3 | probe | ffprobe → `duration_seconds` |
-| 4 | check_plan + initial_debit | si dur > plan.max → fail. Débit upfront du `credits_estimated`. |
-| 5 | upload_source | clé `sources/{user_id}/{job_id}.mp4` (best-effort) |
-| 6 | transcribe | OpenAI **`whisper-1`**, `timestamp_granularities=["word","segment"]` : on garde les mots horodatés ET les **phrases ponctuées** (428 sur notre vidéo de test — elles étaient jetées avant le 2026-08-07 ; ce sont elles qui donnent les vraies frontières de coupe). Audio extrait en mp3 mono 16 kHz (limite 25 Mo). Post-process : fusion des élisions françaises ("J","ai" → "J'ai") |
-| 7 | select_segments | Modèle texte primary via env `PRIMARY_TEXT_MODEL` (validé : gemini-2.5-flash, `reasoning` off ; fallback Claude Haiku désactivé) : retourne 5-8 segments candidats `{start, end, hook, emotion, transcript_excerpt, why, suggested_title, suggested_hook}` |
-| 8 | verify_segments | string match transcript_excerpt vs transcript réel (fuzzy ratio ≥ 0.7 sur la fenêtre). Drop hallucinations. |
-| 9 | extract_frames + deep_vision | 2-3 frames par segment restant, Gemini 2.5 Flash vision (fallback Haiku) JSON `{decor, person_visible, energy, action, proof_objects, problems, visual_score}` |
-| 10 | score_and_pick | poids `hook 35% + emotion 20% + visual 25% + campaign_fit 15% + editing 5%`. Garde top `target_clip_count`. |
-| 11 | render | FFmpeg vertical 1080x1920, 1 segment = pas de concat |
-| 12 | captions + upload + save + finalize | ASS burn-in, R2 upload, insert clips, debit final, cost log |
-
----
-
-## Pipeline story-first (vidéos ≥ 5 min)
-
-| # | Étape | Détail |
-| ---: | --- | --- |
-| 1 | validate_url | idem |
-| 2 | download | idem |
-| 3 | probe | idem |
-| 4 | check_plan + initial_debit | idem |
-| 5 | upload_source | idem |
-| 6 | transcribe | idem |
-| 7 | **scene_detection + frame_sampling** | FFmpeg `select='gt(scene,0.4)'` + sampling régulier. Cap selon durée : `<10min→80`, `10-30→150`, `>30→220` frames |
-| 8 | **build_video_map** | Modèle vision cheap via env `VISION_CHEAP_MODEL` (validé : gemini-2.5-flash, `reasoning` off), prompt = `VIDEO_MAP_SYSTEM_PROMPT` + frames + transcript résumé. Sortie : `{video_summary, events[]}` 20-40 events avec `{id, start, end, decor, people, objects, action, transcript_summary, visual_importance, narrative_role}` |
-| 9 | **detect_story_arcs** | Modèle texte primary (env `PRIMARY_TEXT_MODEL`) sur video_map + transcript_lines + campaign. Sortie montage-v2 : 8-12 arcs de 1-3 segments `{title, arc_type, segments[], viral_reason, estimated_retention, continuity_risk, link_reason, campaign_fit, campaign_fit_reason}` |
-| 9b | **anchor_arcs** (2026-08-07) | `boundaries.anchor_arcs_to_transcript()` : retrouve dans le transcript les mots que le modèle a CITÉS et recale la fenêtre dessus (appariement flou ±15 s), puis étend la fin pour englober `payoff_line`. **C'est ici qu'on cesse de croire les timestamps du LLM** — voir l'encadré ci-dessous. |
-| 10 | **verify_arcs** | Pour chaque arc, pour chaque segment : checker que les mots du transcript dans `[start, end]` existent vraiment. Sinon drop l'arc entier. ⚠️ Vérifie le CONTENU, pas la POSITION : sans l'étape 9b, une dérive de 8 s passait avec un ratio de 1.0. |
-| 11 | **deep_vision** sur top 5 | Top 5 arcs par `estimated_retention`. Pour chaque segment d'un arc top 5 : extract 4-6 frames (début, milieu, fin, +1-2 si > 15s). Gemini 2.5 Flash vision (fallback Haiku) : confirm decor/action/proof. Retourne `visual_score` agrégé par arc. |
-| 12 | **score_and_pick_arcs** | poids montage-v2 : `visual_proof 28% + hook_strength 20% + payoff_strength 18% + campaign_fit 12% + editing_continuity 12% + retention 10%` (voir section Scoring). Top `target_clip_count`. |
-| 13 | render_montage | Pour chaque arc retenu, FFmpeg : cadrage PAR SEGMENT (face-crop 9:16 plein cadre ou fit+blur), transitions par joint (cut sec / dip-to-white 0,10 s selon `joint_compatibility`), concat avec crossfade audio 150 ms, vertical 1080x1920, h264. Garde anti-noir par segment avant rendu |
-| 14 | retime_captions | Mots du transcript dans la fenêtre source → recalculés sur la timeline finale (offset cumulatif des segments précédents). ASS burn-in. |
-| 15 | upload + save | clé `clips/{user_id}/{job_id}/{idx}.mp4`. Insert clips avec `segments jsonb`. |
-| 16 | finalize | debit final, cost log (transcription + video_map_cost + arcs_text_cost + deep_vision_cost + render_seconds + storage). |
-
----
-
-## Anti-hallucination : étape 10 / 8
-
-Le LLM peut inventer des moments qui n'existent pas. **Garde-fou obligatoire avant render** :
-
-```python
-def verify_segment(transcript_words, start, end, expected_excerpt) -> bool:
-    actual = " ".join(w.word for w in transcript_words if start <= w.start <= end)
-    ratio = SequenceMatcher(None, actual.lower(), expected_excerpt.lower()).ratio()
-    return ratio >= 0.7
-```
-
-Si un arc a un segment qui rate la vérification → l'arc complet est drop. On préfère 2 clips solides que 3 clips dont 1 hallucination.
-
----
-
-## Ancrage sur le transcript (étape 9b) — la règle d'or
-
-> **Aucune seconde émise par un LLM ne part directement dans ffmpeg.**
-
-Mesuré le 2026-08-07 sur données réelles : **sur 7 arcs sur 8, les mots cités par
-le modèle commençaient 0,7 à 8,1 s après le `start` qu'il déclarait**. Le modèle
-lit le marqueur `[t]` d'une ligne de transcript comme un début, tout en citant des
-mots situés plusieurs secondes plus loin dans cette ligne. Les clips ouvraient
-donc sur la mise en route.
-
-Le principe : le modèle **cite** (phrase d'ouverture, `payoff_line`), le code
-**date**. Le transcript mot à mot est l'horloge de référence — gratuite, exacte,
-déjà calculée.
-
-Deux dépendances non évidentes :
-
-1. **Les phrases ponctuées de whisper.** L'API renvoie `segments` (texte ponctué +
-   bornes) en plus de `words` (sans ponctuation) : on les jetait. Récupérées via
-   `timestamp_granularities=["word","segment"]` → **428 vraies phrases** contre 73
-   devinées auparavant sur le même audio.
-2. **La détection de silences ne marche pas sur du whisper.** Les mots reviennent
-   quasi collés (écart inter-mots médian ET p90 = 0,000 s), donc un seuil en
-   VALEUR s'effondre sur son plancher. Le secours utilise désormais un critère de
-   RANG (les 12 % plus grands écarts), qui dégrade proprement sur n'importe quelle
-   source.
-
-Effets mesurés : dérive médiane 1,88 s → **0,12 s** (max 8,14 → 0,12), segments
-correctement calés 3/7 → **7/7**, punchline à l'intérieur du clip 7/8 → **8/8**,
-et les arcs sous le plancher de 12 s sont **réparés** (fin poussée à la prochaine
-fin de phrase) au lieu d'être jetés en silence.
-
-Corollaire pour le choix des modèles : un modèle incapable de dater un événement
-reste utilisable pour la video-map et la deep vision, puisque **ces timecodes-là
-viennent des frames qu'on extrait nous-mêmes**. Voir `docs/model-landscape.md`.
-
----
-
-## Vision globale (étape 8 story) — règle d'or
-
-> **NE JAMAIS** envoyer toutes les frames à un seul appel LLM.
-
-On bat avant d'envoyer :
-
-- frames chunkées en batches de 20-30 par appel
-- chaque appel reçoit le transcript résumé + la fenêtre temporelle des frames
-- réponses concaténées en post-traitement
-- coût cible : **< 5 cents par job sur 30 min de vidéo**
-
-Provider : OpenRouter, modèle via env `VISION_CHEAP_MODEL` (validé : `google/gemini-2.5-flash` avec `reasoning:{max_tokens:0}` — sans ça le raisonnement consomme le budget tokens et tronque le JSON). Fallback Claude Haiku configuré mais désactivé (`ENABLE_FALLBACK=false`).
-
----
-
-## Continuity entre segments éloignés (montage-v2, 2026-07-08)
-
-Le montage multi-segments est le concept central : 1 à 3 moments distants
-assemblés quand ils forment un vrai fil narratif (`link_reason` obligatoire
-dans la réponse LLM pour tout arc multi-segments).
-
-Au rendu, chaque **joint** entre deux segments adjacents est classé par
-`score.joint_compatibility(vision_a, vision_b)` à partir de la deep vision
-par segment :
-
-- `continuous` (même décor, même présence personne) → **cut sec** + crossfade
-  audio 150 ms (comportement historique) ;
-- `scene_change` (décors différents, ou vision manquante) → **dip-to-white
-  0,10 s** de part et d'autre du joint (fade-out blanc fin du segment sortant,
-  fade-in blanc début de l'entrant, cuits dans les intermédiaires), audio
-  toujours en acrossfade 150 ms. La "téléportation" devient une transition
-  intentionnelle.
-
-Le même classement alimente la pénalité de continuité du scoring (-3 par
-joint continu, -8 par changement de scène, -6 si vision absente) — plus
-d'écrasement forfaitaire des montages.
-
-Le **cadrage est décidé par segment** (plus par clip) : plan visage →
-crop 9:16 plein cadre centré sur `face_center_x` (renvoyé par la deep
-vision) ; plan écran/slide → fit+blur letterbox. Les captions portent une
-MarginV par événement selon le segment (400 plein cadre, 620 fit+blur) et
-les groupes karaoké sont coupés aux joints. La garde anti-frames-noires
-(blackdetect) s'applique au début de chaque segment.
-
----
-
-## Améliorations qualité du rendu (implémentées 2026-06)
-
-Livré sur `main` (merge `draft/parallel-workers`). Roadmap complète : `docs/pipeline-improvements.md`. Aucune de ces briques n'ajoute de coût LLM/vision (elles réutilisent les word timestamps et la deep vision déjà calculés).
-
-| Brique | Où (code) | Effet |
-| --- | --- | --- |
-| Snapping des bords de segment | `pipeline/boundaries.py` (`snap_arc_segments`), appelé après `verify_arcs` (`current_step = snap_segments`, les 2 chemins) | cale `start`/`end` sur silence / fin de phrase via word timestamps → plus de coupe en plein mot |
-| Loudnorm -14 LUFS | `pipeline/ffmpeg.py` (`loudnorm=I=-14:TP=-1.5:LRA=11`) | volume constant entre clips |
-| Gate QC post-rendu | `runner.py` (`render_qc_failed`) + `ffmpeg.py` (`volumedetect`) | rejette un clip muet / cassé / hors tolérance de durée avant l'upload |
-| Sous-titres karaoké | `pipeline/captions.py` (1 event par mot, override couleur `\c` + scale) | mot prononcé surligné en temps réel |
-| Persist `why` par segment | `runner.py` (`_segments_to_jsonb`) + `score.py` | la justification LLM de chaque segment est stockée (explicabilité) |
-
-Livré ensuite (passe qualité 2026-07-06 → 2026-07-08, commits `7463048`/`5255a96`) :
-
-| Brique | Où (code) | Effet |
-| --- | --- | --- |
-| Recadrage face-aware par segment | `ffmpeg.py` (`_vertical_face_crop_vf`), `prompts.py`/`vision.py` (`face_center_x`) | visage plein cadre (~50 % de hauteur) sur les plans visage, fit+blur réservé aux écrans |
-| Élisions françaises | `transcribe.py` (`merge_french_elisions`) | whisper-1 renvoie "J","ai" sans apostrophe → "J'ai" (U+2019) partout (captions, excerpts, prompts) |
-| Captions style Submagic | `captions.py` | MAJUSCULES, 2-3 mots/groupe coupés sur pauses et joints, wrap `\N` + shrink `\fs` anti-débordement, highlight vert #00E676 jamais sur mots-outils |
-| Snap frontières v2 | `boundaries.py` | frontières de phrase par gaps adaptatifs (p85) — la ponctuation n'existe pas dans les mots whisper ; extension avant jusqu'à +8 s pour finir la phrase |
-| Garde anti-noir | `ffmpeg.py` (`detect_black_open_for_segments`) + `runner.py` | plus d'ouverture de segment sur des frames noires |
-| Transitions par joint | `ffmpeg.py` (`transitions=`), `score.py` (`joint_compatibility`) | dip-to-white 0,10 s sur changement de scène, cut sec sinon |
-| Cache source | `ffmpeg.py` (`yt_dlp_download`) | re-runs idempotents, plus de re-téléchargement YouTube (403 sur répétition) |
-
-Encore en roadmap (non implémenté) : cadrage par scène À L'INTÉRIEUR d'un segment (un segment mixte visage+écran garde un seul mode), suivi du visage sur les gestes (crop statique), courbe d'énergie audio, dédup/diversité des arcs (MMR), trim des silences, variantes de titre/hook, thumbnail, juge vidéo natif (`docs/clip-judge.md`, worktree redesign). Voir `docs/pipeline-improvements.md`.
-
-## Scoring (étape 10 simple / 12 story)
-
-**Single-window** :
-
-```
-total = 0.35·hook + 0.20·emotion + 0.25·visual + 0.15·campaign_fit + 0.05·editing
-```
-
-**Story arc** (poids montage-v2, 2026-07-08) :
-
-```
-total = 0.28·visual_proof + 0.20·hook_strength + 0.18·payoff_strength
-      + 0.12·campaign_fit + 0.12·editing_continuity + 0.10·retention
-```
-
-- `hook_strength` : noté sur **ce qui est réellement prononcé** dans les 2,5
-  premières secondes de la fenêtre (`words_in_window`), pas sur le champ
-  `opening_words` que le modèle contrôle — sinon il suffit d'écrire une belle
-  phrase pour échapper à la pénalité d'attaque molle. Liste des connecteurs
-  interdits partagée avec le prompt (source unique).
-- `campaign_fit` : 0.5 × auto-évaluation LLM (`campaign_fit` renvoyé par
-  arc avec `campaign_fit_reason`) + 0.5 × match mots-clés FLOU
-  (difflib ≥ 0.8 : tolère les fautes du brief, "buinesse" ≈ "business").
-- `editing_continuity` : pénalité par joint selon `joint_compatibility`
-  (voir section continuity), plus de multiplicateur anti-montage.
-- Pénalité ×0.55 si aucune personne visible sur tout le clip.
-
-Si `visual_score = null` (vision KO) : renormaliser le poids restant.
-
----
-
-## Logging coût / marge (toutes les étapes, append-only)
-
-Colonnes dans `jobs` (déjà créées en migration 0002 + ajouts 0003) :
-
-| Colonne | Source |
+| Invariant | Valeur / règle |
 | --- | --- |
-| `duration_seconds` | étape 3 |
-| `credits_charged` | étape finalize |
-| `transcription_cost_cents` | étape 6 (durée × tarif) |
-| `analysis_tokens` | somme tokens LLM (arcs + deep vision) |
-| `vision_frames_count` | total frames envoyées en vision (cheap + deep) |
-| `video_map_cost_cents` | nouveau (étape 8 story) |
-| `deep_vision_cost_cents` | nouveau (étape 11 story) |
-| `render_seconds` | wall time étapes 13-14 |
-| `storage_bytes` | somme bytes uploadés |
-| `total_cost_estimate_cents` | somme calculée |
-| `failed_step` | nom de l'étape d'échec |
-| `retry_count` | cumul retries |
+| Clip final | 12 à 60 secondes après compilation |
+| Segment final | Au moins 3 secondes |
+| Fenêtres | Finies, ordonnées dans chaque segment, dans la source |
+| Contenu requis | Tous les mots sélectionnés de chaque segment |
+| Padding | Dans le périmètre autorisé, sans mot voisin tronqué |
+| Timeline | Nombre entier d'images, 30 fps par défaut |
+| Sortie active | 1080 × 1920, H.264, audio stéréo 48 kHz |
+| Jointures actives | Coupes franches |
 
----
+Le cadrage est choisi par segment : visage centré selon la vision, ou source complète avec fond flouté. Le calcul du crop tient compte du centre réel de l'image. Le suivi continu d'un visage ou d'un locuteur n'est pas implémenté dans ce chemin.
 
-## Concurrence et limites
+## Sous-titres et contrôle du rendu
 
-- Starter : 1 job concurrent par user
-- Worker : `WORKER_CONCURRENCY=1`
-- Retry budget par étape externe (LLM, vision, transcription) : **1**
-- Pipeline story sur vidéo 30 min : cible totale **< 8 minutes wall-time** (transcription dominant)
-- Stockage source : 14 jours (cron V2)
-- Clips R2 : 60 jours (cron V2)
+Les sous-titres reprennent les occurrences de mots sur la timeline compilée, y compris les replays expérimentaux. Le regroupement suit les phrases ASR lorsqu'elles s'alignent correctement, les pauses et l'équilibrage des groupes. Il évite les queues isolées lorsque les contraintes le permettent.
 
----
+Les lignes longues sont réparties sur deux lignes avec le budget de largeur existant du projet ; la police peut diminuer jusqu'au minimum lisible existant. Un mot qui dépasse encore ce budget est rejeté. Les groupes commençant au même instant sont réunis pour préserver les mots ASR de durée nulle. Les événements ASS sont bornés par le groupe suivant pour éviter les lignes superposées. Aucun échec ne déclenche une tentative sans sous-titres.
 
-## Définition de succès
+Le MP4 doit avoir des flux mesurables et cohérents avec la durée compilée. La tolérance de synchronisation audio/vidéo est d'une image plus 12 ms. Les dimensions, la cadence et le format audio sont contrôlés. Une analyse de toute la durée recherche les plages noires et silencieuses : bords noirs supérieurs à 250 ms, bords silencieux supérieurs à 800 ms, ou plus de 15 % de noir échouent au contrôle. L'intensité audio et la luminance au milieu sont aussi mesurées. Les pauses intérieures sont consignées, sans suppression automatique.
 
-ClipFactory peut rendre un clip comme :
+Ces seuils sont des heuristiques techniques. Ils ne mesurent pas la lisibilité de chaque preuve visuelle, le naturel de toutes les jointures, la factualité ou la rétention d'audience.
 
-```
-02:00  → il achète une Lamborghini      (setup, 17s)
-12:30  → il a un accident avec          (payoff, 27s)
-─────────────────────────────────────────────────────
-clip final : vertical 1080x1920, 44s, crossfade audio 150ms
-            score 88, rationale = "contraste achat/accident"
+## Artefacts, publication et reprise
+
+Chaque tentative dispose d'un répertoire et de clés de stockage distincts :
+
+```text
+sources/{user_id}/{job_id}/{attempt_id}.mp4
+jobs/{user_id}/{job_id}/{attempt_id}/transcript.json
+jobs/{user_id}/{job_id}/{attempt_id}/selection.json
+jobs/{user_id}/{job_id}/{attempt_id}/render_outcomes.json
+clips/{user_id}/{job_id}/{attempt_id}/{index}.mp4
+clips/{user_id}/{job_id}/{attempt_id}/{index}.manifest.json
 ```
 
-Sans exploser la marge :
+La source et les checkpoints sont conservés au mieux ; un échec est journalisé. Le MP4 et son manifeste sont obligatoires pour publier un clip. Le manifeste contient les empreintes SHA-256 de la source, du transcript, des sous-titres et du MP4, l'EDL, les occurrences et les résultats de contrôle. Les segments sauvegardés en base correspondent aux fenêtres compilées.
 
-- video map cheap (< 5 cents)
-- deep vision seulement top 5 arcs
-- log coût détaillé par job
-- 1 credit / minute source débité quoi qu'il arrive
+L'API et la politique RLS de lecture des clips exigent un job `completed`. Si la réserve produit moins de clips que demandé mais au moins un valide, le job peut terminer avec ce nombre réel ; la facturation reste fondée sur la durée source. Zéro clip valide fait échouer le job et rembourse la réservation.
+
+Les checkpoints servent à l'audit et au replay, pas à une reprise automatique à mi-parcours. Redis utilise toujours `BLPOP` : un arrêt brutal après le pop peut perdre une livraison, et une tentative active abandonnée n'a pas encore de lease/reaper. Les objets de stockage orphelins après échec ne sont pas collectés automatiquement.
+
+## Permissions et déploiement
+
+La migration `20260907150016_restrict_client_job_and_profile_writes.sql` réserve les mutations de jobs au backend, limite l'édition du profil client à `full_name`, applique les droits de l'appelant à `credit_balances` et masque les clips intermédiaires. Elle est testée localement ; son application en production reste distincte du changement de code.
+
+Les opérations de crédits sont protégées contre les accès concurrents du worker et de l'API. Cela ne remplace pas une revue de tous les autres producteurs du ledger ni un test complet Stripe. Toute nouvelle écriture de crédits doit respecter le même ordre de verrouillage.
+
+Les appels OpenRouter ont au plus trois tentatives, avec temporisation bornée et échec immédiat des erreurs permanentes. Un rejet explicite du paramètre de raisonnement autorise un essai sans ce paramètre, en gardant le budget de sortie. Les sous-processus ont un délai maximal configurable, 900 secondes par défaut ; annulation et timeout arrêtent puis récupèrent leur groupe de processus.
+
+Les modules `editorial_beats.py`, `editorial_director.py` et `editorial_reflex_qc.py` sont des fondations restaurées et testées, pas un directeur activé dans `run_job`. Recherche externe, apprentissage, musique, SFX, inserts et suivi dynamique ne font pas partie du chemin actif validé ici.
+
+## Vérification
+
+Les dépendances sont figées dans les deux fichiers `requirements.lock`. La procédure locale est dans `apps/worker/README.md`. Le workflow `pipeline-quality.yml` exécute lint, tests worker et intégrations sur PostgreSQL 17 sous Python 3.11. Sa présence dans le dépôt n'est pas la preuve de son exécution sur GitHub.

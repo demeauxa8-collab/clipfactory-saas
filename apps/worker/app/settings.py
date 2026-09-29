@@ -84,6 +84,8 @@ class Settings(BaseSettings):
     ffmpeg_bin: str = "ffmpeg"
     ffprobe_bin: str = "ffprobe"
     yt_dlp_bin: str = "yt-dlp"
+    # Bound stalled decoders/downloaders and reap their children on cancellation.
+    subprocess_timeout_seconds: float = 900.0
     # Optional browser to pull YouTube cookies from (e.g. "chrome") — helps dodge
     # 403 bot-blocks when downloading. Empty disables the flag.
     yt_dlp_cookies_from_browser: str = ""

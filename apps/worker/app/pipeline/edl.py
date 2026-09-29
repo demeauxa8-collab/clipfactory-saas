@@ -109,10 +109,29 @@ class EDLValidationError(ValueError):
 
 
 @dataclass(frozen=True)
+class FramingRegion:
+    """A normalized source-space region for a verified on-screen proof.
+
+    The values describe ``x, y, width, height`` as fractions of the decoded
+    source frame — never output pixels and never an FFmpeg expression.  A
+    region is deliberately only meaningful for ``screen_focus``: attaching it
+    to another preset would make the intent ambiguous and is rejected by the
+    compiler.  The legacy ``screen_focus`` preset without a region remains
+    valid and preserves its centred crop behaviour.
+    """
+
+    x: float
+    y: float
+    width: float
+    height: float
+
+
+@dataclass(frozen=True)
 class FramingIntent:
     mode: FramingMode = "source_safe"
     center_x: float = 0.5
     base_scale: float = 1.0
+    screen_region: FramingRegion | None = None
 
 
 @dataclass(frozen=True)
@@ -364,6 +383,36 @@ def _validate_anchor_quote(
         )
 
 
+def _validate_framing_region(
+    region: FramingRegion,
+    *,
+    shot_id: str,
+) -> None:
+    """Validate a normalized proof ROI before it can reach the renderer."""
+    if not isinstance(region, FramingRegion):
+        raise EDLValidationError(
+            f"shot {shot_id}: screen_region must be a FramingRegion"
+        )
+    values = (region.x, region.y, region.width, region.height)
+    if not all(isinstance(value, (int, float)) and not isinstance(value, bool) for value in values):
+        raise EDLValidationError(f"shot {shot_id}: screen_region values must be numbers")
+    if not all(math.isfinite(value) for value in values):
+        raise EDLValidationError(f"shot {shot_id}: screen_region values must be finite")
+    if region.x < 0.0 or region.y < 0.0:
+        raise EDLValidationError(f"shot {shot_id}: screen_region origin must be in-frame")
+    # Very small regions make a fabricated-looking vertical crop and are not
+    # usable proof.  This is an editorial guardrail as well as avoiding zero
+    # dimensions after the renderer's even-pixel rounding.
+    if region.width < 0.05 or region.height < 0.05:
+        raise EDLValidationError(
+            f"shot {shot_id}: screen_region width and height must be at least 0.05"
+        )
+    if region.width > 1.0 or region.height > 1.0:
+        raise EDLValidationError(f"shot {shot_id}: screen_region size must be in-frame")
+    if region.x + region.width > 1.0 or region.y + region.height > 1.0:
+        raise EDLValidationError(f"shot {shot_id}: screen_region must stay in-frame")
+
+
 def _validate_shot_intent(
     shot: EditShotIntent,
     *,
@@ -386,6 +435,12 @@ def _validate_shot_intent(
         raise EDLValidationError(f"shot {shot.shot_id}: center_x must be in [0, 1]")
     if not 1.0 <= shot.framing.base_scale <= 1.35:
         raise EDLValidationError(f"shot {shot.shot_id}: base_scale must be in [1, 1.35]")
+    if shot.framing.screen_region is not None:
+        if shot.framing.mode != "screen_focus":
+            raise EDLValidationError(
+                f"shot {shot.shot_id}: screen_region is only valid with screen_focus"
+            )
+        _validate_framing_region(shot.framing.screen_region, shot_id=shot.shot_id)
     if not MIN_SPEED <= shot.speed <= MAX_SPEED:
         raise EDLValidationError(
             f"shot {shot.shot_id}: speed must be in [{MIN_SPEED}, {MAX_SPEED}]"
@@ -497,6 +552,92 @@ def _validate_shot_scope(shot: EditShotIntent, *, scope: EditScope) -> None:
                 f"shot {shot.shot_id}: cuts through protected word range "
                 f"{protected.from_word_id}..{protected.to_word_id}"
             )
+
+
+def _narrowest_allowed_range_for_shot(
+    shot: EditShotIntent,
+    *,
+    scope: EditScope,
+) -> InclusiveWordRange:
+    """Return the least-privilege authority range for one already-valid shot.
+
+    An edit scope may intentionally contain a broad range as well as a narrow
+    campaign/arc range.  Rolls must use the narrowest authority that contains
+    the selected words.  Equal-width overlapping ranges are ambiguous; their
+    intersection is the only conservative choice and still contains the shot.
+    """
+    containing = tuple(
+        word_range
+        for word_range in scope.allowed_word_ranges
+        if word_range.from_word_id <= shot.from_word_id
+        and shot.to_word_id <= word_range.to_word_id
+    )
+    if not containing:
+        # Kept defensive even though _validate_shot_scope runs first.
+        raise EDLValidationError(
+            f"shot {shot.shot_id}: word range is outside the allowed edit scope"
+        )
+    narrowest_span = min(
+        word_range.to_word_id - word_range.from_word_id for word_range in containing
+    )
+    narrowest = tuple(
+        word_range
+        for word_range in containing
+        if word_range.to_word_id - word_range.from_word_id == narrowest_span
+    )
+    return InclusiveWordRange(
+        from_word_id=max(word_range.from_word_id for word_range in narrowest),
+        to_word_id=min(word_range.to_word_id for word_range in narrowest),
+    )
+
+
+def _scoped_source_bounds(
+    intent: EditShotIntent,
+    *,
+    transcript: Transcript,
+    source_duration_ms: int,
+    allowed_range: InclusiveWordRange,
+) -> tuple[int, int]:
+    """Apply rolls only inside scope-owned silence around selected words.
+
+    The source window can extend into an observed ASR gap, never into the
+    previous/next spoken word.  If adjacent ASR timings overlap, the only safe
+    response is no roll at that edge: retaining the first/last selected word is
+    more important than trying to infer a non-existent silent boundary.
+    """
+    first_word = transcript.words[intent.from_word_id]
+    last_word = transcript.words[intent.to_word_id]
+    first_start = round(first_word.start * 1000)
+    last_end = round(last_word.end * 1000)
+    scope_start = round(transcript.words[allowed_range.from_word_id].start * 1000)
+    scope_end = round(transcript.words[allowed_range.to_word_id].end * 1000)
+
+    source_in = first_start
+    if intent.pre_roll_ms and intent.from_word_id > 0:
+        previous_end = round(transcript.words[intent.from_word_id - 1].end * 1000)
+        # An overlap means any positive lower boundary would cut the selected
+        # first word; do not trade it away for an artificial roll.
+        if previous_end <= first_start and scope_start <= first_start:
+            source_in = max(
+                scope_start,
+                previous_end,
+                first_start - intent.pre_roll_ms,
+            )
+
+    source_out = last_end
+    if intent.post_roll_ms and intent.to_word_id + 1 < len(transcript.words):
+        next_start = round(transcript.words[intent.to_word_id + 1].start * 1000)
+        # Symmetric to the leading-edge rule: a following ASR overlap has no
+        # safe trailing silence, so preserve the final selected word in full.
+        if last_end <= next_start and last_end <= scope_end:
+            source_out = min(
+                scope_end,
+                next_start,
+                last_end + intent.post_roll_ms,
+                source_duration_ms,
+            )
+
+    return source_in, source_out
 
 
 def _compile_music(
@@ -676,11 +817,32 @@ def compile_edit_intent(
 
         first_word = transcript.words[intent.from_word_id]
         last_word = transcript.words[intent.to_word_id]
-        source_in = max(0, round(first_word.start * 1000) - intent.pre_roll_ms)
-        source_out = min(
-            source_duration_ms,
-            round(last_word.end * 1000) + intent.post_roll_ms,
-        )
+        selected_words = transcript.words[intent.from_word_id:intent.to_word_id + 1]
+        previous_start = -1.0
+        for word in selected_words:
+            if (
+                not math.isfinite(word.start) or not math.isfinite(word.end)
+                or not 0 <= word.start <= word.end <= source_duration_ms / 1000 + 0.001
+                or word.start < previous_start
+            ):
+                raise EDLValidationError(f"shot {intent.shot_id}: invalid source word timestamps")
+            previous_start = word.start
+        if edit_scope is None:
+            # Preserve the original V2 behaviour outside a scoped edit: rolls
+            # are a creative timing choice and may include neighbouring audio.
+            source_in = max(0, round(first_word.start * 1000) - intent.pre_roll_ms)
+            source_out = min(
+                source_duration_ms,
+                round(last_word.end * 1000) + intent.post_roll_ms,
+            )
+        else:
+            allowed_range = _narrowest_allowed_range_for_shot(intent, scope=edit_scope)
+            source_in, source_out = _scoped_source_bounds(
+                intent,
+                transcript=transcript,
+                source_duration_ms=source_duration_ms,
+                allowed_range=allowed_range,
+            )
         source_duration = source_out - source_in
         if not MIN_SHOT_SOURCE_MS <= source_duration <= MAX_SHOT_SOURCE_MS:
             raise EDLValidationError(

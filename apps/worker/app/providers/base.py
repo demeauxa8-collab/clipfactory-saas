@@ -11,16 +11,27 @@ class ProviderError(RuntimeError):
     to fall back to a secondary provider.
     """
 
-    def __init__(self, message: str, *, kind: str = "unknown") -> None:
+    def __init__(
+        self,
+        message: str,
+        *,
+        kind: str = "unknown",
+        status_code: int | None = None,
+        retry_after: float | None = None,
+    ) -> None:
         super().__init__(message)
         self.kind = kind  # "http" | "parse" | "empty" | "timeout" | "unknown"
+        self.status_code = status_code
+        self.retry_after = retry_after
+        self.tokens_in = 0
+        self.tokens_out = 0
 
 
 @dataclass
 class LLMCallResult:
     """Wraps a parsed LLM response plus the metadata needed for cost logging."""
 
-    payload: Any                   # parsed JSON (dict / list / object) or raw text
+    payload: Any  # parsed JSON (dict / list / object) or raw text
     tokens_in: int = 0
     tokens_out: int = 0
     model: str = ""

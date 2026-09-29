@@ -8,6 +8,7 @@ from app.pipeline.edl import (
     EDLValidationError,
     EffectIntent,
     FramingIntent,
+    FramingRegion,
     InclusiveWordRange,
     MusicIntent,
     SFXCueIntent,
@@ -173,6 +174,77 @@ def test_invalid_or_unbounded_llm_operations_are_rejected(
     plan = EditIntentPlan("2.0", "unsafe", (shot,))
     with pytest.raises(EDLValidationError, match=message):
         compile_edit_intent(plan, _transcript(), source_duration_ms=120_000)
+
+
+def test_screen_proof_region_is_normalized_in_frame_and_screen_focus_only() -> None:
+    valid = EditShotIntent(
+        shot_id="proof",
+        role="proof",
+        from_word_id=4,
+        to_word_id=7,
+        framing=FramingIntent(
+            "screen_focus",
+            screen_region=FramingRegion(x=0.10, y=0.25, width=0.70, height=0.40),
+        ),
+    )
+    plan = EditIntentPlan("2.0", "Show the verified number.", (valid,))
+    edl = compile_edit_intent(plan, _transcript(), source_duration_ms=120_000)
+
+    assert edl.shots[0].framing.screen_region == FramingRegion(0.10, 0.25, 0.70, 0.40)
+
+    for framing, message in (
+        (
+            FramingIntent(
+                "screen_focus",
+                screen_region=FramingRegion(x=0.8, y=0.2, width=0.3, height=0.3),
+            ),
+            "stay in-frame",
+        ),
+        (
+            FramingIntent(
+                "locked_face",
+                screen_region=FramingRegion(x=0.1, y=0.2, width=0.5, height=0.4),
+            ),
+            "only valid with screen_focus",
+        ),
+        (
+            FramingIntent(
+                "screen_focus",
+                screen_region=FramingRegion(x=0.1, y=0.2, width=float("nan"), height=0.4),
+            ),
+            "must be finite",
+        ),
+    ):
+        unsafe = EditShotIntent(
+            shot_id="unsafe_proof",
+            role="proof",
+            from_word_id=4,
+            to_word_id=7,
+            framing=framing,
+        )
+        with pytest.raises(EDLValidationError, match=message):
+            compile_edit_intent(
+                EditIntentPlan("2.0", "unsafe", (unsafe,)),
+                _transcript(),
+                source_duration_ms=120_000,
+            )
+
+    forged_type = EditShotIntent(
+        shot_id="forged_region_type",
+        role="proof",
+        from_word_id=4,
+        to_word_id=7,
+        framing=FramingIntent(
+            "screen_focus",
+            screen_region={"x": 0.1, "y": 0.2, "width": 0.5, "height": 0.4},  # type: ignore[arg-type]
+        ),
+    )
+    with pytest.raises(EDLValidationError, match="must be a FramingRegion"):
+        compile_edit_intent(
+            EditIntentPlan("2.0", "unsafe", (forged_type,)),
+            _transcript(),
+            source_duration_ms=120_000,
+        )
 
 
 def test_asset_ids_are_catalogue_ids_not_paths_or_urls() -> None:
@@ -344,6 +416,111 @@ def test_scope_rejects_partial_protected_span_and_missing_required_span() -> Non
             source_duration_ms=120_000,
             edit_scope=scope,
         )
+
+
+def _roll_transcript(*, overlapping: bool = False) -> Transcript:
+    """Four words with space for an interior scoped shot and its rolls."""
+    spans = (
+        (0.00, 0.30, "before"),
+        (0.60, 0.90, "first"),
+        (1.20, 1.50, "last"),
+        (1.45 if overlapping else 1.80, 2.10, "after"),
+    )
+    words = [TranscriptWord(word, start, end) for start, end, word in spans]
+    return Transcript(text=" ".join(word.word for word in words), words=words)
+
+
+def _rolled_scope_plan() -> EditIntentPlan:
+    return EditIntentPlan(
+        "2.0",
+        "Keep the selected proof complete.",
+        (
+            EditShotIntent(
+                shot_id="proof",
+                role="hook",
+                from_word_id=1,
+                to_word_id=2,
+                pre_roll_ms=250,
+                post_roll_ms=400,
+            ),
+        ),
+    )
+
+
+def test_exact_scope_blocks_pre_and_post_roll_outside_selected_words() -> None:
+    transcript = _roll_transcript()
+    edl = compile_edit_intent(
+        _rolled_scope_plan(),
+        transcript,
+        source_duration_ms=3_000,
+        edit_scope=EditScope((InclusiveWordRange(1, 2),)),
+    )
+
+    shot = edl.shots[0]
+    assert (shot.source_in_ms, shot.source_out_ms) == (600, 1_500)
+    assert [item.word_id for item in shot.word_occurrences] == [1, 2]
+    assert edl.duration_frames == shot.timeline_out_frame
+    assert edl.duration_ms == round(edl.duration_frames * 1000 / edl.fps)
+
+
+def test_broader_scope_allows_rolls_only_in_adjacent_silence() -> None:
+    transcript = _roll_transcript()
+    edl = compile_edit_intent(
+        _rolled_scope_plan(),
+        transcript,
+        source_duration_ms=3_000,
+        edit_scope=EditScope((InclusiveWordRange(0, 3),)),
+    )
+
+    shot = edl.shots[0]
+    # The planned rolls stay inside the two silent gaps: neither "before" nor
+    # "after" can leak into the source window despite being scope-authorised.
+    assert (shot.source_in_ms, shot.source_out_ms) == (350, 1_800)
+    assert all(
+        item.source_in_ms >= shot.source_in_ms
+        and item.source_out_ms <= shot.source_out_ms
+        and item.timeline_out_frame > item.timeline_in_frame
+        for item in shot.word_occurrences
+    )
+
+
+def test_scoped_rolls_do_not_cut_selected_words_when_asr_timings_overlap() -> None:
+    transcript = _roll_transcript(overlapping=True)
+    edl = compile_edit_intent(
+        _rolled_scope_plan(),
+        transcript,
+        source_duration_ms=3_000,
+        edit_scope=EditScope((InclusiveWordRange(0, 3),)),
+    )
+
+    shot = edl.shots[0]
+    # The left gap exists, but the next word overlaps the final selected word.
+    # Thus the post-roll is zero while the selected word remains whole.
+    assert (shot.source_in_ms, shot.source_out_ms) == (350, 1_500)
+    assert shot.word_occurrences[-1].source_out_ms == 1_500
+
+
+def test_ambiguous_equal_scope_ranges_use_their_least_privilege_intersection() -> None:
+    transcript = _roll_transcript()
+    edl = compile_edit_intent(
+        _rolled_scope_plan(),
+        transcript,
+        source_duration_ms=3_000,
+        # Both ranges contain 1..2 and have the same width.  Choosing either
+        # range would authorize one side's roll; their intersection authorizes
+        # neither side beyond the selected words.
+        edit_scope=EditScope(
+            (
+                InclusiveWordRange(0, 2),
+                InclusiveWordRange(1, 3),
+            )
+        ),
+    )
+
+    shot = edl.shots[0]
+    assert (shot.source_in_ms, shot.source_out_ms) == (600, 1_500)
+    assert edl.duration_frames == shot.timeline_out_frame
+    assert edl.duration_ms == round(edl.duration_frames * 1000 / edl.fps)
 
 
 def test_duration_policy_and_catalogue_allowlists_are_authoritative() -> None:

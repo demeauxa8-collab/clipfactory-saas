@@ -123,6 +123,7 @@ async def get_job(job_id: str, user: CurrentUser = Depends(current_user)) -> Job
                    score_total, score_breakdown, width, height
               from clips
              where job_id = $1 and user_id = $2
+               and exists (select 1 from jobs where jobs.id = clips.job_id and status = 'completed')
              order by idx asc
             """,
             job_id,

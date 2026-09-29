@@ -90,37 +90,48 @@ async def create_job(
     user_id: str,
     payload: JobCreate,
 ) -> JobOut:
-    sub = await _active_subscription(conn, user_id)
-    if sub is None:
-        raise JobError("no_active_subscription", "You need an active subscription to create a job.")
-
-    if payload.target_clip_count > int(sub["max_clips_per_video"]):
-        raise JobError(
-            "clip_count_exceeded",
-            f"Your plan allows up to {sub['max_clips_per_video']} clips per video.",
-        )
-
-    campaign = await campaigns_svc.get_campaign(
-        conn, user_id=user_id, campaign_id=payload.campaign_id
-    )
-    if campaign is None:
-        raise JobError("campaign_not_found", "Campaign not found or not owned by you.")
-
-    if await _concurrent_jobs(conn, user_id) >= int(sub["max_concurrent_jobs"]):
-        raise JobError(
-            "concurrent_jobs_exceeded",
-            "You already have a job running. Wait for it to finish before starting another.",
-        )
-
-    balance = await credits_svc.get_balance(conn, user_id)
-    if balance <= 0:
-        raise JobError("insufficient_credits", "You have no credits left for this billing period.")
-
-    # V1: we don't probe the URL before queueing. Charge the cheapest plausible
-    # bucket (1 credit) up front; the worker debits the real duration after probe.
-    estimated = 1
-
     async with conn.transaction():
+        # Serialize admissions for one user before counting their active jobs.
+        profile = await conn.fetchrow(
+            "select user_id from profiles where user_id = $1 for update",
+            user_id,
+        )
+        if profile is None:
+            raise JobError("profile_not_found", "Your account profile is missing.")
+        sub = await _active_subscription(conn, user_id)
+        if sub is None:
+            raise JobError(
+                "no_active_subscription", "You need an active subscription to create a job."
+            )
+
+        if payload.target_clip_count > int(sub["max_clips_per_video"]):
+            raise JobError(
+                "clip_count_exceeded",
+                f"Your plan allows up to {sub['max_clips_per_video']} clips per video.",
+            )
+
+        campaign = await campaigns_svc.get_campaign(
+            conn, user_id=user_id, campaign_id=payload.campaign_id
+        )
+        if campaign is None:
+            raise JobError("campaign_not_found", "Campaign not found or not owned by you.")
+
+        if await _concurrent_jobs(conn, user_id) >= int(sub["max_concurrent_jobs"]):
+            raise JobError(
+                "concurrent_jobs_exceeded",
+                "You already have a job running. Wait for it to finish before starting another.",
+            )
+
+        balance = await credits_svc.get_balance(conn, user_id)
+        if balance <= 0:
+            raise JobError(
+                "insufficient_credits", "You have no credits left for this billing period."
+            )
+
+        # This is a display estimate. The worker reserves the measured duration.
+        # No credits are debited merely by creating a queued job.
+        estimated = 1
+
         row = await conn.fetchrow(
             f"""
             insert into jobs
@@ -136,7 +147,25 @@ async def create_job(
             estimated,
         )
 
-    await queue_svc.enqueue_job(str(row["id"]))
+    try:
+        await queue_svc.enqueue_job(str(row["id"]))
+    except Exception as exc:
+        # A successful push with a lost response may already be owned by a worker.
+        # Only a still-queued job can be failed here; it has no debit to refund.
+        failed = await conn.fetchval(
+            """update jobs set status = 'failed', error_code = 'queue_unavailable',
+                   error_message = 'Job could not be queued. Please try again.',
+                   failed_step = 'enqueue', credits_charged = 0,
+                   finished_at = now(), updated_at = now()
+               where id = $1 and status = 'queued' returning id""",
+            row["id"],
+        )
+        if failed is not None:
+            log.warning("job.enqueue_failed", job_id=str(row["id"]), error_type=type(exc).__name__)
+            raise JobError(
+                "queue_unavailable", "Job could not be queued. Please try again."
+            ) from exc
+        row = await conn.fetchrow(f"select {_JOB_COLUMNS} from jobs where id = $1", row["id"])
     return _row_to_job_out(row)
 
 
