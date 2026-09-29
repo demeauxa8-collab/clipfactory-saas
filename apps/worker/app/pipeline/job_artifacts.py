@@ -10,8 +10,8 @@ from typing import Any
 import structlog
 
 from ..models import JobContext
-from ..storage import upload_file
 from ..settings import get_settings
+from ..storage import upload_file
 
 log = structlog.get_logger()
 

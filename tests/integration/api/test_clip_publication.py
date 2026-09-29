@@ -1,8 +1,7 @@
 import pytest
-from fastapi import HTTPException
-
 from app.auth import CurrentUser
 from app.routers import clips, jobs
+from fastapi import HTTPException
 
 pytestmark = pytest.mark.asyncio
 

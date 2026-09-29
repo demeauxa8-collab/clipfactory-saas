@@ -2,7 +2,6 @@ import asyncio
 from uuid import uuid4
 
 import pytest
-
 from app.pipeline.job_state import (
     JobStateError,
     claim_job,
@@ -130,17 +129,16 @@ async def test_terminal_job_is_not_rerun_or_refunded(db_pool, account):
     job_id = await new_job(db_pool, account)
     token = (await claim(db_pool, job_id))["worker_id"]
     await reserve(db_pool, job_id, account[0], token, 4)
-    async with db_pool.acquire() as conn:
-        async with conn.transaction():
-            assert (
-                await confirm_reservation(
-                    conn, job_id=job_id, user_id=str(account[0]), token=token, minutes=4
-                )
-                == 4
+    async with db_pool.acquire() as conn, conn.transaction():
+        assert (
+            await confirm_reservation(
+                conn, job_id=job_id, user_id=str(account[0]), token=token, minutes=4
             )
-            await conn.execute(
-                "update jobs set status = 'completed' where id = $1", job_id
-            )
+            == 4
+        )
+        await conn.execute(
+            "update jobs set status = 'completed' where id = $1", job_id
+        )
     await run_job(db_pool, job_id)
     assert not await fail(db_pool, job_id, account[0], token)
     assert await balance(db_pool, account[0]) == 6

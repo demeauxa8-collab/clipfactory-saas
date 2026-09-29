@@ -4,7 +4,6 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 import pytest
-
 from app.models import ArcSegmentSpec, StoryArc, Transcript, TranscriptWord
 from app.pipeline import runner
 from app.pipeline.clip_render import ClipRejected

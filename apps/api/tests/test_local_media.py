@@ -5,10 +5,10 @@ from types import SimpleNamespace
 from urllib.parse import parse_qs, urlparse
 
 import pytest
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
 
-from app.routers import media
+from app.routers import clips, media
 from app.services import storage
 from app.settings import Settings
 
@@ -65,7 +65,9 @@ async def test_path_escape_and_symlink(client):
     outside.unlink()
 
 
-def test_local_storage_configuration_validation(tmp_path: Path):
+def test_local_storage_configuration_validation(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.delenv("STORAGE_LOCAL_DIR", raising=False)
+    monkeypatch.delenv("MEDIA_SIGNING_SECRET", raising=False)
     base = dict(
         database_url="postgres://example", supabase_url="https://example.invalid",
         supabase_service_role_key="x", supabase_jwt_secret="x",
@@ -77,3 +79,50 @@ def test_local_storage_configuration_validation(tmp_path: Path):
     with pytest.raises(ValueError):
         Settings(**base, storage_local_dir=str(tmp_path), media_signing_secret="short")
     assert Settings(**base, storage_local_dir=str(tmp_path), media_signing_secret="x" * 32)
+
+
+@pytest.mark.asyncio
+async def test_clip_download_keeps_ownership_gate_and_storage_contract(client, monkeypatch):
+    class FakeConnection:
+        def __init__(self):
+            self.row = {"r2_key": "clips/owned.mp4"}
+
+        async def fetchrow(self, sql, clip_id, user_id):
+            assert "c.user_id = $2" in sql and "j.status = 'completed'" in sql
+            assert (clip_id, user_id) == ("clip-1", "user-1")
+            return self.row
+
+    connection = FakeConnection()
+
+    class Acquired:
+        async def __aenter__(self):
+            return connection
+
+        async def __aexit__(self, *_):
+            return False
+
+    pool = SimpleNamespace(acquire=lambda: Acquired())
+    monkeypatch.setattr(clips, "get_pool", lambda: pool)
+    monkeypatch.setattr(clips.analytics, "track_with_pool", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(clips.analytics, "fire_and_forget", lambda *_args: None)
+    user = SimpleNamespace(user_id="user-1")
+
+    local = await clips.download_clip("clip-1", user)
+    assert "/media/clips/owned.mp4?" in local.url
+    assert local.expires_in_seconds == 600
+
+    class FakeS3:
+        def generate_presigned_url(self, *_args, **_kwargs):
+            return "https://r2.example/owned.mp4"
+
+    monkeypatch.setattr(storage, "_s3_client", lambda: FakeS3())
+    monkeypatch.setattr(storage, "get_settings", lambda: SimpleNamespace(
+        storage_backend="r2", r2_bucket_clips="clips",
+    ))
+    remote = await clips.download_clip("clip-1", user)
+    assert remote.url == "https://r2.example/owned.mp4"
+
+    connection.row = None
+    with pytest.raises(HTTPException) as exc:
+        await clips.download_clip("clip-1", user)
+    assert exc.value.status_code == 404

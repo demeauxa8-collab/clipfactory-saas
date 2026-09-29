@@ -7,30 +7,29 @@ pytestmark = pytest.mark.asyncio
 
 
 async def test_client_can_edit_own_name_but_cannot_become_admin(db_pool, account):
-    async with db_pool.acquire() as conn:
-        async with conn.transaction():
-            await conn.execute("set local role authenticated")
+    async with db_pool.acquire() as conn, conn.transaction():
+        await conn.execute("set local role authenticated")
+        await conn.fetchval(
+            "select set_config('request.jwt.claim.sub', $1, true)", str(account[0])
+        )
+        assert (
             await conn.fetchval(
-                "select set_config('request.jwt.claim.sub', $1, true)", str(account[0])
+                "update profiles set full_name = 'Alice' returning full_name"
             )
-            assert (
-                await conn.fetchval(
-                    "update profiles set full_name = 'Alice' returning full_name"
-                )
-                == "Alice"
-            )
-            for column, value in [
-                ("is_admin", "true"),
-                ("email", "'other@example.com'"),
-                ("stripe_customer_id", "'customer_fake'"),
-            ]:
-                with pytest.raises(asyncpg.InsufficientPrivilegeError):
-                    async with conn.transaction():
-                        await conn.execute(f"update profiles set {column} = {value}")
+            == "Alice"
+        )
+        for column, value in [
+            ("is_admin", "true"),
+            ("email", "'other@example.com'"),
+            ("stripe_customer_id", "'customer_fake'"),
+        ]:
+            with pytest.raises(asyncpg.InsufficientPrivilegeError):
+                async with conn.transaction():
+                    await conn.execute(f"update profiles set {column} = {value}")
 
 
 async def test_client_cannot_insert_job_bypassing_api(db_pool, account):
-    async with db_pool.acquire() as conn:
+    async with db_pool.acquire() as conn:  # noqa: SIM117 -- transaction needs conn
         async with conn.transaction():
             await conn.execute("set local role authenticated")
             await conn.fetchval(
