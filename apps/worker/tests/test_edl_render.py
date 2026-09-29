@@ -10,6 +10,7 @@ from app.pipeline.edl import (
     EditShotIntent,
     EffectIntent,
     FramingIntent,
+    FramingRegion,
     compile_edit_intent,
 )
 from app.pipeline.edl_captions import build_caption_plan, write_ass_for_edl
@@ -54,7 +55,17 @@ def _edl(*, width: int = 1080, height: int = 1920):
                 role="setup",
                 from_word_id=0,
                 to_word_id=3,
-                framing=FramingIntent("screen_focus", center_x=0.8, base_scale=1.0),
+                framing=FramingIntent(
+                    "screen_focus",
+                    center_x=0.8,
+                    base_scale=1.0,
+                    screen_region=FramingRegion(
+                        x=0.15,
+                        y=0.20,
+                        width=0.70,
+                        height=0.45,
+                    ),
+                ),
                 effects=(
                     EffectIntent("freeze", at_word_id=2, duration_ms=150, intensity=0.5),
                     EffectIntent("color_pop", at_word_id=3, duration_ms=100, intensity=0.4),
@@ -196,6 +207,63 @@ def test_asset_ids_stay_deferred_and_fit_blur_is_a_real_composition() -> None:
     assert not any("fit_blur" in limitation for limitation in render_plan.limitations)
 
 
+def test_screen_proof_region_is_a_real_crop_then_fit_blur_composition() -> None:
+    edl, transcript = _edl()
+    render_plan = compile_ffmpeg_render_plan(edl, transcript)
+
+    graph = render_plan.filter_complex
+    assert "[frame_1_proof_bg]" in graph
+    assert "[frame_1_proof_crop]" in graph
+    assert "[frame_1_proof_blurred][frame_1_proof_fitted]overlay=(W-w)/2:(H-h)/2" in graph
+    assert (
+        "crop=w='trunc(iw*0.7/2)*2':h='trunc(ih*0.45/2)*2':"
+        "x='trunc(iw*0.15/2)*2':y='trunc(ih*0.2/2)*2'"
+    ) in graph
+    assert "[frame_1_proof_crop]crop=" in graph
+    assert "force_original_aspect_ratio=decrease[frame_1_proof_fitted]" in graph
+
+    legacy_second = replace(
+        edl.shots[1],
+        framing=FramingIntent("screen_focus", center_x=0.8, base_scale=1.0),
+    )
+    legacy = compile_ffmpeg_render_plan(
+        replace(edl, shots=(edl.shots[0], legacy_second, *edl.shots[2:])),
+        transcript,
+    )
+    assert "frame_1_proof_crop" not in legacy.filter_complex
+    assert "crop=1080:1920:x='max(0,min(iw-ow,iw*0.5-ow/2))'" in legacy.filter_complex
+
+    forged_region = replace(
+        edl.shots[1],
+        framing=FramingIntent(
+            "screen_focus",
+            screen_region={"x": 0.1, "y": 0.2, "width": 0.5, "height": 0.4},  # type: ignore[arg-type]
+        ),
+    )
+    with pytest.raises(EDLRenderError, match="invalid screen_region type"):
+        compile_ffmpeg_render_plan(
+            replace(edl, shots=(edl.shots[0], forged_region, *edl.shots[2:])),
+            transcript,
+        )
+
+
+def test_handcrafted_screen_proof_region_is_revalidated_before_graph_generation() -> None:
+    edl, transcript = _edl()
+    invalid = replace(
+        edl.shots[1],
+        framing=FramingIntent(
+            "screen_focus",
+            screen_region=FramingRegion(x=0.9, y=0.1, width=0.2, height=0.4),
+        ),
+    )
+
+    with pytest.raises(EDLRenderError, match="out-of-frame screen_region"):
+        compile_ffmpeg_render_plan(
+            replace(edl, shots=(edl.shots[0], invalid, *edl.shots[2:])),
+            transcript,
+        )
+
+
 def test_video_only_source_gets_deterministic_silent_dialogue() -> None:
     edl, transcript = _edl()
 
@@ -223,6 +291,63 @@ def test_handcrafted_effect_cannot_escape_its_compiled_word_occurrences() -> Non
     edited = replace(edl, shots=(first, *edl.shots[1:]))
 
     with pytest.raises(EDLRenderError, match="effect word 0 is outside"):
+        compile_ffmpeg_render_plan(edited, transcript)
+
+
+def test_reversed_word_range_cannot_bypass_occurrence_validation() -> None:
+    edl, transcript = _edl()
+    # Before renderer-side range validation, an inverted range produced an empty
+    # ``range(...)`` and therefore accepted a forged empty occurrence tuple.
+    reversed_first = replace(
+        edl.shots[0],
+        from_word_id=7,
+        to_word_id=4,
+        word_occurrences=(),
+    )
+    edited = replace(edl, shots=(reversed_first, *edl.shots[1:]))
+
+    with pytest.raises(EDLRenderError, match="invalid inclusive word range"):
+        compile_ffmpeg_render_plan(edited, transcript)
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    [
+        (lambda shot: replace(shot, role="untrusted_role"), "unsupported role"),
+        (
+            lambda shot: replace(shot, framing=FramingIntent("untrusted_framing")),
+            "unsupported framing",
+        ),
+        (lambda shot: replace(shot, caption_theme="untrusted_caption"), "caption theme"),
+        (
+            lambda shot: replace(shot, effects=(EffectIntent("untrusted_effect"),)),
+            "unsupported effect",
+        ),
+    ],
+)
+def test_handcrafted_compiled_edl_cannot_bypass_closed_catalogues(mutation, message: str) -> None:
+    edl, transcript = _edl()
+    edited = replace(edl, shots=(mutation(edl.shots[0]), *edl.shots[1:]))
+
+    with pytest.raises(EDLRenderError, match=message):
+        compile_ffmpeg_render_plan(edited, transcript)
+
+
+def test_empty_decode_island_is_rejected_before_filtergraph_generation() -> None:
+    edl, transcript = _edl()
+    empty_island = replace(edl.decode_islands[0], shot_ids=())
+    edited = replace(edl, decode_islands=(empty_island, *edl.decode_islands[1:]))
+
+    with pytest.raises(EDLRenderError, match="is empty"):
+        compile_ffmpeg_render_plan(edited, transcript)
+
+
+def test_final_transition_must_be_a_hard_cut_even_for_handcrafted_edl() -> None:
+    edl, transcript = _edl()
+    invalid_last = replace(edl.shots[-1], transition_out="time_jump")
+    edited = replace(edl, shots=(*edl.shots[:-1], invalid_last))
+
+    with pytest.raises(EDLRenderError, match=r"final EDL shot.*hard_cut"):
         compile_ffmpeg_render_plan(edited, transcript)
 
 

@@ -13,17 +13,33 @@ makes the eventual renderer easy to test and lets a job queue cache plans.
 from __future__ import annotations
 
 import math
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
 from ..models import Transcript
-from .edl import CompiledEDL, CompiledShot, DecodeIsland, EffectIntent
+from .edl import (
+    MAX_EFFECTS_PER_SHOT,
+    MAX_MUSIC_TRACKS,
+    MAX_SFX_CUES,
+    SUPPORTED_CAPTION_THEMES,
+    SUPPORTED_EFFECTS,
+    SUPPORTED_FRAMING_MODES,
+    SUPPORTED_SHOT_ROLES,
+    SUPPORTED_TRANSITIONS,
+    CompiledEDL,
+    CompiledShot,
+    DecodeIsland,
+    EffectIntent,
+    FramingRegion,
+)
 
 DIALOGUE_JOIN_FADE_SECONDS = 0.008
 MAX_RENDER_DECODE_ISLANDS = 16
 MAX_RENDER_DURATION_SECONDS = 180
 MAX_RENDER_COMPLEXITY = 120
 MAX_RENDER_PIXELS = 2160 * 3840
+_SAFE_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$")
 
 
 class EDLRenderError(ValueError):
@@ -163,7 +179,95 @@ def _effect_timeline_frame(
     )
 
 
+def _validate_safe_id(value: object, *, label: str) -> str:
+    """Reject forged identifiers before they become render-plan metadata.
+
+    Music/SFX IDs are still deferred to the trusted asset resolver, but the
+    renderer must not blindly carry arbitrary persisted values across this
+    boundary.  Keep the same closed identifier grammar as the EDL compiler.
+    """
+    if not isinstance(value, str) or not _SAFE_ID_RE.fullmatch(value):
+        raise EDLRenderError(f"{label} must be a catalogue-safe ID")
+    return value
+
+
+def _validate_deferred_audio(edl: CompiledEDL, *, known_shot_ids: set[str]) -> None:
+    """Revalidate compiler-owned audio records before deferring them.
+
+    ``CompiledEDL`` can come from persistence rather than ``compile_edit_intent``.
+    Asset paths are resolved later, but timings, gains and shot/word references
+    are render-boundary invariants and must not be trusted merely because the
+    containing object is named "Compiled".
+    """
+    if len(edl.music) > MAX_MUSIC_TRACKS:
+        raise EDLRenderError("EDL exceeds the music-track catalogue limit")
+    if len(edl.sfx) > MAX_SFX_CUES:
+        raise EDLRenderError("EDL exceeds the SFX-cue catalogue limit")
+
+    occurrences_by_shot = {
+        shot.shot_id: {item.word_id: item for item in shot.word_occurrences}
+        for shot in edl.shots
+    }
+    for track in edl.music:
+        _validate_safe_id(track.asset_id, label="music asset_id")
+        if not (
+            0 <= track.timeline_in_ms < track.timeline_out_ms <= edl.duration_ms
+        ):
+            raise EDLRenderError("music has invalid timeline bounds")
+        if not math.isfinite(track.gain_db) or not -40.0 <= track.gain_db <= -6.0:
+            raise EDLRenderError("music has invalid gain")
+        if not math.isfinite(track.ducking_db) or not -24.0 <= track.ducking_db <= 0.0:
+            raise EDLRenderError("music has invalid ducking")
+        duration_ms = track.timeline_out_ms - track.timeline_in_ms
+        if not (
+            isinstance(track.fade_in_ms, int)
+            and isinstance(track.fade_out_ms, int)
+            and 0 <= track.fade_in_ms <= min(5_000, duration_ms)
+            and 0 <= track.fade_out_ms <= min(5_000, duration_ms)
+            and isinstance(track.loop, bool)
+        ):
+            raise EDLRenderError("music has invalid fade or loop settings")
+
+    for cue in edl.sfx:
+        _validate_safe_id(cue.asset_id, label="SFX asset_id")
+        if cue.shot_id not in known_shot_ids:
+            raise EDLRenderError(f"SFX references unknown shot {cue.shot_id!r}")
+        occurrence = occurrences_by_shot[cue.shot_id].get(cue.word_id)
+        if occurrence is None:
+            raise EDLRenderError(f"SFX word {cue.word_id} is outside shot {cue.shot_id}")
+        if cue.timeline_at_ms != occurrence.timeline_in_ms:
+            raise EDLRenderError("SFX timing does not match its compiled word occurrence")
+        if not 0 <= cue.timeline_at_ms < edl.duration_ms:
+            raise EDLRenderError("SFX has invalid timeline timing")
+        if not math.isfinite(cue.gain_db) or not -30.0 <= cue.gain_db <= 6.0:
+            raise EDLRenderError("SFX has invalid gain")
+
+
+def _validate_screen_region(region: FramingRegion, *, shot_id: str) -> None:
+    """Repeat the EDL ROI checks at the persistence-to-render trust boundary."""
+    if not isinstance(region, FramingRegion):
+        raise EDLRenderError(f"shot {shot_id} has an invalid screen_region type")
+    values = (region.x, region.y, region.width, region.height)
+    if not all(
+        isinstance(value, (int, float)) and not isinstance(value, bool)
+        for value in values
+    ):
+        raise EDLRenderError(f"shot {shot_id} has non-numeric screen_region values")
+    if not all(math.isfinite(value) for value in values):
+        raise EDLRenderError(f"shot {shot_id} has non-finite screen_region values")
+    if region.x < 0.0 or region.y < 0.0:
+        raise EDLRenderError(f"shot {shot_id} has an out-of-frame screen_region origin")
+    if region.width < 0.05 or region.height < 0.05:
+        raise EDLRenderError(f"shot {shot_id} has an unusably small screen_region")
+    if region.width > 1.0 or region.height > 1.0:
+        raise EDLRenderError(f"shot {shot_id} has an out-of-frame screen_region size")
+    if region.x + region.width > 1.0 or region.y + region.height > 1.0:
+        raise EDLRenderError(f"shot {shot_id} has an out-of-frame screen_region")
+
+
 def _validate_edl(edl: CompiledEDL, transcript: Transcript) -> dict[str, DecodeIsland]:
+    if edl.schema_version != "2.0":
+        raise EDLRenderError(f"unsupported EDL schema version {edl.schema_version!r}")
     if edl.width <= 0 or edl.height <= 0 or edl.fps <= 0 or edl.duration_ms <= 0:
         raise EDLRenderError("EDL output dimensions, fps and duration must be positive")
     if edl.fps not in {24, 25, 30, 50, 60}:
@@ -181,6 +285,7 @@ def _validate_edl(edl: CompiledEDL, transcript: Transcript) -> dict[str, DecodeI
     complexity = (
         len(edl.shots)
         + sum(shot.framing.mode == "fit_blur" for shot in edl.shots)
+        + sum(shot.framing.screen_region is not None for shot in edl.shots)
         + sum(len(shot.effects) * 3 for shot in edl.shots)
     )
     if complexity > MAX_RENDER_COMPLEXITY:
@@ -191,6 +296,9 @@ def _validate_edl(edl: CompiledEDL, transcript: Transcript) -> dict[str, DecodeI
         raise EDLRenderError("decode island IDs must be unique")
     shot_to_island: dict[str, str] = {}
     for island in edl.decode_islands:
+        _validate_safe_id(island.island_id, label="decode island ID")
+        if not island.shot_ids:
+            raise EDLRenderError(f"decode island {island.island_id} is empty")
         if island.source_out_ms <= island.source_in_ms:
             raise EDLRenderError(f"decode island {island.island_id} has no duration")
         if island.source_in_ms < 0 or island.source_out_ms - island.source_in_ms > 60_000:
@@ -204,9 +312,29 @@ def _validate_edl(edl: CompiledEDL, transcript: Transcript) -> dict[str, DecodeI
     known_shot_ids: set[str] = set()
     known_occurrence_ids: set[str] = set()
     for shot in edl.shots:
+        _validate_safe_id(shot.shot_id, label="shot ID")
         if shot.shot_id in known_shot_ids:
             raise EDLRenderError(f"duplicate EDL shot {shot.shot_id}")
         known_shot_ids.add(shot.shot_id)
+        if shot.role not in SUPPORTED_SHOT_ROLES:
+            raise EDLRenderError(f"shot {shot.shot_id} has unsupported role {shot.role!r}")
+        if shot.framing.mode not in SUPPORTED_FRAMING_MODES:
+            raise EDLRenderError(
+                f"shot {shot.shot_id} has unsupported framing {shot.framing.mode!r}"
+            )
+        if shot.caption_theme not in SUPPORTED_CAPTION_THEMES:
+            raise EDLRenderError(
+                f"shot {shot.shot_id} has unsupported caption theme {shot.caption_theme!r}"
+            )
+        if shot.transition_out not in SUPPORTED_TRANSITIONS:
+            raise EDLRenderError(
+                f"shot {shot.shot_id} has unsupported transition {shot.transition_out!r}"
+            )
+        if not (0 <= shot.from_word_id <= shot.to_word_id < len(transcript.words)):
+            raise EDLRenderError(
+                f"shot {shot.shot_id} has invalid inclusive word range "
+                f"{shot.from_word_id}..{shot.to_word_id}"
+            )
         if shot.source_in_ms < 0 or shot.source_out_ms <= shot.source_in_ms:
             raise EDLRenderError(f"shot {shot.shot_id} has invalid source timing")
         if not math.isfinite(shot.speed) or not 0.5 <= shot.speed <= 2.0:
@@ -234,6 +362,12 @@ def _validate_edl(edl: CompiledEDL, transcript: Transcript) -> dict[str, DecodeI
             or not 1.0 <= shot.framing.base_scale <= 1.35
         ):
             raise EDLRenderError(f"shot {shot.shot_id} has invalid framing geometry")
+        if shot.framing.screen_region is not None:
+            if shot.framing.mode != "screen_focus":
+                raise EDLRenderError(
+                    f"shot {shot.shot_id} has screen_region outside screen_focus"
+                )
+            _validate_screen_region(shot.framing.screen_region, shot_id=shot.shot_id)
         island_id = shot_to_island.get(shot.shot_id)
         if island_id is None:
             raise EDLRenderError(f"shot {shot.shot_id} is not assigned to a decode island")
@@ -302,7 +436,13 @@ def _validate_edl(edl: CompiledEDL, transcript: Transcript) -> dict[str, DecodeI
                 raise EDLRenderError(
                     f"word occurrence {occurrence.occurrence_id!r} is not frame-authoritative"
                 )
+        if len(shot.effects) > MAX_EFFECTS_PER_SHOT:
+            raise EDLRenderError(f"shot {shot.shot_id} exceeds the effect catalogue limit")
         for effect in shot.effects:
+            if effect.kind not in SUPPORTED_EFFECTS:
+                raise EDLRenderError(
+                    f"shot {shot.shot_id} has unsupported effect {effect.kind!r}"
+                )
             if (
                 not 50 <= effect.duration_ms <= 1_500
                 or not math.isfinite(effect.intensity)
@@ -319,6 +459,9 @@ def _validate_edl(edl: CompiledEDL, transcript: Transcript) -> dict[str, DecodeI
         raise EDLRenderError("EDL frame duration does not match its shot timeline")
     if set(shot_to_island) != known_shot_ids:
         raise EDLRenderError("decode islands reference an unknown shot")
+    if edl.shots[-1].transition_out != "hard_cut":
+        raise EDLRenderError("final EDL shot must end with a hard_cut transition")
+    _validate_deferred_audio(edl, known_shot_ids=known_shot_ids)
     return islands
 
 
@@ -348,7 +491,61 @@ def _simple_frame_filter(shot: CompiledShot, *, width: int, height: int) -> str:
     return (
         f"scale=w='trunc({width}*{scale}/2)*2':h='trunc({height}*{scale}/2)*2':"
         f"force_original_aspect_ratio=increase,"
-        f"crop={width}:{height}:x='(iw-ow)*{center_x}':y='(ih-oh)/2'"
+        f"crop={width}:{height}:x='max(0,min(iw-ow,iw*{center_x}-ow/2))':y='(ih-oh)/2'"
+    )
+
+
+def _region_crop_filter(region: FramingRegion) -> str:
+    """Return the fixed, source-relative crop for a validated proof ROI.
+
+    Even-pixel truncation keeps yuv420p output encodable.  Because both the
+    origin and extent truncate inward, the crop cannot spill beyond the
+    normalized in-frame ROI supplied by the evidence layer.
+    """
+    x = _number(region.x)
+    y = _number(region.y)
+    width = _number(region.width)
+    height = _number(region.height)
+    return (
+        f"crop=w='trunc(iw*{width}/2)*2':h='trunc(ih*{height}/2)*2':"
+        f"x='trunc(iw*{x}/2)*2':y='trunc(ih*{y}/2)*2'"
+    )
+
+
+def _append_screen_region_framing(
+    lines: list[str],
+    *,
+    source_label: str,
+    target_label: str,
+    shot: CompiledShot,
+    shot_index: int,
+    width: int,
+    height: int,
+) -> None:
+    """Compose a validated on-screen proof over a blurred source canvas.
+
+    This intentionally does *not* use the old centre crop.  The proof region
+    is cropped in source coordinates, scaled only with
+    ``force_original_aspect_ratio=decrease`` and centred on a complete-frame
+    blurred background.  It therefore preserves the evidence region even when
+    it is wide (a browser, dashboard or receipt) in a vertical output.
+    """
+    assert shot.framing.screen_region is not None  # checked before lowering
+    background = f"frame_{shot_index}_proof_bg"
+    proof = f"frame_{shot_index}_proof_crop"
+    blurred = f"frame_{shot_index}_proof_blurred"
+    fitted = f"frame_{shot_index}_proof_fitted"
+    lines.append(f"[{source_label}]split=2[{background}][{proof}]")
+    lines.append(
+        f"[{background}]scale={width}:{height}:force_original_aspect_ratio=increase,"
+        f"crop={width}:{height},boxblur=20:2[{blurred}]"
+    )
+    lines.append(
+        f"[{proof}]{_region_crop_filter(shot.framing.screen_region)},"
+        f"scale={width}:{height}:force_original_aspect_ratio=decrease[{fitted}]"
+    )
+    lines.append(
+        f"[{blurred}][{fitted}]overlay=(W-w)/2:(H-h)/2,setsar=1[{target_label}]"
     )
 
 
@@ -363,6 +560,17 @@ def _append_framing(
     height: int,
 ) -> None:
     """Render a framing preset, including the real fit+blur composition."""
+    if shot.framing.mode == "screen_focus" and shot.framing.screen_region is not None:
+        _append_screen_region_framing(
+            lines,
+            source_label=source_label,
+            target_label=target_label,
+            shot=shot,
+            shot_index=shot_index,
+            width=width,
+            height=height,
+        )
+        return
     if shot.framing.mode != "fit_blur":
         lines.append(
             f"[{source_label}]"
