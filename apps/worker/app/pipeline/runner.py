@@ -713,15 +713,17 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                 conn, job_id=job_id, user_id=user_id, token=token, minutes=minutes
             )
 
-        # Step 6 — upload source (best-effort)
-        try:
-            ctx.source_r2_key = f"sources/{user_id}/{job_id}/{token}.mp4"
-            ctx.storage_bytes += await asyncio.to_thread(
-                upload_file, ctx.source_path, ctx.source_r2_key
-            )
-        except Exception as exc:
-            log_ctx.warning("pipeline.source_upload_failed", err=str(exc))
-            ctx.source_r2_key = None
+        # Local storage retains delivered clips only. The workdir (including
+        # the downloaded source) is removed in the finally block below.
+        if settings.storage_backend != "local":
+            try:
+                ctx.source_r2_key = f"sources/{user_id}/{job_id}/{token}.mp4"
+                ctx.storage_bytes += await asyncio.to_thread(
+                    upload_file, ctx.source_path, ctx.source_r2_key
+                )
+            except Exception as exc:
+                log_ctx.warning("pipeline.source_upload_failed", err=str(exc))
+                ctx.source_r2_key = None
 
         async with pool.acquire() as conn:
             await conn.execute(
@@ -739,7 +741,10 @@ async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
                 conn, job_id, token=token, status="transcribing", current_step="transcribe"
             )
         ctx.transcript = await transcribe(ctx.source_path)
-        ctx.transcription_cost_cents = round(minutes * settings.cost_transcribe_cents_per_min)
+        ctx.transcription_cost_cents = (
+            0 if ctx.transcript.asr_backend == "mlx_whisper"
+            else round(minutes * settings.cost_transcribe_cents_per_min)
+        )
         source_digest = await asyncio.to_thread(file_sha256, ctx.source_path)
         await checkpoint_job(
             ctx,

@@ -17,6 +17,11 @@ provider = "openai"
 model = "whisper-1"
 env = "OPENAI_TRANSCRIBE_MODEL"
 
+[stages.transcription_local]
+provider = "mlx_whisper"
+model = "mlx-community/whisper-large-v3-turbo"
+env = "MLX_WHISPER_MODEL"
+
 [stages.text]
 # Candidate selection, story arcs, arc verification, scoring prompts.
 provider = "openrouter"

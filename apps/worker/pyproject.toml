@@ -19,6 +19,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+mlx = ["mlx-whisper>=0.4.0"]
 dev = [
   "ruff>=0.7.0",
   "black>=24.10.0",
@@ -43,3 +44,5 @@ target-version = ["py311"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+markers = ["mlx: requires Apple Silicon, mlx-whisper, and MLX_TEST_AUDIO"]
+addopts = "-m 'not mlx'"

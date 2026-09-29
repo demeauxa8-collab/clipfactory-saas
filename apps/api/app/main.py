@@ -26,6 +26,7 @@ from .routers import (
     health,
     jobs,
     me,
+    media,
     public,
     series,
 )
@@ -131,6 +132,7 @@ def create_app() -> FastAPI:
     app.include_router(jobs.router)
     app.include_router(series.router)
     app.include_router(clips.router)
+    app.include_router(media.router)
     app.include_router(feedback.router)
     app.include_router(billing.router)
     app.include_router(events.router)
