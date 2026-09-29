@@ -1,0 +1,70 @@
+name: Pipeline quality
+
+on:
+  # Every pull request runs the offline backend suite: no secrets, no network calls
+  # to model providers, a disposable PostgreSQL service only.
+  pull_request:
+  push:
+    branches: [main]
+    paths: ['apps/worker/**', 'apps/api/**', 'db/**', 'tests/integration/**', '.github/workflows/pipeline-quality.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        app: [worker, api]
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: clipfactory_test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: clipfactory_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd 'pg_isready -U clipfactory_test -d clipfactory_test'
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PYTHONPATH: apps/${{ matrix.app }}
+      CLIPFACTORY_TEST_DATABASE_URL: postgresql://clipfactory_test:test@127.0.0.1:5432/clipfactory_test
+      DATABASE_URL: postgresql://clipfactory_test:test@127.0.0.1:5432/clipfactory_test
+      STORAGE_BACKEND: local
+      R2_ACCOUNT_ID: local
+      R2_ACCESS_KEY_ID: local
+      R2_SECRET_ACCESS_KEY: local
+      R2_ENDPOINT_URL: https://example.com
+      OPENAI_API_KEY: local
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.11'
+      - name: Install runtime and locked dependencies
+        run: |
+          python -m pip install uv==0.11.11
+          uv venv apps/${{ matrix.app }}/.venv --python 3.11
+          uv pip sync --python apps/${{ matrix.app }}/.venv/bin/python apps/${{ matrix.app }}/requirements.lock
+      - name: Install media tools
+        if: matrix.app == 'worker'
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core
+      - name: Worker lint and regression tests
+        if: matrix.app == 'worker'
+        run: |
+          apps/worker/.venv/bin/ruff check apps/worker/app apps/worker/tests apps/worker/scripts/benchmark_clipping.py tests/integration
+          apps/worker/.venv/bin/python -m pytest apps/worker/tests -q
+      - name: API admission lint
+        if: matrix.app == 'api'
+        run: apps/api/.venv/bin/ruff check apps/api/app/services/jobs.py apps/api/app/routers/jobs.py apps/api/app/routers/clips.py
+      - name: API unit and series PostgreSQL tests
+        if: matrix.app == 'api'
+        run: |
+          apps/api/.venv/bin/python tests/integration/apply_schema.py
+          apps/api/.venv/bin/python -m pytest apps/api/tests -q
+      - name: PostgreSQL integration and permissions
+        run: apps/${{ matrix.app }}/.venv/bin/python -m pytest tests/integration/${{ matrix.app }} -q
