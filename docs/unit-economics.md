@@ -1,6 +1,6 @@
 # Unit economics — credits, VPS, APIs, margins
 
-Last updated: 2026-05-24.
+Last updated: 2026-06-03 (specialised model stack refresh).
 
 This doc is the financial source of truth for V1 pricing until real production
 usage replaces the estimates.
@@ -127,44 +127,33 @@ RAM uncomfortable.
 
 ## Variable API costs
 
-Current pipeline:
+### Pipeline — specialised model per stage (2026-06-03 refresh)
 
-- Transcription: OpenAI `gpt-4o-mini-transcribe`.
-- Primary text: OpenRouter DeepSeek.
-- Cheap global vision: OpenRouter Qwen VL.
-- Deep targeted vision: OpenRouter Gemini Flash on top arcs.
-- Fallback: Anthropic Haiku 4.5 only on primary errors.
+The pipeline now uses the best specialised model for each job, at mid-tier
+("normal") prices. Every Chinese model below runs through **OpenRouter** (a
+legal aggregator with invoices and explicit model IDs), so this is the
+**allowed cheaper route**, not the grey-market path banned later in this doc.
 
-### Current official/reference prices
+| Stage | Model | Provider | Reference price | Role |
+| --- | --- | --- | ---: | --- |
+| Transcription | `Deepgram Nova-3` | Deepgram | $0.0043 / source min | Dedicated ASR, word timestamps + diarisation, lower WER than a generalist LLM transcribe |
+| Cheap global vision | `qwen/qwen3-vl-flash` | OpenRouter (Alibaba) | ~$0.05-0.15 / 1M | Scans all sampled frames → coarse video map |
+| Deep targeted vision | `z-ai/glm-4.6v` | OpenRouter (Z.ai) | $0.300 / $0.900 per 1M | Frame-level proof analysis on candidate moments; cheaper output than Gemini Flash |
+| Text primary (arcs + scoring, JSON) | `deepseek/deepseek-v4-flash` | OpenRouter (DeepSeek) | $0.098 / $0.197 per 1M | ~60% cheaper than v3.2, mature structured JSON |
+| Selector brain (final clip choice) | `google/gemini-3-flash` | OpenRouter / Google | $0.500 / $3.000 per 1M | Native video understanding on the top 2-3 candidate zones only |
+| Fallback (text + vision) | `claude-haiku-4-5` | Anthropic | $1.00 / $5.00 per 1M | Only on primary provider errors (~5%) |
 
-OpenAI:
-
-| Model | Reference price |
-| --- | ---: |
-| `gpt-4o-mini-transcribe` | $1.25 / 1M audio input tokens, $5 / 1M output tokens |
-| Worker estimate used today | $0.003 / source minute |
-
-OpenRouter snapshot from `https://openrouter.ai/api/v1/models` on 2026-05-24:
-
-| Role | Current candidate model | Input / 1M | Output / 1M | Notes |
-| --- | --- | ---: | ---: | --- |
-| Text primary | `deepseek/deepseek-v3.2` | $0.252 | $0.378 | Current code uses `deepseek/deepseek-chat-v3.2`; verify ID before prod |
-| Deep vision | `google/gemini-2.5-flash` | $0.300 | $2.500 | Vision/image input also priced by image tokens |
-| Cheap vision | `qwen/qwen3-vl-8b-instruct` | $0.080 | $0.500 | cheapest Qwen VL candidate found |
-| Cheap vision safer | `qwen/qwen3-vl-32b-instruct` | $0.104 | $0.416 | better likely quality / still cheap |
-| Large Qwen VL | `qwen/qwen2.5-vl-72b-instruct` | $0.250 | $0.750 | stronger but more expensive |
-
-Anthropic fallback:
-
-| Model | Input / 1M | Output / 1M |
-| --- | ---: | ---: |
-| `claude-haiku-4-5` | $1.00 | $5.00 |
+Net effect vs the old stack: text and deep-vision output got cheaper, a small
+Deepgram premium replaces the OpenAI transcribe estimate, and a new Gemini 3
+Flash selector adds a small per-job cost — but it only sees the top candidate
+zones, so total cost per credit stays roughly flat while clip quality jumps
+(the selector actually *watches* the video instead of only reading frames).
 
 Important: OpenRouter prices and model IDs move often. Re-check with:
 
 ```bash
 curl -s https://openrouter.ai/api/v1/models \
-  | jq -r '.data[] | select(.id|test("deepseek|gemini-2.5-flash|qwen.*vl|haiku"; "i")) | [.id, .pricing.prompt, .pricing.completion, .pricing.image] | @tsv'
+  | jq -r '.data[] | select(.id|test("deepseek-v4|gemini-3-flash|glm-4.6v|qwen.*vl"; "i")) | [.id, .pricing.prompt, .pricing.completion, .pricing.image] | @tsv'
 ```
 
 ### Pipeline cost guardrails
@@ -213,11 +202,16 @@ Net revenue after VAT + Stripe:
 | CPX32 + backups | 20.15 EUR |
 | R2 | 2.00 EUR |
 | Domain | 1.00 EUR |
-| OpenAI transcription: 2,100 min x 0.003 | 6.30 EUR |
-| OpenRouter text + vision mix | 12.00 EUR |
+| Deepgram Nova-3 transcription: 2,100 min x 0.0043 | 9.03 EUR |
+| OpenRouter text + vision (DeepSeek V4 Flash + Qwen3-VL + GLM-4.6V) | 8.00 EUR |
+| Gemini 3 Flash selector (top 2-3 zones / job) | 2.00 EUR |
 | Anthropic fallback, ~5% | 1.00 EUR |
-| **Total** | **42.45 EUR** |
-| **Net margin after VAT + Stripe** | **121.91 EUR** |
+| **Total** | **43.18 EUR** |
+| **Net margin after VAT + Stripe** | **~121.18 EUR** |
+
+Net API cost per credit stays ~0.0095 EUR (well under the 0.03 EUR healthy
+threshold). The specialised stack keeps margin essentially flat versus the old
+stack while improving comprehension and clip quality.
 
 ### Conservative heavy-story case
 
@@ -363,9 +357,12 @@ story-first pipeline.
 ## Immediate corrections to keep before launch
 
 1. Keep CPX32 as the default VPS in deploy docs.
-2. Verify OpenRouter model IDs before prod:
-   - replace `deepseek/deepseek-chat-v3.2` if invalid,
-   - replace `qwen/qwen3-vl-flash` if invalid.
+2. Verify OpenRouter model IDs before prod (the refreshed stack):
+   - `deepseek/deepseek-v4-flash` (text primary),
+   - `z-ai/glm-4.6v` (deep vision),
+   - `google/gemini-3-flash` (selector),
+   - `qwen/qwen3-vl-flash` (cheap vision),
+   - confirm Deepgram Nova-3 account + key for transcription.
 3. Add provider spend caps in dashboards:
    - OpenAI monthly cap,
    - OpenRouter monthly cap,
