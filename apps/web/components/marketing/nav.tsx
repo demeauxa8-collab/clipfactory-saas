@@ -15,7 +15,7 @@ export function MarketingNav() {
             className="relative inline-flex h-5 w-5 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-muted)]"
             aria-hidden
           >
-            <span className="h-2.5 w-1 rounded-sm bg-[var(--color-brand)] shadow-[0_0_18px_rgba(216,195,163,0.32)]" />
+            <span className="h-2.5 w-1 rounded-sm bg-[var(--color-brand)]" />
           </span>
           <span className="text-base">{SITE.name}</span>
         </Link>

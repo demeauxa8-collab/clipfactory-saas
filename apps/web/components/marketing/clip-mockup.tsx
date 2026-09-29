@@ -34,14 +34,14 @@ export function ClipMockup({
   return (
     <div
       className={cn(
-        "rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-5 shadow-sm",
+        "rounded-[1.25rem] border border-[var(--color-border)] bg-[var(--color-muted)] [box-shadow:0_20px_40px_-15px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.6)] p-5",
         className
       )}
     >
       <div className="flex items-start gap-5">
         {/* Vertical preview */}
         <div
-          className="relative h-56 w-32 shrink-0 overflow-hidden rounded-md bg-gradient-to-br from-zinc-900 to-zinc-700"
+          className="relative h-56 w-32 shrink-0 overflow-hidden rounded-[0.75rem] bg-gradient-to-br from-[#3a3631] to-[#5c564d]"
           aria-hidden="true"
         >
           <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent" />
@@ -83,10 +83,10 @@ export function ClipMockup({
             <div className="flex-1">
               <div className="flex items-center justify-between text-[10px] font-medium uppercase tracking-wider text-[var(--color-muted-foreground)]">
                 <span>Virality score</span>
-                <span className="font-mono text-[var(--color-foreground)]">{total}/100</span>
+                <span className="font-mono tabular-nums text-[var(--color-foreground)]">{total}/100</span>
               </div>
               <div
-                className="mt-1 h-1.5 rounded-full bg-[var(--color-muted)]"
+                className="mt-1.5 h-1 rounded-full"
                 aria-hidden="true"
               >
                 <div
@@ -105,14 +105,11 @@ export function ClipMockup({
             <dt className="text-[10px] uppercase tracking-wider text-[var(--color-muted-foreground)]">
               {s.label}
             </dt>
-            <dd className="mt-1 flex items-baseline gap-1">
+            <dd className="mt-1 flex items-baseline gap-1.5">
               <span className="font-mono font-semibold tabular-nums">{s.value}</span>
               <span
                 aria-hidden="true"
-                className={cn(
-                  "h-1.5 flex-1 rounded-full bg-[var(--color-muted)]",
-                  s.value >= 70 && "bg-[var(--color-brand-soft)]"
-                )}
+                className="h-1 flex-1 self-center overflow-hidden rounded-full bg-[var(--color-brand-soft)]"
               >
                 <span
                   className="block h-full rounded-full bg-[var(--color-brand)]"

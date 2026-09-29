@@ -25,7 +25,7 @@ const COMPANY = [
 
 export function MarketingFooter() {
   return (
-    <footer className="border-t border-[var(--color-border)] bg-[#050505] py-16 text-sm text-[var(--color-muted-foreground)]">
+    <footer className="border-t border-[var(--color-border)] bg-[var(--color-muted)] py-16 text-sm text-[var(--color-muted-foreground)]">
       <Container className="grid gap-12 md:grid-cols-12">
         {/* Brand + tagline */}
         <div className="md:col-span-4">

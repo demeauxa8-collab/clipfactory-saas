@@ -7,7 +7,6 @@ import {
   Eye,
   GitBranch,
   ShieldCheck,
-  Sparkles,
   Target,
   TimerReset,
 } from "lucide-react";
@@ -130,7 +129,7 @@ function Hero() {
             {["Series goal", "Whole-video context", "Multi-moment montage"].map((item) => (
               <span
                 key={item}
-                className="rounded-full border border-[var(--color-border)] bg-black/20 px-3 py-2 transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-foreground)]"
+                className="rounded-full border border-[var(--color-border)] bg-[var(--color-muted)] px-3 py-2 transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:text-[var(--color-foreground)]"
               >
                 {item}
               </span>
@@ -153,235 +152,8 @@ function Hero() {
             29€/month · 300 video minutes · no watermark · EU hosted
           </p>
         </div>
-
-        <div className="fade-up-2 mx-auto mt-9 w-full max-w-5xl">
-          <HeroProductStage />
-        </div>
       </Container>
     </section>
-  );
-}
-
-function HeroProductStage() {
-  const insights = [
-    {
-      icon: Brain,
-      label: "Context",
-      title: "Setup found",
-      body: "The first moment explains why the payoff matters.",
-      color: "var(--color-brand)",
-      soft: "var(--color-brand-soft)",
-    },
-    {
-      icon: Eye,
-      label: "Vision",
-      title: "Screen proof",
-      body: "The object, reaction and action are visible in frame.",
-      color: "var(--color-vision)",
-      soft: "var(--color-vision-soft)",
-    },
-    {
-      icon: GitBranch,
-      label: "Edit",
-      title: "Two-part cut",
-      body: "Setup and payoff are joined into one short story.",
-      color: "var(--color-edit)",
-      soft: "var(--color-edit-soft)",
-    },
-  ];
-
-  const scores = [
-    { label: "Hook", value: 95, color: "var(--color-brand)" },
-    { label: "Emotion", value: 88, color: "var(--color-edit)" },
-    { label: "Visual proof", value: 92, color: "var(--color-vision)" },
-    { label: "Audience fit", value: 90, color: "var(--color-brand)" },
-  ];
-
-  return (
-    <div className="relative">
-      <div className="absolute -inset-3 rounded-[1.25rem] border border-white/8" aria-hidden />
-      <div className="film-surface soft-sheen stage-float relative overflow-hidden rounded-lg border border-[var(--color-border)] shadow-[0_24px_90px_-46px_rgba(245,245,247,0.26)]">
-        <div className="frame-notch h-4 opacity-30" aria-hidden />
-        <div className="flex items-center justify-between gap-4 border-b border-[var(--color-border)] px-4 py-3">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="flex gap-1.5" aria-hidden>
-              <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-brand)]" />
-              <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-vision)]" />
-              <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-edit)]" />
-            </div>
-            <p className="truncate font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-muted-foreground)]">
-              ClipFactory review
-            </p>
-          </div>
-          <p className="font-mono text-xs tabular-nums text-[var(--color-foreground)]">
-            12:47:08
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-[1fr_176px]">
-          <div className="p-4">
-            <div className="grid gap-4 sm:grid-cols-[170px_1fr]">
-              <div className="relative mx-auto aspect-[9/16] w-full max-w-[170px] overflow-hidden rounded-md border border-white/10 bg-[linear-gradient(145deg,#2a2a2d_0%,#141416_42%,#050505_100%)]">
-                <span
-                  aria-hidden="true"
-                  className="scan-sweep absolute inset-x-0 top-0 z-10 h-16 blur-md"
-                  style={{ backgroundColor: "rgba(245, 245, 247, 0.16)" }}
-                />
-                <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-black/70 to-transparent" />
-                <div className="absolute left-3 top-3 rounded-sm bg-black/65 px-2 py-1 font-mono text-[10px] text-white/75">
-                  02:14 → 12:47
-                </div>
-                <div className="absolute right-3 top-3 rounded-sm bg-[var(--color-brand)] px-2 py-1 font-mono text-[10px] font-semibold text-[var(--color-brand-foreground)]">
-                  91
-                </div>
-                <div className="absolute inset-x-5 top-20 h-24 rounded-md border border-white/12 bg-white/8" />
-                <div className="absolute left-6 top-24 h-11 w-11 rounded-full border border-[var(--color-vision)]/70 bg-[var(--color-vision-soft)]" />
-                <div className="absolute right-7 top-32 h-14 w-14 rounded-sm border border-[var(--color-edit)]/70 bg-[var(--color-edit-soft)]" />
-                <div className="absolute inset-x-4 bottom-5">
-                  <p className="text-lg font-semibold leading-tight text-white">
-                    Setup and payoff in one clip.
-                  </p>
-                  <p className="mt-2 font-mono text-[10px] uppercase tracking-wider text-white/55">
-                    captions · 1080x1920
-                  </p>
-                </div>
-              </div>
-
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-muted-foreground)]">
-                      Output clip
-                    </p>
-                    <p className="mt-1 text-lg font-semibold">Series clip · 42.6s · 2 segments</p>
-                  </div>
-                  <div className="rounded-md bg-[var(--color-brand)] px-3 py-2 text-right text-[var(--color-brand-foreground)]">
-                    <p className="font-mono text-[10px] uppercase tracking-wider">Score</p>
-                    <p className="text-2xl font-semibold tabular-nums">91</p>
-                  </div>
-                </div>
-
-                <div className="mt-5 grid gap-2">
-                  {scores.map((score, scoreIndex) => (
-                    <div key={score.label}>
-                      <div className="flex items-center justify-between text-sm">
-                        <span>{score.label}</span>
-                        <span className="font-mono text-xs text-[var(--color-muted-foreground)]">
-                          {score.value}
-                        </span>
-                      </div>
-                      <div className="mt-1.5 h-1.5 rounded-full bg-white/10">
-                        <div
-                          className="score-fill h-full rounded-full"
-                          style={{
-                            width: `${score.value}%`,
-                            backgroundColor: score.color,
-                            animationDelay: `${0.12 * (scoreIndex + 1)}s`,
-                          }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="edit-grid mt-5 rounded-md border border-[var(--color-border)] bg-black/25 p-3">
-              <div className="mb-3 flex justify-between font-mono text-[10px] text-[var(--color-muted-foreground)]">
-                <span>00:00</span>
-                <span>02:14</span>
-                <span>12:47</span>
-                <span>14:08</span>
-              </div>
-              <div className="relative space-y-2">
-                <span
-                  aria-hidden="true"
-                  className="timeline-playhead absolute -top-1 bottom-0 z-10 w-px bg-[var(--color-foreground)]/80 shadow-[0_0_18px_rgba(246,240,229,0.55)]"
-                >
-                  <span className="absolute -left-1 top-0 h-2 w-2 rounded-full bg-[var(--color-foreground)]" />
-                </span>
-                {[
-                  {
-                    label: "source",
-                    left: "0%",
-                    width: "100%",
-                    color: "rgba(246,240,229,0.16)",
-                  },
-                  {
-                    label: "setup",
-                    left: "16%",
-                    width: "18%",
-                    color: "var(--color-brand)",
-                  },
-                  {
-                    label: "payoff",
-                    left: "78%",
-                    width: "14%",
-                    color: "var(--color-edit)",
-                  },
-                  {
-                    label: "vision check",
-                    left: "74%",
-                    width: "20%",
-                    color: "var(--color-vision)",
-                  },
-                ].map((track, trackIndex) => (
-                  <div key={track.label} className="grid grid-cols-[78px_1fr] items-center gap-3">
-                    <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--color-muted-foreground)]">
-                      {track.label}
-                    </span>
-                    <span className="relative h-4 overflow-hidden rounded-sm bg-black/30">
-                      <span
-                        className="score-fill absolute inset-y-0 rounded-sm"
-                        style={{
-                          left: track.left,
-                          width: track.width,
-                          backgroundColor: track.color,
-                          animationDelay: `${0.1 * (trackIndex + 1)}s`,
-                        }}
-                      />
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <aside className="border-t border-[var(--color-border)] bg-black/18 p-4 lg:border-l lg:border-t-0">
-            <div className="flex items-center gap-2 text-[var(--color-brand)]">
-              <Sparkles className="h-4 w-4" />
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em]">
-                Why this works
-              </p>
-            </div>
-            <div className="mt-4 space-y-3">
-              {insights.map((item, itemIndex) => (
-                <div
-                  key={item.label}
-                  className="insight-card rounded-md border p-3 transition-transform duration-300 hover:-translate-y-0.5"
-                  style={{
-                    borderColor: item.color,
-                    backgroundColor: item.soft,
-                    animationDelay: `${0.18 * (itemIndex + 1)}s`,
-                  }}
-                >
-                  <div className="flex items-center gap-2" style={{ color: item.color }}>
-                    <item.icon className="h-4 w-4" />
-                    <p className="font-mono text-[10px] uppercase tracking-[0.18em]">
-                      {item.label}
-                    </p>
-                  </div>
-                  <p className="mt-2 text-sm font-semibold">{item.title}</p>
-                  <p className="mt-1 text-xs leading-relaxed text-[var(--color-muted-foreground)]">
-                    {item.body}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </aside>
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -516,7 +288,7 @@ function Positioning() {
           {points.map((p, pointIndex) => (
             <article
               key={p.title}
-                  className="insight-card grid gap-4 rounded-[1.5rem] border border-[var(--color-border)] bg-black/25 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-foreground)]/25 md:grid-cols-[auto_1fr]"
+                  className="insight-card grid gap-4 rounded-[1.25rem] border border-[var(--color-border)] bg-[var(--color-background)] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand)]/40 md:grid-cols-[auto_1fr]"
               style={{ animationDelay: `${0.1 * (pointIndex + 1)}s` }}
             >
                   <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-muted)]">
@@ -592,7 +364,7 @@ function Pipeline() {
             <li
               key={s.title}
               className={
-                "insight-card relative min-h-52 rounded-[1.6rem] border border-[var(--color-border)] bg-[var(--color-background)] p-5 transition-all duration-500 hover:-translate-y-1 hover:border-[var(--color-brand)]/60 " +
+                "insight-card relative min-h-52 rounded-[1.25rem] border border-[var(--color-border)] bg-[var(--color-background)] p-5 transition-all duration-500 hover:-translate-y-1 hover:border-[var(--color-brand)]/60 " +
                 (i % 2 === 1 ? "md:mt-10" : "")
               }
               style={{ animationDelay: `${0.08 * (i + 1)}s` }}
@@ -744,7 +516,7 @@ function PricingTeaser() {
             </p>
           </div>
 
-          <div className="pro-panel rounded-lg border-2 border-[var(--color-brand)] p-7">
+          <div className="pro-panel rounded-[2rem] border-2 border-[var(--color-brand)] p-7">
             <div className="flex items-start justify-between gap-6">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-wider text-[var(--color-brand)]">
@@ -824,7 +596,7 @@ function FinalCta() {
         className="pointer-events-none absolute inset-0 opacity-70"
         style={{
           background:
-            "radial-gradient(640px 360px at 50% 0%, rgba(216,195,163,0.14), transparent 70%)",
+            "radial-gradient(640px 360px at 50% 0%, rgba(194,97,61,0.08), transparent 70%)",
         }}
       />
       <Container className="relative py-24 text-center">

@@ -9,12 +9,12 @@ export function ExampleArc() {
   ];
 
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-6">
+    <div className="rounded-[1.25rem] border border-[var(--color-border)] bg-[var(--color-muted)] [box-shadow:0_20px_40px_-15px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.6)] p-6">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h3 className="text-lg font-semibold">
           Example: a 25-minute vlog → one viral 40-second clip
         </h3>
-        <span className="rounded bg-[var(--color-brand)] px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-brand-foreground)]">
+        <span className="rounded-full bg-[var(--color-brand)] px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-brand-foreground)]">
           2-part clip
         </span>
       </div>
@@ -27,9 +27,9 @@ export function ExampleArc() {
         {segments.map((s) => (
           <li
             key={s.role}
-            className="flex items-center gap-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-muted)] p-4"
+            className="flex items-center gap-4 rounded-[0.75rem] border border-[var(--color-border)] bg-[var(--color-background)] p-4"
           >
-            <span className="rounded bg-[var(--color-foreground)] px-2 py-1 font-mono text-xs text-[var(--color-background)]">
+            <span className="rounded-[0.375rem] bg-[var(--color-foreground)] px-2 py-1 font-mono text-xs text-[var(--color-background)]">
               {s.time}
             </span>
             <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
@@ -40,7 +40,7 @@ export function ExampleArc() {
         ))}
       </ol>
 
-      <div className="mt-6 flex items-center justify-between rounded-lg border border-[var(--color-brand)] bg-[var(--color-brand-soft)]/40 p-4">
+      <div className="mt-6 flex items-center justify-between rounded-[0.75rem] border border-[var(--color-brand)] bg-[var(--color-brand-soft)] p-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand)]">
             Final montage

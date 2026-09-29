@@ -81,7 +81,7 @@ export function ComparisonTable() {
           </p>
         </div>
 
-        <div className="mt-10 overflow-x-auto rounded-xl border border-[var(--color-border)] bg-[var(--color-background)]">
+        <div className="mt-10 overflow-x-auto rounded-[2rem] border border-[var(--color-border)] bg-[var(--color-muted)]">
           <table className="w-full min-w-[700px] text-sm">
             <thead>
               <tr className="border-b border-[var(--color-border)] bg-[var(--color-muted)] text-left">

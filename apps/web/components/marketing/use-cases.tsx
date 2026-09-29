@@ -60,7 +60,7 @@ export function UseCases() {
           {CASES.map((c) => (
             <article
               key={c.persona}
-              className="group flex flex-col rounded-lg border border-[var(--color-border)] p-6 transition-colors hover:border-[var(--color-brand)]"
+              className="group flex flex-col rounded-[1.25rem] border border-[var(--color-border)] bg-[var(--color-muted)] p-6 transition-colors hover:border-[var(--color-brand)]"
             >
               <c.icon className="h-5 w-5 text-[var(--color-brand)]" />
               <p
