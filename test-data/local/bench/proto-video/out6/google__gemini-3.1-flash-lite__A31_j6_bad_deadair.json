@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.1-flash-lite",
+ "tag": "A31_j6_bad_deadair",
+ "latency_s": 2.3,
+ "usage": {
+  "prompt_tokens": 592,
+  "completion_tokens": 146,
+  "total_tokens": 738,
+  "cost": 0.00046725,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 401,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00046725,
+   "upstream_inference_prompt_cost": 0.00024825,
+   "upstream_inference_completions_cost": 0.000219
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": false,\n  \"score_global\": 4,\n  \"hook_2s\": 6,\n  \"phrase_coupee_au_debut\": true,\n  \"phrase_coupee_a_la_fin\": true,\n  \"premier_mot_entendu\": \"heure\",\n  \"dernier_mot_entendu\": \"pas\",\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"Le clip commence en plein milieu d'une phrase ('...heure') et se termine brutalement en plein milieu d'une phrase ('...pas').\"\n}\n```",
+ "provider": "Google"
+}

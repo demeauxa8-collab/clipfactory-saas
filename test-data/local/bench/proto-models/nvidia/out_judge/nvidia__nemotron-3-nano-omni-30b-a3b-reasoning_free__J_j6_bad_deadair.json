@@ -1,0 +1,32 @@
+{
+ "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+ "tag": "J_j6_bad_deadair",
+ "latency_s": 77.4,
+ "usage": {
+  "prompt_tokens": 2918,
+  "completion_tokens": 9185,
+  "total_tokens": 12103,
+  "cost": 0,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0,
+   "upstream_inference_prompt_cost": 0,
+   "upstream_inference_completions_cost": 0
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 7598,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"publiable\": true,\n  \"score_global\": 7,\n  \"hook_2s\": 8,\n  \"phrase_coupee_au_debut\": false,\n  \"phrase_coupee_a_la_fin\": false,\n  \"premier_mot_entendu\": \"C'est\",\n  \"dernier_mot_entendu\": \"euros\",\n  \"raccords\": [\n    {\n      \"at_s\": 0,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Le clip débute avec une prise de vue close-up du téléphone affichant un prix total (4 648,50 €), ce qui constitue un hook visuel fort et établit immédiatement le sujet financier de la vidéo.\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"\"\n}",
+ "reasoning": "The user wants me to evaluate a video clip based on specific criteria.\n\n**1. Analyze the input:**\n- **Video:** A man is holding a phone showing a price (4,648.50 €). He then talks to the camera. He gestures with his hands. He seems to be explaining something about a price or a cost.\n- **Task:** Determine if the clip is \"publiable\" (publishable) based on the provided JSON schema and rules.\n- **Rules:**\n    - \"publiable\": true/false.\n    - \"score_global\": 0-10.\n    - \"hook_2s\": 0-10.\n    - \"phrase_coupee_au_debut\": true/false.\n    - \"phrase_coupee_a_la_fin\": true/false.\n    - \"premier_mot_entendu\": first word heard.\n    - \"dernier_mot_entendu\": last word heard.\n    - \"raccords\": list of connections (start time, understanding, reason).\n    - \"moment_mort\": true/false (dead air/moment).\n    - ",
+ "provider": "Nvidia"
+}

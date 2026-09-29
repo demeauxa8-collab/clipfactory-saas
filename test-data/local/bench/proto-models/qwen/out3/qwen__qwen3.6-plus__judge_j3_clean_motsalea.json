@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.6-plus",
+ "tag": "judge_j3_clean_motsalea",
+ "kind": "video",
+ "latency_s": 7.9,
+ "usage": {
+  "prompt_tokens": 3808,
+  "completion_tokens": 309,
+  "total_tokens": 4117,
+  "cost": 0.00184015,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00184015,
+   "upstream_inference_prompt_cost": 0.0012376,
+   "upstream_inference_completions_cost": 0.00060255
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": false,\n  \"score_global\": 2,\n  \"hook_2s\": 3,\n  \"phrase_coupee_au_debut\": true,\n  \"phrase_coupee_a_la_fin\": true,\n  \"premier_mot_entendu\": \"\",\n  \"dernier_mot_entendu\": \"\",\n  \"raccords\": [\n    {\n      \"at_s\": 0.8,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Cut brutal du face caméra vers le screen recording, mais le flux audio semble continu (voix off).\"\n    },\n    {\n      \"at_s\": 7.5,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Retour au face caméra, raccord visuel acceptable.\"\n    },\n    {\n      \"at_s\": 10.5,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Retour au screen recording.\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"Le clip commence et se termine par des phrases tronquées (incompréhensibles sans contexte). De plus, il n'y a aucune piste audio audible dans le fichier fourni, ce qui rend le contenu inexploitable pour un format vidéo vertical type TikTok/Reels.\"\n}\n```",
+ "provider": "Alibaba"
+}

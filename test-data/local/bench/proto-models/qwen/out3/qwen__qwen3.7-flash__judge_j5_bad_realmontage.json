@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.7-flash",
+ "tag": "judge_j5_bad_realmontage",
+ "kind": "video",
+ "latency_s": 10.7,
+ "usage": {
+  "prompt_tokens": 4708,
+  "completion_tokens": 299,
+  "total_tokens": 5007,
+  "cost": 0.00018011,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00018011,
+   "upstream_inference_prompt_cost": 0.00014124,
+   "upstream_inference_completions_cost": 3.887e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": false,\n  \"score_global\": 2,\n  \"hook_2s\": 8,\n  \"phrase_coupee_au_debut\": true,\n  \"phrase_coupee_a_la_fin\": true,\n  \"premier_mot_entendu\": \"J'ai\",\n  \"dernier_mot_entendu\": \"ça\",\n  \"raccords\": [\n    {\n      \"at_s\": 0.07,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Le hook visuel et textuel est excellent (pièce de monnaie + 'J'ai seulement'), mais la phrase est coupée net au milieu.\"\n    },\n    {\n      \"at_s\": 13.5,\n      \"ca_se_comprend\": false,\n      \"pourquoi\": \"Changement de décor brutal (depuis le rooftop vers une chambre) sans transition narrative, coupe sèche et maladroite qui brise le rythme.\"\n    }\n  ],\n  \"moment_mort\": true,\n  \"raison_du_refus\": \"Le clip est inachevé : il commence par une phrase tronquée ('J'ai seulement...') et se termine par un mot isolé ('ça') après un raccord visuel très mauvais. C'est un temps mort sans conclusion ni idée reçue.\"\n}\n```",
+ "provider": "Alibaba"
+}

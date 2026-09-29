@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.6-flash",
+ "tag": "audio595_anchor_36",
+ "latency_s": 14.0,
+ "usage": {
+  "prompt_tokens": 15088,
+  "completion_tokens": 1099,
+  "total_tokens": 16187,
+  "cost": 0.0308745,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 14881,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0308745,
+   "upstream_inference_prompt_cost": 0.022632,
+   "upstream_inference_completions_cost": 0.0082425
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1010,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\"A\": 37.3, \"B\": 55.5, \"C\": 124.0, \"D\": 143.2, \"E\": 213.5, \"F\": 243.2, \"G\": 285.5, \"duree_video_s\": 600.0}\n```",
+ "provider": "Google"
+}

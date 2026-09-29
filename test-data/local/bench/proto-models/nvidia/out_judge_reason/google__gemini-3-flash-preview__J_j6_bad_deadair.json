@@ -1,0 +1,32 @@
+{
+ "model": "google/gemini-3-flash-preview",
+ "tag": "J_j6_bad_deadair",
+ "latency_s": 4.6,
+ "usage": {
+  "prompt_tokens": 1671,
+  "completion_tokens": 274,
+  "total_tokens": 1945,
+  "cost": 0.0018575,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 400,
+   "video_tokens": 1056
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0018575,
+   "upstream_inference_prompt_cost": 0.0010355,
+   "upstream_inference_completions_cost": 0.000822
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\"publiable\":false,\"score_global\":4,\"hook_2s\":6,\n \"phrase_coupee_au_debut\":true,\"phrase_coupee_a_la_fin\":true,\n \"premier_mot_entendu\":\"heure\", \"dernier_mot_entendu\":\"formation\",\n \"raccords\":[{\"at_s\":0.02,\"ca_se_comprend\":true,\"pourquoi\":\"Le premier mot est coupé, on entend 'heure' au lieu de 'tout à l'heure'\"},\n             {\"at_s\":0.05,\"ca_se_comprend\":true,\"pourquoi\":\"Transition fluide entre la preuve sociale (téléphone) et le discours face caméra\"},\n             {\"at_s\":0.14,\"ca_se_comprend\":false,\"pourquoi\":\"La phrase finale est brutalement interrompue en plein milieu d'une idée\"}],\n \"moment_mort\":false,\n \"raison_du_refus\":\"Le clip est inexploitable car la première phrase est tronquée ('...heure' au lieu de 'tout à l'heure') et la fin est coupée net au milieu d'une phrase, ce qui empêche toute compréhension du message final.\"}\n```",
+ "reasoning": "",
+ "provider": "Google"
+}

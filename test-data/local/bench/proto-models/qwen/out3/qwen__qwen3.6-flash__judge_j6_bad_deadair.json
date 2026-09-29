@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.6-flash",
+ "tag": "judge_j6_bad_deadair",
+ "kind": "video",
+ "latency_s": 7.8,
+ "usage": {
+  "prompt_tokens": 3088,
+  "completion_tokens": 255,
+  "total_tokens": 3343,
+  "cost": 0.000865875,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.000865875,
+   "upstream_inference_prompt_cost": 0.000579,
+   "upstream_inference_completions_cost": 0.000286875
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": false,\n  \"score_global\": 3.5,\n  \"hook_2s\": 4,\n  \"phrase_coupee_au_debut\": true,\n  \"phrase_coupee_a_la_fin\": true,\n  \"premier_mot_entendu\": \"C'est\",\n  \"dernier_mot_entendu\": \"ça\",\n  \"raccords\": [\n    {\n      \"at_s\": 0,\n      \"ca_se_comprend\": false,\n      \"pourquoi\": \"Le clip commence au milieu d'une phrase ('C'est...') sans contexte visuel ou sonore.\"\n    },\n    {\n      \"at_s\": 15,\n      \"ca_se_comprend\": false,\n      \"pourquoi\": \"Le clip se termine brusquement sur un mot de liaison ('ça'), coupant la conclusion de la pensée.\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"Le contenu est incohérent car la phrase est tronquée au début et à la fin, rendant le message incompréhensible.\"\n}\n```",
+ "provider": "Alibaba"
+}

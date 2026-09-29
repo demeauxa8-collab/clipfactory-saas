@@ -1,0 +1,32 @@
+{
+ "model": "google/gemini-3.1-flash-lite",
+ "tag": "T2_t2b",
+ "latency_s": 2.8,
+ "usage": {
+  "prompt_tokens": 5668,
+  "completion_tokens": 317,
+  "total_tokens": 5985,
+  "cost": 0.0018925,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0018925,
+   "upstream_inference_prompt_cost": 0.001417,
+   "upstream_inference_completions_cost": 0.0004755
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "[\n  {\"decor\":\"chambre\",\"person_visible\":true,\"face_center_x\":0.5,\"energy\":6,\"action\":\"parle face caméra\",\"proof_objects\":[\"homme\",\"mur avec cadres\"],\"problems\":[],\"visual_score\":8,\"burned_captions\":false},\n  {\"decor\":\"bureau avec écran\",\"person_visible\":true,\"face_center_x\":0.15,\"energy\":5,\"action\":\"parle en regardant l'écran\",\"proof_objects\":[\"homme\",\"ordinateur\",\"site web\"],\"problems\":[\"personnage trop petit\"],\"visual_score\":4,\"burned_captions\":false},\n  {\"decor\":\"bureau avec écran\",\"person_visible\":true,\"face_center_x\":0.15,\"energy\":5,\"action\":\"parle en regardant l'écran\",\"proof_objects\":[\"homme\",\"ordinateur\",\"site web\"],\"problems\":[\"personnage trop petit\"],\"visual_score\":4,\"burned_captions\":false},\n  {\"decor\":\"bureau avec écran\",\"person_visible\":true,\"face_center_x\":0.15,\"energy\":5,\"action\":\"parle en regardant l'écran\",\"proof_objects\":[\"homme\",\"ordinateur\",\"site web\"],\"problems\":[\"personnage trop petit\"],\"visual_score\":4,\"burned_captions\":false},\n  {\"decor\":\"bureau avec écran\",\"person_visible\":true,\"face_center_x\":0.15,\"energy\":5,\"action\":\"parle en regardant l'écran\",\"proof_objects\":[\"homme\",\"ordinateur\",\"site web\"],\"problems\":[\"personnage trop petit\"],\"visual_score\":4,\"burned_captions\":false}\n]",
+ "reasoning": "",
+ "provider": "Google AI Studio"
+}

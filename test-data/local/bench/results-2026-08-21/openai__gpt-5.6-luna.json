@@ -1,0 +1,55 @@
+{
+  "model": "openai/gpt-5.6-luna",
+  "ok": true,
+  "error": null,
+  "latency_seconds": 36.874,
+  "tokens": 22139,
+  "arcs": [
+    {
+      "title": "Un euro transformé en vente Google en 24 heures",
+      "arc_type": "challenge_result",
+      "segments": [
+        {
+          "role": "setup",
+          "start": 0.0,
+          "end": 24.0,
+          "transcript_excerpt": "J’ai seulement un euro pour lancer une boutique rentable en dropshipping et le tout en 24 heures Moi c’est Gaspar j’ai fait 4 millions et demi en e commerce et l’objectif ça va être simple aujourd’hui C’est juste de prouver qu’en 2025 tu peux lancer un business avec quasiment rien du tout Aujourd’hu",
+          "why": "This establishes the one-euro constraint, Gaspar’s credibility, and the specific challenge that the later result must answer.",
+          "start_anchor": "J’ai seulement un euro pour lancer une boutique rentable",
+          "end_anchor": "ou est ce que je vais vraiment tout perdre",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        },
+        {
+          "role": "payoff",
+          "start": 469.0,
+          "end": 482.0,
+          "transcript_excerpt": "Une grande nouvelle On a fait une vente à 69 euros Et je ne m’y attendais vraiment pas",
+          "why": "This directly resolves the challenge with a concrete sale after 24 hours.",
+          "start_anchor": "Une grande nouvelle On a fait une vente à 69 euros",
+          "end_anchor": "On a fait une vente à 69 euros",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "",
+      "estimated_retention": 0,
+      "continuity_risk": "medium",
+      "suggested_hook": "Un euro suffit-il vraiment pour lancer un business rentable ?",
+      "link_reason": null,
+      "campaign_fit_llm": null,
+      "campaign_fit_reason": null,
+      "opening_words": "J’ai seulement un euro pour lancer une boutique rentable",
+      "self_contained": true,
+      "payoff_line": null
+    }
+  ],
+  "raw_video_read": {
+    "n_events": 79,
+    "n_events_in_fixture": 79,
+    "video_map_summary_chars": 600,
+    "n_transcript_words": 2864,
+    "n_transcript_words_in_fixture": 2864,
+    "transcript_lines_chars": 14977
+  }
+}

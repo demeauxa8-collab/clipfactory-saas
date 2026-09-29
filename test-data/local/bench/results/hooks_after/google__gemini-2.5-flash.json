@@ -1,0 +1,120 @@
+{
+  "model": "google/gemini-2.5-flash",
+  "ok": true,
+  "error": null,
+  "latency_seconds": 10.754,
+  "tokens": 21714,
+  "arcs": [
+    {
+      "title": "De 1€ à 50€ de bénéfice en 24h avec Google Ads",
+      "arc_type": "challenge_result",
+      "segments": [
+        {
+          "role": "setup",
+          "start": 0.0,
+          "end": 6.0,
+          "transcript_excerpt": "J’ai seulement un euro pour lancer une boutique rentable en dropshipping et le tout en 24 heures Moi c’est Gaspar j’ai fait 4 millions et demi en e commerce et l’objectif ça va être simple aujourd’hui C’est juste de prouver qu’en 2025 tu peux lancer un business avec",
+          "why": "This segment introduces the ambitious challenge and establishes Gaspar's credibility with his past earnings.",
+          "start_anchor": "J’ai seulement un euro pour lancer une boutique rentable en dropshipping",
+          "end_anchor": "en 24 heures Moi c’est Gaspar j’ai fait 4 millions",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        },
+        {
+          "role": "transition",
+          "start": 48.0,
+          "end": 53.0,
+          "transcript_excerpt": "Par contre le problème c’est que sur Google il faut au minimum 100 euros pour lancer une boutique Donc la première étape ça va être de transformer ces un euro en 100 euros Ce que j’ai réfléchi pour faire ça c’est que le plus simple ça serait juste que je demande à ma meuf 100 euros Je pense que ça i",
+          "why": "This segment explains the initial hurdle of needing 100 euros for Google Ads and how he plans to get it without 'cheating'.",
+          "start_anchor": "Par contre le problème c’est que sur Google il faut au minimum 100 euros",
+          "end_anchor": "euros Ce que j’ai réfléchi pour faire ça c’est que le plus simple",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        },
+        {
+          "role": "payoff",
+          "start": 536.0,
+          "end": 549.0,
+          "transcript_excerpt": "Et on peut voir qu’on a dépensé que 3 dollars On a dépensé que 3 dollars Donc là En sachant que le produit nous a coûté 14 euros à envoyer On est à environ 50 euros bénéfice Donc c’est vraiment Très très bien Parce que là Du coup C’est un retour sur investissement",
+          "why": "This segment reveals the successful outcome of the challenge, showing a significant profit from a minimal investment.",
+          "start_anchor": "Et on peut voir qu’on a dépensé que 3 dollars On a dépensé",
+          "end_anchor": "euros bénéfice Donc c’est vraiment Très très bien Parce que là",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The clip showcases an impressive financial transformation from a tiny starting capital, appealing to aspiring entrepreneurs.",
+      "estimated_retention": 90,
+      "continuity_risk": "low",
+      "suggested_hook": "1€ pour lancer une boutique rentable en 24h ?",
+      "link_reason": "The first segment sets up the challenge of starting with 1 euro, the second explains the financial hurdle to overcome, and the third delivers the concrete profit achieved, directly answering the initial challenge.",
+      "campaign_fit_llm": 95,
+      "campaign_fit_reason": "This clip directly demonstrates the entrepreneur's ability to generate profit with minimal resources, aligning perfectly with the goal of selling a business training program.",
+      "opening_words": "J’ai seulement un euro pour lancer une boutique rentable en dropshipping",
+      "self_contained": true,
+      "payoff_line": "On est à environ 50 euros bénéfice"
+    },
+    {
+      "title": "Pourquoi Google Ads est mieux que TikTok pour le dropshipping",
+      "arc_type": "counterintuitive",
+      "segments": [
+        {
+          "role": "single",
+          "start": 36.0,
+          "end": 48.0,
+          "transcript_excerpt": "En vrai de vrai avec un euro je pourrais faire du dropshipping sur TikTok mais le truc c’est que je préfère faire du dropshipping sur Google Vu que c’est des meilleures marges je vais faire plus de profit En plus de ça c’est beaucoup plus long terme que TikTok et surtout tu vend tes produits à des g",
+          "why": "This segment explains the strategic advantage of Google Ads over TikTok for dropshipping, highlighting better margins and long-term potential.",
+          "start_anchor": "En vrai de vrai avec un euro je pourrais faire du dropshipping sur TikTok",
+          "end_anchor": "un euro Par contre le problème c’est que sur Google",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "It offers a contrarian view on a popular e-commerce platform (TikTok) and provides a strategic alternative (Google Ads), appealing to those seeking better results.",
+      "estimated_retention": 85,
+      "continuity_risk": "low",
+      "suggested_hook": "Google Ads vs TikTok pour le dropshipping : le choix du pro",
+      "link_reason": null,
+      "campaign_fit_llm": 90,
+      "campaign_fit_reason": "The clip positions the entrepreneur as an expert with valuable, non-obvious insights into profitable e-commerce strategies, directly supporting the training program's value proposition.",
+      "opening_words": "En vrai de vrai avec un euro je pourrais faire du dropshipping sur TikTok",
+      "self_contained": true,
+      "payoff_line": "c’est beaucoup plus long terme que TikTok et surtout tu vend tes produits à des gens qui recherchent déjà ton produit"
+    },
+    {
+      "title": "Le secret pour réussir en e-commerce : les connaissances",
+      "arc_type": "insider_secret",
+      "segments": [
+        {
+          "role": "single",
+          "start": 561.0,
+          "end": 579.0,
+          "transcript_excerpt": "Donc en fait Cette vidéo Elle prouve quand même Que tu peux te lancer avec pas grand chose Par contre Ce qui coûte le plus cher C’est quand même les connaissances J’ai du mettre plus de 30 000 balles Dans des coachings Là actuellement J’ai un coaching avec un américain Pour chiffrer encore un e comm",
+          "why": "This segment reveals the true cost of success in e-commerce, emphasizing the value of knowledge and coaching over initial capital.",
+          "start_anchor": "Donc en fait Cette vidéo Elle prouve quand même Que tu peux te lancer",
+          "end_anchor": "un e commerce Et c’est ça qui coûte le plus cher Et c’est pour ça",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "It offers a powerful, counterintuitive insight into what truly drives success in e-commerce, positioning knowledge as the ultimate asset.",
+      "estimated_retention": 90,
+      "continuity_risk": "low",
+      "suggested_hook": "Ce qui coûte le plus cher en e-commerce, ce n'est pas l'argent",
+      "link_reason": null,
+      "campaign_fit_llm": 98,
+      "campaign_fit_reason": "This clip directly promotes the value of the entrepreneur's coaching by highlighting that knowledge, not just capital, is the key to success, making it highly relevant for selling a business training program.",
+      "opening_words": "Donc en fait Cette vidéo Elle prouve quand même Que tu peux te lancer",
+      "self_contained": true,
+      "payoff_line": "Ce qui coûte le plus cher C’est quand même les connaissances J’ai du mettre plus de 30 000 balles Dans des coachings"
+    }
+  ],
+  "raw_video_read": {
+    "n_events": 79,
+    "n_events_in_fixture": 79,
+    "video_map_summary_chars": 600,
+    "n_transcript_words": 2864,
+    "n_transcript_words_in_fixture": 2864,
+    "transcript_lines_chars": 14977
+  }
+}

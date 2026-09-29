@@ -1,0 +1,142 @@
+{
+  "ground_truth": {
+    "f_30.jpg": [
+      0.48,
+      "talking head, balcony, holding a coin"
+    ],
+    "f_95.jpg": [
+      0.41,
+      "talking head, parking garage, slightly left"
+    ],
+    "f_210.jpg": [
+      0.13,
+      "Google page + small webcam inset bottom-left"
+    ],
+    "f_355.jpg": [
+      0.54,
+      "talking head, apartment, slightly right"
+    ],
+    "f_505.jpg": [
+      0.08,
+      "Shopify dashboard + small webcam inset bottom-left"
+    ],
+    "f_560.jpg": [
+      0.43,
+      "talking head, bedroom, left of centre"
+    ]
+  },
+  "results": {
+    "qwen/qwen3-vl-32b-instruct": [
+      {
+        "frame": "f_30.jpg",
+        "face_center_x": 0.45,
+        "person_visible": true,
+        "decor": "outdoor",
+        "tokens": 677,
+        "tokens_in": 600,
+        "tokens_out": 77
+      },
+      {
+        "frame": "f_95.jpg",
+        "face_center_x": 0.5,
+        "person_visible": true,
+        "decor": "car",
+        "tokens": 675,
+        "tokens_in": 600,
+        "tokens_out": 75
+      },
+      {
+        "frame": "f_210.jpg",
+        "face_center_x": 0.2,
+        "person_visible": true,
+        "decor": "desktop screen",
+        "tokens": 693,
+        "tokens_in": 600,
+        "tokens_out": 93
+      },
+      {
+        "frame": "f_355.jpg",
+        "face_center_x": 0.5,
+        "person_visible": true,
+        "decor": "other",
+        "tokens": 675,
+        "tokens_in": 600,
+        "tokens_out": 75
+      },
+      {
+        "frame": "f_505.jpg",
+        "face_center_x": 0.2,
+        "person_visible": true,
+        "decor": "desktop screen",
+        "tokens": 690,
+        "tokens_in": 600,
+        "tokens_out": 90
+      },
+      {
+        "frame": "f_560.jpg",
+        "face_center_x": 0.45,
+        "person_visible": true,
+        "decor": "other",
+        "tokens": 677,
+        "tokens_in": 600,
+        "tokens_out": 77
+      }
+    ],
+    "google/gemini-2.5-flash": [
+      {
+        "frame": "f_30.jpg",
+        "face_center_x": 0.45,
+        "person_visible": true,
+        "decor": "outdoor",
+        "tokens": 1849,
+        "tokens_in": 1762,
+        "tokens_out": 87
+      },
+      {
+        "frame": "f_95.jpg",
+        "face_center_x": 0.5,
+        "person_visible": true,
+        "decor": "other",
+        "tokens": 1848,
+        "tokens_in": 1762,
+        "tokens_out": 86
+      },
+      {
+        "frame": "f_210.jpg",
+        "face_center_x": 0.25,
+        "person_visible": true,
+        "decor": "other",
+        "tokens": 1849,
+        "tokens_in": 1762,
+        "tokens_out": 87
+      },
+      {
+        "frame": "f_355.jpg",
+        "face_center_x": 0.5,
+        "person_visible": true,
+        "decor": "other",
+        "tokens": 1848,
+        "tokens_in": 1762,
+        "tokens_out": 86
+      },
+      {
+        "frame": "f_505.jpg",
+        "face_center_x": 0.15,
+        "person_visible": true,
+        "decor": "desktop screen",
+        "tokens": 1859,
+        "tokens_in": 1762,
+        "tokens_out": 97
+      },
+      {
+        "frame": "f_560.jpg",
+        "face_center_x": 0.35,
+        "person_visible": true,
+        "decor": "other",
+        "tokens": 1849,
+        "tokens_in": 1762,
+        "tokens_out": 87
+      }
+    ]
+  }
+}

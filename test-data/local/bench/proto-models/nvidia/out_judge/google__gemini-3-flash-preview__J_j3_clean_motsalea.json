@@ -1,0 +1,32 @@
+{
+ "model": "google/gemini-3-flash-preview",
+ "tag": "J_j3_clean_motsalea",
+ "latency_s": 5.3,
+ "usage": {
+  "prompt_tokens": 2035,
+  "completion_tokens": 310,
+  "total_tokens": 2345,
+  "cost": 0.0021975,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 500,
+   "video_tokens": 1320
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0021975,
+   "upstream_inference_prompt_cost": 0.0012675,
+   "upstream_inference_completions_cost": 0.00093
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": false,\n  \"score_global\": 4,\n  \"hook_2s\": 6,\n  \"phrase_coupee_au_debut\": true,\n  \"phrase_coupee_a_la_fin\": true,\n  \"premier_mot_entendu\": \"actuellement\",\n  \"dernier_mot_entendu\": \"faire\",\n  \"raccords\": [\n    {\n      \"at_s\": 7,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Transition fluide entre l'écran et le présentateur.\"\n    },\n    {\n      \"at_s\": 11,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Retour sur l'écran pour la démonstration.\"\n    },\n    {\n      \"at_s\": 18,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Retour sur le présentateur pour conclure.\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"Le clip commence par un mot tronqué ('actuellement' est coupé au début) et se termine brusquement au milieu d'une phrase ('ça me fait souvent...'), ce qui le rend inexploitable en l'état.\"\n}\n```",
+ "reasoning": "",
+ "provider": "Google"
+}

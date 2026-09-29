@@ -1,0 +1,32 @@
+{
+ "model": "google/gemini-3.1-flash-lite",
+ "tag": "T2_t2c",
+ "latency_s": 2.6,
+ "usage": {
+  "prompt_tokens": 5668,
+  "completion_tokens": 346,
+  "total_tokens": 6014,
+  "cost": 0.001936,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.001936,
+   "upstream_inference_prompt_cost": 0.001417,
+   "upstream_inference_completions_cost": 0.000519
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "[\n  {\"decor\":\"bureau/home office\",\"person_visible\":true,\"face_center_x\":0.15,\"energy\":4,\"action\":\"parler face caméra\",\"proof_objects\":[\"ordinateur\",\"interface Semrush\"],\"problems\":[\"trop de texte à l'écran\",\"personne trop petite\"],\"visual_score\":4,\"burned_captions\":false},\n  {\"decor\":\"bureau/home office\",\"person_visible\":true,\"face_center_x\":0.15,\"energy\":4,\"action\":\"parler face caméra\",\"proof_objects\":[\"ordinateur\",\"interface Semrush\"],\"problems\":[\"trop de texte à l'écran\",\"personne trop petite\"],\"visual_score\":4,\"burned_captions\":false},\n  {\"decor\":\"bureau/home office\",\"person_visible\":true,\"face_center_x\":0.15,\"energy\":4,\"action\":\"parler face caméra\",\"proof_objects\":[\"ordinateur\",\"interface Semrush\"],\"problems\":[\"trop de texte à l'écran\",\"personne trop petite\"],\"visual_score\":4,\"burned_captions\":false},\n  {\"decor\":\"bureau/home office\",\"person_visible\":true,\"face_center_x\":0.15,\"energy\":4,\"action\":\"parler face caméra\",\"proof_objects\":[\"ordinateur\",\"interface Semrush\"],\"problems\":[\"trop de texte à l'écran\",\"personne trop petite\"],\"visual_score\":4,\"burned_captions\":false},\n  {\"decor\":\"bureau/home office\",\"person_visible\":true,\"face_center_x\":0.15,\"energy\":4,\"action\":\"parler face caméra\",\"proof_objects\":[\"ordinateur\",\"interface Semrush\"],\"problems\":[\"trop de texte à l'écran\",\"personne trop petite\"],\"visual_score\":4,\"burned_captions\":false}\n]",
+ "reasoning": "",
+ "provider": "Google AI Studio"
+}

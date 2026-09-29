@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.1-flash-lite",
+ "tag": "J31_j1_clean_intro",
+ "latency_s": 3.2,
+ "usage": {
+  "prompt_tokens": 2946,
+  "completion_tokens": 155,
+  "total_tokens": 3101,
+  "cost": 0.000969,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 2730
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.000969,
+   "upstream_inference_prompt_cost": 0.0007365,
+   "upstream_inference_completions_cost": 0.0002325
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": true,\n  \"score_global\": 8,\n  \"hook_2s\": 9,\n  \"phrase_coupee_au_debut\": false,\n  \"phrase_coupee_a_la_fin\": false,\n  \"premier_mot_entendu\": \"J'ai\",\n  \"dernier_mot_entendu\": \"grave\",\n  \"raccords\": [\n    {\n      \"at_s\": 0.05,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Le raccord est fluide et maintient le rythme dynamique du montage.\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"\"\n}\n```",
+ "provider": "Google AI Studio"
+}

@@ -1,0 +1,32 @@
+{
+ "model": "google/gemini-3.5-flash-lite",
+ "tag": "J_j1_clean_intro",
+ "latency_s": 2.6,
+ "usage": {
+  "prompt_tokens": 2945,
+  "completion_tokens": 128,
+  "total_tokens": 3073,
+  "cost": 0.0012035,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 750,
+   "video_tokens": 1980
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0012035,
+   "upstream_inference_prompt_cost": 0.0008835,
+   "upstream_inference_completions_cost": 0.00032
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\"publiable\":true,\"score_global\":8,\"hook_2s\":9,\n \"phrase_coupee_au_debut\":false,\"phrase_coupee_a_la_fin\":false,\n \"premier_mot_entendu\":\"J'ai\",\"dernier_mot_entendu\":\"grave\",\n \"raccords\":[{\"at_s\":5,\"ca_se_comprend\":true,\"pourquoi\":\"Transition visuelle fluide avec le logo qui change\"}],\n \"moment_mort\":false,\n \"raison_du_refus\":\"\"}\n```",
+ "reasoning": "",
+ "provider": "Google"
+}

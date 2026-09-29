@@ -1,0 +1,30 @@
+{
+ "model": "qwen/qwen3.7-flash",
+ "tag": "anchor300",
+ "latency_s": 17.5,
+ "usage": {
+  "prompt_tokens": 36238,
+  "completion_tokens": 90,
+  "total_tokens": 36328,
+  "cost": 0.0036598,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0036598,
+   "upstream_inference_prompt_cost": 0.0036238,
+   "upstream_inference_completions_cost": 3.6e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"A\": -1,\n  \"B\": -1,\n  \"C\": 1:26,\n  \"D\": 1:48,\n  \"E\": 2:03,\n  \"F\": 3:51,\n  \"G\": 4:34,\n  \"duree_video_s\": 300.0\n}"
+}

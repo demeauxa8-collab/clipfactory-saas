@@ -1,0 +1,32 @@
+{
+ "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+ "tag": "T2_t2c",
+ "latency_s": 12.7,
+ "usage": {
+  "prompt_tokens": 1534,
+  "completion_tokens": 2086,
+  "total_tokens": 3620,
+  "cost": 0,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0,
+   "upstream_inference_prompt_cost": 0,
+   "upstream_inference_completions_cost": 0
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1875,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"decor\": \"indoor room with a window and furniture\",\n  \"person_visible\": true,\n  \"face_center_x\": 0.20,\n  \"energy\": 6,\n  \"action\": \"speaking\",\n  \"proof_objects\": [],\n  \"problems\": [],\n  \"visual_score\": 8,\n  \"burned_captions\": false\n}",
+ "reasoning": "So, let's analyze the image. First, check if a person is visible. Yes, there's a person in the bottom left. Now, face_center_x: the person's face is on the left side. Let's see the image. The main person's face—since it's a vlog, the person is in the lower part. Let's estimate the x-coordinate. The image is 9:16 vertical, so the person's face is around 0.2 maybe? Wait, need to be precise. Let's look at the position. The person is in the bottom left, so the face's center x. Let's see: the image's width, the person's face is not at the center. Let's check. The person is on the left side, so x is less than 0.5. Let's say 0.2 (since 0.0 is left edge, 1.0 right). Wait, the person's face: in the image, the person is in the lower left, so the face's center x. Let's estimate. Let's see the image: ",
+ "provider": "Nvidia"
+}

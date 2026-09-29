@@ -1,0 +1,31 @@
+{
+ "model": "qwen/qwen3.5-9b",
+ "set": "t2_caption",
+ "latency_s": 4.1,
+ "usage": {
+  "prompt_tokens": 1231,
+  "completion_tokens": 118,
+  "total_tokens": 1349,
+  "cost": 0.0001408,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0001408,
+   "upstream_inference_prompt_cost": 0.0001231,
+   "upstream_inference_completions_cost": 1.77e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"decor\": \"other\",\n  \"person_visible\": true,\n  \"energy\": 65,\n  \"action\": \"talking head\",\n  \"proof_objects\": [\n    \"bed\",\n    \"chair\",\n    \"window\",\n    \"captions\"\n  ],\n  \"problems\": [\n    \"low contrast\"\n  ],\n  \"visual_score\": 72,\n  \"face_center_x\": 0.48,\n  \"burned_captions\": true\n}",
+ "provider": "SiliconFlow"
+}

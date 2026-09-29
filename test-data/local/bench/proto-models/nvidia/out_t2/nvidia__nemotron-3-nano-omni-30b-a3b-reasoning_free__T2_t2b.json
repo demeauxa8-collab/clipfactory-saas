@@ -1,0 +1,32 @@
+{
+ "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+ "tag": "T2_t2b",
+ "latency_s": 37.5,
+ "usage": {
+  "prompt_tokens": 1534,
+  "completion_tokens": 2516,
+  "total_tokens": 4050,
+  "cost": 0,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0,
+   "upstream_inference_prompt_cost": 0,
+   "upstream_inference_completions_cost": 0
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1927,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\"decor\":\"room\",\"person_visible\":true,\"face_center_x\":0.25,\"energy\":4,\"action\":\"looking down, speaking\",\"proof_objects\":[],\"problems\":[],\"visual_score\":8,\"burned_captions\":true}\n{\"decor\":\"room\",\"person_visible\":true,\"face_center_x\":0.25,\"energy\":7,\"action\":\"smiling, looking at camera\",\"proof_objects\":[],\"problems\":[],\"visual_score\":8,\"burned_captions\":true}\n{\"decor\":\"room\",\"person_visible\":true,\"face_center_x\":0.25,\"energy\":6,\"action\":\"hand on chin, thinking\",\"proof_objects\":[],\"problems\":[],\"visual_score\":8,\"burned_captions\":true}\n{\"decor\":\"room\",\"person_visible\":true,\"face_center_x\":0.25,\"energy\":5,\"action\":\"hand on chin, speaking\",\"proof_objects\":[],\"problems\":[],\"visual_score\":8,\"burned_captions\":true}\n{\"decor\":\"room\",\"person_visible\":true,\"face_center_x\":0.25,\"energy\":5,\"action\":\"hand on chin, speaking\",\"proof_objects\":[],\"problems\":[],\"visual_score\":8,\"burned_captions\":true}",
+ "reasoning": "So, let's analyze each frame. First, check if the person is visible. In all frames, the person is there. Then face_center_x: need to find the horizontal center of the main face. Let's look at each image.\n\nFrame 1: The person's face is centered around 0.5? Wait, no. Let's see. The main person is in the center. Let's check coordinates. The face center x: in frame 1, the person is positioned such that the face is around 0.5? Wait, no. Wait, the image is 9:16, so the width is the main part. Let's check each frame.\n\nWait, the person is in the lower left in some frames? Wait no, in all frames, the person is in the lower left corner (the small video inset). Wait, no: looking at the images, the main content is the website, and the person is in a small window at the bottom left. Wait, no, in the fi",
+ "provider": "Nvidia"
+}

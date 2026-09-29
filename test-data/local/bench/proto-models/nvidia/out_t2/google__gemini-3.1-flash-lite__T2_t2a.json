@@ -1,0 +1,32 @@
+{
+ "model": "google/gemini-3.1-flash-lite",
+ "tag": "T2_t2a",
+ "latency_s": 2.3,
+ "usage": {
+  "prompt_tokens": 5667,
+  "completion_tokens": 328,
+  "total_tokens": 5995,
+  "cost": 0.00190875,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00190875,
+   "upstream_inference_prompt_cost": 0.00141675,
+   "upstream_inference_completions_cost": 0.000492
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "[\n  {\"decor\":\"extérieur urbain\",\"person_visible\":true,\"face_center_x\":0.50,\"energy\":6,\"action\":\"parle face caméra\",\"proof_objects\":[\"immeubles\",\"palmiers\"],\"problems\":[],\"visual_score\":8,\"burned_captions\":true},\n  {\"decor\":\"extérieur urbain\",\"person_visible\":true,\"face_center_x\":0.50,\"energy\":6,\"action\":\"montre une pièce de monnaie\",\"proof_objects\":[\"pièce de monnaie\",\"immeubles\"],\"problems\":[],\"visual_score\":8,\"burned_captions\":true},\n  {\"decor\":\"extérieur urbain\",\"person_visible\":true,\"face_center_x\":0.50,\"energy\":6,\"action\":\"montre une pièce de monnaie\",\"proof_objects\":[\"pièce de monnaie\",\"immeubles\"],\"problems\":[],\"visual_score\":8,\"burned_captions\":true},\n  {\"decor\":\"extérieur urbain\",\"person_visible\":true,\"face_center_x\":0.50,\"energy\":5,\"action\":\"parle face caméra\",\"proof_objects\":[\"immeubles\"],\"problems\":[],\"visual_score\":8,\"burned_captions\":true},\n  {\"decor\":\"extérieur urbain\",\"person_visible\":true,\"face_center_x\":0.50,\"energy\":6,\"action\":\"parle face caméra\",\"proof_objects\":[\"logo Google Ads\",\"immeubles\"],\"problems\":[],\"visual_score\":8,\"burned_captions\":true}\n]",
+ "reasoning": "",
+ "provider": "Google"
+}

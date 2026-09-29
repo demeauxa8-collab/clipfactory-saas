@@ -1,0 +1,912 @@
+[
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/README.md",
+    "bytes": 1198,
+    "sha256": "3c25b3e01bccd1b66b29138ded6b02bc7b992c6c7d128bb3f45a962dd1d2832f",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/__init__.py",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/analytics.py",
+    "bytes": 2242,
+    "sha256": "69dd92e84e4a769fdcca0d5e26e37ab0abb56023bca2b73f9cd9cca1e5454e1f",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/db.py",
+    "bytes": 1008,
+    "sha256": "042df3803063617cd34faf1ef6adfc272850c45e335e99f70766076955a9b1ca",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/log_sanitize.py",
+    "bytes": 893,
+    "sha256": "4dce9bef136ed8d77c0b318ab0fc325a85a0d2eb5636bb347d3ba96d9213c5a6",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/main.py",
+    "bytes": 2472,
+    "sha256": "5d6cb0facb5670434e191a6bd80ad76981fb474a580d14a905bf5eb9c34bde7d",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/models.py",
+    "bytes": 6835,
+    "sha256": "a8b02dce65879d53e8ae94efb3efdf7a54676ca59b89d1d51be026b53f7eeaeb",
+    "status": "different"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/__init__.py",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/analyze.py",
+    "bytes": 3862,
+    "sha256": "9afd89030d374c67fdcb88bda32b241e68335711b073624817b1e77dda16873f",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/audio_assets.py",
+    "bytes": 13974,
+    "sha256": "d981f26e54cf347179e91bdce897a8d08ac739e1c5348761a061f45017ce59e0",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/audio_map.py",
+    "bytes": 15552,
+    "sha256": "a9e46d0bc3bcbb49a268437d89b8a93da4156448740a5358653db80e543fbbb9",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/audio_render_plan.py",
+    "bytes": 6732,
+    "sha256": "6c1f7f794a722876e3afd8bacc54cd665bd65c3d2fdd22c733a2b986b8b52cc3",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/boundaries.py",
+    "bytes": 37961,
+    "sha256": "4c7b5d95d96709f7015980fac7b2fa855532cb53231d7c2a1a23fdd954f03255",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/campaign_research.py",
+    "bytes": 44835,
+    "sha256": "6fa51500089237837e676799222ee67dae342c9128159e1a402cc58a8a2cd074",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/campaign_research_adaptive_runtime.py",
+    "bytes": 29978,
+    "sha256": "6cb9f86e441d3383559d5eedf9c35f55bf2f6bb768a76920ad83c52a5692d742",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/campaign_research_quality.py",
+    "bytes": 16473,
+    "sha256": "e40763541c0f1349a1acdc15fde17224cb5654bc7329002e4059a26ef7557303",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/campaign_research_runtime.py",
+    "bytes": 26468,
+    "sha256": "6d81bab27f07cd716b8e3d79eb8858e9a7e8716c4c4f1195df123ce68df78b83",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/campaign_research_strategy.py",
+    "bytes": 25536,
+    "sha256": "c18ee3b59737a0d35d61fb1c15cba678b8a6e00433925f48c3ce2b136bf1012c",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/captions.py",
+    "bytes": 15154,
+    "sha256": "118723514caf47ea3f0b5b3d519ec2413f9580870cf321a905aaa841fca49656",
+    "status": "different"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/claim_authority.py",
+    "bytes": 30172,
+    "sha256": "509084cadab6dc9d520871c89ebb5cce54afea4c9cb8c40f4c17cf40b89147a3",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/context_intelligence.py",
+    "bytes": 17384,
+    "sha256": "a9041313d9d21d49eb81655e96a903083b41951775a0e22b1f5abb0a401e81bb",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/decision_outcomes.py",
+    "bytes": 57983,
+    "sha256": "0c0c93d293712f0a3aaebd2db136d91c26c3b70bf8883b038a2ae16572fdc506",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/decision_provenance.py",
+    "bytes": 31594,
+    "sha256": "c0286723e952ff8e16cc70e0eac844560496c838036ce7e7279c35e50319bda2",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/edit_intent.py",
+    "bytes": 19627,
+    "sha256": "3bb9d412e3aefb67b4924d5d83d42f38aac2daba0cf0cf314927e7539e395290",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/editor_v2.py",
+    "bytes": 8537,
+    "sha256": "5489f3bb44c881cfd41286373ae3b5a6d2aefd89ed88114966badf7809355dda",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/editorial_beats.py",
+    "bytes": 39881,
+    "sha256": "1a2676b137cbc36ab07a85bf404fd74cdb612de32a4a4465ed37b614206192d8",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/editorial_context.py",
+    "bytes": 33944,
+    "sha256": "b191e25980b73b0086b454597105b85025443d85b24dbc41cc1a953aba338546",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/editorial_context_authority.py",
+    "bytes": 42596,
+    "sha256": "e287d711a5ff3047bb6c354d6362e624355e833ac36cebfdb91080d41817e804",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/editorial_director.py",
+    "bytes": 35695,
+    "sha256": "8096d88b78d750209abefa73b8ef3de3f9363fd7c377f5bc72c9cf804d242cc6",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/editorial_director_v22.py",
+    "bytes": 16202,
+    "sha256": "180a1571acb75db5559514541aa149b833ca2adfdb6b2593d727f4249a81d945",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/editorial_qc.py",
+    "bytes": 12869,
+    "sha256": "42839468aa98af35fe7f873c3ffc931aba10c61196ca04ce90ed28739536e080",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/editorial_reflex_qc.py",
+    "bytes": 26044,
+    "sha256": "269e6457f32eaefc687ae053995e1bd0ea84e634cf4080525498093db4db29ae",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/editorial_retrieval.py",
+    "bytes": 27844,
+    "sha256": "a9315ede5b0ac7ec45ba76b23559ede1b998ab5cd3ab32aaddf0cbe6918941d4",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/edl.py",
+    "bytes": 35706,
+    "sha256": "1db3909b518ef680e54dc7fddda4d2ab718a8d7f4c13a65eadb5a49eaa80b480",
+    "status": "different"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/edl_captions.py",
+    "bytes": 19850,
+    "sha256": "69c2c0e756486860e1602b330174efca3bc65151839f0daa2f38cd2bc9681b16",
+    "status": "different"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/edl_render.py",
+    "bytes": 44527,
+    "sha256": "2341f32073d9138a2a7fc85ec1d41557a8f3ae1f7c2199d2281d7a4f7c19dc84",
+    "status": "different"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/ffmpeg.py",
+    "bytes": 48216,
+    "sha256": "696cd9fbeabe1ec96bead42afc85319e5192098084fc132dfe9e9654695f5e5c",
+    "status": "different"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/knowledge_governance.py",
+    "bytes": 33844,
+    "sha256": "6d9439332adcac65eda0dddf9946cf3c574361f374be03185c4ef6933691b0fa",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/knowledge_ingestion.py",
+    "bytes": 22722,
+    "sha256": "8b07298719f4e8751577a01b26cda7759bd3ee39d346d8827214f9cbb6be688d",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/knowledge_tenant_authority.py",
+    "bytes": 14886,
+    "sha256": "8eafe7d850ec3ad1a33de0fdecfd302f4c92c13d833f953db286d7c6314e9b7a",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/knowledge_vault.py",
+    "bytes": 39509,
+    "sha256": "13dbb25f88c7cde227a313f45e6c6e9d5cf87c6cc12fec624cfdcf71b6bc1ede",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/learning_authority.py",
+    "bytes": 27740,
+    "sha256": "6958ed02563b10b0e0297b6878e447bd17b0f4614a70765aed310a74ad96d447",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/learning_evaluation_authority.py",
+    "bytes": 14582,
+    "sha256": "4bdfe4fb966b7840c3d39a7484a943de7f805749ed14d7c3c1220bc69b307044",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/learning_registration.py",
+    "bytes": 28149,
+    "sha256": "d59ff6d2c124cca40612ca4f8f9e5725944f92217c462d8a5a80711ac5aa8295",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/research_attestation_authority.py",
+    "bytes": 13644,
+    "sha256": "229384a536e910a710d1910603eddb41b8cf06fc0eea4f44a12b4b53f87a2483",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/research_evidence_authority.py",
+    "bytes": 21294,
+    "sha256": "ab2741dc8e171b809175bebbd2768c95fb175d6d66f26e870c0fa518ba3fc40c",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/runner.py",
+    "bytes": 50488,
+    "sha256": "4ed2532f154fcca8de07055f73087d0a33d205bf6d8b4cf3b39d57a5ca6a3acd",
+    "status": "different"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/score.py",
+    "bytes": 31398,
+    "sha256": "615a9f0d6bf3bcceb1c7e0582b80f3d66508f1b005d05d530fea811fa53a4b6c",
+    "status": "different"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/story_arcs.py",
+    "bytes": 12383,
+    "sha256": "0a3b3ea4586783614b3b280e9793fea6a0354884aded0d122f555e913d051bef",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/transcribe.py",
+    "bytes": 8063,
+    "sha256": "dc54728bf75e6027a5a4a37eedf158f7d6cfaf03a8ff7a355ba4fcf783ef127e",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/verify.py",
+    "bytes": 2887,
+    "sha256": "4633187c48b6f118889ffaec1a28eed128af717a03514358a39175023af1559d",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/video_map.py",
+    "bytes": 7349,
+    "sha256": "e2469d55d171470b4f2b79fbad4fbc786326675cc1bb6dc2f60d93a8bdef60e4",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/vision.py",
+    "bytes": 6035,
+    "sha256": "93bffcdfb2dd51008cb74b2b6bdcfd2327e9a9faad9bb588d840d5d9cd5fcd3e",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/pipeline/vision_evidence_authority.py",
+    "bytes": 23119,
+    "sha256": "f7949f753598fc2e9a7f7d64174ca66fa6b6ee0290d3c195019da6cdee60d40d",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/prompts.py",
+    "bytes": 21782,
+    "sha256": "aae6e88e03845ddfbd2dc01e16c6cdedc5affd7827d60b216b2b8ef1665c14ef",
+    "status": "different"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/providers/__init__.py",
+    "bytes": 216,
+    "sha256": "d1a84f4d9d237ff12ce5a728342c8c76545f857aeb18db0a986880cf033d64e8",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/providers/_jsonparse.py",
+    "bytes": 1449,
+    "sha256": "365b4b1778a4e21e4969b0b565be46afcf5bccbb41ed065b895910eb628ebf7b",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/providers/anthropic.py",
+    "bytes": 4500,
+    "sha256": "5b9be2a392d266e328523657bc4c576d5a155f809a060c7aeeaef7c478037479",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/providers/base.py",
+    "bytes": 2492,
+    "sha256": "0a7595f197082f4817a81a84030b17c11203eee12284d40d20bbe4719a340c61",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/providers/openrouter.py",
+    "bytes": 6375,
+    "sha256": "2c8c72f3a6ccd2c109c5406d1a4f1fb1a2bbd9ed11296e89eb1206c2f6e33391",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/safety.py",
+    "bytes": 4353,
+    "sha256": "07894d65dff1797084c62a8e27c24d6dc1e9479b1b9e88fc5f2b644ef927d8a0",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/settings.py",
+    "bytes": 3675,
+    "sha256": "338867f0c9bcd1793b1b02aee5b085c6c7b682ff9aecefb964c80ecaf27911c3",
+    "status": "different"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/app/storage.py",
+    "bytes": 1201,
+    "sha256": "f30ac6777ee72fd323e6bbae7384b0eb9a141a62556f69eec909b1a2fdd21a24",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/pyproject.toml",
+    "bytes": 916,
+    "sha256": "0b538cfca91a371257a9bed15619e8899d2957bb4305fe7b72f104604e3073a0",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/scripts/render_v2_fixture_variants.py",
+    "bytes": 14063,
+    "sha256": "ad789baae0691b92544cc7fe7e1cd1f055df89276d2f33da9b0812f9a2073c92",
+    "status": "different"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/fixtures/editorial_vault.json",
+    "bytes": 17725,
+    "sha256": "5305b6a2730c9bfa0f05bdd4f2fd35c432cddb65eea8715b57d946b81bb126e7",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_analyze.py",
+    "bytes": 1310,
+    "sha256": "d73f6c944749ebe36df335cd9dfb7362ae818a5a0dbdf3b3efce7272b381cc2c",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_audio_assets.py",
+    "bytes": 8363,
+    "sha256": "242dc35ddbb7f17029cc1482c945f630a5e838dad764634eeadfee6a1b118252",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_audio_map.py",
+    "bytes": 8139,
+    "sha256": "ef32525206574b335592aa32da6a48bdce0bdeec5d7b21685f40f046cc13ce32",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_audio_render_plan.py",
+    "bytes": 8610,
+    "sha256": "5c4196d290d849a441a1a40b04ed631bd997cf63cdf3d23af7e9d5823e85ac07",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_boundaries.py",
+    "bytes": 25980,
+    "sha256": "3d05df8325c5e522f8a403193a4228d4903cf5b3f5654a68e3867818e0072e7f",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_campaign_research.py",
+    "bytes": 16721,
+    "sha256": "3a59b0e12f03b536c5d1d8a2e90ba74a42a41b0638c1e3a5ad2c30a53d5decd1",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_campaign_research_adaptive_runtime.py",
+    "bytes": 10028,
+    "sha256": "80887d2c6a314372e5804d95af1f0089206ab327ad6487f8c0f3bd06dfeaf374",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_campaign_research_quality.py",
+    "bytes": 9557,
+    "sha256": "8340791acdcb7fa3c45e5dc7011df0cbb421f967e613521dd0c871ba74ca1c5e",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_campaign_research_runtime.py",
+    "bytes": 17867,
+    "sha256": "77b03f418195e91baffce37123dcfafbb78ccc8274b1920afab914fdf39edaec",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_campaign_research_strategy.py",
+    "bytes": 9122,
+    "sha256": "df0b3a77822220e5c74b36c03ea56039de2b2e041b1f129802fdf36c13e0720a",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_captions.py",
+    "bytes": 13168,
+    "sha256": "cc32e945bcc1ef9033806412aa825dcfc066bf08d99fb3997ca11283e94fa7b6",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_claim_authority.py",
+    "bytes": 9267,
+    "sha256": "bed3efd2684e729049839307737f5c0c7398c23da6d077026bf26b63b6117ffd",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_context_intelligence.py",
+    "bytes": 23457,
+    "sha256": "8d37e65b8ec686dee45033016af0481f0088d1782becef6260585ef206bacac6",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_decision_outcomes.py",
+    "bytes": 24117,
+    "sha256": "e8fb2264f6d5ba9ee4e851cbd03af12536b841500e09bd33b8477ef405182b3a",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_decision_provenance.py",
+    "bytes": 9520,
+    "sha256": "bdfab9c1595d72b997898a7e1a026ea2bffdec65b0258811b6095ae35fa1b2a0",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_edit_intent.py",
+    "bytes": 7692,
+    "sha256": "a9b4131f02ee57a0393c070d7fdf2e92c4d922b47e7a06c5384315ab1618064e",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_editor_v2.py",
+    "bytes": 2757,
+    "sha256": "8f351071bf95fe67bf09fe1d4fa69630c1805cae60d9088efd598ecb07ed596a",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_editorial_beats.py",
+    "bytes": 13930,
+    "sha256": "aeb586fd3f602967507b81888b6195190716d2200c7b53f76218479a0eb4e5d5",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_editorial_context.py",
+    "bytes": 16273,
+    "sha256": "780a07b4a975b06f0bf6a4f2014d67a0360819f097635188aeabd2f9eb18f84f",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_editorial_context_authority.py",
+    "bytes": 15541,
+    "sha256": "ab8244bdb8f4fb6064811bf9df1ce12a0ae5b4ea5d7cd89bdc4cc48fda44f606",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_editorial_director.py",
+    "bytes": 16193,
+    "sha256": "a8f5705eb6a3f08b7a20710a2c6c010067a179ef49596bd7be8f90550a933473",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_editorial_director_v22.py",
+    "bytes": 12533,
+    "sha256": "771d9d850629e5b3c70716d90fba9981a684cf73571c0add9a45cefd0d985fd9",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_editorial_qc.py",
+    "bytes": 6551,
+    "sha256": "7558d495f53cbd324c17849970f5ab82fd53c589bea5575c5748e94285ca8535",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_editorial_reflex_qc.py",
+    "bytes": 14820,
+    "sha256": "1332b5934776a1d72d6901f189313fc233b5d56d713ca75a638ef94c704bd444",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_editorial_retrieval.py",
+    "bytes": 20289,
+    "sha256": "c099893b06fbdf2700843878d39bb7403fc3bb728350cbebbdb1900c5d26d896",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_edl.py",
+    "bytes": 19405,
+    "sha256": "80b6340d7e42d2c87b3eadacd6258c864e5280c033bb34691a111e941c1435dd",
+    "status": "different"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_edl_audio_mix.py",
+    "bytes": 5597,
+    "sha256": "d403b54399b9348831100cd268a7925cff4d64382db18fbc16451e6f3bc0287f",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_edl_captions.py",
+    "bytes": 17673,
+    "sha256": "bae91f4708eab65ac17fddef8699e19b8fe6676ffa9cee864f5e19bc7325baaf",
+    "status": "different"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_edl_render.py",
+    "bytes": 17768,
+    "sha256": "3d5e5614cc52583a8478315cacb5c2f384d40f511f8671749b5350fcea84b3fe",
+    "status": "different"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_framing.py",
+    "bytes": 12458,
+    "sha256": "a4578a9326f4217a34e1ddea98470e5d280e4cbfbb2ca4694153acb3ef37f4a2",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_knowledge_governance.py",
+    "bytes": 21201,
+    "sha256": "5d2008e36062955b9277be621ce77d96410f396e47a5d87e83e3089a51f61409",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_knowledge_ingestion.py",
+    "bytes": 12668,
+    "sha256": "b35852436a478f3c9f3a55fc39721cff04ad59666f33214dadf2fc0878fbcc26",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_knowledge_tenant_authority.py",
+    "bytes": 7287,
+    "sha256": "b6640ba4db6f2ce932dac78c6ba4f71e46bc234a4922c5688d3aec836441f0b0",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_knowledge_vault.py",
+    "bytes": 19461,
+    "sha256": "3071ef576d79f7edebf0fd254b9af761b15fe45e8494a0f7854c5a3f8b1b1184",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_learning_authority.py",
+    "bytes": 26310,
+    "sha256": "7c9aaab240d6edc5d39c80b116834892b7e3855fce8dfbc7e99636db8b92fbdd",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_learning_evaluation_authority.py",
+    "bytes": 5602,
+    "sha256": "0a3780a3cd9e28d37aabb94a039f5cfb7e6da66e7409a15cdb5059bc706e68e1",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_learning_registration.py",
+    "bytes": 10538,
+    "sha256": "f184464dbd19ee2d4142374c45d3342e02d0d1e93785ba8e5f4e8fa10eabbd1a",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_research_attestation_authority.py",
+    "bytes": 5035,
+    "sha256": "a3d50068b7760e5ba1cd7ca042c45f3ef7551fa3f32d89ac1fd68e3c77decc3b",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_research_evidence_authority.py",
+    "bytes": 6880,
+    "sha256": "5f7d3aae6e2447a5f70ba7e8ab29040af589d35cbd886e55dcb3804433c39a3c",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_scoring.py",
+    "bytes": 34391,
+    "sha256": "dc8ef24b7621fae2b360838011315b7faae0d2841e0e07439eecda9008bd8e6f",
+    "status": "different"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_story_arcs.py",
+    "bytes": 13633,
+    "sha256": "cf32b961d11d71848421fc73c1c983f6a73450e107121f6a5a69c1b626d1aef0",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "apps/worker/tests/test_vision_evidence_authority.py",
+    "bytes": 7418,
+    "sha256": "4798f849cead4d018c0a8118af704ec5068abe36ef4157128e71b73bb1c8c5c8",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/admin.md",
+    "bytes": 3012,
+    "sha256": "436bc8308d0edf2b714ba77a6a7214392958320452eaf7fc6a7ce24126873311",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/analytics.md",
+    "bytes": 3179,
+    "sha256": "aa3d8b2b148c824a631476a5f20fa35f1b6157bb673de4f312b1b8a72c11730d",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/api-contract.md",
+    "bytes": 9207,
+    "sha256": "4c3dd186977f0d2b0a308a14acfb1ac1a84613c3eea4e8c9f03548b92b97d8e5",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/campaign-research-implementation.md",
+    "bytes": 13871,
+    "sha256": "0c258ef70fd5f201fd21d373b485732094a5d6ced66807ad573fd5a1be06dcf0",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/codex-brief.md",
+    "bytes": 12422,
+    "sha256": "a60527ae864f17538b3c99695decd09b47e1ca2dacb16d3d23c407d56fda9456",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/context-intelligence-architecture.md",
+    "bytes": 27188,
+    "sha256": "a336d083eb66d5b12acddd5e6c3b4d1994422e48cb1e410a3f297b322967abf8",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/db-schema.md",
+    "bytes": 7975,
+    "sha256": "e70c9a51c244a8abd3dda67426d20d2da82db07e0a5a0a980875b2988ad99a4e",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/deploy.md",
+    "bytes": 10233,
+    "sha256": "066b7d27a571aaa347ba75e361d37922b24c1978e63e14d9e8a1b97b9a6cf7a8",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/editor-brain-v3.md",
+    "bytes": 13804,
+    "sha256": "59bcfa6ba79419118f7d1d3e92bcd53c8762a2d5876d4dbe661fae434bd7f8e5",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/editor-v2-local-build.md",
+    "bytes": 5331,
+    "sha256": "a7ef1fb63bbf093e60b1996fdc6bae4cdfeef2fc7765c4f311591f8a9e4f0416",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/global-video-understanding.md",
+    "bytes": 10904,
+    "sha256": "29504a4b4d41fe729d03aece7215eeabda080be9ed7e189a4431da0378783d4e",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/handoff-codex.md",
+    "bytes": 55555,
+    "sha256": "82608d7f832959acd1dd0a763bd66a28dfdc3366830e10216c54d9713f12d7a6",
+    "status": "different"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/infrastructure.md",
+    "bytes": 5290,
+    "sha256": "0a663f1ab6b4720293ff76e2ede4a6a3df1179170bf1654cd49ef053b4866f40",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/model-landscape.md",
+    "bytes": 9865,
+    "sha256": "7cb543ea5bf4236bc5650a31445fd7550541755059094a6cf2dbd0b7f23b4f93",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/pipeline-improvements.md",
+    "bytes": 12983,
+    "sha256": "be803f02c376a1440db390f6f16259faea482728148f3595876e5ea470f49754",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/pipeline.md",
+    "bytes": 17606,
+    "sha256": "c790268c592118168f1965d371ce9c14cea69f07215223c9760b588c97f51bca",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/plan.md",
+    "bytes": 4237,
+    "sha256": "87850393fcaf7af84437246635dc7168fe4ba01d22c4e9c878fc808aab1dcf9a",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/second-brain-vaults.md",
+    "bytes": 15378,
+    "sha256": "279504830e7377e2ffdbb43ee06a50466955adc5288d4a1c08b9c076b30a6451",
+    "status": "absent"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/security-audit.md",
+    "bytes": 12382,
+    "sha256": "ba6047c3210baeec3a3e4ed263780aa66028541b9e5881207b2debaaf2bbfd91",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/seo.md",
+    "bytes": 3430,
+    "sha256": "a41b3e9da63f181921b3b141827547a2025bd50fe8a479f67e519a46c59f1257",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/unit-economics.md",
+    "bytes": 13914,
+    "sha256": "7e200de60f23b6fef3f7b03c434396e576a4df5473bb7ca972449f45cd7030b3",
+    "status": "identical"
+  },
+  {
+    "root": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "path": "docs/v1-scope.md",
+    "bytes": 5934,
+    "sha256": "ebecfc86d836a462fab707186f19e2d99994283e9068f6b04f8d5bc7de2b6113",
+    "status": "identical"
+  }
+]

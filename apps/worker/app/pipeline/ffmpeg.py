@@ -5,6 +5,7 @@ import json
 import math
 import os
 import re
+import signal
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
@@ -44,6 +45,8 @@ class MediaProbe:
     video_fps: float | None = None
     audio_sample_rate: int | None = None
     audio_channels: int | None = None
+    width: int | None = None
+    height: int | None = None
 
 
 @dataclass(frozen=True)
@@ -55,13 +58,49 @@ class RenderQualityReport:
     has_audio: bool
     mean_volume_db: float | None
     mid_frame_luma: float | None
+    black_intervals: tuple[tuple[float, float], ...] = ()
+    silence_intervals: tuple[tuple[float, float], ...] = ()
+    max_volume_db: float | None = None
 
 
-async def _run(cmd: list[str]) -> tuple[int, str, str]:
-    proc = await asyncio.create_subprocess_exec(
-        *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+async def _run(
+    cmd: list[str], *, timeout_seconds: float | None = None
+) -> tuple[int, str, str]:
+    timeout = (
+        get_settings().subprocess_timeout_seconds
+        if timeout_seconds is None else timeout_seconds
     )
-    stdout, stderr = await proc.communicate()
+    if not math.isfinite(timeout) or timeout <= 0:
+        raise FFmpegError("subprocess timeout must be finite and positive")
+    proc = await asyncio.create_subprocess_exec(
+        *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+        start_new_session=os.name == "posix",
+    )
+    communication = asyncio.create_task(proc.communicate())
+
+    def stop(sig: int) -> None:
+        try:
+            if os.name == "posix":
+                os.killpg(proc.pid, sig)
+            elif sig == signal.SIGTERM:
+                proc.terminate()
+            else:
+                proc.kill()
+        except ProcessLookupError:
+            pass
+
+    try:
+        stdout, stderr = await asyncio.wait_for(asyncio.shield(communication), timeout)
+    except (TimeoutError, asyncio.CancelledError) as exc:
+        stop(signal.SIGTERM)
+        try:
+            await asyncio.wait_for(asyncio.shield(communication), 2.0)
+        except TimeoutError:
+            stop(signal.SIGKILL)
+            await communication
+        if isinstance(exc, asyncio.CancelledError):
+            raise
+        raise FFmpegError(f"{Path(cmd[0]).name} timed out after {timeout:g}s") from exc
     return (
         proc.returncode or 0,
         stdout.decode("utf-8", "replace"),
@@ -160,6 +199,8 @@ async def probe_media(path: str, *, ffprobe_bin: str | None = None) -> MediaProb
             int(str(audio["sample_rate"])) if audio and audio.get("sample_rate") else None
         ),
         audio_channels=(int(str(audio["channels"])) if audio and audio.get("channels") else None),
+        width=int(video["width"]) if video and video.get("width") else None,
+        height=int(video["height"]) if video and video.get("height") else None,
     )
 
 
@@ -407,8 +448,23 @@ async def validate_rendered_clip(
     duration_tolerance_seconds: float = 0.5,
     min_mean_volume_db: float = -55.0,
     min_mid_frame_luma: float = 4.0,
+    expected_width: int | None = None,
+    expected_height: int | None = None,
+    max_black_edge_seconds: float = 0.25,
+    max_black_ratio: float = 0.15,
+    max_silent_edge_seconds: float = 0.8,
+    expected_fps: float = OUTPUT_VIDEO_FPS,
 ) -> RenderQualityReport:
+    """Inspect the complete output timeline, including its opening and landing.
+
+    Silence inside the edit is reported, not automatically deleted: a deliberate
+    pause can carry the payoff. Unreadable measurements cannot pass QC.
+    """
+    from .audio_map import parse_silencedetect
+
     problems: list[str] = []
+    if not math.isfinite(expected_duration_seconds) or expected_duration_seconds <= 0:
+        raise FFmpegError("expected render duration must be finite and positive")
     try:
         probe = await probe_media(path)
     except FFmpegError as exc:
@@ -422,7 +478,11 @@ async def validate_rendered_clip(
             mid_frame_luma=None,
         )
 
-    if abs(probe.duration_seconds - expected_duration_seconds) > duration_tolerance_seconds:
+    if (
+        not math.isfinite(probe.duration_seconds)
+        or probe.duration_seconds <= 0
+        or abs(probe.duration_seconds - expected_duration_seconds) > duration_tolerance_seconds
+    ):
         problems.append(
             f"duration_mismatch:{probe.duration_seconds:.2f}!={expected_duration_seconds:.2f}"
         )
@@ -430,8 +490,54 @@ async def validate_rendered_clip(
         problems.append("missing_video")
     if not probe.has_audio:
         problems.append("missing_audio")
+    if expected_width is not None and probe.width != expected_width:
+        problems.append(f"width_mismatch:{probe.width}!={expected_width}")
+    if expected_height is not None and probe.height != expected_height:
+        problems.append(f"height_mismatch:{probe.height}!={expected_height}")
+    try:
+        _validate_mux_timeline(probe, expected_duration_seconds, expected_fps=expected_fps)
+    except FFmpegError as exc:
+        problems.append(f"timeline_mismatch:{exc}")
 
-    mean_volume = await measure_mean_volume_db(path) if probe.has_audio else None
+    mean_volume = None
+    max_volume = None
+    black: tuple[tuple[float, float], ...] = ()
+    silences: tuple[tuple[float, float], ...] = ()
+    if probe.has_audio and probe.has_video:
+        try:
+            code, _, diagnostic = await _run([
+                get_settings().ffmpeg_bin, "-hide_banner", "-nostats", "-i", path,
+                "-vf", "scale=320:-2,blackdetect=d=0.1:pix_th=0.10",
+                "-af", "silencedetect=noise=-50dB:d=0.2,volumedetect",
+                "-f", "null", "-",
+            ])
+            if code != 0:
+                raise FFmpegError("temporal analysis failed")
+            mean_match = _MEAN_VOLUME_RE.search(diagnostic)
+            peak_match = re.search(r"max_volume:\s*(-?\d+(?:\.\d+)?)\s*dB", diagnostic)
+            mean_volume = float(mean_match.group(1)) if mean_match else None
+            max_volume = float(peak_match.group(1)) if peak_match else None
+            black = tuple((float(m[1]), float(m[2])) for m in _BLACK_RE.finditer(diagnostic))
+            silences = tuple(
+                (s.start, s.end)
+                for s in parse_silencedetect(diagnostic, duration_seconds=probe.duration_seconds)
+            )
+        except (FFmpegError, ValueError):
+            problems.append("temporal_analysis_unreadable")
+        for label, intervals, limit in (
+            ("black", black, max_black_edge_seconds),
+            ("silence", silences, max_silent_edge_seconds),
+        ):
+            if any(start <= 0.05 and end - start > limit for start, end in intervals):
+                problems.append(f"{label}_opening")
+            if any(
+                end >= probe.duration_seconds - 0.05 and end - start > limit
+                for start, end in intervals
+            ):
+                problems.append(f"{label}_ending")
+        black_duration = sum(max(0.0, end - start) for start, end in black)
+        if black_duration > max_black_ratio * probe.duration_seconds:
+            problems.append("excessive_black_coverage")
     if probe.has_audio and mean_volume is None:
         problems.append("volume_unreadable")
     elif mean_volume is not None and mean_volume < min_mean_volume_db:
@@ -451,6 +557,9 @@ async def validate_rendered_clip(
         has_audio=probe.has_audio,
         mean_volume_db=mean_volume,
         mid_frame_luma=luma,
+        black_intervals=black,
+        silence_intervals=silences,
+        max_volume_db=max_volume,
     )
 
 

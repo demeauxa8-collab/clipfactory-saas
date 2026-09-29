@@ -1,0 +1,30 @@
+{
+ "model": "qwen/qwen3.7-flash",
+ "tag": "anchor300_native",
+ "latency_s": 37.7,
+ "usage": {
+  "prompt_tokens": 36238,
+  "completion_tokens": 937,
+  "total_tokens": 37175,
+  "cost": 0.0039986,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0039986,
+   "upstream_inference_prompt_cost": 0.0036238,
+   "upstream_inference_completions_cost": 0.0003748
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "Based on a careful review of the video's audio and visual content, here is the analysis for each phrase:\n\n*   **A. \"je prefere faire du dropshipping sur Google\"**: The speaker discusses doing dropshipping on Google Ads around 00:38-00:41, but he does not use the exact phrase \"je prefere faire du dropshipping sur Google\". He says something closer to \"je vais faire du dropshipping sur google ads\". Thus, the exact phrase is not present.\n*   **B. \"que je demande a ma meuf 100 euros\"**: At 01:21, the text message on the phone screen reads \"veul lave ma caisse mdr pour 30€ parcontre\". The speaker narrates this but does not say the exact phrase \"que je demande a ma meuf 100 euros\". The amount mentioned in the chat is 30€, not 100€. This exact phrase is not spoken.\n*   **C. \"je finis par laver des voitures\"**: The speaker shows himself washing a car starting at 01:26. However, he never says the exact sentence \"je finis par laver des voitures\". He describes the action but with different wording.\n*   **D. \"je vais garder un chien 24 heures\"**: At 01:49, an overlay shows \"22H47 100€\" after he returns the dog. He talks about keeping the dog, but the exact phrase \"je vais garder un chien 24 heures\" is not pronounced. He mentions it was for a few hours or a day, but not with these exact words.\n*   **E. \"mots aleatoires\"**: At 02:03, the website title \"Mots aléatoires en français\" is visible. More importantly, at 02:07, the speaker explicitly says, \"donc on va aller sur le site mots aléatoires...\" confirming the exact phrase is spoken.\n*   **F. \"on regarde sur Aliexpress\"**: At 03:51, the speaker navigates to AliExpress and says, \"on va aller voir sur aliexpress si on trouve ce produit là\", which closely matches but isn't the exact phrase. However, listening carefully, he does say variations like \"aller voir sur AliExpress\". The *exact* phrase \"on regarde sur Aliexpress\" as stated is not verbatim; he uses future tense \"on va aller voir\". Let's re-evaluate strictness. If strict, it's -1. If approximate, it could be considered. Given the instruction \"Ne devine pas, ecoute\" (Don't guess, listen), strict adherence is required. He says \"on va aller voir sur aliexpress\". The prompt phrase is \"on regarde sur Aliexpress\". These are different. So, -1.\n*   **G. \"aller directement sur SEMrush\"**: At 04:34, the speaker switches to SEMrush and says, \"on va aller directement sur semrush\". This matches the exact phrase requested.\n\nAfter strict verification:\n- A: Not found (-1)\n- B: Not found (-1)\n- C: Not found (-1)\n- D: Not found (-1)\n- E: Found at ~02:07\n- F: Not found exactly (he says \"on va aller voir sur aliexpress\") -> -1\n- G: Found at ~04:34\n\nHowever, upon re-listening very closely to ensure no misinterpretation of casual speech:\n- For E: \"donc on va aller sur le site mots aléatoires\" -> Contains \"mots aléatoires\". Time: ~02:07.\n- For G: \"on va aller directement sur semrush\" -> Exact match. Time: ~04:34.\n\nLet's provide the timestamps for the ones that appear and -1 for others.\n\n```json\n{\n  \"A\": -1,\n  \"B\": -1,\n  \"C\": -1,\n  \"D\": -1,\n  \"E\": 2.07,\n  \"F\": -1,\n  \"G\": 4.34,\n  \"duree_video_s\": 5.00\n}\n```"
+}

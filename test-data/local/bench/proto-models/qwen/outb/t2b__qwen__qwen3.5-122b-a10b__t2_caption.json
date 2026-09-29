@@ -1,0 +1,31 @@
+{
+ "model": "qwen/qwen3.5-122b-a10b",
+ "set": "t2_caption",
+ "latency_s": 2.8,
+ "usage": {
+  "prompt_tokens": 1228,
+  "completion_tokens": 85,
+  "total_tokens": 1313,
+  "cost": 0.0007632,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0007632,
+   "upstream_inference_prompt_cost": 0.0004912,
+   "upstream_inference_completions_cost": 0.000272
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"decor\": \"other\",\n  \"person_visible\": true,\n  \"energy\": 75,\n  \"action\": \"talking head\",\n  \"proof_objects\": [],\n  \"problems\": [],\n  \"visual_score\": 85,\n  \"face_center_x\": 0.48,\n  \"burned_captions\": false\n}",
+ "provider": "Novita"
+}

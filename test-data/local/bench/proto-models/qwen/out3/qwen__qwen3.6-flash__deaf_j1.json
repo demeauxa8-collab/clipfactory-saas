@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.6-flash",
+ "tag": "deaf_j1",
+ "kind": "video",
+ "latency_s": 13.9,
+ "usage": {
+  "prompt_tokens": 5538,
+  "completion_tokens": 247,
+  "total_tokens": 5785,
+  "cost": 0.00131625,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00131625,
+   "upstream_inference_prompt_cost": 0.001038375,
+   "upstream_inference_completions_cost": 0.000277875
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"entends_le_son\": true,\n  \"transcription_orale\": \"J'ai seulement une pièce de monnaie et 45 minutes pour gagner 4,5 millions d'euros. C'est le concept de la vidéo du jour. Je pars à Dubaï avec un seul objectif : devenir millionnaire en 24 heures. Pour cela, j'ai décidé de suivre les conseils de Jordan Belfort, surnommé le Loup de Wall Street. Il a écrit un livre qui s'appelle 'Comment devenir riche en 12 mois'. Dans ce livre, il explique comment il est passé de zéro à 370 millions de dollars en seulement 12 mois. Aujourd'hui, je vais essayer de reproduire ses méthodes. Mais attention, je n'ai qu'une seule pièce de monnaie et 45 minutes pour commencer. Si vous aussi vous voulez apprendre à devenir riche, restez bien jusqu'à la fin de cette vidéo.\",\n  \"texte_incruste_a_l_ecran\": [\n    \"J'AI SEULEMENT\",\n    \"4,5 MILLIONS €\"\n  ]\n}\n```",
+ "provider": "Alibaba"
+}

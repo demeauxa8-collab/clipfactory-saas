@@ -1,0 +1,32 @@
+{
+ "model": "google/gemini-3-flash-preview",
+ "tag": "J_j1_clean_intro",
+ "latency_s": 6.3,
+ "usage": {
+  "prompt_tokens": 2945,
+  "completion_tokens": 316,
+  "total_tokens": 3261,
+  "cost": 0.0027955,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 750,
+   "video_tokens": 1980
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0027955,
+   "upstream_inference_prompt_cost": 0.0018475,
+   "upstream_inference_completions_cost": 0.000948
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": true,\n  \"score_global\": 8,\n  \"hook_2s\": 9,\n  \"phrase_coupee_au_debut\": false,\n  \"phrase_coupee_a_la_fin\": false,\n  \"premier_mot_entendu\": \"J'ai\",\n  \"dernier_mot_entendu\": \"grave\",\n  \"raccords\": [\n    {\"at_s\": 0.05, \"ca_se_comprend\": true, \"pourquoi\": \"Introduction dynamique avec texte à l'écran\"},\n    {\"at_s\": 0.06, \"ca_se_comprend\": true, \"pourquoi\": \"Transition fluide vers la présentation du créateur\"},\n    {\"at_s\": 0.13, \"ca_se_comprend\": true, \"pourquoi\": \"Retour au plan principal pour expliquer le défi\"},\n    {\"at_s\": 0.17, \"ca_se_comprend\": true, \"pourquoi\": \"Insertion d'une capture d'écran pour illustrer les étapes\"},\n    {\"at_s\": 0.24, \"ca_se_comprend\": true, \"pourquoi\": \"Conclusion avec un enjeu clair\"}\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"\"\n}\n```",
+ "reasoning": "",
+ "provider": "Google"
+}

@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.6-flash",
+ "tag": "full595_36",
+ "latency_s": 46.7,
+ "usage": {
+  "prompt_tokens": 54317,
+  "completion_tokens": 2762,
+  "total_tokens": 57079,
+  "cost": 0.1021905,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 14875,
+   "video_tokens": 39270
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.1021905,
+   "upstream_inference_prompt_cost": 0.0814755,
+   "upstream_inference_completions_cost": 0.020715
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1559,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"segments_clipables\": [\n    {\n      \"start_s\": 0,\n      \"end_s\": 33,\n      \"titre\": \"Lancer un business e-commerce avec seulement 1€ en 24h\",\n      \"hook_score\": 10,\n      \"energie\": 9,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Hook ultra-impactant avec la pièce de 1€ montrée à l'image, un défi fort, une promesse de storytelling captivante idéale pour TikTok/Reels.\"\n    },\n    {\n      \"start_s\": 78,\n      \"end_s\": 98,\n      \"titre\": \"Devenir laveur de voiture pour trouver le budget\",\n      \"hook_score\": 8,\n      \"energie\": 8,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Séquence drôle et concrète où l'entrepreneur se retrouve à laver la voiture d'un pote dans un parking souterrain à 40°C pour gagner 30€.\"\n    },\n    {\n      \"start_s\": 139,\n      \"end_s\": 172,\n      \"titre\": \"Garder un chien 24h pour atteindre 100€ de budget\",\n      \"hook_score\": 7,\n      \"energie\": 7,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Pivot insolite dans le vlog avec la recherche de job de dog-sitter, la rencontre avec le chien et le passage à 100€ de budget.\"\n    },\n    {\n      \"start_s\": 173,\n      \"end_s\": 206,\n      \"titre\": \"4500€ par jour en e-commerce grâce à Google Ads\",\n      \"hook_score\": 9,\n      \"energie\": 9,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Preuve sociale percutante où il montre son écran Shopify avec 4543€ de chiffre d'affaires quotidien et explique sa marge bénéficiaire.\"\n    },\n    {\n      \"start_s\": 316,\n      \"end_s\": 352,\n      \"titre\": \"Témoignage élève : il a changé sa vie grâce à l'e-commerce\",\n      \"hook_score\": 7,\n      \"energie\": 8,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Témoignage vidéo authentique d'un élève qui partage ses résultats, idéal pour la crédibilité et la conversion.\"\n    },\n    {\n      \"start_s\": 375,\n      \"end_s\": 410,\n      \"titre\": \"Création du site et stratégie de budget Google Ads\",\n      \"hook_score\": 7,\n      \"energie\": 8,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Contenu éducatif et concrit montrant la répartition exacte des dépenses (Shopify, domaine, Google Ads) avec une dose d'humour sur le budget.\"\n    },\n    {\n      \"start_s\": 465,\n      \"end_s\": 502,\n      \"titre\": \"Résultats après 24h : Première vente débloquée !\",\n      \"hook_score\": 9,\n      \"energie\": 9,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Moment fort de révélation du dashboard Shopify avec la première vente de 69€ sur seulement 10 visites (10% de conversion).\"\n    },\n    {\n      \"start_s\": 529,\n      \"end_s\": 564,\n      \"titre\": \"Calcul de la rentabilité : 38€ de bénéfice pur à partir de 1€\",\n      \"hook_score\": 8,\n      \"energie\": 8,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Bilan financier limpide montrant les coûts réels et le bénéfice net de 38€ généré en 24h à partir d'une simple pièce de 1€.\"\n    }\n  ],\n  \"moments_morts\": [\n    [32, 34],\n    [117, 125],\n    [198, 203],\n    [554, 600],\n    [650, 656],\n    [708, 717],\n    [743, 745]\n  ],\n  \"meilleur_hook_absolu\": {\n    \"start_s\": 0,\n    \"end_s\": 33,\n    \"pourquoi\": \"C'est l'accroche idéale pour les réseaux sociaux : le visuel de la pièce de 1€, la skyline de Dubaï en fond, un objectif ambitieux (lancer un shop rentable en 24h) et la mention de ses 4,5M€ faits en e-commerce pour poser son autorité immédiate.\"\n  }\n}\n```",
+ "provider": "Google"
+}

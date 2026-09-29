@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.6-flash",
+ "tag": "J36_j6_bad_deadair",
+ "latency_s": 9.7,
+ "usage": {
+  "prompt_tokens": 1672,
+  "completion_tokens": 1259,
+  "total_tokens": 2931,
+  "cost": 0.0119505,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 1456
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0119505,
+   "upstream_inference_prompt_cost": 0.002508,
+   "upstream_inference_completions_cost": 0.0094425
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1044,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": false,\n  \"score_global\": 3,\n  \"hook_2s\": 7,\n  \"phrase_coupee_au_debut\": true,\n  \"phrase_coupee_a_la_fin\": true,\n  \"premier_mot_entendu\": \"tre\",\n  \"dernier_mot_entendu\": \"je\",\n  \"raccords\": [\n    {\n      \"at_s\": 2,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Transition fluide entre la présentation de l'écran du téléphone et le visage de l'intervenant.\"\n    },\n    {\n      \"at_s\": 5,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Changement de plan légèrement plus large accompagnant l'enchaînement des explications.\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"La première phrase est tronquée au début (mot incomplet) et la vidéo s'arrête brutalement au milieu de la dernière phrase.\"\n}\n```",
+ "provider": "Google AI Studio"
+}

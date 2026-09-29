@@ -1,0 +1,32 @@
+{
+ "model": "meta/muse-spark-1.2",
+ "tag": "deaf_muse-spark-1.2",
+ "latency_s": 8.3,
+ "usage": {
+  "prompt_tokens": 2436,
+  "completion_tokens": 1015,
+  "total_tokens": 3451,
+  "cost": 0.00735875,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00735875,
+   "upstream_inference_prompt_cost": 0.003045,
+   "upstream_inference_completions_cost": 0.00431375
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 893,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\"acces_audio\": true, \"transcription\": \"Bref on va voir tout ça ensemble, vous êtes prêts, c'est parti. En vrai de vrai avec un euro je pourrais faire du dropshipping sur TikTok et le truc c'est que je préfère faire du dropshipping sur Google vu que c'est des meilleures marges, je vais faire plus de profit, en plus de ça c'est beaucoup plus long terme que TikTok et surtout bah tu vends tes produits à des gens qui recherchent\", \"langue\": \"fr\"}",
+ "reasoning": "",
+ "provider": "Meta"
+}

@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.1-flash-lite",
+ "tag": "statusquo_20frames",
+ "latency_s": 5.0,
+ "usage": {
+  "prompt_tokens": 23285,
+  "completion_tokens": 834,
+  "total_tokens": 24119,
+  "cost": 0.00707225,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00707225,
+   "upstream_inference_prompt_cost": 0.00582125,
+   "upstream_inference_completions_cost": 0.001251
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "[\n  {\"start\": 0, \"end\": 12, \"decor\": \"Outdoor terrace with skyscrapers\", \"people\": [\"Gaspar\"], \"action\": \"Introducing the challenge of starting a dropshipping business with 1 euro\", \"objects\": [\"1 euro coin\"], \"narrative_role\": \"Introduction\", \"visual_importance\": \"High\", \"transcript_summary\": \"Gaspar sets the goal: start a profitable dropshipping business in 24 hours with only 1 euro.\"},\n  {\"start\": 12, \"end\": 30, \"decor\": \"Outdoor terrace\", \"people\": [\"Gaspar\"], \"action\": \"Explaining why he prefers Google over TikTok for dropshipping\", \"objects\": [\"1 euro coin\"], \"narrative_role\": \"Strategy explanation\", \"visual_importance\": \"Medium\", \"transcript_summary\": \"He chooses Google Ads for better margins and long-term sustainability compared to TikTok.\"},\n  {\"start\": 30, \"end\": 48, \"decor\": \"Outdoor terrace\", \"people\": [\"Gaspar\"], \"action\": \"Discussing the need for 100 euros to start on Google\", \"objects\": [\"Google Ads logo\"], \"narrative_role\": \"Problem identification\", \"visual_importance\": \"Medium\", \"transcript_summary\": \"Google requires a minimum of 100 euros, so he needs to scale his 1 euro capital.\"},\n  {\"start\": 48, \"end\": 66, \"decor\": \"Outdoor terrace\", \"people\": [\"Gaspar\"], \"action\": \"Rejecting the idea of asking his girlfriend for money\", \"objects\": [], \"narrative_role\": \"Decision making\", \"visual_importance\": \"Low\", \"transcript_summary\": \"He decides not to cheat by asking his girlfriend for money, opting to work for it instead.\"},\n  {\"start\": 66, \"end\": 84, \"decor\": \"Outdoor terrace\", \"people\": [\"Gaspar\"], \"action\": \"Messaging a friend to ask for work\", \"objects\": [\"Smartphone\"], \"narrative_role\": \"Action initiation\", \"visual_importance\": \"Medium\", \"transcript_summary\": \"He messages a friend to find a job to earn the necessary capital.\"},\n  {\"start\": 84, \"end\": 96, \"decor\": \"Parking garage\", \"people\": [\"Gaspar\"], \"action\": \"Washing a car for 30 euros\", \"objects\": [\"Cleaning spray\", \"Car\"], \"narrative_role\": \"Execution\", \"visual_importance\": \"High\", \"transcript_summary\": \"His friend agrees to pay him 30 euros to wash his car.\"},\n  {\"start\": 96, \"end\": 108, \"decor\": \"Indoor living room\", \"people\": [\"Gaspar\"], \"action\": \"Looking for a pet sitting job on a website\", \"objects\": [\"Smartphone\"], \"narrative_role\": \"Execution\", \"visual_importance\": \"Medium\", \"transcript_summary\": \"He finds a pet sitting gig to earn the remaining money needed to reach 100 euros.\"},\n  {\"start\": 108, \"end\": 120, \"decor\": \"Entrance of a building\", \"people\": [\"Gaspar\", \"Dog\"], \"action\": \"Walking with a dog\", \"objects\": [\"Dog leash\"], \"narrative_role\": \"Execution\", \"visual_importance\": \"High\", \"transcript_summary\": \"He successfully earns the 100 euros by pet sitting and is ready to start the business.\"},\n  {\"start\": 120, \"end\": 135, \"decor\": \"Indoor living room\", \"people\": [\"Gaspar\", \"Dog\"], \"action\": \"Starting product research\", \"objects\": [\"Laptop\"], \"narrative_role\": \"Business development\", \"visual_importance\": \"High\", \"transcript_summary\": \"With the capital secured, he begins the product research phase using a keyword tool.\"}\n]",
+ "provider": "Google AI Studio"
+}

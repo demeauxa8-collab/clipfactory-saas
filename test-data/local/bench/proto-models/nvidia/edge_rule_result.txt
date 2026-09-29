@@ -1,0 +1,10 @@
+clip                  verite          regle           1er mot       dernier mot   res
+j1_clean_intro        (False,False)   (False,False)   J’ai          grave         ok/ok
+j2_clean_google       (True,False)    (True,True)     dropshipping  100           ok/XX
+j3_clean_motsalea     (True,True)     (True,True)     quarts        Si            ok/ok
+j4_bad_midsentence    (True,False)    (True,True)     poche         prêts         ok/XX
+j5_bad_realmontage    (False,True)    (False,True)    J’ai          réussi        ok/ok
+j6_bad_deadair        (True,True)     (True,True)     ça            prêts         ok/ok
+
+REGLE DETERMINISTE (transcript mot-a-mot deja possede) : bords 10/12  cout $0  latence ~0 ms
+rappel meilleur modele : gemini-3.6-flash 12/12 a $0.01148/clip ; gemini-3-flash-preview 9/12 a $0.00211

@@ -1,0 +1,32 @@
+{
+ "model": "nvidia/nemotron-nano-12b-v2-vl:free",
+ "tag": "deaf_nemotron-nano-12b-v2-vl:free",
+ "latency_s": 6.7,
+ "usage": {
+  "prompt_tokens": 2381,
+  "completion_tokens": 108,
+  "total_tokens": 2489,
+  "cost": 0,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0,
+   "upstream_inference_prompt_cost": 0,
+   "upstream_inference_completions_cost": 0
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"acces_audio\": true,\n  \"transcription\": \"Je vais vous montrer un exemple de comment vous pouvez utiliser Google Ads pour promouvoir votre entreprise. Vous pouvez cibler des personnes qui cherchent des services comme les vôtres, et vous pouvez définir un budget pour vous assurer que vous ne dépensez pas plus que vous ne pouvez vous le permettre. Vous pouvez également suivre les performances de vos annonces et ajuster votre stratégie en conséquence.\",\n  \"langue\": \"fr\"\n}\n```\n",
+ "reasoning": "",
+ "provider": "Nvidia"
+}

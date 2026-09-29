@@ -1,0 +1,32 @@
+{
+ "model": "bytedance-seed/seed-2.0-mini",
+ "tag": "deaf_seed-2.0-mini",
+ "latency_s": 3.5,
+ "usage": {
+  "prompt_tokens": 2433,
+  "completion_tokens": 31,
+  "total_tokens": 2464,
+  "cost": 0.0002557,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0002557,
+   "upstream_inference_prompt_cost": 0.0002433,
+   "upstream_inference_completions_cost": 1.24e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\"acces_audio\": true, \"transcription\": \"24H00 1€\", \"langue\": \"français\"}",
+ "reasoning": "",
+ "provider": "Seed"
+}

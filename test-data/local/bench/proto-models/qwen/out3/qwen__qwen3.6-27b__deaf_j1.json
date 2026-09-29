@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.6-27b",
+ "tag": "deaf_j1",
+ "kind": "video",
+ "latency_s": 13.7,
+ "usage": {
+  "prompt_tokens": 3151,
+  "completion_tokens": 136,
+  "total_tokens": 3287,
+  "cost": 0.00144352,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00144352,
+   "upstream_inference_prompt_cost": 0.00100832,
+   "upstream_inference_completions_cost": 0.0004352
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"entends_le_son\": true,\n  \"transcription_orale\": \"J'ai seulement 4,5 millions d'abonnés sur YouTube. C'est pas grand-chose, mais c'est déjà pas mal. Et j'ai fait ça en seulement 1 an et demi. Donc si vous voulez savoir comment j'ai fait, je vais vous expliquer tout ça dans cette vidéo.\",\n  \"texte_incruste_a_l_ecran\": [\n    \"J'AI SEULEMENT\",\n    \"4,5 MILLIONS\",\n    \"1 AN ET DEMI\"\n  ]\n}\n```",
+ "provider": "DeepInfra"
+}

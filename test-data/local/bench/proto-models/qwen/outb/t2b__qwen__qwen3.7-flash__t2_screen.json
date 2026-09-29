@@ -1,0 +1,31 @@
+{
+ "model": "qwen/qwen3.7-flash",
+ "set": "t2_screen",
+ "latency_s": 5.1,
+ "usage": {
+  "prompt_tokens": 1231,
+  "completion_tokens": 131,
+  "total_tokens": 1362,
+  "cost": 5.396e-05,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 5.396e-05,
+   "upstream_inference_prompt_cost": 3.693e-05,
+   "upstream_inference_completions_cost": 1.703e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"decor\": \"studio podcast\",\n  \"person_visible\": true,\n  \"energy\": 65,\n  \"action\": \"talking head\",\n  \"proof_objects\": [\n    \"Google Ads dashboard\",\n    \"131 impressions\",\n    \"11 clicks\",\n    \"3.18 $ cost\"\n  ],\n  \"problems\": [\n    \"unreadable slide\"\n  ],\n  \"visual_score\": 45,\n  \"face_center_x\": 0.12,\n  \"burned_captions\": false\n}",
+ "provider": "Alibaba"
+}

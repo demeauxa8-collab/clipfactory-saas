@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.6-flash",
+ "tag": "judge_j1_clean_intro",
+ "kind": "video",
+ "latency_s": 10.6,
+ "usage": {
+  "prompt_tokens": 5608,
+  "completion_tokens": 147,
+  "total_tokens": 5755,
+  "cost": 0.001216875,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.001216875,
+   "upstream_inference_prompt_cost": 0.0010515,
+   "upstream_inference_completions_cost": 0.000165375
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\"publiable\":false,\"score_global\":4.5,\"hook_2s\":6.0,\"phrase_coupee_au_debut\":true,\"phrase_coupee_a_la_fin\":false,\"premier_mot_entendu\":\"J'AI\",\"dernier_mot_entendu\":\"euros\",\"raccords\":[{\"at_s\":17.0,\"ca_se_comprend\":false,\"pourquoi\":\"Plan pixelisé qui coupe le flux visuel et audio sans transition claire.\"}],\"moment_mort\":false,\"raison_du_refus\":\"Le clip commence au milieu d'une phrase ('J'AI SEULEMENT...') ce qui rend l'accroche confuse et peu engageante pour un nouveau spectateur.\"}",
+ "provider": "Alibaba"
+}

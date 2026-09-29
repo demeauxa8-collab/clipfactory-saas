@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.1-flash-lite",
+ "tag": "J31_j5_bad_realmontage",
+ "latency_s": 2.4,
+ "usage": {
+  "prompt_tokens": 2572,
+  "completion_tokens": 155,
+  "total_tokens": 2727,
+  "cost": 0.0008755,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 2356
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0008755,
+   "upstream_inference_prompt_cost": 0.000643,
+   "upstream_inference_completions_cost": 0.0002325
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": true,\n  \"score_global\": 8,\n  \"hook_2s\": 9,\n  \"phrase_coupee_au_debut\": false,\n  \"phrase_coupee_a_la_fin\": false,\n  \"premier_mot_entendu\": \"J'ai\",\n  \"dernier_mot_entendu\": \"réussi\",\n  \"raccords\": [\n    {\n      \"at_s\": 13,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Transition fluide entre le décor extérieur et intérieur, le discours reste cohérent.\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"\"\n}\n```",
+ "provider": "Google AI Studio"
+}

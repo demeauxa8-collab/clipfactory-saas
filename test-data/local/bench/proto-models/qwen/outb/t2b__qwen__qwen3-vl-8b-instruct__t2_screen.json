@@ -1,0 +1,31 @@
+{
+ "model": "qwen/qwen3-vl-8b-instruct",
+ "set": "t2_screen",
+ "latency_s": 1.7,
+ "usage": {
+  "prompt_tokens": 1209,
+  "completion_tokens": 105,
+  "total_tokens": 1314,
+  "cost": 0.000189228,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.000189228,
+   "upstream_inference_prompt_cost": 0.000141453,
+   "upstream_inference_completions_cost": 4.7775e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"decor\": \"desktop screen\",\n  \"person_visible\": true,\n  \"energy\": 30,\n  \"action\": \"talking head\",\n  \"proof_objects\": [\n    \"Google Ads dashboard\",\n    \"line graphs\",\n    \"metrics: clicks, impressions, CTR, cost, sales\"\n  ],\n  \"problems\": [],\n  \"visual_score\": 85,\n  \"face_center_x\": 0.15,\n  \"burned_captions\": false\n}",
+ "provider": "Alibaba"
+}

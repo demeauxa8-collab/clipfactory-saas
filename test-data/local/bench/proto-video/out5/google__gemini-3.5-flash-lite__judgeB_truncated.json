@@ -1,0 +1,30 @@
+{
+ "model": "google/gemini-3.5-flash-lite",
+ "tag": "judgeB_truncated",
+ "latency_s": 12.8,
+ "usage": {
+  "prompt_tokens": 2609,
+  "completion_tokens": 276,
+  "total_tokens": 2885,
+  "cost": 0.0014727,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 640,
+   "video_tokens": 1716
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0014727,
+   "upstream_inference_prompt_cost": 0.0007827,
+   "upstream_inference_completions_cost": 0.00069
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n \"publiable\": true,\n \"score_global\": 9,\n \"hook_2s\": 9,\n \"coherence_du_montage\": {\n  \"score\": 9,\n  \"raccords_percus\": [\n   {\n    \"at_s\": 5.5,\n    \"type\": \"cut sec\",\n    \"ca_se_comprend\": true,\n    \"pourquoi\": \"Changement de plan dynamique pour illustrer le chiffre.\"\n   },\n   {\n    \"at_s\": 12.8,\n    \"type\": \"cut sec\",\n    \"ca_se_comprend\": true,\n    \"pourquoi\": \"Transition vers la conclusion en intérieur, cohérente.\"\n   }\n  ]\n },\n \"phrase_coupee_au_debut\": false,\n \"phrase_coupee_a_la_fin\": false,\n \"premier_mot_entendu\": \"j'ai\",\n \"dernier_mot_entendu\": \"réussi\",\n \"correction_start_s\": 0.0,\n \"correction_end_s\": 0.0,\n \"raison_du_refus\": \"\"\n}\n```"
+}

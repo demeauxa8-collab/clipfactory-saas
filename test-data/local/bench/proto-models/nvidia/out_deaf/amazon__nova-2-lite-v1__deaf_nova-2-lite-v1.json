@@ -1,0 +1,32 @@
+{
+ "model": "amazon/nova-2-lite-v1",
+ "tag": "deaf_nova-2-lite-v1",
+ "latency_s": 7.3,
+ "usage": {
+  "prompt_tokens": 3752,
+  "completion_tokens": 556,
+  "total_tokens": 4308,
+  "cost": 0.0025156,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0025156,
+   "upstream_inference_prompt_cost": 0.0011256,
+   "upstream_inference_completions_cost": 0.00139
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\"description\": \"The video features an individual standing outdoors on a sunny day, with a cityscape of tall buildings and palm trees in the background. Initially, the person is seen holding a coin in their right hand, wearing a brown sweater, and appears to be speaking or gesturing with their left hand. As the video progresses, the individual is seen holding the coin closer to the camera, with the coin becoming more prominent in the frame. The background remains consistent, showcasing the same cityscape and palm trees, indicating no significant change in the environment or camera position.\n\nLater, the individual is seen without the coin, holding a smartphone in their right hand, possibly recording or taking a picture. The background remains unchanged, with the cityscape and palm trees still visible. The individual appears to be looking directly at the camera, possibly addressing the audience or explaining something.\n\nIn the final observed moment, the individual is seen holding a smartphone in their left hand, with the right hand not visible in the frame. The background remains consistent with the previous scenes, showing the same cityscape and palm trees. The individual appears to be looking slightly to the side, possibly at something off-camera or continuing their explanation. Throughout the video, there are no significant changes in the environment, the individual's position, or the camera's perspective, maintaining a steady and continuous visual narrative.\", \"shots\": [{\"image_url\": \"https://storage.googleapis.com/aipx-image-caching/9c2a7d7d-0b9b-4d8b-9b8c-8c9d9c9d9c9d.jpg\", \"description\": \"An individual stands outdoors on a sunny day, holding a coin in their right hand and gesturing with their left, against a cityscape backdrop of tall buildings and palm trees.\"}, {\"image_url\": \"https://storage.googleapis.com/aipx-image-caching/3a9b0c9d-7c8e-4b2a-9f5c-1d2e3f4a5b6c.jpg\", \"description\": \"The same individual is seen holding a smartphone in their right hand, with the coin no longer visible, against the unchanged cityscape and palm trees background.\"}, {\"image_url\": \"https://storage.googleapis.com/aipx-image-caching/5e8f9c1d-2a3b-4c7d-8e6f-7g8h9i0j1k2l.jpg\", \"description\": \"The individual is now holding a smartphone in their left hand, with their right hand out of frame, looking slightly to the side against the consistent cityscape and palm trees backdrop.\"}]}]",
+ "reasoning": "",
+ "provider": "Amazon Bedrock"
+}

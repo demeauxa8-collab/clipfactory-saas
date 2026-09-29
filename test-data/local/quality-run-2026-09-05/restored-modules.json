@@ -1,0 +1,62 @@
+[
+  {
+    "path": "apps/worker/app/pipeline/edl.py",
+    "source": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp/apps/worker/app/pipeline/edl.py",
+    "source_sha256": "1db3909b518ef680e54dc7fddda4d2ab718a8d7f4c13a65eadb5a49eaa80b480",
+    "previous_sha256": "277c3a3271b020750debe16a88f444a48e7951bf7cacda81d6eb8c583b3d0b5f"
+  },
+  {
+    "path": "apps/worker/app/pipeline/edl_render.py",
+    "source": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp/apps/worker/app/pipeline/edl_render.py",
+    "source_sha256": "2341f32073d9138a2a7fc85ec1d41557a8f3ae1f7c2199d2281d7a4f7c19dc84",
+    "previous_sha256": "1ce7b07312ed612799c6875e2ef93090e0c1a85a4598ad33108cb971fe31306c"
+  },
+  {
+    "path": "apps/worker/app/pipeline/editorial_beats.py",
+    "source": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp/apps/worker/app/pipeline/editorial_beats.py",
+    "source_sha256": "1a2676b137cbc36ab07a85bf404fd74cdb612de32a4a4465ed37b614206192d8",
+    "previous_sha256": null
+  },
+  {
+    "path": "apps/worker/app/pipeline/editorial_director.py",
+    "source": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp/apps/worker/app/pipeline/editorial_director.py",
+    "source_sha256": "8096d88b78d750209abefa73b8ef3de3f9363fd7c377f5bc72c9cf804d242cc6",
+    "previous_sha256": null
+  },
+  {
+    "path": "apps/worker/app/pipeline/editorial_reflex_qc.py",
+    "source": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp/apps/worker/app/pipeline/editorial_reflex_qc.py",
+    "source_sha256": "269e6457f32eaefc687ae053995e1bd0ea84e634cf4080525498093db4db29ae",
+    "previous_sha256": null
+  },
+  {
+    "path": "apps/worker/tests/test_edl.py",
+    "source": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp/apps/worker/tests/test_edl.py",
+    "source_sha256": "80b6340d7e42d2c87b3eadacd6258c864e5280c033bb34691a111e941c1435dd",
+    "previous_sha256": "4b04d96dc71c4ca13009a506df3fc8d1289cc56343fa5d6cfdfe5865ce001bd5"
+  },
+  {
+    "path": "apps/worker/tests/test_edl_render.py",
+    "source": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp/apps/worker/tests/test_edl_render.py",
+    "source_sha256": "3d5e5614cc52583a8478315cacb5c2f384d40f511f8671749b5350fcea84b3fe",
+    "previous_sha256": "a2fe3be86510ad05011d2d8c971cad7b8e6829b0f6248495940da754f719b8dd"
+  },
+  {
+    "path": "apps/worker/tests/test_editorial_beats.py",
+    "source": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp/apps/worker/tests/test_editorial_beats.py",
+    "source_sha256": "aeb586fd3f602967507b81888b6195190716d2200c7b53f76218479a0eb4e5d5",
+    "previous_sha256": null
+  },
+  {
+    "path": "apps/worker/tests/test_editorial_director.py",
+    "source": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp/apps/worker/tests/test_editorial_director.py",
+    "source_sha256": "a8f5705eb6a3f08b7a20710a2c6c010067a179ef49596bd7be8f90550a933473",
+    "previous_sha256": null
+  },
+  {
+    "path": "apps/worker/tests/test_editorial_reflex_qc.py",
+    "source": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp/apps/worker/tests/test_editorial_reflex_qc.py",
+    "source_sha256": "1332b5934776a1d72d6901f189313fc233b5d56d713ca75a638ef94c704bd444",
+    "previous_sha256": null
+  }
+]

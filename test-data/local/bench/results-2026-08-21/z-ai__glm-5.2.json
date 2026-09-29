@@ -1,0 +1,309 @@
+{
+  "model": "z-ai/glm-5.2",
+  "ok": true,
+  "error": null,
+  "latency_seconds": 77.664,
+  "tokens": 24610,
+  "arcs": [
+    {
+      "title": "1€ to profitable store in 24h — the full proof",
+      "arc_type": "challenge_result",
+      "segments": [
+        {
+          "role": "setup",
+          "start": 0.0,
+          "end": 12.0,
+          "transcript_excerpt": "J'ai seulement un euro pour lancer une boutique rentable en dropshipping et le tout en 24 heures Moi c'est Gaspar j'ai fait 4 millions et demi en e commerce",
+          "why": "Establishes the challenge and the credibility in one breath",
+          "start_anchor": "J'ai seulement un euro pour lancer une boutique rentable",
+          "end_anchor": "j'ai fait 4 millions et demi en e commerce",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        },
+        {
+          "role": "payoff",
+          "start": 469.0,
+          "end": 482.0,
+          "transcript_excerpt": "On se retrouve 24 heures plus tard Et on va voir combien Est ce qu'on a fait sur la boutique Est ce qu'on a fait des ventes Est ce qu'on va gagner de l'argent Est ce qu'on va perdre de l'argent Est ce qu'on a fait vraiment tout ça pour rien C'est ce qu'on va voir Maintenant On se retrouve directemen",
+          "why": "Delivers the payoff: a sale at 69€ within 24 hours",
+          "start_anchor": "On se retrouve 24 heures plus tard",
+          "end_anchor": "On a fait une vente à 69 euros",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The transformation from 1€ to a real sale in 24h is a compelling proof-of-concept that keeps viewers watching",
+      "estimated_retention": 88,
+      "continuity_risk": "medium",
+      "suggested_hook": "1€ pour lancer un business rentable en 24h",
+      "link_reason": "Segment 2 answers segment 1: the 1€ challenge set up at the start is resolved with a concrete sale 24h later",
+      "campaign_fit_llm": 95,
+      "campaign_fit_reason": "Directly proves Gaspar's method works and his credibility (4.5M€), positioning him as the expert to learn from",
+      "opening_words": "J'ai seulement un euro pour lancer une boutique rentable",
+      "self_contained": true,
+      "payoff_line": "On a fait une vente à 69 euros"
+    },
+    {
+      "title": "Pourquoi Google Ads bat TikTok pour le dropshipping",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 36.0,
+          "end": 49.0,
+          "transcript_excerpt": "avec un euro je pourrais faire du dropshipping sur TikTok mais le truc c'est que je préfère faire du dropshipping sur Google Vu que c'est des meilleures marges je vais faire plus de profit En plus de ça c'est beaucoup plus long terme que TikTok et surtout tu vend tes produits à des gens qui recherch",
+          "why": "Explains the contrarian choice of Google over TikTok with concrete reasons: better margins, long-term, intent-based buyers",
+          "start_anchor": "avec un euro je pourrais faire du dropshipping sur TikTok",
+          "end_anchor": "transformer ces un euro en 100 euros",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "Contrarian take on platform choice with specific reasoning challenges conventional wisdom and positions Gaspar as an insider",
+      "estimated_retention": 78,
+      "continuity_risk": "low",
+      "suggested_hook": "Pourquoi je préfère Google à TikTok en dropshipping",
+      "link_reason": null,
+      "campaign_fit_llm": 82,
+      "campaign_fit_reason": "Positions Gaspar's expertise as counterintuitive insider knowledge worth paying for",
+      "opening_words": "avec un euro je pourrais faire du dropshipping sur TikTok",
+      "self_contained": true,
+      "payoff_line": "tu vend tes produits à des gens qui recherchent déjà ton produit"
+    },
+    {
+      "title": "4500€ en 24h avec cette méthode Google",
+      "arc_type": "phrase_visual_proof",
+      "segments": [
+        {
+          "role": "single",
+          "start": 170.0,
+          "end": 196.0,
+          "transcript_excerpt": "les gars il y a quelques mois J'ai trouvé un produit avec ce site justement Et regardez où est ce qu'il en est aujourd'hui Ça c'était sur la journée d'hier Et dites vous que j'ai 5 autres boutiques qui tournent de la même manière Donc juste sur 24h Elle a fait 4500€ Et là dessus je prends 45 de marg",
+          "why": "Shows concrete proof of a 4500€/day shop and ties it directly to his coaching program with a contract guarantee",
+          "start_anchor": "les gars il y a quelques mois J'ai trouvé un produit",
+          "end_anchor": "c'est garanti sous contrat",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The 4500€/day figure with visible dashboard proof and the direct link to his coaching program is a powerful credibility + offer moment",
+      "estimated_retention": 85,
+      "continuity_risk": "low",
+      "suggested_hook": "Un produit trouvé avec cette méthode fait 4500€/jour",
+      "link_reason": null,
+      "campaign_fit_llm": 98,
+      "campaign_fit_reason": "Directly sells the training program with proof of results and a contract guarantee — the core campaign goal",
+      "opening_words": "les gars il y a quelques mois J'ai trouvé un produit",
+      "self_contained": true,
+      "payoff_line": "J'accompagne jusqu'au 1000€ par jour de chiffre d'affaires Et c'est garanti sous contrat"
+    },
+    {
+      "title": "10 visites, 1 vente: le taux de conversion qui tue",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 481.0,
+          "end": 507.0,
+          "transcript_excerpt": "On a eu 10 visites sur le site à peine Et on a réussi à faire une vente Avec juste 10 visites Donc ça nous fait un taux de conversion A 10 Habituellement Habituellement Un bon taux de conversion C'est à environ 2 Et là Mais du coup On est à 10 Bon C'est sur un petit segment de clients Mais bon Quand",
+          "why": "Reveals a 10% conversion rate vs the usual 2%, proving the method's effectiveness with hard numbers",
+          "start_anchor": "On a eu 10 visites sur le site à peine",
+          "end_anchor": "Une vente à 69 euros",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The 10% vs 2% conversion rate comparison is a striking proof point that demonstrates the method's superiority",
+      "estimated_retention": 82,
+      "continuity_risk": "low",
+      "suggested_hook": "10 visites et déjà 1 vente — le taux de conversion parfait",
+      "link_reason": null,
+      "campaign_fit_llm": 90,
+      "campaign_fit_reason": "Proves the method's effectiveness with concrete numbers, reinforcing why learning from Gaspar is worth it",
+      "opening_words": "On a eu 10 visites sur le site à peine",
+      "self_contained": true,
+      "payoff_line": "On a fait du coup Une vente à 69 euros"
+    },
+    {
+      "title": "3 dollars dépensés, 50€ de bénéfice",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 536.0,
+          "end": 562.0,
+          "transcript_excerpt": "On a dépensé que 3 dollars Donc là En sachant que le produit nous a coûté 14 euros à envoyer On est à environ 50 euros bénéfice Donc c'est vraiment Très très bien Parce que là Du coup C'est un retour sur investissement Où on sait plus tard Que quand on mettra plus d'argent dans le budget On va faire",
+          "why": "Delivers the final ROI: 3$ ad spend, 14€ product cost, ~50€ net profit — proving the model works at scale",
+          "start_anchor": "On a dépensé que 3 dollars",
+          "end_anchor": "C'est le plus important",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The extreme ROI ratio (3$ spent → 50€ profit) is a striking number that makes viewers want to learn the method",
+      "estimated_retention": 80,
+      "continuity_risk": "low",
+      "suggested_hook": "3$ dépensés en pub, 50€ de bénéfice net",
+      "link_reason": null,
+      "campaign_fit_llm": 88,
+      "campaign_fit_reason": "Concrete proof of profitability that positions the method as worth learning from Gaspar",
+      "opening_words": "On a dépensé que 3 dollars",
+      "self_contained": true,
+      "payoff_line": "On est à environ 50 euros bénéfice"
+    },
+    {
+      "title": "30 000€ en coachings: ce qui coûte le plus cher",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 561.0,
+          "end": 586.0,
+          "transcript_excerpt": "Ce qui coûte le plus cher C'est quand même les connaissances J'ai du mettre plus de 30 000 balles Dans des coachings Là actuellement J'ai un coaching avec un américain Pour chiffrer encore un e commerce Et c'est ça qui coûte le plus cher Et c'est pour ça que j'ai réussi aussi ce challenge Et si dema",
+          "why": "Reveals the 30k€ investment in coaching and pivots to offering his own program — the core campaign pitch",
+          "start_anchor": "Ce qui coûte le plus cher C'est quand même les connaissances",
+          "end_anchor": "J'ai un accompagnement",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The 30k€ figure establishes massive credibility and the pivot to 'a beginner can't do it alone' creates urgency to join his program",
+      "estimated_retention": 83,
+      "continuity_risk": "low",
+      "suggested_hook": "Ce qui coûte le plus cher en e-commerce? Les connaissances",
+      "link_reason": null,
+      "campaign_fit_llm": 96,
+      "campaign_fit_reason": "Directly pitches the coaching program with credibility (30k€ invested) and urgency (beginners can't succeed alone)",
+      "opening_words": "Ce qui coûte le plus cher C'est quand même les connaissances",
+      "self_contained": true,
+      "payoff_line": "Tu peux regarder directement dans la description J'ai un accompagnement"
+    },
+    {
+      "title": "Le débutant qui essaie seul n'y arrivera pas",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 573.0,
+          "end": 586.0,
+          "transcript_excerpt": "si demain un débutant Essaye tout seul Avec 1 euro ou 100 euros Il n'y arrivera pas Honnêtement Et si justement Tu as du budget Que tu veux gagner du temps Et te faire accompagner Pour réussir en e commerce Tu peux regarder directement dans la description J'ai un accompagnement",
+          "why": "Delivers the urgent warning that beginners can't succeed alone, then pivots directly to the coaching offer",
+          "start_anchor": "si demain un débutant Essaye tout seul",
+          "end_anchor": "J'ai un accompagnement",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The blunt warning 'a beginner won't make it alone' creates urgency and positions the coaching as essential, not optional",
+      "estimated_retention": 75,
+      "continuity_risk": "low",
+      "suggested_hook": "Un débutant seul en e-commerce? Il n'y arrivera pas",
+      "link_reason": null,
+      "campaign_fit_llm": 94,
+      "campaign_fit_reason": "Creates urgency to join the program by warning that solo attempts will fail — directly serves the campaign goal",
+      "opening_words": "si demain un débutant Essaye tout seul",
+      "self_contained": true,
+      "payoff_line": "Tu peux regarder directement dans la description J'ai un accompagnement"
+    },
+    {
+      "title": "Méthode Google garantie jusqu'à 1000€/jour",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 182.0,
+          "end": 207.0,
+          "transcript_excerpt": "c'est cette méthode que j'apprends aux élèves de mon accompagnement En gros avec pile cette méthode Qui est de faire du e commerce sur Google J'accompagne jusqu'au 1000€ par jour de chiffre d'affaires Et c'est garanti sous contrat Et moi mon objectif derrière ça Ce n'est pas de vendre des formations",
+          "why": "Presents the coaching offer with a contract guarantee and a unique partnership angle — not just selling a course but partnering",
+          "start_anchor": "c'est cette méthode que j'apprends aux élèves",
+          "end_anchor": "faire encore plus d'argent en fait",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The contract guarantee and the partnership model (not just selling a course) differentiates this offer from typical e-commerce training",
+      "estimated_retention": 80,
+      "continuity_risk": "low",
+      "suggested_hook": "Ma méthode Google t'accompagne jusqu'à 1000€/jour garanti",
+      "link_reason": null,
+      "campaign_fit_llm": 97,
+      "campaign_fit_reason": "Directly pitches the program with a unique angle (partnership not just training) and a contract guarantee — ideal for the campaign",
+      "opening_words": "c'est cette méthode que j'apprends aux élèves",
+      "self_contained": true,
+      "payoff_line": "J'accompagne jusqu'au 1000€ par jour de chiffre d'affaires Et c'est garanti sous contrat"
+    },
+    {
+      "title": "De 1€ à 100€: le hustle pour démarrer",
+      "arc_type": "challenge_result",
+      "segments": [
+        {
+          "role": "setup",
+          "start": 48.0,
+          "end": 61.0,
+          "transcript_excerpt": "la première étape ça va être de transformer ces un euro en 100 euros Ce que j'ai réfléchi pour faire ça c'est que le plus simple ça serait juste que je demande à ma meuf 100 euros Je pense que ça ira plus vite Et en échange je lui donne des parts après Le but c'est quand même de montrer que c'est po",
+          "why": "Sets up the sub-challenge of turning 1€ into 100€ and the decision to earn it honestly",
+          "start_anchor": "la première étape ça va être de transformer ces un euro",
+          "end_anchor": "on va aller bosser",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        },
+        {
+          "role": "payoff",
+          "start": 85.0,
+          "end": 110.0,
+          "transcript_excerpt": "les gars pour faire mes premiers 100 euros J'étais préparateur de commande Je peux vous dire qu'on se tuait bien plus que là Bon même s'il fait 40 degrés là Bon allez on a bien nettoyé Je suis bien transpirant On a maintenant 31 euros Vu qu'on a que 24 heures Et que pour atteindre 100 euros je vais ",
+          "why": "Shows the hustle to earn the 100€ — car cleaning and dog sitting — and reaches the goal",
+          "start_anchor": "les gars pour faire mes premiers 100 euros",
+          "end_anchor": "On a désormais les 100 euros",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The hustle montage (car cleaning, dog sitting) to earn starting capital is relatable and entertaining while proving the 'start from nothing' premise",
+      "estimated_retention": 76,
+      "continuity_risk": "medium",
+      "suggested_hook": "Comment transformer 1€ en 100€ pour lancer un business",
+      "link_reason": "Segment 2 answers segment 1: the goal of turning 1€ into 100€ is achieved through real work",
+      "campaign_fit_llm": 72,
+      "campaign_fit_reason": "Shows the entrepreneur's work ethic and authenticity, building trust for the training program pitch",
+      "opening_words": "la première étape ça va être de transformer ces un euro",
+      "self_contained": true,
+      "payoff_line": "On a désormais les 100 euros"
+    },
+    {
+      "title": "Le témoignage qui prouve que la méthode marche",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 319.0,
+          "end": 345.0,
+          "transcript_excerpt": "J'ai reçu un témoignage d'un élève Qui lui aussi a monté du coup Son business d'e commerce sur Google Et c'est vraiment pour ce genre de témoignage Que j'ai fait ça Et là ça finit par payer Dès que j'avais un petit souci Les coachs ils étaient là pour moi Je recommande à 100 C'est en train de vraime",
+          "why": "Student testimonial provides social proof that the coaching program transforms lives — directly serves the campaign",
+          "start_anchor": "J'ai reçu un témoignage d'un élève",
+          "end_anchor": "je remercie encore L'accompagnement",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "Authentic student testimonial about life transformation through the program is powerful social proof",
+      "estimated_retention": 72,
+      "continuity_risk": "low",
+      "suggested_hook": "Un élève a changé sa vie grâce à cette méthode",
+      "link_reason": null,
+      "campaign_fit_llm": 92,
+      "campaign_fit_reason": "Student testimonial directly validates the coaching program and provides social proof for potential buyers",
+      "opening_words": "J'ai reçu un témoignage d'un élève",
+      "self_contained": true,
+      "payoff_line": "C'est la Une des meilleures décisions Que j'ai prises de ma vie"
+    }
+  ],
+  "raw_video_read": {
+    "n_events": 79,
+    "n_events_in_fixture": 79,
+    "video_map_summary_chars": 600,
+    "n_transcript_words": 2864,
+    "n_transcript_words_in_fixture": 2864,
+    "transcript_lines_chars": 14977
+  }
+}

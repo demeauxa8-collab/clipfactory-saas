@@ -1,0 +1,61 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Inter,110,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,6,2,2,80,80,400,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:00.12,Default,,0,0,500,,EN 24 HEURES
+Dialogue: 0,0:00:00.12,0:00:00.50,Default,,0,0,500,,EN 24 HEURES
+Dialogue: 0,0:00:00.50,0:00:00.60,Default,,0,0,500,,EN 24 {\c&H76E600&\fscx112\fscy112}HEURES{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:00.72,0:00:00.76,Default,,0,0,500,,N’AI JAMAIS
+Dialogue: 0,0:00:00.76,0:00:01.00,Default,,0,0,500,,N’AI {\c&H76E600&\fscx112\fscy112}JAMAIS{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:01.00,0:00:01.12,Default,,0,0,500,,{\c&H76E600&\fscx112\fscy112}FAIT{\c&HFFFFFF&\fscx100\fscy100} ÇA
+Dialogue: 0,0:00:01.12,0:00:01.24,Default,,0,0,500,,FAIT ÇA
+Dialogue: 0,0:00:01.24,0:00:01.78,Default,,0,0,500,,J’AI SEULEMENT\NUN
+Dialogue: 0,0:00:01.78,0:00:01.98,Default,,0,0,500,,J’AI {\c&H76E600&\fscx112\fscy112}SEULEMENT{\c&HFFFFFF&\fscx100\fscy100}\NUN
+Dialogue: 0,0:00:01.98,0:00:02.68,Default,,0,0,500,,J’AI SEULEMENT\NUN
+Dialogue: 0,0:00:02.68,0:00:03.00,Default,,0,0,500,,{\c&H76E600&\fscx112\fscy112}EURO{\c&HFFFFFF&\fscx100\fscy100} POUR\NLANCER
+Dialogue: 0,0:00:03.00,0:00:03.46,Default,,0,0,500,,EURO POUR\NLANCER
+Dialogue: 0,0:00:03.46,0:00:03.60,Default,,0,0,500,,EURO POUR\N{\c&H76E600&\fscx112\fscy112}LANCER{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:03.60,0:00:04.18,Default,,0,0,500,,UNE RENTABLE EN
+Dialogue: 0,0:00:04.18,0:00:04.62,Default,,0,0,500,,UNE {\c&H76E600&\fscx112\fscy112}RENTABLE{\c&HFFFFFF&\fscx100\fscy100} EN
+Dialogue: 0,0:00:04.62,0:00:04.84,Default,,0,0,500,,UNE RENTABLE EN
+Dialogue: 0,0:00:04.84,0:00:05.34,Default,,0,0,500,,{\c&H76E600&\fscx112\fscy112}DROPSHIPPING{\c&HFFFFFF&\fscx100\fscy100} ET\NLE
+Dialogue: 0,0:00:05.34,0:00:05.68,Default,,0,0,500,,DROPSHIPPING ET\NLE
+Dialogue: 0,0:00:05.68,0:00:05.88,Default,,0,0,500,,DROPSHIPPING ET\NLE
+Dialogue: 0,0:00:05.88,0:00:06.00,Default,,0,0,500,,TOUT EN
+Dialogue: 0,0:00:06.00,0:00:06.20,Default,,0,0,500,,TOUT EN
+Dialogue: 0,0:00:06.20,0:00:06.62,Default,,0,0,500,,24 HEURES
+Dialogue: 0,0:00:06.62,0:00:06.72,Default,,0,0,500,,24 {\c&H76E600&\fscx112\fscy112}HEURES{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:06.72,0:00:06.86,Default,,0,0,500,,{\c&H76E600&\fscx112\fscy112}JUSTE{\c&HFFFFFF&\fscx100\fscy100} DE QU’EN
+Dialogue: 0,0:00:06.86,0:00:07.30,Default,,0,0,500,,JUSTE DE QU’EN
+Dialogue: 0,0:00:07.30,0:00:07.64,Default,,0,0,500,,JUSTE DE QU’EN
+Dialogue: 0,0:00:07.64,0:00:08.04,Default,,0,0,500,,{\c&H76E600&\fscx112\fscy112}2025{\c&HFFFFFF&\fscx100\fscy100} TU PEUX
+Dialogue: 0,0:00:08.04,0:00:08.20,Default,,0,0,500,,2025 TU PEUX
+Dialogue: 0,0:00:08.20,0:00:08.30,Default,,0,0,500,,2025 TU {\c&H76E600&\fscx112\fscy112}PEUX{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:08.30,0:00:08.48,Default,,0,0,500,,{\c&H76E600&\fscx112\fscy112}LANCER{\c&HFFFFFF&\fscx100\fscy100} UN\NBUSINESS
+Dialogue: 0,0:00:08.48,0:00:08.68,Default,,0,0,500,,LANCER UN\NBUSINESS
+Dialogue: 0,0:00:08.68,0:00:09.10,Default,,0,0,500,,LANCER UN\N{\c&H76E600&\fscx112\fscy112}BUSINESS{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:09.10,0:00:09.38,Default,,0,0,500,,AVEC QUASIMENT
+Dialogue: 0,0:00:09.38,0:00:09.70,Default,,0,0,500,,AVEC {\c&H76E600&\fscx112\fscy112}QUASIMENT{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:09.70,0:00:10.06,Default,,0,0,500,,{\c&H76E600&\fscx112\fscy112}RIEN{\c&HFFFFFF&\fscx100\fscy100} DU
+Dialogue: 0,0:00:10.06,0:00:10.30,Default,,0,0,500,,RIEN DU
+Dialogue: 0,0:00:10.52,0:00:10.70,Default,,0,0,500,,LES AMIS GRANDE
+Dialogue: 0,0:00:10.70,0:00:11.00,Default,,0,0,500,,LES {\c&H76E600&\fscx112\fscy112}AMIS{\c&HFFFFFF&\fscx100\fscy100} GRANDE
+Dialogue: 0,0:00:11.00,0:00:11.12,Default,,0,0,500,,LES AMIS {\c&H76E600&\fscx112\fscy112}GRANDE{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:11.12,0:00:11.56,Default,,0,0,500,,{\c&H76E600&\fscx112\fscy112}NOUVELLE{\c&HFFFFFF&\fscx100\fscy100} ON A
+Dialogue: 0,0:00:11.56,0:00:11.58,Default,,0,0,500,,NOUVELLE ON A
+Dialogue: 0,0:00:11.58,0:00:11.74,Default,,0,0,500,,NOUVELLE ON A
+Dialogue: 0,0:00:11.74,0:00:11.86,Default,,0,0,500,,{\c&H76E600&\fscx112\fscy112}FAIT{\c&HFFFFFF&\fscx100\fscy100} UNE VENTE
+Dialogue: 0,0:00:11.86,0:00:12.10,Default,,0,0,500,,FAIT UNE VENTE
+Dialogue: 0,0:00:12.10,0:00:12.24,Default,,0,0,500,,FAIT UNE {\c&H76E600&\fscx112\fscy112}VENTE{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:12.24,0:00:12.42,Default,,0,0,500,,À 69 EUROS
+Dialogue: 0,0:00:12.42,0:00:12.92,Default,,0,0,500,,À 69 EUROS
+Dialogue: 0,0:00:12.92,0:00:13.12,Default,,0,0,500,,À 69 {\c&H76E600&\fscx112\fscy112}EUROS{\c&HFFFFFF&\fscx100\fscy100}

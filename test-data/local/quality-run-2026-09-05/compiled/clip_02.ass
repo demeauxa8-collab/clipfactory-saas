@@ -1,0 +1,135 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: CFHook,Inter,122,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,7,2,2,80,80,400,1
+Style: CFStandard,Inter,110,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,6,2,2,80,80,400,1
+Style: CFProof,Inter,94,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,5,1,2,80,80,400,1
+Style: CFReaction,Inter,116,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,7,2,2,80,80,400,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.13,0:00:00.16,CFStandard,,0,0,400,,Le but c’est
+Dialogue: 0,0:00:00.13,0:00:00.26,CFStandard,,0,0,400,,Le {\c&H76E600&\fscx112\fscy112}but{\c&HFFFFFF&\fscx100\fscy100} c’est
+Dialogue: 0,0:00:00.26,0:00:00.66,CFStandard,,0,0,400,,Le but {\c&H76E600&\fscx112\fscy112}c’est{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:00.66,0:00:00.80,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}quand{\c&HFFFFFF&\fscx100\fscy100} même de
+Dialogue: 0,0:00:00.80,0:00:00.86,CFStandard,,0,0,400,,quand {\c&H76E600&\fscx112\fscy112}même{\c&HFFFFFF&\fscx100\fscy100} de
+Dialogue: 0,0:00:00.86,0:00:01.13,CFStandard,,0,0,400,,quand même de
+Dialogue: 0,0:00:01.13,0:00:01.26,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}montrer{\c&HFFFFFF&\fscx100\fscy100} que c’est
+Dialogue: 0,0:00:01.26,0:00:01.40,CFStandard,,0,0,400,,montrer que c’est
+Dialogue: 0,0:00:01.40,0:00:01.56,CFStandard,,0,0,400,,montrer que {\c&H76E600&\fscx112\fscy112}c’est{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:01.56,0:00:01.86,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}possible{\c&HFFFFFF&\fscx100\fscy100} de partir
+Dialogue: 0,0:00:01.86,0:00:02.13,CFStandard,,0,0,400,,possible de partir
+Dialogue: 0,0:00:02.13,0:00:02.26,CFStandard,,0,0,400,,possible de {\c&H76E600&\fscx112\fscy112}partir{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:02.26,0:00:02.46,CFStandard,,0,0,400,,avec rien
+Dialogue: 0,0:00:02.46,0:00:02.73,CFStandard,,0,0,400,,avec {\c&H76E600&\fscx112\fscy112}rien{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:02.86,0:00:02.93,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}Donc{\c&HFFFFFF&\fscx100\fscy100} on va
+Dialogue: 0,0:00:02.93,0:00:02.96,CFStandard,,0,0,400,,Donc on va
+Dialogue: 0,0:00:02.96,0:00:03.03,CFStandard,,0,0,400,,Donc on va
+Dialogue: 0,0:00:03.03,0:00:03.33,CFStandard,,0,0,400,,pas tricher
+Dialogue: 0,0:00:03.33,0:00:03.46,CFStandard,,0,0,400,,pas {\c&H76E600&\fscx112\fscy112}tricher{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:03.46,0:00:03.76,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}comme{\c&HFFFFFF&\fscx100\fscy100} ça
+Dialogue: 0,0:00:03.76,0:00:03.80,CFStandard,,0,0,400,,comme ça
+Dialogue: 0,0:00:03.93,0:00:03.96,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}Donc{\c&HFFFFFF&\fscx100\fscy100} ce qu’on
+Dialogue: 0,0:00:03.96,0:00:04.06,CFStandard,,0,0,400,,Donc ce qu’on
+Dialogue: 0,0:00:04.06,0:00:04.10,CFStandard,,0,0,400,,Donc ce {\c&H76E600&\fscx112\fscy112}qu’on{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:04.10,0:00:04.23,CFStandard,,0,0,400,,va faire tout
+Dialogue: 0,0:00:04.23,0:00:04.36,CFStandard,,0,0,400,,va {\c&H76E600&\fscx112\fscy112}faire{\c&HFFFFFF&\fscx100\fscy100} tout
+Dialogue: 0,0:00:04.36,0:00:04.70,CFStandard,,0,0,400,,va faire {\c&H76E600&\fscx112\fscy112}tout{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:04.70,0:00:04.73,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}simplement{\c&HFFFFFF&\fscx100\fscy100} on va
+Dialogue: 0,0:00:04.70,0:00:04.86,CFStandard,,0,0,400,,simplement on va
+Dialogue: 0,0:00:04.86,0:00:04.90,CFStandard,,0,0,400,,simplement on va
+Dialogue: 0,0:00:04.86,0:00:05.06,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}aller{\c&HFFFFFF&\fscx100\fscy100} bosser
+Dialogue: 0,0:00:05.06,0:00:05.26,CFStandard,,0,0,400,,aller {\c&H76E600&\fscx112\fscy112}bosser{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:05.36,0:00:05.43,CFStandard,,0,0,400,,On va pas
+Dialogue: 0,0:00:05.43,0:00:05.46,CFStandard,,0,0,400,,On va pas
+Dialogue: 0,0:00:05.43,0:00:05.63,CFStandard,,0,0,400,,On va pas
+Dialogue: 0,0:00:05.63,0:00:05.76,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}choisir{\c&HFFFFFF&\fscx100\fscy100} la facilité
+Dialogue: 0,0:00:05.76,0:00:06.00,CFStandard,,0,0,400,,choisir la facilité
+Dialogue: 0,0:00:06.00,0:00:06.33,CFStandard,,0,0,400,,choisir la {\c&H76E600&\fscx112\fscy112}facilité{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:06.33,0:00:06.56,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}quand{\c&HFFFFFF&\fscx100\fscy100} même
+Dialogue: 0,0:00:06.56,0:00:06.60,CFStandard,,0,0,400,,quand {\c&H76E600&\fscx112\fscy112}même{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:06.63,0:00:06.73,CFStandard,,0,0,400,,Et en
+Dialogue: 0,0:00:06.73,0:00:06.90,CFStandard,,0,0,400,,Et en
+Dialogue: 0,0:00:06.96,0:00:07.00,CFStandard,,0,0,400,,On a maintenant
+Dialogue: 0,0:00:07.00,0:00:07.10,CFStandard,,0,0,400,,On a maintenant
+Dialogue: 0,0:00:07.10,0:00:07.40,CFStandard,,0,0,400,,On a {\c&H76E600&\fscx112\fscy112}maintenant{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:07.40,0:00:08.06,CFStandard,,0,0,400,,31 euros
+Dialogue: 0,0:00:08.06,0:00:08.33,CFStandard,,0,0,400,,31 {\c&H76E600&\fscx112\fscy112}euros{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:08.43,0:00:08.53,CFStandard,,0,0,400,,Vu qu’on a
+Dialogue: 0,0:00:08.53,0:00:08.56,CFStandard,,0,0,400,,Vu {\c&H76E600&\fscx112\fscy112}qu’on{\c&HFFFFFF&\fscx100\fscy100} a
+Dialogue: 0,0:00:08.56,0:00:08.70,CFStandard,,0,0,400,,Vu qu’on a
+Dialogue: 0,0:00:08.70,0:00:08.86,CFStandard,,0,0,400,,que 24 heures
+Dialogue: 0,0:00:08.86,0:00:09.16,CFStandard,,0,0,400,,que 24 heures
+Dialogue: 0,0:00:09.16,0:00:09.33,CFStandard,,0,0,400,,que 24 {\c&H76E600&\fscx112\fscy112}heures{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:09.40,0:00:09.53,CFStandard,,0,0,400,,Et que pour
+Dialogue: 0,0:00:09.53,0:00:09.63,CFStandard,,0,0,400,,Et que pour
+Dialogue: 0,0:00:09.63,0:00:09.73,CFStandard,,0,0,400,,Et que pour
+Dialogue: 0,0:00:09.73,0:00:09.90,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}atteindre{\c&HFFFFFF&\fscx100\fscy100} 100 euros
+Dialogue: 0,0:00:09.90,0:00:10.20,CFStandard,,0,0,400,,atteindre {\c&H76E600&\fscx112\fscy112}100{\c&HFFFFFF&\fscx100\fscy100} euros
+Dialogue: 0,0:00:10.20,0:00:10.30,CFStandard,,0,0,400,,atteindre 100 {\c&H76E600&\fscx112\fscy112}euros{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:10.30,0:00:10.46,CFStandard,,0,0,400,,je vais pas
+Dialogue: 0,0:00:10.46,0:00:10.50,CFStandard,,0,0,400,,je {\c&H76E600&\fscx112\fscy112}vais{\c&HFFFFFF&\fscx100\fscy100} pas
+Dialogue: 0,0:00:10.46,0:00:10.66,CFStandard,,0,0,400,,je vais pas
+Dialogue: 0,0:00:10.66,0:00:10.83,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}laver{\c&HFFFFFF&\fscx100\fscy100} des voitures
+Dialogue: 0,0:00:10.83,0:00:11.06,CFStandard,,0,0,400,,laver des voitures
+Dialogue: 0,0:00:11.06,0:00:11.23,CFStandard,,0,0,400,,laver des {\c&H76E600&\fscx112\fscy112}voitures{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:11.23,0:00:11.43,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}toute{\c&HFFFFFF&\fscx100\fscy100} la journée
+Dialogue: 0,0:00:11.43,0:00:11.80,CFStandard,,0,0,400,,toute la journée
+Dialogue: 0,0:00:11.80,0:00:11.83,CFStandard,,0,0,400,,toute la {\c&H76E600&\fscx112\fscy112}journée{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:11.93,0:00:12.13,CFStandard,,0,0,400,,En vrai je
+Dialogue: 0,0:00:12.13,0:00:12.20,CFStandard,,0,0,400,,En {\c&H76E600&\fscx112\fscy112}vrai{\c&HFFFFFF&\fscx100\fscy100} je
+Dialogue: 0,0:00:12.20,0:00:12.26,CFStandard,,0,0,400,,En vrai je
+Dialogue: 0,0:00:12.26,0:00:12.40,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}vais{\c&HFFFFFF&\fscx100\fscy100} garder un
+Dialogue: 0,0:00:12.40,0:00:12.56,CFStandard,,0,0,400,,vais {\c&H76E600&\fscx112\fscy112}garder{\c&HFFFFFF&\fscx100\fscy100} un
+Dialogue: 0,0:00:12.56,0:00:12.86,CFStandard,,0,0,400,,vais garder un
+Dialogue: 0,0:00:12.86,0:00:12.90,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}chien{\c&HFFFFFF&\fscx100\fscy100} 24 heures
+Dialogue: 0,0:00:12.86,0:00:13.33,CFStandard,,0,0,400,,chien 24 heures
+Dialogue: 0,0:00:13.33,0:00:13.46,CFStandard,,0,0,400,,chien 24 {\c&H76E600&\fscx112\fscy112}heures{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:13.56,0:00:13.60,CFStandard,,0,0,400,,Il est
+Dialogue: 0,0:00:13.60,0:00:13.66,CFStandard,,0,0,400,,Il est
+Dialogue: 0,0:00:13.66,0:00:13.93,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}tout{\c&HFFFFFF&\fscx100\fscy100} mignon
+Dialogue: 0,0:00:13.93,0:00:14.10,CFStandard,,0,0,400,,tout {\c&H76E600&\fscx112\fscy112}mignon{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:14.16,0:00:14.23,CFStandard,,0,0,400,,Et là en
+Dialogue: 0,0:00:14.23,0:00:14.33,CFStandard,,0,0,400,,Et là en
+Dialogue: 0,0:00:14.33,0:00:14.53,CFStandard,,0,0,400,,Et là en
+Dialogue: 0,0:00:14.53,0:00:14.56,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}plus{\c&HFFFFFF&\fscx100\fscy100} on arrivera
+Dialogue: 0,0:00:14.53,0:00:14.70,CFStandard,,0,0,400,,plus on arrivera
+Dialogue: 0,0:00:14.70,0:00:14.96,CFStandard,,0,0,400,,plus on {\c&H76E600&\fscx112\fscy112}arrivera{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:14.96,0:00:15.06,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}aux{\c&HFFFFFF&\fscx100\fscy100} 100 euros
+Dialogue: 0,0:00:15.06,0:00:15.26,CFStandard,,0,0,400,,aux {\c&H76E600&\fscx112\fscy112}100{\c&HFFFFFF&\fscx100\fscy100} euros
+Dialogue: 0,0:00:15.26,0:00:15.40,CFStandard,,0,0,400,,aux 100 {\c&H76E600&\fscx112\fscy112}euros{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:15.53,0:00:15.56,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}Donc{\c&HFFFFFF&\fscx100\fscy100} on pourra
+Dialogue: 0,0:00:15.56,0:00:15.73,CFStandard,,0,0,400,,Donc on pourra
+Dialogue: 0,0:00:15.73,0:00:15.83,CFStandard,,0,0,400,,Donc on {\c&H76E600&\fscx112\fscy112}pourra{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:15.83,0:00:16.20,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}enfin{\c&HFFFFFF&\fscx100\fscy100} se lancer
+Dialogue: 0,0:00:16.20,0:00:16.56,CFStandard,,0,0,400,,enfin se lancer
+Dialogue: 0,0:00:16.56,0:00:16.60,CFStandard,,0,0,400,,enfin se {\c&H76E600&\fscx112\fscy112}lancer{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:16.56,0:00:16.93,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}Voilà{\c&HFFFFFF&\fscx100\fscy100} la terreur
+Dialogue: 0,0:00:16.93,0:00:17.13,CFStandard,,0,0,400,,Voilà la terreur
+Dialogue: 0,0:00:17.13,0:00:17.43,CFStandard,,0,0,400,,Voilà la {\c&H76E600&\fscx112\fscy112}terreur{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:17.53,0:00:17.66,CFStandard,,0,0,400,,On va garder
+Dialogue: 0,0:00:17.66,0:00:17.73,CFStandard,,0,0,400,,On va garder
+Dialogue: 0,0:00:17.73,0:00:17.90,CFStandard,,0,0,400,,On va {\c&H76E600&\fscx112\fscy112}garder{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:17.90,0:00:18.06,CFStandard,,0,0,400,,ce jeune chien
+Dialogue: 0,0:00:18.06,0:00:18.33,CFStandard,,0,0,400,,ce {\c&H76E600&\fscx112\fscy112}jeune{\c&HFFFFFF&\fscx100\fscy100} chien
+Dialogue: 0,0:00:18.33,0:00:18.46,CFStandard,,0,0,400,,ce jeune {\c&H76E600&\fscx112\fscy112}chien{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:18.66,0:00:18.70,CFStandard,,0,0,400,,On a désormais
+Dialogue: 0,0:00:18.66,0:00:18.76,CFStandard,,0,0,400,,On a désormais
+Dialogue: 0,0:00:18.76,0:00:19.00,CFStandard,,0,0,400,,On a {\c&H76E600&\fscx112\fscy112}désormais{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:19.00,0:00:19.23,CFStandard,,0,0,400,,les 100 euros
+Dialogue: 0,0:00:19.23,0:00:19.40,CFStandard,,0,0,400,,les {\c&H76E600&\fscx112\fscy112}100{\c&HFFFFFF&\fscx100\fscy100} euros
+Dialogue: 0,0:00:19.40,0:00:19.56,CFStandard,,0,0,400,,les 100 {\c&H76E600&\fscx112\fscy112}euros{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:19.83,0:00:19.86,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}J’espère{\c&HFFFFFF&\fscx100\fscy100} juste qu’il
+Dialogue: 0,0:00:19.83,0:00:20.13,CFStandard,,0,0,400,,J’espère {\c&H76E600&\fscx112\fscy112}juste{\c&HFFFFFF&\fscx100\fscy100} qu’il
+Dialogue: 0,0:00:20.13,0:00:20.16,CFStandard,,0,0,400,,J’espère juste {\c&H76E600&\fscx112\fscy112}qu’il{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:20.16,0:00:20.26,CFStandard,,0,0,400,,va pas faire
+Dialogue: 0,0:00:20.26,0:00:20.43,CFStandard,,0,0,400,,va pas faire
+Dialogue: 0,0:00:20.43,0:00:20.53,CFStandard,,0,0,400,,va pas {\c&H76E600&\fscx112\fscy112}faire{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:20.53,0:00:20.73,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}trop{\c&HFFFFFF&\fscx100\fscy100} caca
+Dialogue: 0,0:00:20.73,0:00:21.00,CFStandard,,0,0,400,,trop {\c&H76E600&\fscx112\fscy112}caca{\c&HFFFFFF&\fscx100\fscy100}

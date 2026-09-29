@@ -1,0 +1,32 @@
+{
+ "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+ "tag": "J_j4_bad_midsentence",
+ "latency_s": 12.1,
+ "usage": {
+  "prompt_tokens": 2918,
+  "completion_tokens": 1321,
+  "total_tokens": 4239,
+  "cost": 0,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0,
+   "upstream_inference_prompt_cost": 0,
+   "upstream_inference_completions_cost": 0
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1060,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"publiable\": false,\n  \"score_global\": 0,\n  \"hook_2s\": 5,\n  \"phrase_coupee_au_debut\": false,\n  \"phrase_coupee_a_la_fin\": true,\n  \"premier_mot_entendu\": \"Je\",\n  \"dernier_mot_entendu\": \"C'est\",\n  \"raccords\": [\n    {\n      \"at_s\": 0,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Le locuteur commence immédiatement à parler, le contexte est clair et compréhensible.\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"Phrase finale tronquée.\"\n}",
+ "reasoning": "We need to evaluate the clip. The clip is a vertical video of a man speaking, likely a short social media clip. He says something about \"Je viens juste d'acheter ça, c'est prouvé, produit 3000, l'année c'est les fèves et surtout et c'est fait pour du profit. Ça va leur être rétracté parce que le budget il est... il va vraiment se véser... je vais utiliser la transformation et c'est 1 euro en 2500. Je vais être tout perdu. Donc encore, je vais perdre 1 euro. Donc c'est pas très grave, je vais faire 1000000 de ces trucs. C'est...\". The transcript seems garbled, maybe auto-transcribed. The clip likely ends abruptly, maybe cut off. The question: \"Tu es le juge final d'une chaine de montage automatique. On te donne UN clip vertical candidat (il peut contenir plusieurs plans colles bout a bout).",
+ "provider": "Nvidia"
+}

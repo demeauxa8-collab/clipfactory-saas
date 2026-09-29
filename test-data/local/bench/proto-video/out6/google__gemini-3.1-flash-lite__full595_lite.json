@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.1-flash-lite",
+ "tag": "full595_lite",
+ "latency_s": 21.5,
+ "usage": {
+  "prompt_tokens": 54318,
+  "completion_tokens": 861,
+  "total_tokens": 55179,
+  "cost": 0.014871,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 54145
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.014871,
+   "upstream_inference_prompt_cost": 0.0135795,
+   "upstream_inference_completions_cost": 0.0012915
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"segments_clipables\": [\n    {\n      \"start_s\": 0,\n      \"end_s\": 5,\n      \"titre\": \"Le défi 1€\",\n      \"hook_score\": 10,\n      \"energie\": 9,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Le hook est très fort, il pose un défi concret et intrigant dès la première seconde.\"\n    },\n    {\n      \"start_s\": 34,\n      \"end_s\": 47,\n      \"titre\": \"Pourquoi Google Ads ?\",\n      \"hook_score\": 8,\n      \"energie\": 7,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Explique la stratégie derrière le choix de la plateforme, très informatif pour l'audience.\"\n    },\n    {\n      \"start_s\": 55,\n      \"end_s\": 62,\n      \"titre\": \"La méthode pour 100€\",\n      \"hook_score\": 7,\n      \"energie\": 8,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Le ton humoristique et la transparence sur la méthode rendent le contenu engageant.\"\n    },\n    {\n      \"start_s\": 130,\n      \"end_s\": 138,\n      \"titre\": \"Le travail acharné\",\n      \"hook_score\": 6,\n      \"energie\": 8,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Montre la réalité du travail derrière le business, renforce la crédibilité.\"\n    },\n    {\n      \"start_s\": 203,\n      \"end_s\": 213,\n      \"titre\": \"Trouver des idées de produits\",\n      \"hook_score\": 7,\n      \"energie\": 7,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Donne une astuce concrète et gratuite, très utile pour les débutants.\"\n    },\n    {\n      \"start_s\": 253,\n      \"end_s\": 262,\n      \"titre\": \"Résultats en 24h\",\n      \"hook_score\": 9,\n      \"energie\": 9,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Preuve sociale forte avec les chiffres, très motivant pour l'audience.\"\n    },\n    {\n      \"start_s\": 795,\n      \"end_s\": 804,\n      \"titre\": \"La première vente\",\n      \"hook_score\": 9,\n      \"energie\": 9,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Le dénouement du défi, très satisfaisant à regarder.\"\n    },\n    {\n      \"start_s\": 814,\n      \"end_s\": 826,\n      \"titre\": \"Analyse du taux de conversion\",\n      \"hook_score\": 7,\n      \"energie\": 7,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Analyse technique simple et efficace, apporte de la valeur ajoutée.\"\n    }\n  ],\n  \"moments_morts\": [\n    [117, 125],\n    [147, 152],\n    [524, 547],\n    [708, 717]\n  ],\n  \"meilleur_hook_absolu\": {\n    \"start_s\": 0,\n    \"end_s\": 5,\n    \"pourquoi\": \"C'est le moment le plus percutant : il combine un enjeu financier (1€), un objectif ambitieux (boutique rentable) et une contrainte de temps (24h).\"\n  }\n}\n```",
+ "provider": "Google AI Studio"
+}

@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.1-flash-lite",
+ "tag": "full595_youtube_lite",
+ "latency_s": 48.4,
+ "usage": {
+  "prompt_tokens": 54323,
+  "completion_tokens": 998,
+  "total_tokens": 55321,
+  "cost": 0.01507775,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 54150
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.01507775,
+   "upstream_inference_prompt_cost": 0.01358075,
+   "upstream_inference_completions_cost": 0.001497
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"segments_clipables\": [\n    {\n      \"start_s\": 0,\n      \"end_s\": 5,\n      \"titre\": \"Le défi 1€\",\n      \"hook_score\": 10,\n      \"energie\": 9,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Le hook est très fort, il pose un défi concret et intrigant dès la première seconde.\"\n    },\n    {\n      \"start_s\": 33,\n      \"end_s\": 48,\n      \"titre\": \"Pourquoi Google Ads ?\",\n      \"hook_score\": 7,\n      \"energie\": 8,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Explique clairement la stratégie choisie, ce qui apporte de la valeur éducative.\"\n    },\n    {\n      \"start_s\": 54,\n      \"end_s\": 64,\n      \"titre\": \"La technique pour 100€\",\n      \"hook_score\": 8,\n      \"energie\": 8,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Le côté 'astuce' pour contourner un problème est très engageant.\"\n    },\n    {\n      \"start_s\": 130,\n      \"end_s\": 138,\n      \"titre\": \"Le résultat du job\",\n      \"hook_score\": 6,\n      \"energie\": 7,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Montre la progression concrète du défi, ce qui maintient l'intérêt.\"\n    },\n    {\n      \"start_s\": 147,\n      \"end_s\": 152,\n      \"titre\": \"Le chien à 100€\",\n      \"hook_score\": 7,\n      \"energie\": 7,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Moment visuel et humoristique qui humanise le vlog.\"\n    },\n    {\n      \"start_s\": 254,\n      \"end_s\": 265,\n      \"titre\": \"Preuve de résultat\",\n      \"hook_score\": 9,\n      \"energie\": 9,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"La preuve sociale et financière est le meilleur argument pour ce type de contenu.\"\n    },\n    {\n      \"start_s\": 755,\n      \"end_s\": 760,\n      \"titre\": \"La première vente\",\n      \"hook_score\": 9,\n      \"energie\": 9,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Le dénouement du défi, très satisfaisant pour l'audience.\"\n    },\n    {\n      \"start_s\": 803,\n      \"end_s\": 813,\n      \"titre\": \"Analyse du succès\",\n      \"hook_score\": 7,\n      \"energie\": 8,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Analyse rapide et efficace du taux de conversion.\"\n    }\n  ],\n  \"moments_morts\": [\n    [126, 130],\n    [153, 158],\n    [203, 212],\n    [234, 246],\n    [329, 334],\n    [352, 359],\n    [400, 404],\n    [434, 437],\n    [454, 459],\n    [516, 524],\n    [555, 600],\n    [623, 628],\n    [656, 658],\n    [708, 711],\n    [717, 727],\n    [854, 859]\n  ],\n  \"meilleur_hook_absolu\": {\n    \"start_s\": 0,\n    \"end_s\": 5,\n    \"pourquoi\": \"C'est le hook le plus direct. Il combine un enjeu financier (1€), un objectif ambitieux (boutique rentable) et une contrainte de temps (24h), ce qui est le format parfait pour TikTok.\"\n  }\n}\n```",
+ "provider": "Google AI Studio"
+}

@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.6-flash",
+ "tag": "J36_j1_clean_intro",
+ "latency_s": 7.9,
+ "usage": {
+  "prompt_tokens": 2945,
+  "completion_tokens": 865,
+  "total_tokens": 3810,
+  "cost": 0.010905,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 750,
+   "video_tokens": 1980
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.010905,
+   "upstream_inference_prompt_cost": 0.0044175,
+   "upstream_inference_completions_cost": 0.0064875
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 635,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": true,\n  \"score_global\": 9,\n  \"hook_2s\": 9,\n  \"phrase_coupee_au_debut\": false,\n  \"phrase_coupee_a_la_fin\": false,\n  \"premier_mot_entendu\": \"J'ai\",\n  \"dernier_mot_entendu\": \"grave\",\n  \"raccords\": [\n    {\n      \"at_s\": 5,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Jump cut fluide présentant le créateur et son chiffre d'affaires\"\n    },\n    {\n      \"at_s\": 17,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Incrustation d'un écran pour illustrer la création de site web\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"\"\n}\n```",
+ "provider": "Google"
+}

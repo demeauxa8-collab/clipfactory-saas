@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.1-flash-lite",
+ "tag": "youtube_url",
+ "latency_s": 53.5,
+ "usage": {
+  "prompt_tokens": 57793,
+  "completion_tokens": 104,
+  "total_tokens": 57897,
+  "cost": 0.01460425,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 57775
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.01460425,
+   "upstream_inference_prompt_cost": 0.01444825,
+   "upstream_inference_completions_cost": 0.000156
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "Cette vidéo montre un lapin imposant qui, après s'être réveillé, se prépare à se défendre contre trois petits animaux malicieux qui tentent de lui jouer des tours. Le lapin finit par les piéger grâce à son ingéniosité, les forçant à fuir. La vidéo se termine sur une note humoristique avec un écureuil volant qui se retrouve suspendu dans les airs.\n\nLa durée de la vidéo est de 10 minutes et 35 secondes.",
+ "provider": "Google AI Studio"
+}

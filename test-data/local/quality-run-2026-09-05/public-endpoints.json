@@ -1,0 +1,27 @@
+[
+  {
+    "host": "api.clipfactory.app",
+    "path": "/health",
+    "error": "[Errno 8] nodename nor servname provided, or not known"
+  },
+  {
+    "host": "clipfactory-saas.vercel.app",
+    "path": "/",
+    "addresses": [
+      "216.198.79.131",
+      "64.29.17.131"
+    ],
+    "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+  },
+  {
+    "host": "clipfactory.app",
+    "path": "/",
+    "addresses": [
+      "188.114.96.2",
+      "188.114.97.2",
+      "2a06:98c1:3120::2",
+      "2a06:98c1:3121::2"
+    ],
+    "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+  }
+]

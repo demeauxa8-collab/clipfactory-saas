@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.1-flash-lite",
+ "tag": "long300",
+ "latency_s": 13.9,
+ "usage": {
+  "prompt_tokens": 27432,
+  "completion_tokens": 777,
+  "total_tokens": 28209,
+  "cost": 0.0080235,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 27300
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0080235,
+   "upstream_inference_prompt_cost": 0.006858,
+   "upstream_inference_completions_cost": 0.0011655
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"segments_clipables\": [\n    {\n      \"start_s\": 0,\n      \"end_s\": 5,\n      \"titre\": \"Le défi 1€\",\n      \"hook_score\": 10,\n      \"pourquoi\": \"Le concept est clair, rapide et intrigant : transformer 1€ en business rentable en 24h.\",\n      \"energie\": 9\n    },\n    {\n      \"start_s\": 33,\n      \"end_s\": 48,\n      \"titre\": \"Pourquoi Google Ads ?\",\n      \"hook_score\": 7,\n      \"pourquoi\": \"Argumentation logique et éducative sur le choix de la plateforme.\",\n      \"energie\": 7\n    },\n    {\n      \"start_s\": 54,\n      \"end_s\": 106,\n      \"titre\": \"La méthode pour trouver 100€\",\n      \"hook_score\": 8,\n      \"pourquoi\": \"Storytelling authentique et drôle sur la manière de générer le capital de départ.\",\n      \"energie\": 8\n    },\n    {\n      \"start_s\": 116,\n      \"end_s\": 125,\n      \"titre\": \"Le résultat du défi\",\n      \"hook_score\": 9,\n      \"pourquoi\": \"Preuve sociale immédiate et décalée avec le SMS du pote.\",\n      \"energie\": 9\n    },\n    {\n      \"start_s\": 130,\n      \"end_s\": 144,\n      \"titre\": \"Le job de pet-sitting\",\n      \"hook_score\": 7,\n      \"pourquoi\": \"Transition concrète vers l'action pour atteindre les 100€.\",\n      \"energie\": 7\n    },\n    {\n      \"start_s\": 198,\n      \"end_s\": 230,\n      \"titre\": \"La recherche de produit\",\n      \"hook_score\": 6,\n      \"pourquoi\": \"Partage d'une technique concrète et gratuite (mots aléatoires).\",\n      \"energie\": 6\n    },\n    {\n      \"start_s\": 252,\n      \"end_s\": 265,\n      \"titre\": \"Preuve de résultats\",\n      \"hook_score\": 8,\n      \"pourquoi\": \"Montre les chiffres réels, ce qui crédibilise le discours.\",\n      \"energie\": 8\n    },\n    {\n      \"start_s\": 328,\n      \"end_s\": 345,\n      \"titre\": \"Vérification de la concurrence\",\n      \"hook_score\": 7,\n      \"pourquoi\": \"Conseil stratégique actionnable pour les débutants.\",\n      \"energie\": 7\n    }\n  ],\n  \"moments_morts\": [\n    [126, 129],\n    [147, 148],\n    [151, 152],\n    [180, 197]\n  ],\n  \"meilleur_hook_absolu\": {\n    \"start_s\": 0,\n    \"end_s\": 5,\n    \"pourquoi\": \"C'est le moment le plus fort : une promesse audacieuse, un visuel clair (la pièce de 1€) et un rythme très dynamique qui capte l'attention immédiatement.\"\n  }\n}\n```",
+ "provider": "Google AI Studio"
+}

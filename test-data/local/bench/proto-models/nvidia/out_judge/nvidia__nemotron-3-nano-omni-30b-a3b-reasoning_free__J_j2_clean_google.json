@@ -1,0 +1,32 @@
+{
+ "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+ "tag": "J_j2_clean_google",
+ "latency_s": 13.2,
+ "usage": {
+  "prompt_tokens": 3088,
+  "completion_tokens": 1004,
+  "total_tokens": 4092,
+  "cost": 0,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0,
+   "upstream_inference_prompt_cost": 0,
+   "upstream_inference_completions_cost": 0
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 788,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"publiable\": false,\n  \"score_global\": 2,\n  \"hook_2s\": 6,\n  \"phrase_coupee_au_debut\": true,\n  \"phrase_coupee_a_la_fin\": false,\n  \"premier_mot_entendu\": \"faire\",\n  \"dernier_mot_entendu\": \"euros\",\n  \"raccords\": [\n    {\n      \"at_s\": 0,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"début de phrase tronquée, le sujet n'est pas clairement introduit\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"la première phrase est tronquée, rendant le clip non conforme aux exigences de publication\"\n}",
+ "reasoning": "We need to evaluate the clip. The clip is a single shot of a man speaking, with a Google Ads logo overlay. He speaks French about making money with Google Ads, higher margins, more profit, more sales, more interest than TikTok, etc. He mentions needing at least 600 euros for a boutique, first step is to transform 1 euro into 100 euros. The clip seems to have a continuous speech, no obvious cut at start or end? Let's see: The transcript starts with \"faire du dropshipping sur Google.\" That's likely the start of his sentence, maybe preceded by something else. The phrase \"faire du dropshipping sur Google\" seems incomplete; maybe the first phrase is cut. At the end, he says \"en 100 euros.\" That seems like a phrase ending. Is the last phrase truncated? He says \"en 100 euros.\" That's a complete p",
+ "provider": "Nvidia"
+}

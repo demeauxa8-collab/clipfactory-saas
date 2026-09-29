@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.5-plus-02-15",
+ "tag": "judge_j4_bad_midsentence",
+ "kind": "video",
+ "latency_s": 7.5,
+ "usage": {
+  "prompt_tokens": 3088,
+  "completion_tokens": 271,
+  "total_tokens": 3359,
+  "cost": 0.00122564,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00122564,
+   "upstream_inference_prompt_cost": 0.00080288,
+   "upstream_inference_completions_cost": 0.00042276
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n\"publiable\": false,\n\"score_global\": 4,\n\"hook_2s\": 5,\n\"phrase_coupee_au_debut\": true,\n\"phrase_coupee_a_la_fin\": true,\n\"premier_mot_entendu\": \"coin\",\n\"dernier_mot_entendu\": \"it\",\n\"raccords\": [\n{\"at_s\": 1.8, \"ca_se_comprend\": false, \"pourquoi\": \"Coupure brutale vers un écran pixelisé (glitch) qui interrompt la phrase en cours.\"},\n{\"at_s\": 3.0, \"ca_se_comprend\": false, \"pourquoi\": \"Retour au plan principal avec une coupure audio/vidéo sèche, reprenant le discours de manière hachée.\"}\n],\n\"moment_mort\": false,\n\"raison_du_refus\": \"Le clip ne respecte pas les critères de qualité : la première phrase est tronquée dès le début ('...coin') et la dernière phrase est coupée net à la fin ('...it'). De plus, l'insertion d'un glitch visuel au milieu coupe artificiellement le flux de parole, rendant le montage incohérent.\"\n}\n```",
+ "provider": "Alibaba"
+}

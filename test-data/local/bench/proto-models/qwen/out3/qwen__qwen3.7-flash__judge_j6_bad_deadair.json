@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.7-flash",
+ "tag": "judge_j6_bad_deadair",
+ "kind": "video",
+ "latency_s": 6.1,
+ "usage": {
+  "prompt_tokens": 3088,
+  "completion_tokens": 234,
+  "total_tokens": 3322,
+  "cost": 0.00012306,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00012306,
+   "upstream_inference_prompt_cost": 9.264e-05,
+   "upstream_inference_completions_cost": 3.042e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": false,\n  \"score_global\": 2,\n  \"hook_2s\": 3,\n  \"phrase_coupee_au_debut\": true,\n  \"phrase_coupee_a_la_fin\": true,\n  \"premier_mot_entendu\": \"C'est\",\n  \"dernier_mot_entendu\": \"cœur\",\n  \"raccords\": [\n    {\n      \"at_s\": 1.5,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Coupe nette entre la présentation de l'écran et le plan parlant, cohérent avec le changement de focus.\"\n    }\n  ],\n  \"moment_mort\": true,\n  \"raison_du_refus\": \"Le clip est tronqué au début (phrase inachevée 'C'est...') et s'arrête brutalement en plein milieu d'une phrase à la fin ('...mon cœur'). Le contenu est trop court pour être autonome et manque d'idée clé transmise.\"\n}\n```",
+ "provider": "Alibaba"
+}

@@ -1,0 +1,30 @@
+{
+ "model": "google/gemini-3.1-flash-lite",
+ "tag": "judgeH_clean",
+ "latency_s": 12.0,
+ "usage": {
+  "prompt_tokens": 2983,
+  "completion_tokens": 273,
+  "total_tokens": 3256,
+  "cost": 0.00115525,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 2729
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00115525,
+   "upstream_inference_prompt_cost": 0.00074575,
+   "upstream_inference_completions_cost": 0.0004095
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": false,\n  \"score_global\": 4,\n  \"hook_2s\": 8,\n  \"coherence_du_montage\": {\n    \"score\": 3,\n    \"raccords_percus\": [\n      {\n        \"at_s\": 0.05,\n        \"type\": \"cut sec\",\n        \"ca_se_comprend\": true,\n        \"pourquoi\": \"Le début est brutal, la première syllabe est coupée.\"\n      },\n      {\n        \"at_s\": 0.29,\n        \"type\": \"cut sec\",\n        \"ca_se_comprend\": true,\n        \"pourquoi\": \"Transition abrupte entre le plan de présentation et le plan de face.\"\n      }\n    ]\n  },\n  \"phrase_coupee_au_debut\": true,\n  \"phrase_coupee_a_la_fin\": false,\n  \"premier_mot_entendu\": \"seulement\",\n  \"dernier_mot_entendu\": \"grave\",\n  \"correction_start_s\": 0.05,\n  \"correction_end_s\": 0.0,\n  \"raison_du_refus\": \"La première phrase est tronquée : le mot 'J'ai' est coupé au tout début, ce qui rend l'entrée en matière peu professionnelle.\"\n}\n```"
+}

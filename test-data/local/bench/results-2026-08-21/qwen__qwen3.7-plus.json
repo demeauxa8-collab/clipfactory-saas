@@ -1,0 +1,16 @@
+{
+  "model": "qwen/qwen3.7-plus",
+  "ok": false,
+  "error": "ProviderError: openrouter 400: {\"error\":{\"message\":\"Provider returned error\",\"code\":400,\"metadata\":{\"raw\":\"data: {\\\"error\\\":{\\\"code\\\":\\\"invalid_parameter_error\\\",\\\"param\\\":null,\\\"message\\\":\\\"The thinking_budget parameter must be a positive integer and not greater than 262144\\\",\\\"type\\\":\\\"invalid_request_error\\\"},\\\"id\\\":\\\"chatcmpl",
+  "latency_seconds": 2.536,
+  "tokens": 0,
+  "arcs": [],
+  "raw_video_read": {
+    "n_events": 79,
+    "n_events_in_fixture": 79,
+    "video_map_summary_chars": 600,
+    "n_transcript_words": 2864,
+    "n_transcript_words_in_fixture": 2864,
+    "transcript_lines_chars": 14977
+  }
+}

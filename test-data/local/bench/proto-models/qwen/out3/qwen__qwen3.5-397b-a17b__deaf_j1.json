@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.5-397b-a17b",
+ "tag": "deaf_j1",
+ "kind": "video",
+ "latency_s": 8.0,
+ "usage": {
+  "prompt_tokens": 5791,
+  "completion_tokens": 151,
+  "total_tokens": 5942,
+  "cost": 0.00305895,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00305895,
+   "upstream_inference_prompt_cost": 0.00260595,
+   "upstream_inference_completions_cost": 0.000453
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"entends_le_son\": true,\n  \"transcription_orale\": \"J'ai seulement une pièce de 2 euros. Et en 24 heures, je vais la transformer en 4,5 millions d'euros. Comment ? C'est simple. J'ai un compte en banque avec 2 euros dessus. Et je vais utiliser ces 2 euros pour acheter un produit que je vais revendre 572 fois plus cher.\",\n  \"texte_incruste_a_l_ecran\": [\n    \"J'AI SEULEMENT\",\n    \"4,5 MILLIONS €\",\n    \"2\",\n    \"572\"\n  ]\n}\n```",
+ "provider": "Chutes"
+}

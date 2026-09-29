@@ -1,0 +1,31 @@
+{
+ "model": "qwen/qwen3-vl-8b-instruct",
+ "set": "t2_caption",
+ "latency_s": 3.6,
+ "usage": {
+  "prompt_tokens": 1204,
+  "completion_tokens": 120,
+  "total_tokens": 1324,
+  "cost": 0.000391,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.000391,
+   "upstream_inference_prompt_cost": 0.000301,
+   "upstream_inference_completions_cost": 9e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"decor\": \"other\",\n  \"person_visible\": true,\n  \"energy\": 75,\n  \"action\": \"talking head\",\n  \"proof_objects\": [\n    \"-16€ de domaine\",\n    \"-1€ de Shopify\",\n    \"-14€ de produits\",\n    \"+69€ de ventes\",\n    \"38€ de bénéfices\"\n  ],\n  \"problems\": [],\n  \"visual_score\": 95,\n  \"face_center_x\": 0.48,\n  \"burned_captions\": true\n}",
+ "provider": "Parasail"
+}

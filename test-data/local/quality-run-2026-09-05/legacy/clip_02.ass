@@ -1,0 +1,123 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Inter,110,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,6,2,2,80,80,620,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.12,0:00:00.26,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}BUT{\c&HFFFFFF&\fscx100\fscy100} C’EST QUAND
+Dialogue: 0,0:00:00.26,0:00:00.68,Default,,0,0,0,,BUT C’EST QUAND
+Dialogue: 0,0:00:00.68,0:00:00.80,Default,,0,0,0,,BUT C’EST QUAND
+Dialogue: 0,0:00:00.80,0:00:00.86,Default,,0,0,0,,MÊME DE MONTRER
+Dialogue: 0,0:00:00.86,0:00:01.12,Default,,0,0,0,,MÊME DE MONTRER
+Dialogue: 0,0:00:01.12,0:00:01.26,Default,,0,0,0,,MÊME DE {\c&H76E600&\fscx112\fscy112}MONTRER{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:01.26,0:00:01.40,Default,,0,0,0,,QUE C’EST\NPOSSIBLE
+Dialogue: 0,0:00:01.40,0:00:01.56,Default,,0,0,0,,QUE C’EST\NPOSSIBLE
+Dialogue: 0,0:00:01.56,0:00:01.86,Default,,0,0,0,,QUE C’EST\N{\c&H76E600&\fscx112\fscy112}POSSIBLE{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:01.86,0:00:02.12,Default,,0,0,0,,DE PARTIR AVEC
+Dialogue: 0,0:00:02.12,0:00:02.26,Default,,0,0,0,,DE {\c&H76E600&\fscx112\fscy112}PARTIR{\c&HFFFFFF&\fscx100\fscy100} AVEC
+Dialogue: 0,0:00:02.26,0:00:02.48,Default,,0,0,0,,DE PARTIR AVEC
+Dialogue: 0,0:00:02.48,0:00:02.86,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}RIEN{\c&HFFFFFF&\fscx100\fscy100} DONC ON
+Dialogue: 0,0:00:02.86,0:00:02.94,Default,,0,0,0,,RIEN DONC ON
+Dialogue: 0,0:00:02.94,0:00:02.98,Default,,0,0,0,,RIEN DONC ON
+Dialogue: 0,0:00:02.98,0:00:03.04,Default,,0,0,0,,VA PAS TRICHER
+Dialogue: 0,0:00:03.04,0:00:03.34,Default,,0,0,0,,VA PAS TRICHER
+Dialogue: 0,0:00:03.34,0:00:03.46,Default,,0,0,0,,VA PAS {\c&H76E600&\fscx112\fscy112}TRICHER{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:03.46,0:00:03.76,Default,,0,0,0,,COMME ÇA DONC
+Dialogue: 0,0:00:03.76,0:00:03.94,Default,,0,0,0,,COMME ÇA DONC
+Dialogue: 0,0:00:03.94,0:00:03.98,Default,,0,0,0,,COMME ÇA DONC
+Dialogue: 0,0:00:03.98,0:00:04.08,Default,,0,0,0,,CE QU’ON VA
+Dialogue: 0,0:00:04.08,0:00:04.10,Default,,0,0,0,,CE QU’ON VA
+Dialogue: 0,0:00:04.10,0:00:04.22,Default,,0,0,0,,CE QU’ON VA
+Dialogue: 0,0:00:04.22,0:00:04.36,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}FAIRE{\c&HFFFFFF&\fscx100\fscy100} TOUT ON
+Dialogue: 0,0:00:04.36,0:00:04.70,Default,,0,0,0,,FAIRE TOUT ON
+Dialogue: 0,0:00:04.70,0:00:04.86,Default,,0,0,0,,FAIRE TOUT ON
+Dialogue: 0,0:00:04.86,0:00:05.08,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}ALLER{\c&HFFFFFF&\fscx100\fscy100} BOSSER ON
+Dialogue: 0,0:00:05.08,0:00:05.36,Default,,0,0,0,,ALLER {\c&H76E600&\fscx112\fscy112}BOSSER{\c&HFFFFFF&\fscx100\fscy100} ON
+Dialogue: 0,0:00:05.36,0:00:05.44,Default,,0,0,0,,ALLER BOSSER ON
+Dialogue: 0,0:00:05.44,0:00:05.64,Default,,0,0,0,,PAS CHOISIR LA
+Dialogue: 0,0:00:05.64,0:00:05.76,Default,,0,0,0,,PAS {\c&H76E600&\fscx112\fscy112}CHOISIR{\c&HFFFFFF&\fscx100\fscy100} LA
+Dialogue: 0,0:00:05.76,0:00:06.00,Default,,0,0,0,,PAS CHOISIR LA
+Dialogue: 0,0:00:06.00,0:00:06.32,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}FACILITÉ{\c&HFFFFFF&\fscx100\fscy100} QUAND\NET
+Dialogue: 0,0:00:06.32,0:00:06.64,Default,,0,0,0,,FACILITÉ QUAND\NET
+Dialogue: 0,0:00:06.64,0:00:06.74,Default,,0,0,0,,FACILITÉ QUAND\NET
+Dialogue: 0,0:00:06.74,0:00:06.90,Default,,0,0,0,,EN VRAI
+Dialogue: 0,0:00:06.90,0:00:06.96,Default,,0,0,0,,EN {\c&H76E600&\fscx112\fscy112}VRAI{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:06.96,0:00:07.08,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}TRANSPIRANT{\c&HFFFFFF&\fscx100\fscy100} ON\NA
+Dialogue: 0,0:00:07.08,0:00:07.10,Default,,0,0,0,,TRANSPIRANT ON\NA
+Dialogue: 0,0:00:07.10,0:00:07.20,Default,,0,0,0,,TRANSPIRANT ON\NA
+Dialogue: 0,0:00:07.20,0:00:07.50,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}MAINTENANT{\c&HFFFFFF&\fscx100\fscy100} 31\NEUROS
+Dialogue: 0,0:00:07.50,0:00:08.16,Default,,0,0,0,,MAINTENANT 31\NEUROS
+Dialogue: 0,0:00:08.16,0:00:08.42,Default,,0,0,0,,MAINTENANT 31\N{\c&H76E600&\fscx112\fscy112}EUROS{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:08.54,0:00:08.62,Default,,0,0,0,,VU QU’ON A
+Dialogue: 0,0:00:08.62,0:00:08.68,Default,,0,0,0,,VU QU’ON A
+Dialogue: 0,0:00:08.68,0:00:08.80,Default,,0,0,0,,VU QU’ON A
+Dialogue: 0,0:00:08.80,0:00:08.96,Default,,0,0,0,,QUE 24 HEURES
+Dialogue: 0,0:00:08.96,0:00:09.28,Default,,0,0,0,,QUE 24 HEURES
+Dialogue: 0,0:00:09.28,0:00:09.42,Default,,0,0,0,,QUE 24 {\c&H76E600&\fscx112\fscy112}HEURES{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:09.50,0:00:09.62,Default,,0,0,0,,ET QUE POUR
+Dialogue: 0,0:00:09.62,0:00:09.72,Default,,0,0,0,,ET QUE POUR
+Dialogue: 0,0:00:09.72,0:00:09.84,Default,,0,0,0,,ET QUE POUR
+Dialogue: 0,0:00:09.84,0:00:10.00,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}ATTEINDRE{\c&HFFFFFF&\fscx100\fscy100} 100\NEUROS
+Dialogue: 0,0:00:10.00,0:00:10.30,Default,,0,0,0,,ATTEINDRE {\c&H76E600&\fscx112\fscy112}100{\c&HFFFFFF&\fscx100\fscy100}\NEUROS
+Dialogue: 0,0:00:10.30,0:00:10.40,Default,,0,0,0,,ATTEINDRE 100\N{\c&H76E600&\fscx112\fscy112}EUROS{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:10.40,0:00:10.56,Default,,0,0,0,,JE VAIS PAS
+Dialogue: 0,0:00:10.56,0:00:10.58,Default,,0,0,0,,JE {\c&H76E600&\fscx112\fscy112}VAIS{\c&HFFFFFF&\fscx100\fscy100} PAS
+Dialogue: 0,0:00:10.58,0:00:10.78,Default,,0,0,0,,JE VAIS PAS
+Dialogue: 0,0:00:10.78,0:00:10.92,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}LAVER{\c&HFFFFFF&\fscx100\fscy100} DES\NVOITURES
+Dialogue: 0,0:00:10.92,0:00:11.16,Default,,0,0,0,,LAVER DES\NVOITURES
+Dialogue: 0,0:00:11.16,0:00:11.34,Default,,0,0,0,,LAVER DES\N{\c&H76E600&\fscx112\fscy112}VOITURES{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:11.34,0:00:11.54,Default,,0,0,0,,TOUTE LA EN
+Dialogue: 0,0:00:11.54,0:00:12.04,Default,,0,0,0,,TOUTE LA EN
+Dialogue: 0,0:00:12.04,0:00:12.22,Default,,0,0,0,,TOUTE LA EN
+Dialogue: 0,0:00:12.22,0:00:12.30,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}VRAI{\c&HFFFFFF&\fscx100\fscy100} JE VAIS
+Dialogue: 0,0:00:12.30,0:00:12.38,Default,,0,0,0,,VRAI JE VAIS
+Dialogue: 0,0:00:12.38,0:00:12.50,Default,,0,0,0,,VRAI JE {\c&H76E600&\fscx112\fscy112}VAIS{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:12.50,0:00:12.68,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}GARDER{\c&HFFFFFF&\fscx100\fscy100} UN 24
+Dialogue: 0,0:00:12.68,0:00:12.98,Default,,0,0,0,,GARDER UN 24
+Dialogue: 0,0:00:12.98,0:00:13.42,Default,,0,0,0,,GARDER UN 24
+Dialogue: 0,0:00:13.42,0:00:13.66,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}HEURES{\c&HFFFFFF&\fscx100\fscy100} IL EST
+Dialogue: 0,0:00:13.66,0:00:13.70,Default,,0,0,0,,HEURES IL EST
+Dialogue: 0,0:00:13.70,0:00:13.78,Default,,0,0,0,,HEURES IL EST
+Dialogue: 0,0:00:13.78,0:00:14.02,Default,,0,0,0,,TOUT MIGNON ET
+Dialogue: 0,0:00:14.02,0:00:14.26,Default,,0,0,0,,TOUT {\c&H76E600&\fscx112\fscy112}MIGNON{\c&HFFFFFF&\fscx100\fscy100} ET
+Dialogue: 0,0:00:14.26,0:00:14.34,Default,,0,0,0,,TOUT MIGNON ET
+Dialogue: 0,0:00:14.34,0:00:14.42,Default,,0,0,0,,LÀ EN ON
+Dialogue: 0,0:00:14.42,0:00:14.64,Default,,0,0,0,,LÀ EN ON
+Dialogue: 0,0:00:14.64,0:00:14.80,Default,,0,0,0,,LÀ EN ON
+Dialogue: 0,0:00:14.80,0:00:15.06,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}ARRIVERA{\c&HFFFFFF&\fscx100\fscy100} AUX\N100
+Dialogue: 0,0:00:15.06,0:00:15.18,Default,,0,0,0,,ARRIVERA AUX\N100
+Dialogue: 0,0:00:15.18,0:00:15.38,Default,,0,0,0,,ARRIVERA AUX\N{\c&H76E600&\fscx112\fscy112}100{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:15.38,0:00:15.62,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}EUROS{\c&HFFFFFF&\fscx100\fscy100} DONC ON
+Dialogue: 0,0:00:15.62,0:00:15.68,Default,,0,0,0,,EUROS DONC ON
+Dialogue: 0,0:00:15.68,0:00:15.82,Default,,0,0,0,,EUROS DONC ON
+Dialogue: 0,0:00:15.82,0:00:15.94,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}POURRA{\c&HFFFFFF&\fscx100\fscy100} ENFIN SE
+Dialogue: 0,0:00:15.94,0:00:16.30,Default,,0,0,0,,POURRA {\c&H76E600&\fscx112\fscy112}ENFIN{\c&HFFFFFF&\fscx100\fscy100} SE
+Dialogue: 0,0:00:16.30,0:00:16.68,Default,,0,0,0,,POURRA ENFIN SE
+Dialogue: 0,0:00:16.68,0:00:17.02,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}VOILÀ{\c&HFFFFFF&\fscx100\fscy100} LA\NTERREUR
+Dialogue: 0,0:00:17.02,0:00:17.24,Default,,0,0,0,,VOILÀ LA\NTERREUR
+Dialogue: 0,0:00:17.24,0:00:17.54,Default,,0,0,0,,VOILÀ LA\N{\c&H76E600&\fscx112\fscy112}TERREUR{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:17.64,0:00:17.76,Default,,0,0,0,,ON VA GARDER
+Dialogue: 0,0:00:17.76,0:00:17.82,Default,,0,0,0,,ON VA GARDER
+Dialogue: 0,0:00:17.82,0:00:18.00,Default,,0,0,0,,ON VA {\c&H76E600&\fscx112\fscy112}GARDER{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:18.00,0:00:18.16,Default,,0,0,0,,CE JEUNE CHIEN
+Dialogue: 0,0:00:18.16,0:00:18.44,Default,,0,0,0,,CE {\c&H76E600&\fscx112\fscy112}JEUNE{\c&HFFFFFF&\fscx100\fscy100} CHIEN
+Dialogue: 0,0:00:18.44,0:00:18.58,Default,,0,0,0,,CE JEUNE {\c&H76E600&\fscx112\fscy112}CHIEN{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:18.76,0:00:18.86,Default,,0,0,0,,A DÉSORMAIS LES
+Dialogue: 0,0:00:18.86,0:00:19.10,Default,,0,0,0,,A {\c&H76E600&\fscx112\fscy112}DÉSORMAIS{\c&HFFFFFF&\fscx100\fscy100} LES
+Dialogue: 0,0:00:19.10,0:00:19.32,Default,,0,0,0,,A DÉSORMAIS LES
+Dialogue: 0,0:00:19.32,0:00:19.50,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}100{\c&HFFFFFF&\fscx100\fscy100} EUROS JUSTE
+Dialogue: 0,0:00:19.50,0:00:19.94,Default,,0,0,0,,100 {\c&H76E600&\fscx112\fscy112}EUROS{\c&HFFFFFF&\fscx100\fscy100} JUSTE
+Dialogue: 0,0:00:19.94,0:00:20.22,Default,,0,0,0,,100 EUROS {\c&H76E600&\fscx112\fscy112}JUSTE{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:20.22,0:00:20.26,Default,,0,0,0,,QU’IL VA PAS
+Dialogue: 0,0:00:20.26,0:00:20.36,Default,,0,0,0,,QU’IL VA PAS
+Dialogue: 0,0:00:20.36,0:00:20.52,Default,,0,0,0,,QU’IL VA PAS
+Dialogue: 0,0:00:20.52,0:00:20.62,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}FAIRE{\c&HFFFFFF&\fscx100\fscy100} TROP CACA
+Dialogue: 0,0:00:20.62,0:00:20.84,Default,,0,0,0,,FAIRE {\c&H76E600&\fscx112\fscy112}TROP{\c&HFFFFFF&\fscx100\fscy100} CACA
+Dialogue: 0,0:00:20.84,0:00:21.10,Default,,0,0,0,,FAIRE TROP {\c&H76E600&\fscx112\fscy112}CACA{\c&HFFFFFF&\fscx100\fscy100}

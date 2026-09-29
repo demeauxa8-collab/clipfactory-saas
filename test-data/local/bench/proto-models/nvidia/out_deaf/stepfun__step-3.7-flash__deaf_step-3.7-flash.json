@@ -1,0 +1,32 @@
+{
+ "model": "stepfun/step-3.7-flash",
+ "tag": "deaf_step-3.7-flash",
+ "latency_s": 8.6,
+ "usage": {
+  "prompt_tokens": 2163,
+  "completion_tokens": 1125,
+  "total_tokens": 3288,
+  "cost": 0.00172635,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00172635,
+   "upstream_inference_prompt_cost": 0.0004326,
+   "upstream_inference_completions_cost": 0.00129375
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1098,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "AUCUN_SON",
+ "reasoning": "The user wants me to transcribe the audio from a 14-second French vlog video. I need to listen to the audio and transcribe it word for word, without inventing anything or describing the images.\n\nLooking at the images provided, I can see a man speaking in what appears to be a vlog format. However, I don't have access to the actual audio file - I only have the images. The user mentions \"Ceci est un extrait video de 14 secondes\" (This is a 14-second video excerpt), but I cannot hear any audio.\n\nSince I cannot access the audio from the images provided, I should respond with \"AUCUN_SON\" as per the instructions: \"Si tu ne percois AUCUN son / si tu n'as pas acces a l'audio, reponds exactement : AUCUN_SON\"\n\nWait, let me reconsider. The user is asking me to transcribe audio from a video, but I only",
+ "provider": "DeepInfra"
+}

@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-2.5-flash-lite",
+ "set": "t2_screen",
+ "latency_s": 1.6,
+ "usage": {
+  "prompt_tokens": 1785,
+  "completion_tokens": 127,
+  "total_tokens": 1912,
+  "cost": 0.0002293,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0002293,
+   "upstream_inference_prompt_cost": 0.0001785,
+   "upstream_inference_completions_cost": 5.08e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"decor\": \"other\",\n  \"person_visible\": true,\n  \"energy\": 60,\n  \"action\": \"pointing at screen\",\n  \"proof_objects\": [\n    \"Google Ads campaign results\",\n    \"impressions\",\n    \"clicks\",\n    \"cost\",\n    \"Shopify sales\"\n  ],\n  \"problems\": [],\n  \"visual_score\": 85,\n  \"face_center_x\": 0.15,\n  \"burned_captions\": false\n}\n```",
+ "provider": "Google"
+}

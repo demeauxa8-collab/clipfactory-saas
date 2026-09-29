@@ -1,0 +1,304 @@
+{
+  "model": "google/gemini-2.5-flash",
+  "ok": true,
+  "error": null,
+  "latency_seconds": 26.976,
+  "tokens": 25441,
+  "arcs": [
+    {
+      "title": "Comment j'ai transformé 1€ en 50€ de bénéfice en 24h",
+      "arc_type": "challenge_result",
+      "segments": [
+        {
+          "role": "setup",
+          "start": 0.0,
+          "end": 12.0,
+          "transcript_excerpt": "J’ai seulement un euro pour lancer une boutique rentable en dropshipping et le tout en 24 heures Moi c’est Gaspar j’ai fait 4 millions et demi en e commerce et l’objectif ça va être simple aujourd’hui C’est juste de prouver qu’en 2025 tu peux lancer un business avec quasiment rien du tout Aujourd’hu",
+          "why": "This segment sets up the core challenge and establishes Gaspar's credibility with his 4.5 million e-commerce success.",
+          "start_anchor": "J’ai seulement un euro pour lancer une boutique rentable en dropshipping",
+          "end_anchor": "lancer un business avec quasiment rien du tout Aujourd’hui",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        },
+        {
+          "role": "transition",
+          "start": 48.0,
+          "end": 53.0,
+          "transcript_excerpt": "Par contre le problème c’est que sur Google il faut au minimum 100 euros pour lancer une boutique Donc la première étape ça va être de transformer ces un euro en 100 euros Ce",
+          "why": "This segment introduces the immediate obstacle of needing 100 euros for Google Ads, raising the stakes for the challenge.",
+          "start_anchor": "Par contre le problème c’est que sur Google il faut au minimum 100 euros",
+          "end_anchor": "transformer ces un euro en 100 euros Ce",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        },
+        {
+          "role": "payoff",
+          "start": 536.0,
+          "end": 549.0,
+          "transcript_excerpt": "Et on peut voir qu’on a dépensé que 3 dollars On a dépensé que 3 dollars Donc là En sachant que le produit nous a coûté 14 euros à envoyer On est à environ 50 euros bénéfice Donc c’est vraiment",
+          "why": "This segment delivers the concrete results, showing the minimal ad spend and the significant profit made, proving the challenge's success.",
+          "start_anchor": "Et on peut voir qu’on a dépensé que 3 dollars On a dépensé que 3 dollars",
+          "end_anchor": "On est à environ 50 euros bénéfice Donc c’est vraiment",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The clip showcases a dramatic transformation from a tiny investment to significant profit in a short time, appealing to aspiring entrepreneurs.",
+      "estimated_retention": 90,
+      "continuity_risk": "low",
+      "suggested_hook": "1€ pour lancer un business rentable en 24h : le défi fou !",
+      "link_reason": "The second segment introduces the financial hurdle, and the third segment provides the concrete financial outcome of overcoming that hurdle.",
+      "campaign_fit_llm": 95,
+      "campaign_fit_reason": "This clip directly demonstrates the potential for high returns with low initial capital, aligning perfectly with the goal of selling a business formation.",
+      "opening_words": "J’ai seulement un euro pour lancer une boutique rentable en dropshipping",
+      "self_contained": true,
+      "payoff_line": "On est à environ 50 euros bénéfice"
+    },
+    {
+      "title": "Pourquoi Google Ads est mieux que TikTok pour le dropshipping",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 36.0,
+          "end": 48.0,
+          "transcript_excerpt": "préfère faire du dropshipping sur Google Vu que c’est des meilleures marges je vais faire plus de profit En plus de ça c’est beaucoup plus long terme que TikTok et surtout tu vend tes produits à des gens qui recherchent déjà ton produit Donc vraiment à ce niveau là moi je m’en fais pas que ça va êtr",
+          "why": "This segment explains Gaspar's strategic choice of Google Ads over TikTok, highlighting higher margins and long-term potential, which positions him as an expert.",
+          "start_anchor": "préfère faire du dropshipping sur Google Vu que c’est des meilleures marges",
+          "end_anchor": "même si on part avec juste un euro Par",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "This clip offers a contrarian view on popular dropshipping platforms, providing valuable strategic insight for aspiring entrepreneurs.",
+      "estimated_retention": 85,
+      "continuity_risk": "low",
+      "suggested_hook": "Google Ads vs TikTok : le secret des meilleures marges en dropshipping",
+      "link_reason": null,
+      "campaign_fit_llm": 90,
+      "campaign_fit_reason": "It showcases Gaspar's expertise and strategic thinking, which is crucial for attracting students to his business formation.",
+      "opening_words": "préfère faire du dropshipping sur Google Vu que c’est des meilleures marges",
+      "self_contained": true,
+      "payoff_line": "tu vend tes produits à des gens qui recherchent déjà ton produit"
+    },
+    {
+      "title": "Le vrai coût du succès en e-commerce : pas l'argent, mais les connaissances",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 561.0,
+          "end": 579.0,
+          "transcript_excerpt": "Cette vidéo Elle prouve quand même Que tu peux te lancer avec pas grand chose Par contre Ce qui coûte le plus cher C’est quand même les connaissances J’ai du mettre plus de 30 000 balles Dans des coachings Là actuellement J’ai un coaching avec un américain Pour chiffrer encore un e commerce Et c’est",
+          "why": "This segment delivers the core message about the value of knowledge and coaching, directly linking Gaspar's success to his investment in learning.",
+          "start_anchor": "Cette vidéo Elle prouve quand même Que tu peux te lancer avec pas grand chose",
+          "end_anchor": "Et c’est ça qui coûte le plus cher Et c’est pour ça que j’ai réussi aussi ce challenge",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "It challenges the common perception that money is the biggest barrier to starting a business, offering a powerful insight that resonates with aspiring entrepreneurs.",
+      "estimated_retention": 90,
+      "continuity_risk": "low",
+      "suggested_hook": "Le secret du succès en e-commerce ? Ce n'est pas l'argent !",
+      "link_reason": null,
+      "campaign_fit_llm": 98,
+      "campaign_fit_reason": "This clip directly promotes the value of coaching and knowledge, which is the core offering of his business formation, making it highly relevant to the campaign goal.",
+      "opening_words": "Cette vidéo Elle prouve quand même Que tu peux te lancer avec pas grand chose",
+      "self_contained": true,
+      "payoff_line": "Ce qui coûte le plus cher C’est quand même les connaissances"
+    },
+    {
+      "title": "De 1 euro à 100 euros : la méthode pour financer son lancement",
+      "arc_type": "decision_consequence",
+      "segments": [
+        {
+          "role": "setup",
+          "start": 60.0,
+          "end": 66.0,
+          "transcript_excerpt": "Le but c’est quand même de montrer que c’est possible de partir avec rien Donc on va pas tricher comme ça Donc ce qu’on va faire tout simplement on va aller bosser On va pas choisir la facilité quand même Et",
+          "why": "This segment establishes the principle of starting with nothing and the decision to earn the initial capital through work.",
+          "start_anchor": "Le but c’est quand même de montrer que c’est possible de partir avec rien",
+          "end_anchor": "On va pas choisir la facilité quand même Et",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        },
+        {
+          "role": "payoff",
+          "start": 97.0,
+          "end": 109.0,
+          "transcript_excerpt": "On a maintenant 31 euros Vu qu’on a que 24 heures Et que pour atteindre 100 euros je vais pas laver des voitures toute la journée En vrai je vais garder un chien 24 heures Il est tout mignon Et là en plus on arrivera aux 100 euros Donc on pourra enfin se lancer Voilà la terreur On va garder ce jeune",
+          "why": "This segment shows the creative ways he earned money and confirms he reached the 100 euro goal, demonstrating resourcefulness.",
+          "start_anchor": "On a maintenant 31 euros Vu qu’on a que 24 heures Et que pour atteindre 100 euros",
+          "end_anchor": "On a désormais les 100 euros J’espère juste qu’il va pas faire trop caca",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The clip highlights ingenuity and determination in overcoming financial constraints, inspiring viewers to start their own ventures.",
+      "estimated_retention": 80,
+      "continuity_risk": "low",
+      "suggested_hook": "Partir de rien : comment j'ai transformé 1€ en 100€ pour mon business",
+      "link_reason": "The second segment shows the successful execution of the decision made in the first segment to earn the money.",
+      "campaign_fit_llm": 85,
+      "campaign_fit_reason": "It reinforces the idea that starting a business is accessible even with minimal funds, which is a key message for attracting potential students.",
+      "opening_words": "Le but c’est quand même de montrer que c’est possible de partir avec rien",
+      "self_contained": true,
+      "payoff_line": "On a désormais les 100 euros"
+    },
+    {
+      "title": "Comment trouver un produit qui marche en dropshipping (méthode Gaspar)",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 121.0,
+          "end": 139.0,
+          "transcript_excerpt": "La première chose à faire pour trouver des produits Faut déjà que j’aie des idées de produits à vendre sur Google Parce qu’en fait sur Google on peut vendre tout et n’importe quoi Donc l’objectif c’est juste trouver un maximum d’idées Moi ce que j’utilise habituellement c’est mots aléatoires Donc c’",
+          "why": "This segment reveals Gaspar's method for product research, offering practical advice and showcasing his expertise.",
+          "start_anchor": "La première chose à faire pour trouver des produits Faut déjà que j’aie des idées",
+          "end_anchor": "maintenant les produits qui marchent ou non Parce que ça fait 5 ans que je fais ça",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The clip provides actionable advice on product selection, a critical step for anyone interested in e-commerce, making it highly shareable.",
+      "estimated_retention": 75,
+      "continuity_risk": "low",
+      "suggested_hook": "Mon secret pour trouver des produits gagnants en dropshipping !",
+      "link_reason": null,
+      "campaign_fit_llm": 88,
+      "campaign_fit_reason": "It highlights a key skill taught in his formation, demonstrating the practical value of his coaching for aspiring entrepreneurs.",
+      "opening_words": "La première chose à faire pour trouver des produits Faut déjà que j’aie des idées",
+      "self_contained": true,
+      "payoff_line": "Moi j’arrive à différencier maintenant les produits qui marchent ou non"
+    },
+    {
+      "title": "Le produit miracle qui m'a fait gagner 2000€ en une journée",
+      "arc_type": "phrase_visual_proof",
+      "segments": [
+        {
+          "role": "setup",
+          "start": 170.0,
+          "end": 174.0,
+          "transcript_excerpt": "D’ailleurs les gars il y a quelques mois J’ai trouvé un produit avec ce site justement Et regardez où est ce qu’il en est aujourd’hui Ça",
+          "why": "This segment sets up the reveal of a highly successful product found using his method.",
+          "start_anchor": "D’ailleurs les gars il y a quelques mois J’ai trouvé un produit avec ce site justement",
+          "end_anchor": "est ce qu’il en est aujourd’hui Ça",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        },
+        {
+          "role": "payoff",
+          "start": 174.0,
+          "end": 182.0,
+          "transcript_excerpt": "c’était sur la journée d’hier Et dites vous que j’ai 5 autres boutiques qui tournent de la même manière Donc juste sur 24h Elle a fait 4500€ Et là dessus je prends 45  de marge Donc presque 2000€ en une journée de bénéfice D’ailleurs",
+          "why": "This segment provides concrete, impressive results (4500€ revenue, 2000€ profit in 24h), validating his product research method.",
+          "start_anchor": "c’était sur la journée d’hier Et dites vous que j’ai 5 autres boutiques",
+          "end_anchor": "presque 2000€ en une journée de bénéfice D’ailleurs",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The promise of significant earnings in a short period, backed by specific numbers, is highly engaging and motivates viewers to learn his methods.",
+      "estimated_retention": 92,
+      "continuity_risk": "low",
+      "suggested_hook": "Ce produit m'a rapporté 2000€ en 24h ! Lequel ?",
+      "link_reason": "The second segment provides the direct financial proof of the product's success, which was introduced in the first segment.",
+      "campaign_fit_llm": 97,
+      "campaign_fit_reason": "This clip showcases Gaspar's ability to generate substantial income, directly appealing to the audience's desire for a luxurious lifestyle and business success.",
+      "opening_words": "D’ailleurs les gars il y a quelques mois J’ai trouvé un produit avec ce site justement",
+      "self_contained": true,
+      "payoff_line": "presque 2000€ en une journée de bénéfice"
+    },
+    {
+      "title": "Mon accompagnement e-commerce : 1000€/jour garantis sous contrat",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 182.0,
+          "end": 194.0,
+          "transcript_excerpt": "c’est cette méthode que j’apprends aux élèves de mon accompagnement En gros avec pile cette méthode Qui est de faire du e commerce sur Google J’accompagne jusqu’au 1000€ par jour de chiffre d’affaires Et c’est garanti sous contrat",
+          "why": "This segment directly promotes Gaspar's coaching program, highlighting its unique selling proposition of guaranteed results under contract.",
+          "start_anchor": "c’est cette méthode que j’apprends aux élèves de mon accompagnement En gros",
+          "end_anchor": "chiffre d’affaires Et c’est garanti sous contrat",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The bold claim of guaranteed 1000€/day under contract is a powerful hook for anyone seeking financial success in e-commerce.",
+      "estimated_retention": 95,
+      "continuity_risk": "low",
+      "suggested_hook": "1000€ par jour garantis en e-commerce ? Mon contrat le prouve !",
+      "link_reason": null,
+      "campaign_fit_llm": 99,
+      "campaign_fit_reason": "This clip is a direct advertisement for his business formation, emphasizing the high value and guaranteed results, perfectly aligning with the campaign goal.",
+      "opening_words": "c’est cette méthode que j’apprends aux élèves de mon accompagnement En gros",
+      "self_contained": true,
+      "payoff_line": "J’accompagne jusqu’au 1000€ par jour de chiffre d’affaires Et c’est garanti sous contrat"
+    },
+    {
+      "title": "Témoignage d'élève : comment mon coaching a changé sa vie",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 314.0,
+          "end": 334.0,
+          "transcript_excerpt": "Là pour mon accompagnement Dont je vous parlais tout à l’heure J’ai reçu un témoignage d’un élève Qui lui aussi a monté du coup Son business d’e commerce sur Google Et c’est vraiment pour ce genre de témoignage Que j’ai fait ça Et là ça finit par payer Dès que j’avais un petit souci Les coachs ils é",
+          "why": "This segment features a powerful testimonial from a student, validating the effectiveness of Gaspar's coaching and its life-changing impact.",
+          "start_anchor": "Là pour mon accompagnement Dont je vous parlais tout à l’heure J’ai reçu un témoignage",
+          "end_anchor": "C’est en train de vraiment Changer mon quotidien Changer ma vie Et ouais franchement",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "A strong personal testimonial about life transformation is highly persuasive and encourages potential students to consider the coaching.",
+      "estimated_retention": 85,
+      "continuity_risk": "low",
+      "suggested_hook": "Mon coaching e-commerce a changé sa vie : le témoignage choc !",
+      "link_reason": null,
+      "campaign_fit_llm": 93,
+      "campaign_fit_reason": "This clip provides social proof and demonstrates the tangible benefits of his formation, directly supporting the campaign's goal of attracting students.",
+      "opening_words": "Là pour mon accompagnement Dont je vous parlais tout à l’heure J’ai reçu un témoignage",
+      "self_contained": true,
+      "payoff_line": "C’est en train de vraiment Changer mon quotidien Changer ma vie"
+    },
+    {
+      "title": "Comment j'ai validé mon produit en 3 étapes (Google Ads)",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 207.0,
+          "end": 222.0,
+          "transcript_excerpt": "ce que je fais c’est que je vais sur Google direct Et je checke s’il y a des concurrents Parce que s’il y a des concurrents ça veut tout dire Ça veut dire qu’il y a un marché Et là on peut voir donc c’est bon signe Il y a toujours des concurrents Comme moi à l’époque quand j’en ai ce produit Et donc",
+          "why": "This segment details the first step of Gaspar's product validation process, emphasizing the importance of checking for competition.",
+          "start_anchor": "ce que je fais c’est que je vais sur Google direct Et je checke s’il y a des concurrents",
+          "end_anchor": "faire en dropshipping Parce que s’il y a des concurrents sur votre produit",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The clip offers a clear, actionable step-by-step guide for product validation, making it highly valuable for aspiring dropshippers.",
+      "estimated_retention": 70,
+      "continuity_risk": "low",
+      "suggested_hook": "Mon secret pour valider un produit en 3 étapes sur Google !",
+      "link_reason": null,
+      "campaign_fit_llm": 80,
+      "campaign_fit_reason": "It provides practical knowledge that would be part of his formation, showcasing the depth of his expertise and attracting students.",
+      "opening_words": "ce que je fais c’est que je vais sur Google direct Et je checke s’il y a des concurrents",
+      "self_contained": true,
+      "payoff_line": "s’il y a des concurrents ça veut tout dire Ça veut dire qu’il y a un marché"
+    }
+  ],
+  "raw_video_read": {
+    "n_events": 79,
+    "n_events_in_fixture": 79,
+    "video_map_summary_chars": 600,
+    "n_transcript_words": 2864,
+    "n_transcript_words_in_fixture": 2864,
+    "transcript_lines_chars": 14977
+  }
+}

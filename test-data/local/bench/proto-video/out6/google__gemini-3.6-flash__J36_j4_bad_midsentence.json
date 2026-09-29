@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.6-flash",
+ "tag": "J36_j4_bad_midsentence",
+ "latency_s": 9.1,
+ "usage": {
+  "prompt_tokens": 1671,
+  "completion_tokens": 864,
+  "total_tokens": 2535,
+  "cost": 0.0089865,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 400,
+   "video_tokens": 1056
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0089865,
+   "upstream_inference_prompt_cost": 0.0025065,
+   "upstream_inference_completions_cost": 0.00648
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 672,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n \"publiable\": false,\n \"score_global\": 6,\n \"hook_2s\": 8,\n \"phrase_coupee_au_debut\": true,\n \"phrase_coupee_a_la_fin\": false,\n \"premier_mot_entendu\": \"poche\",\n \"dernier_mot_entendu\": \"prêts\",\n \"raccords\": [\n  {\n   \"at_s\": 1,\n   \"ca_se_comprend\": true,\n   \"pourquoi\": \"Inserts d'images d'illustration sur la recherche de produit et la création de boutique qui accompagnent la voix off.\"\n  }\n ],\n \"moment_mort\": false,\n \"raison_du_refus\": \"La toute première phrase commence de manière tronquée au mot 'poche'.\"\n}\n```",
+ "provider": "Google"
+}

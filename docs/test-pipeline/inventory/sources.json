@@ -1,0 +1,120 @@
+[
+  {
+    "id": "pipeline-current",
+    "source": "/Users/augustindemeaux/clipfactory-clipping-quality",
+    "destination": ".",
+    "captured_at": "2026-09-07T15:01:09.344003+00:00",
+    "head": "f17e1295757cfccd59392652bc6c07cb8b32a067",
+    "branch": "codex/clipping-quality-2026-09-05",
+    "remote": "https://github.com/demeauxa8-collab/clipfactory-saas.git",
+    "files": 215,
+    "bytes": 1658147
+  },
+  {
+    "id": "saas-main",
+    "source": "/Users/augustindemeaux/clipfactory-saas",
+    "destination": "archives/local/saas-main",
+    "captured_at": "2026-09-07T15:01:09.344003+00:00",
+    "head": "f17e1295757cfccd59392652bc6c07cb8b32a067",
+    "branch": "main",
+    "remote": "https://github.com/demeauxa8-collab/clipfactory-saas.git",
+    "files": 202,
+    "bytes": 1510795
+  },
+  {
+    "id": "prototype",
+    "source": "/Users/augustindemeaux/Documents/autre/ChatGPT/clips factory saas pricp",
+    "destination": "archives/local/prototype",
+    "captured_at": "2026-09-07T15:01:09.344003+00:00",
+    "head": "c1cb7837f20c2f26ed40edfc1c52b1044c563dad",
+    "branch": "main",
+    "remote": "https://github.com/demeauxa8-collab/clipfactory-saas.git",
+    "files": 402,
+    "bytes": 316129351
+  },
+  {
+    "id": "ui-ux-lab",
+    "source": "/Users/augustindemeaux/Documents/Codex/2026-08-21/clipfactory-ui-redesign",
+    "destination": "archives/local/ui-ux-lab",
+    "captured_at": "2026-09-07T15:01:09.344003+00:00",
+    "head": "acd9a6188a2767be6c0f60800391a7da34e68dcf",
+    "branch": "redesign/ui-ux-lab",
+    "remote": "https://github.com/demeauxa8-collab/clipfactory-saas.git",
+    "files": 289,
+    "bytes": 8589270
+  },
+  {
+    "id": "seo",
+    "source": "/Users/augustindemeaux/clipfactory-seo",
+    "destination": "archives/local/seo",
+    "captured_at": "2026-09-07T15:01:09.344003+00:00",
+    "head": "acd9a6188a2767be6c0f60800391a7da34e68dcf",
+    "branch": "codex/seo-vercel-2026-09-06",
+    "remote": "https://github.com/demeauxa8-collab/clipfactory-saas.git",
+    "files": 340,
+    "bytes": 9933354
+  },
+  {
+    "id": "beige",
+    "source": "/Users/augustindemeaux/clipfactory-beige",
+    "destination": "archives/local/beige",
+    "captured_at": "2026-09-07T15:01:09.344003+00:00",
+    "head": "e0b95ea73671070a677181477a442a4d7432ab41",
+    "branch": "redesign/beige",
+    "remote": "https://github.com/demeauxa8-collab/clipfactory-saas.git",
+    "files": 157,
+    "bytes": 680325
+  },
+  {
+    "id": "apple-premium",
+    "source": "/Users/augustindemeaux/clipfactory-redesign",
+    "destination": "archives/local/apple-premium",
+    "captured_at": "2026-09-07T15:01:09.344003+00:00",
+    "head": "6e3dc459ae0f13cf0520af40129e7dc36d67b4ac",
+    "branch": "redesign/apple-premium",
+    "remote": "https://github.com/demeauxa8-collab/clipfactory-saas.git",
+    "files": 160,
+    "bytes": 706112
+  },
+  {
+    "id": "google-verification",
+    "source": "/Users/augustindemeaux/clipfactory-gsc-verify",
+    "destination": "archives/local/google-verification",
+    "captured_at": "2026-09-07T15:01:09.344003+00:00",
+    "head": "4d8b50d9cf237cd666cf2bde1e429a8063b6922d",
+    "branch": "",
+    "remote": "https://github.com/demeauxa8-collab/clipfactory-saas.git",
+    "files": 276,
+    "bytes": 2866289
+  },
+  {
+    "id": "free-trial",
+    "source": "/Users/augustindemeaux/clipfactory-saas/.claude/worktrees/free-trial-paywall",
+    "destination": "archives/local/free-trial",
+    "captured_at": "2026-09-07T15:01:09.344003+00:00",
+    "head": "254de071a29540f0b42d30939a9b2235b88a4398",
+    "branch": "worktree-free-trial-paywall",
+    "remote": "https://github.com/demeauxa8-collab/clipfactory-saas.git",
+    "files": 206,
+    "bytes": 1463622
+  },
+  {
+    "id": "legacy-desktop",
+    "source": "/Users/augustindemeaux/ClipFactory",
+    "destination": "archives/local/legacy-desktop",
+    "captured_at": "2026-09-07T15:01:09.344003+00:00",
+    "head": "54e8bff988633bf4f93492fab87ac62872a3d05f",
+    "branch": "main",
+    "remote": "https://github.com/demeauxa8-collab/ClipFactory.git",
+    "files": 113,
+    "bytes": 522726461
+  },
+  {
+    "id": "benchmarks",
+    "source": "/Users/augustindemeaux/clipfactory-data",
+    "destination": "test-data/local",
+    "captured_at": "2026-09-07T15:01:09.344003+00:00",
+    "files": 3715,
+    "bytes": 430300121
+  }
+]

@@ -1,0 +1,32 @@
+{
+ "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+ "tag": "J_j1_clean_intro",
+ "latency_s": 35.5,
+ "usage": {
+  "prompt_tokens": 5304,
+  "completion_tokens": 2951,
+  "total_tokens": 8255,
+  "cost": 0,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0,
+   "upstream_inference_prompt_cost": 0,
+   "upstream_inference_completions_cost": 0
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2186,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"publiable\": false,\n  \"score_global\": 0,\n  \"hook_2s\": 9,\n  \"phrase_coupee_au_debut\": false,\n  \"phrase_coupee_a_la_fin\": true,\n  \"raccords\": [\n    {\n      \"at_s\": 0,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Début de la vidéo\"\n    },\n    {\n      \"at_s\": 0.06,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Coupe vers texte noir\"\n    },\n    {\n      \"at_s\": 0.07,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Retour à la vidéo\"\n    },\n    {\n      \"at_s\": 0.17,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Coupe vers écran flou\"\n    },\n    {\n      \"at_s\": 0.19,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Retour à la vidéo\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"Phrase coupée à la fin\"\n}",
+ "reasoning": "The user wants me to evaluate a video clip based on specific criteria.\n\n**1. Analyze the input:**\n- **Video:** A man is speaking directly to the camera, holding a coin. He talks about making money with dropshipping and e-commerce. There are text overlays like \"J'AI SEULEMENT 1 EURO\", \"4,5 MILLIONS €\", \"21\", \"572\", \"22\".\n- **Task:** Determine if the clip is \"publiable\" (publishable) based on the rules provided.\n- **Rules:**\n    - A clip whose first or last sentence is cut off is NOT publishable.\n    - A clip that is just dead air/time without an idea is NOT publishable.\n    - I need to output JSON with specific fields: `publiable`, `score_global`, `hook_2s`, `phrase_coupee_au_debut`, `phrase_coupee_a_la_fin`, `raccords`, `moment_mort`, `raison_du_refus`.\n\n**2. Analyze the video content:**\n-",
+ "provider": "Nvidia"
+}

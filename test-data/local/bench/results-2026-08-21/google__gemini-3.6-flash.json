@@ -1,0 +1,228 @@
+{
+  "model": "google/gemini-3.6-flash",
+  "ok": true,
+  "error": null,
+  "latency_seconds": 36.909,
+  "tokens": 29189,
+  "arcs": [
+    {
+      "title": "4500€ par jour en e-commerce avec Google Ads",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 170.8,
+          "end": 195.0,
+          "transcript_excerpt": "J’ai trouvé un produit avec ce site justement Et regardez où est ce qu’il en est aujourd’hui Ça c’était sur la journée d’hier Et dites vous que j’ai 5 autres boutiques qui tournent de la même manière Donc juste sur 24h Elle a fait 4500€ Et là dessus je prends 45  de marge Donc presque 2000€ en une j",
+          "why": "Establishes massive social proof with real financial figures (4500€ in 24h, 45% margin) and transitions directly to his mentorship program guarantee.",
+          "start_anchor": "J’ai trouvé un produit avec ce site justement",
+          "end_anchor": "par jour de chiffre d’affaires Et c’est garanti sous contrat",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "Concrete income numbers (4,500€/day) combined with a clear profit margin breakdown generate immediate authority and high retention.",
+      "estimated_retention": 94,
+      "continuity_risk": "low",
+      "suggested_hook": "Comment j'ai généré 4500€ en 24h avec cette méthode Google Ads",
+      "link_reason": null,
+      "campaign_fit_llm": 98,
+      "campaign_fit_reason": "Directly pitch-focused arc highlighting verified student methodology and contractual guarantees for the e-commerce mentorship program.",
+      "opening_words": "J’ai trouvé un produit avec ce site justement",
+      "self_contained": true,
+      "payoff_line": "Donc presque 2000€ en une journée de bénéfice D’ailleurs c’est cette méthode que j’apprends aux élèves de mon accompagnement"
+    },
+    {
+      "title": "Le challenge e-commerce à 1 euro en 24 heures",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 0.0,
+          "end": 24.5,
+          "transcript_excerpt": "J’ai seulement un euro pour lancer une boutique rentable en dropshipping et le tout en 24 heures Moi c’est Gaspar j’ai fait 4 millions et demi en e commerce et l’objectif ça va être simple aujourd’hui C’est juste de prouver qu’en 2025 tu peux lancer un business avec quasiment rien du tout Aujourd’hu",
+          "why": "Introduces the extreme 1 euro challenge while immediately anchoring credibility by stating his 4.5M€ track record.",
+          "start_anchor": "J’ai seulement un euro pour lancer une boutique",
+          "end_anchor": "site lancer des pubs et surtout essayer de faire du profit",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "High-concept challenge combined with early credibility establishment grabs immediate attention from ambitious young viewers.",
+      "estimated_retention": 90,
+      "continuity_risk": "low",
+      "suggested_hook": "Lancer un e-commerce rentable avec 1€ en 24H ?",
+      "link_reason": null,
+      "campaign_fit_llm": 88,
+      "campaign_fit_reason": "Positions the creator as an elite operator who can generate profits from scratch, making his mentorship highly desirable.",
+      "opening_words": "J’ai seulement un euro pour lancer une boutique",
+      "self_contained": true,
+      "payoff_line": "Moi c’est Gaspar j’ai fait 4 millions et demi en e commerce"
+    },
+    {
+      "title": "Pourquoi Google Ads détruit TikTok Ads en dropshipping",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 36.6,
+          "end": 50.0,
+          "transcript_excerpt": "Je préfère faire du dropshipping sur Google Vu que c’est des meilleures marges je vais faire plus de profit En plus de ça c’est beaucoup plus long terme que TikTok et surtout tu vend tes produits à des gens qui recherchent déjà ton produit Donc vraiment à ce niveau là moi je m’en fais pas que ça va ",
+          "why": "Presents a strong contrarian business claim that challenges mainstream TikTok dropshipping advice.",
+          "start_anchor": "Je préfère faire du dropshipping sur Google Vu que",
+          "end_anchor": "beaucoup plus simple même si on part avec juste un euro",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "Contrarian angle against popular TikTok trend content captures attention from e-commerce beginners.",
+      "estimated_retention": 85,
+      "continuity_risk": "low",
+      "suggested_hook": "Pourquoi Google Ads est 10x supérieur à TikTok Ads",
+      "link_reason": null,
+      "campaign_fit_llm": 86,
+      "campaign_fit_reason": "Positions Gaspar as a strategic mentor offering sustainable long-term business methods over temporary trends.",
+      "opening_words": "Je préfère faire du dropshipping sur Google Vu",
+      "self_contained": true,
+      "payoff_line": "tu vend tes produits à des gens qui recherchent déjà ton produit"
+    },
+    {
+      "title": "Du résultat 24H au secret de la réussite",
+      "arc_type": "setup_payoff",
+      "segments": [
+        {
+          "role": "setup",
+          "start": 469.6,
+          "end": 485.0,
+          "transcript_excerpt": "Une grande nouvelle On a fait une vente à 69 euros Et je ne m’y attendais vraiment pas Parce que là En 24 heures En 24 heures Je n’ai jamais fait ça",
+          "why": "Shows the immediate sales result obtained within 24 hours.",
+          "start_anchor": "Une grande nouvelle On a fait une vente",
+          "end_anchor": "En 24 heures Je n’ai jamais fait ça",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        },
+        {
+          "role": "payoff",
+          "start": 561.6,
+          "end": 575.0,
+          "transcript_excerpt": "Ce qui coûte le plus cher C’est quand même les connaissances J’ai du mettre plus de 30 000 balles Dans des coachings Là actuellement J’ai un coaching avec un américain Pour chiffrer encore un e commerce Et c’est ça qui coûte le plus cher Et c’est pour ça que j’ai réussi aussi ce challenge",
+          "why": "Explains that the fast result is only possible due to heavy investment in high-level coaching and knowledge.",
+          "start_anchor": "Ce qui coûte le plus cher C’est quand même",
+          "end_anchor": "c’est pour ça que j’ai réussi aussi ce challenge",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "Builds a clear narrative bridge between quick execution and high-value mentorship.",
+      "estimated_retention": 89,
+      "continuity_risk": "low",
+      "suggested_hook": "Le vrai secret derrière 69€ générés en 24h",
+      "link_reason": "Segment 1 introduces the quick financial win, while Segment 2 connects it directly to the importance of investing in coaching.",
+      "campaign_fit_llm": 97,
+      "campaign_fit_reason": "Perfect conversion angle: demonstrates that success is not luck but paid knowledge and mentorship.",
+      "opening_words": "Une grande nouvelle On a fait une vente",
+      "self_contained": true,
+      "payoff_line": "Ce qui coûte le plus cher C’est quand même les connaissances J’ai du mettre plus de 30 000 balles Dans des coachings"
+    },
+    {
+      "title": "Pourquoi les débutants échouent en e-commerce",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 573.8,
+          "end": 588.0,
+          "transcript_excerpt": "Et si demain un débutant Essaye tout seul Avec 1 euro ou 100 euros Il n’y arrivera pas Honnêtement Et si justement Tu as du budget Que tu veux gagner du temps Et te faire accompagner Pour réussir en e commerce Tu peux regarder directement dans la description J’ai un accompagnement",
+          "why": "Delivers an urgent reality check on solo attempts while offering direct access to his mentorship.",
+          "start_anchor": "Si demain un débutant Essaye tout seul Avec",
+          "end_anchor": "dans la description J’ai un accompagnement",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "Urgent warning format creates FOMO and highlights the risks of trying to launch alone without guidance.",
+      "estimated_retention": 87,
+      "continuity_risk": "low",
+      "suggested_hook": "Pourquoi 99% des débutants échouent sans accompagnement",
+      "link_reason": null,
+      "campaign_fit_llm": 96,
+      "campaign_fit_reason": "Direct call to action to sign up for training, hitting pain points of wasted money and wasted time.",
+      "opening_words": "Si demain un débutant Essaye tout seul Avec",
+      "self_contained": true,
+      "payoff_line": "Et si demain un débutant Essaye tout seul Avec 1 euro ou 100 euros Il n’y arrivera pas Honnêtement"
+    },
+    {
+      "title": "Taux de conversion extrême de 10% sur Google",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 481.8,
+          "end": 506.1,
+          "transcript_excerpt": "On a eu 10 visites sur le site à peine Et on a réussi à faire une vente Avec juste 10 visites Donc ça nous fait un taux de conversion A 10 Habituellement Habituellement Un bon taux de conversion C’est à environ 2 Et là Mais du coup On est à 10 Bon C’est sur un petit segment de clients Mais bon Quand",
+          "why": "Breaks down specific e-commerce KPIs comparing standard 2% conversion rates to his 10% result.",
+          "start_anchor": "On a eu 10 visites sur le site",
+          "end_anchor": "fait du coup Une vente à 69 euros",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "Metric breakdown (10% vs 2% industry benchmark) educates viewers while demonstrating superior campaign setup skills.",
+      "estimated_retention": 88,
+      "continuity_risk": "low",
+      "suggested_hook": "Comment obtenir 10% de taux de conversion en e-commerce",
+      "link_reason": null,
+      "campaign_fit_llm": 90,
+      "campaign_fit_reason": "Establishes technical authority on e-commerce optimization, appealing directly to aspiring digital entrepreneurs.",
+      "opening_words": "On a eu 10 visites sur le site",
+      "self_contained": true,
+      "payoff_line": "Donc ça nous fait un taux de conversion A 10 Habituellement Un bon taux de conversion C’est à environ 2"
+    },
+    {
+      "title": "De 100€ de capital à la première vente Google",
+      "arc_type": "challenge_result",
+      "segments": [
+        {
+          "role": "setup",
+          "start": 48.6,
+          "end": 57.5,
+          "transcript_excerpt": "Par contre le problème c’est que sur Google il faut au minimum 100 euros pour lancer une boutique Donc la première étape ça va être de transformer ces un euro en 100 euros",
+          "why": "Sets up the obstacle of needing 100€ initial capital for Google Ads testing.",
+          "start_anchor": "Le problème c’est que sur Google il faut",
+          "end_anchor": "de transformer ces un euro en 100 euros",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        },
+        {
+          "role": "payoff",
+          "start": 481.8,
+          "end": 498.0,
+          "transcript_excerpt": "On a eu 10 visites sur le site à peine Et on a réussi à faire une vente Avec juste 10 visites Donc ça nous fait un taux de conversion A 10 Habituellement Habituellement Un bon taux de conversion C’est à environ 2",
+          "why": "Shows the payoff: turning that minimum budget into high-converting sales traffic.",
+          "start_anchor": "On a eu 10 visites sur le site",
+          "end_anchor": "Un bon taux de conversion C’est à environ 2",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "Problem-to-solution arc showing clear execution steps builds high credibility.",
+      "estimated_retention": 86,
+      "continuity_risk": "low",
+      "suggested_hook": "Transforme 100€ de budget en première vente rentable",
+      "link_reason": "Segment 1 outlines the minimum financial requirement for Google Ads, and Segment 2 proves how fast that budget converts into orders.",
+      "campaign_fit_llm": 89,
+      "campaign_fit_reason": "Shows practical execution and profitability on modest budgets, encouraging beginners to join his course.",
+      "opening_words": "Le problème c’est que sur Google il faut",
+      "self_contained": true,
+      "payoff_line": "Et on a réussi à faire une vente Avec juste 10 visites Donc ça nous fait un taux de conversion A 10"
+    }
+  ],
+  "raw_video_read": {
+    "n_events": 79,
+    "n_events_in_fixture": 79,
+    "video_map_summary_chars": 600,
+    "n_transcript_words": 2864,
+    "n_transcript_words_in_fixture": 2864,
+    "transcript_lines_chars": 14977
+  }
+}

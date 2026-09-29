@@ -1,0 +1,16 @@
+{
+  "model": "google/gemini-3.6-flash",
+  "ok": false,
+  "error": "ProviderError: openrouter 400: {\"error\":{\"message\":\"Reasoning is mandatory for this endpoint and cannot be disabled.\",\"code\":400,\"metadata\":{\"provider_name\":null,\"previous_errors\":[{\"code\":400,\"message\":\"Reasoning is mandatory for this endpoint and cannot be disabled.\"}]}},\"user_id\":\"user_3EMW1XdKVmyDNWDe88jqBEvLafv\"}",
+  "latency_seconds": 3.032,
+  "tokens": 0,
+  "arcs": [],
+  "raw_video_read": {
+    "n_events": 79,
+    "n_events_in_fixture": 79,
+    "video_map_summary_chars": 600,
+    "n_transcript_words": 2864,
+    "n_transcript_words_in_fixture": 2864,
+    "transcript_lines_chars": 14977
+  }
+}

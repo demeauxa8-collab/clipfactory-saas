@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.1-flash-lite",
+ "tag": "A31_j4_bad_midsentence",
+ "latency_s": 1.8,
+ "usage": {
+  "prompt_tokens": 593,
+  "completion_tokens": 95,
+  "total_tokens": 688,
+  "cost": 0.000391,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 401,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.000391,
+   "upstream_inference_prompt_cost": 0.0002485,
+   "upstream_inference_completions_cost": 0.0001425
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\"publiable\":true,\"score_global\":9,\"hook_2s\":9,\n \"phrase_coupee_au_debut\":false,\"phrase_coupee_a_la_fin\":false,\n \"premier_mot_entendu\":\"Bon\", \"dernier_mot_entendu\":\"prêt\",\n \n \"moment_mort\":false,\n \"raison_du_refus\":\"\"}\n```",
+ "provider": "Google AI Studio"
+}

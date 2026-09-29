@@ -1,0 +1,146 @@
+{
+  "model": "google/gemini-2.5-flash",
+  "ok": true,
+  "error": null,
+  "latency_seconds": 19.1,
+  "tokens": 22782,
+  "arcs": [
+    {
+      "title": "1 euro pour 50 euros de bénéfice en 24h",
+      "arc_type": "challenge_result",
+      "segments": [
+        {
+          "role": "setup",
+          "start": 0.0,
+          "end": 12.3,
+          "transcript_excerpt": "J’ai seulement un euro pour lancer une boutique rentable en dropshipping et le tout en 24 heures Moi c’est Gaspar j’ai fait 4 millions et demi en e commerce et l’objectif ça va être simple aujourd’hui C’est juste de prouver qu’en 2025 tu peux lancer un business avec",
+          "why": "This segment introduces the core challenge and Gaspar's expertise, setting the stage for the proof of concept."
+        },
+        {
+          "role": "transition",
+          "start": 48.6,
+          "end": 53.0,
+          "transcript_excerpt": "Par contre le problème c’est que sur Google il faut au minimum 100 euros pour lancer une boutique Donc la première étape ça va être de transformer ces un euro en 100 euros",
+          "why": "This segment highlights the main obstacle and the immediate goal: turning 1 euro into 100 euros."
+        },
+        {
+          "role": "payoff",
+          "start": 549.6,
+          "end": 555.0,
+          "transcript_excerpt": "On est à environ 50 euros bénéfice Donc c’est vraiment Très très bien Parce que là Du coup C’est un retour sur investissement",
+          "why": "This segment reveals the successful outcome of the challenge, demonstrating profitability from a minimal start."
+        }
+      ],
+      "viral_reason": "The clip showcases an impressive return on investment from a tiny starting capital, which is highly engaging and aspirational for business-minded viewers.",
+      "estimated_retention": 90,
+      "continuity_risk": "low",
+      "suggested_hook": "1€ pour lancer un business rentable en 24h",
+      "link_reason": "The second segment introduces the financial hurdle that the third segment's profit directly addresses, showing the successful transformation of the initial euro into a profitable business.",
+      "campaign_fit_llm": 95,
+      "campaign_fit_reason": "This clip directly proves that it's possible to start a profitable business with minimal capital, validating the entrepreneur's expertise and the potential of his methods, which aligns with selling a business training program.",
+      "opening_words": "J’ai seulement un euro pour lancer une boutique rentable en dropshipping",
+      "self_contained": true,
+      "payoff_line": "On est à environ 50 euros bénéfice"
+    },
+    {
+      "title": "Le secret des marges Google Ads vs TikTok",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 36.6,
+          "end": 48.6,
+          "transcript_excerpt": "je préfère faire du dropshipping sur Google Vu que c’est des meilleures marges je vais faire plus de profit En plus de ça c’est beaucoup plus long terme que TikTok et surtout tu vend tes produits à des gens qui recherchent déjà ton produit Donc vraiment à ce niveau là moi je m’en fais pas que ça va ",
+          "why": "This segment explains the strategic advantage of Google Ads over TikTok for dropshipping, focusing on higher margins and long-term potential."
+        }
+      ],
+      "viral_reason": "This clip offers a clear, actionable insight into dropshipping strategy, appealing to aspiring entrepreneurs looking for effective methods.",
+      "estimated_retention": 85,
+      "continuity_risk": "low",
+      "suggested_hook": "Google Ads vs TikTok: les meilleures marges",
+      "link_reason": null,
+      "campaign_fit_llm": 90,
+      "campaign_fit_reason": "The clip demonstrates the entrepreneur's strategic thinking and expertise in e-commerce, highlighting a key differentiator that would be taught in his business training.",
+      "opening_words": "je préfère faire du dropshipping sur Google Vu que c’est des meilleures marges",
+      "self_contained": true,
+      "payoff_line": "c’est beaucoup plus long terme que TikTok et surtout tu vend tes produits à des gens qui recherchent déjà ton produit"
+    },
+    {
+      "title": "La connaissance est le vrai coût de l'e-commerce",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 561.6,
+          "end": 578.0,
+          "transcript_excerpt": "Cette vidéo Elle prouve quand même Que tu peux te lancer avec pas grand chose Par contre Ce qui coûte le plus cher C’est quand même les connaissances J’ai du mettre plus de 30 000 balles Dans des coachings Là actuellement J’ai un coaching avec un américain Pour chiffrer encore un e commerce Et c’est",
+          "why": "This segment delivers the core message about the value of knowledge and coaching in e-commerce, directly linking success to investment in learning."
+        }
+      ],
+      "viral_reason": "This clip offers a contrarian and insightful take on business investment, challenging common assumptions and providing a strong argument for education.",
+      "estimated_retention": 90,
+      "continuity_risk": "low",
+      "suggested_hook": "Le vrai coût de l'e-commerce n'est pas l'argent",
+      "link_reason": null,
+      "campaign_fit_llm": 98,
+      "campaign_fit_reason": "This clip directly supports the campaign's goal by emphasizing that knowledge and coaching are the most valuable investments for e-commerce success, thereby promoting the entrepreneur's training program.",
+      "opening_words": "Cette vidéo Elle prouve quand même Que tu peux te lancer avec pas grand chose",
+      "self_contained": true,
+      "payoff_line": "Ce qui coûte le plus cher C’est quand même les connaissances"
+    },
+    {
+      "title": "Preuve de rentabilité: 4500€ en 24h",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 170.8,
+          "end": 184.0,
+          "transcript_excerpt": "D’ailleurs les gars il y a quelques mois J’ai trouvé un produit avec ce site justement Et regardez où est ce qu’il en est aujourd’hui Ça c’était sur la journée d’hier Et dites vous que j’ai 5 autres boutiques qui tournent de la même manière Donc juste sur 24h Elle a fait 4500€ Et là dessus je prends",
+          "why": "This segment provides concrete proof of high earnings in a short period, demonstrating the effectiveness of his methods."
+        }
+      ],
+      "viral_reason": "The clip presents an impressive financial result, which is highly motivating and creates a strong desire to learn the methods behind it.",
+      "estimated_retention": 92,
+      "continuity_risk": "low",
+      "suggested_hook": "4500€ de CA en 24h avec cette méthode",
+      "link_reason": null,
+      "campaign_fit_llm": 97,
+      "campaign_fit_reason": "This clip serves as powerful social proof of the entrepreneur's expertise and the profitability of his strategies, directly encouraging enrollment in his business training.",
+      "opening_words": "D’ailleurs les gars il y a quelques mois J’ai trouvé un produit avec ce site justement",
+      "self_contained": true,
+      "payoff_line": "juste sur 24h Elle a fait 4500€ Et là dessus je prends 45 de marge Donc presque 2000€ en une journée de bénéfice"
+    },
+    {
+      "title": "Témoignage élève: changer ma vie",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 307.6,
+          "end": 332.0,
+          "transcript_excerpt": "Là pour mon accompagnement Dont je vous parlais tout à l’heure J’ai reçu un témoignage d’un élève Qui lui aussi a monté du coup Son business d’e commerce sur Google Et c’est vraiment pour ce genre de témoignage Que j’ai fait ça Et là ça finit par payer Dès que j’avais un petit souci Les coachs ils é",
+          "why": "This segment features a powerful testimonial from a student, validating the effectiveness and life-changing impact of the coaching program."
+        }
+      ],
+      "viral_reason": "A personal success story from a student is highly persuasive and emotionally resonant, making the program more appealing.",
+      "estimated_retention": 88,
+      "continuity_risk": "low",
+      "suggested_hook": "Mon accompagnement a changé sa vie",
+      "link_reason": null,
+      "campaign_fit_llm": 96,
+      "campaign_fit_reason": "This clip provides strong social proof through a student testimonial, directly addressing the audience's desire for transformation and reinforcing the value of the entrepreneur's training program.",
+      "opening_words": "Là pour mon accompagnement Dont je vous parlais tout à l’heure J’ai reçu un témoignage d’un élève",
+      "self_contained": true,
+      "payoff_line": "C’est en train de vraiment Changer mon quotidien Changer ma vie"
+    }
+  ],
+  "raw_video_read": {
+    "n_events": 79,
+    "n_events_in_fixture": 79,
+    "video_map_summary_chars": 600,
+    "n_transcript_words": 2864,
+    "n_transcript_words_in_fixture": 2864,
+    "transcript_lines_chars": 14977
+  }
+}

@@ -1,0 +1,32 @@
+{
+ "model": "google/gemini-3.5-flash-lite",
+ "tag": "J_j3_clean_motsalea",
+ "latency_s": 2.4,
+ "usage": {
+  "prompt_tokens": 2035,
+  "completion_tokens": 164,
+  "total_tokens": 2199,
+  "cost": 0.0010205,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 500,
+   "video_tokens": 1320
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0010205,
+   "upstream_inference_prompt_cost": 0.0006105,
+   "upstream_inference_completions_cost": 0.00041
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": true,\n  \"score_global\": 7,\n  \"hook_2s\": 6,\n  \"phrase_coupee_au_debut\": false,\n  \"phrase_coupee_a_la_fin\": true,\n  \"premier_mot_entendu\": \"Actuellement\",\n  \"dernier_mot_entendu\": \"e-commerce\",\n  \"raccords\": [\n    {\n      \"at_s\": 0,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"\"\n}\n```",
+ "reasoning": "",
+ "provider": "Google"
+}

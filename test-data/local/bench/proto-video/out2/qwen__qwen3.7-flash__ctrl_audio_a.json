@@ -1,0 +1,31 @@
+{
+ "model": "qwen/qwen3.7-flash",
+ "tag": "ctrl_audio_a",
+ "latency_s": 7.2,
+ "usage": {
+  "prompt_tokens": 6779,
+  "completion_tokens": 82,
+  "total_tokens": 6861,
+  "cost": 0.00021403,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00021403,
+   "upstream_inference_prompt_cost": 0.00020337,
+   "upstream_inference_completions_cost": 1.066e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n \"je_percois_le_son\": false,\n \"transcription_verbatim\": \"\",\n \"premier_mot_prononce\": \"\",\n \"dernier_mot_prononce\": \"\",\n \"texte_incruste_a_l_ecran\": [\n  \"J'AI\",\n  \"SEULEMENT\",\n  \"4,5 MILLIONS €\"\n ]\n}",
+ "provider": "Alibaba"
+}

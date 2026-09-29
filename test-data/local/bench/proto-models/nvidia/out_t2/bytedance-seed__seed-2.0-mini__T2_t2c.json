@@ -1,0 +1,32 @@
+{
+ "model": "bytedance-seed/seed-2.0-mini",
+ "tag": "T2_t2c",
+ "latency_s": 4.7,
+ "usage": {
+  "prompt_tokens": 6702,
+  "completion_tokens": 126,
+  "total_tokens": 6828,
+  "cost": 0.0007206,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0007206,
+   "upstream_inference_prompt_cost": 0.0006702,
+   "upstream_inference_completions_cost": 5.04e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\"decor\":\"Bureau avec interface Semrush en arrière-plan, petit coin de la pièce de vie du createur en bas a gauche\",\"person_visible\":true,\"face_center_x\":0.15,\"energy\":7,\"action\":\"Presentation et explication de l'outil SEO Semrush\",\"proof_objects\":[\"interface Semrush\",\"ordinateur affichant les outils SEO\"],\"problems\":\"Le visage du createur est trop a gauche, la partie droite de l'interface n'est pas visible sur les 2 premieres frames\",\"visual_score\":6,\"burned_captions\":false}",
+ "reasoning": "",
+ "provider": "Seed"
+}

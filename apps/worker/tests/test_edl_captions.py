@@ -2,13 +2,14 @@ from dataclasses import replace
 
 import pytest
 
-from app.models import Transcript, TranscriptWord
+from app.models import Transcript, TranscriptSentence, TranscriptWord
 from app.pipeline.edl import EditIntentPlan, EditShotIntent, FramingIntent, compile_edit_intent
 from app.pipeline.edl_captions import (
     CaptionSafeZone,
     EDLCaptionError,
     build_caption_plan,
     render_ass,
+    sentence_word_ids,
     write_ass_for_edl,
 )
 
@@ -255,3 +256,248 @@ def test_all_none_themes_produce_an_empty_plan_and_no_file(tmp_path) -> None:
     assert plan.cues == ()
     assert write_ass_for_edl(plan, out_path=str(out)) is False
     assert not out.exists()
+
+
+def test_groups_do_not_cross_overlapping_asr_sentence_boundaries_even_under_max_words() -> None:
+    transcript = Transcript(
+        text="one two. three four five.",
+        words=[
+            TranscriptWord("one", 0.00, 0.10),
+            TranscriptWord("two.", 0.11, 0.20),
+            TranscriptWord("three", 0.21, 0.30),
+            TranscriptWord("four", 0.31, 0.40),
+            TranscriptWord("five.", 0.41, 0.50),
+        ],
+        # Segment starts overlap slightly in a normal verbose_json response.
+        sentences=[
+            TranscriptSentence("one two.", 0.00, 0.205),
+            TranscriptSentence("three four five.", 0.195, 0.52),
+        ],
+    )
+    edl = compile_edit_intent(
+        EditIntentPlan(
+            "2.0",
+            "Two punctuated sentences are separate reading units.",
+            (EditShotIntent("semantic", "hook", 0, 4, caption_theme="standard_karaoke"),),
+        ),
+        transcript,
+        source_duration_ms=5_000,
+    )
+
+    captions = build_caption_plan(edl, transcript)
+
+    # standard_karaoke allows three words, but no cue may straddle `two.` → `three`.
+    assert [[word.text for word in cue.words] for cue in captions.cues] == [
+        ["one", "two."],
+        ["three", "four", "five."],
+    ]
+
+
+def test_sentence_mapping_does_not_steal_next_word_or_caption_empty_asr_placeholders() -> None:
+    transcript = Transcript(
+        text="des ventes Est ce qu'on gagne",
+        words=[
+            TranscriptWord("des", 0.00, 0.10),
+            TranscriptWord("ventes", 0.10, 0.20),
+            TranscriptWord("", 0.20, 0.22),
+            # Its midpoint is exactly the preceding sentence end.  Midpoint
+            # mapping used to steal this first word into the previous cue.
+            TranscriptWord("Est", 0.22, 0.32),
+            TranscriptWord("ce", 0.32, 0.34),
+            TranscriptWord("qu'on", 0.34, 0.44),
+            TranscriptWord("gagne", 0.44, 0.55),
+        ],
+        sentences=[
+            TranscriptSentence("des ventes.", 0.00, 0.27),
+            TranscriptSentence("Est-ce qu'on gagne ?", 0.26, 0.56),
+        ],
+    )
+    edl = compile_edit_intent(
+        EditIntentPlan(
+            "2.0",
+            "A boundary may not create a one-word orphan or a blank caption.",
+            (EditShotIntent("question", "hook", 0, 6, caption_theme="standard_karaoke"),),
+        ),
+        transcript,
+        source_duration_ms=5_000,
+    )
+
+    captions = build_caption_plan(edl, transcript)
+
+    assert [[word.text for word in cue.words] for cue in captions.cues] == [
+        ["des", "ventes"],
+        ["Est", "ce"],
+        ["qu'on", "gagne"],
+    ]
+    # The same mapper consumed by reflex QC assigns the straddling ``Est`` to
+    # the second sentence; midpoint mapping used to steal it into the first.
+    assert sentence_word_ids(transcript) == (0, 0, None, 1, 1, 1, 1)
+
+
+def test_stale_sentence_segment_cannot_force_a_caption_boundary_before_unmapped_tail() -> None:
+    transcript = Transcript(
+        text="one two three",
+        words=[
+            TranscriptWord("one", 0.00, 0.10),
+            TranscriptWord("two", 0.11, 0.20),
+            TranscriptWord("three", 0.21, 0.32),
+        ],
+        # This older partial ASR segment does not cover the later transcript
+        # tail. It may map its own words, but cannot force a semantic break.
+        sentences=[TranscriptSentence("one two.", 0.00, 0.21)],
+    )
+    edl = compile_edit_intent(
+        EditIntentPlan(
+            "2.0",
+            "Stale sentence metadata must fall back to timing-safe grouping.",
+            (EditShotIntent("stale", "hook", 0, 2, caption_theme="standard_karaoke"),),
+        ),
+        transcript,
+        source_duration_ms=5_000,
+    )
+
+    captions = build_caption_plan(edl, transcript)
+
+    assert sentence_word_ids(transcript) == (0, 0, None)
+    assert [[word.text for word in cue.words] for cue in captions.cues] == [["one", "two", "three"]]
+
+
+def test_sentence_boundaries_apply_to_each_replay_using_compiled_output_occurrences() -> None:
+    transcript = Transcript(
+        text="one two. three four.",
+        words=[
+            TranscriptWord("one", 0.00, 0.10),
+            TranscriptWord("two.", 0.11, 0.20),
+            TranscriptWord("three", 0.21, 0.30),
+            TranscriptWord("four.", 0.31, 0.40),
+        ],
+        sentences=[
+            TranscriptSentence("one two.", 0.00, 0.205),
+            TranscriptSentence("three four.", 0.195, 0.42),
+        ],
+    )
+    edl = compile_edit_intent(
+        EditIntentPlan(
+            "2.0",
+            "Replay the same two sentence units at a different speed.",
+            (
+                EditShotIntent(
+                    "first_pass",
+                    "hook",
+                    0,
+                    3,
+                    caption_theme="standard_karaoke",
+                    speed=1.25,
+                ),
+                EditShotIntent(
+                    "replay",
+                    "payoff",
+                    0,
+                    3,
+                    caption_theme="standard_karaoke",
+                    speed=0.75,
+                ),
+            ),
+        ),
+        transcript,
+        source_duration_ms=5_000,
+    )
+
+    captions = build_caption_plan(edl, transcript)
+
+    assert [[word.text for word in cue.words] for cue in captions.cues] == [
+        ["one", "two."],
+        ["three", "four."],
+        ["one", "two."],
+        ["three", "four."],
+    ]
+    first_replay_word = captions.cues[2].words[0]
+    assert first_replay_word.word_id == 0
+    assert first_replay_word.timeline_in_ms == edl.shots[1].word_occurrences[0].timeline_in_ms
+    assert first_replay_word.timeline_in_ms > captions.cues[1].timeline_out_ms
+
+
+def test_without_sentences_keeps_the_existing_pause_aware_balancing_behaviour() -> None:
+    transcript = Transcript(
+        text="one two three four",
+        words=[
+            TranscriptWord("one", 0.00, 0.10),
+            TranscriptWord("two", 0.11, 0.20),
+            TranscriptWord("three", 0.21, 0.30),
+            TranscriptWord("four", 0.31, 0.40),
+        ],
+    )
+    edl = compile_edit_intent(
+        EditIntentPlan(
+            "2.0",
+            "No sentence metadata retains the established cue balancer.",
+            (EditShotIntent("fallback", "hook", 0, 3, caption_theme="standard_karaoke"),),
+        ),
+        transcript,
+        source_duration_ms=5_000,
+    )
+
+    captions = build_caption_plan(edl, transcript)
+
+    assert transcript.sentences == []
+    assert [[word.text for word in cue.words] for cue in captions.cues] == [
+        ["one", "two"],
+        ["three", "four"],
+    ]
+
+
+def test_a_long_asr_sentence_still_uses_balanced_cues_within_that_sentence() -> None:
+    transcript = Transcript(
+        text="one two three four five six seven",
+        words=[
+            TranscriptWord(word, index * 0.21, index * 0.21 + 0.20)
+            for index, word in enumerate("one two three four five six seven".split())
+        ],
+        sentences=[TranscriptSentence("one two three four five six seven.", 0.00, 1.50)],
+    )
+    edl = compile_edit_intent(
+        EditIntentPlan(
+            "2.0",
+            "A long semantic unit should not leave a one-word caption tail.",
+            (EditShotIntent("long_sentence", "hook", 0, 6, caption_theme="standard_karaoke"),),
+        ),
+        transcript,
+        source_duration_ms=5_000,
+    )
+
+    captions = build_caption_plan(edl, transcript)
+
+    assert [[word.text for word in cue.words] for cue in captions.cues] == [
+        ["one", "two", "three"],
+        ["four", "five"],
+        ["six", "seven"],
+    ]
+
+
+def test_unmappable_sentences_do_not_invent_a_caption_boundary() -> None:
+    transcript = Transcript(
+        text="one two three four",
+        words=[
+            TranscriptWord("one", 0.00, 0.10),
+            TranscriptWord("two", 0.11, 0.20),
+            TranscriptWord("three", 0.21, 0.30),
+            TranscriptWord("four", 0.31, 0.40),
+        ],
+        sentences=[TranscriptSentence("stale ASR segment.", 10.00, 11.00)],
+    )
+    edl = compile_edit_intent(
+        EditIntentPlan(
+            "2.0",
+            "Stale sentence metadata cannot create a fictitious output cue.",
+            (EditShotIntent("unmappable", "hook", 0, 3, caption_theme="standard_karaoke"),),
+        ),
+        transcript,
+        source_duration_ms=5_000,
+    )
+
+    captions = build_caption_plan(edl, transcript)
+
+    assert [[word.text for word in cue.words] for cue in captions.cues] == [
+        ["one", "two"],
+        ["three", "four"],
+    ]

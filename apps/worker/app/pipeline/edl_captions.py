@@ -12,8 +12,10 @@ occurrence remains a separate caption occurrence with its own timestamp.
 
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping
 from dataclasses import dataclass
+from itertools import pairwise
 from pathlib import Path
 from typing import Literal
 
@@ -72,6 +74,112 @@ _FALLBACK_POSITION_BY_FRAMING: dict[str, CaptionPosition] = {
 }
 _MARGIN_V_BY_POSITION: dict[CaptionPosition, int] = {"upper": 1_050, "lower": 400}
 _PAUSE_CUT_MS = 300
+_SENTENCE_WORD_END_TOLERANCE_SECONDS = 0.025
+
+
+def sentence_word_ids(transcript: Transcript) -> tuple[int | None, ...]:
+    """Conservatively assign real transcript words to timed ASR sentences.
+
+    This is deliberately one shared timing contract for captions and editorial
+    QC.  Sentence punctuation is useful only if it can be aligned forward to
+    the transcript words that own output timing.  A word belongs to a sentence
+    when it *ends* no later than that sentence end (with a tiny ASR tolerance),
+    never because its midpoint happens to land in a neighbouring segment.
+
+    Sentence starts are also checked against the next unconsumed word.  This
+    filters stale or disconnected ASR segments while accepting normal slight
+    overlap where a word straddles the next sentence start.  Empty word
+    placeholders advance the cursor but cannot become semantic evidence.
+    """
+
+    words = transcript.words
+    if not words or not transcript.sentences:
+        return tuple(None for _ in words)
+    if any(
+        not math.isfinite(word.start)
+        or not math.isfinite(word.end)
+        or word.end < word.start
+        for word in words
+    ) or any((right.start, right.end) < (left.start, left.end) for left, right in pairwise(words)):
+        return tuple(None for _ in words)
+
+    sentence_ids: list[int | None] = [None] * len(words)
+    word_cursor = 0
+    previous_sentence_end: float | None = None
+    for sentence_index, sentence in enumerate(
+        sorted(transcript.sentences, key=lambda item: (item.start, item.end))
+    ):
+        if (
+            not math.isfinite(sentence.start)
+            or not math.isfinite(sentence.end)
+            or sentence.end <= sentence.start
+            or (previous_sentence_end is not None and sentence.end <= previous_sentence_end)
+        ):
+            continue
+        if word_cursor >= len(words):
+            break
+        next_word = words[word_cursor]
+        # The new segment must plausibly cover the next source word.  A slight
+        # ASR segment overlap is accepted; a stale segment wholly before/after
+        # that word is ignored rather than inventing a phrase boundary.
+        if (
+            sentence.start > next_word.end + _SENTENCE_WORD_END_TOLERANCE_SECONDS
+            or sentence.end < next_word.start - _SENTENCE_WORD_END_TOLERANCE_SECONDS
+        ):
+            continue
+        previous_sentence_end = sentence.end
+        while word_cursor < len(words):
+            word = words[word_cursor]
+            if word.end > sentence.end + _SENTENCE_WORD_END_TOLERANCE_SECONDS:
+                break
+            if word.word.strip():
+                sentence_ids[word_cursor] = sentence_index
+            word_cursor += 1
+    return tuple(sentence_ids)
+
+
+def _semantic_break_after_word_ids(transcript: Transcript) -> frozenset[int]:
+    """Return transcript word IDs which end a reliably mapped ASR sentence.
+
+    ``Transcript.sentences`` and ``Transcript.words`` are parallel ASR views:
+    the former has punctuation and semantic phrasing, while the latter owns the
+    exact word timings.  We deliberately map a sentence boundary *only* when a
+    forward, timestamp-based walk can assign real transcript words to it.  This
+    keeps captions grounded in the compiled word occurrences: no segment text
+    is copied, punctuated, or assigned an invented output time.
+
+    Adjacent ASR segments may overlap by a few milliseconds.  That is normal,
+    so sentence starts are not used as hard cutoffs; their increasing end times
+    provide the unambiguous forward boundary.  A word must *finish* at that end
+    (within a small ASR tolerance): midpoint matching can steal the first word
+    of the next sentence when it straddles a segment boundary.  Empty ASR words
+    advance the timing cursor but never become a semantic break. Crossed/nested
+    segments and segments that map to zero meaningful words are ignored.  With
+    no usable sentence boundary, callers retain the established pause-aware
+    grouping behaviour.
+    """
+
+    breaks: set[int] = set()
+    sentence_ids = sentence_word_ids(transcript)
+    previous_meaningful_word_id: int | None = None
+    previous_sentence_id: int | None = None
+    for word_id, sentence_id in enumerate(sentence_ids):
+        if not transcript.words[word_id].word.strip():
+            continue
+        # Empty timing placeholders never form a visual cue and must not hide
+        # an otherwise validated sentence boundary between real words.
+        if (
+            previous_meaningful_word_id is not None
+            and previous_sentence_id is not None
+            and sentence_id is not None
+            and previous_sentence_id != sentence_id
+        ):
+            breaks.add(previous_meaningful_word_id)
+        previous_meaningful_word_id = word_id
+        previous_sentence_id = sentence_id
+
+    return frozenset(breaks)
+
 
 
 @dataclass(frozen=True)
@@ -258,6 +366,8 @@ def _caption_words_for_shot(
             )
         if words and occurrence.timeline_in_ms < words[-1].timeline_in_ms:
             raise EDLCaptionError(f"word occurrence {occurrence.occurrence_id!r} is not monotonic")
+        if not transcript.words[occurrence.word_id].word.strip():
+            continue
         words.append(
             CaptionWord(
                 occurrence_id=occurrence.occurrence_id,
@@ -271,14 +381,23 @@ def _caption_words_for_shot(
     return tuple(words)
 
 
-def _groups(words: tuple[CaptionWord, ...], *, max_words: int) -> list[tuple[CaptionWord, ...]]:
-    """Split one shot into pause-aware, visually balanced caption cues.
+def _groups(
+    words: tuple[CaptionWord, ...],
+    *,
+    max_words: int,
+    semantic_break_after_word_ids: frozenset[int] = frozenset(),
+) -> list[tuple[CaptionWord, ...]]:
+    """Split one shot into semantic, pause-aware, balanced caption cues.
 
     A simple fixed-width chunker creates distracting orphan tails: four words
     become ``3 + 1`` and seven words become ``3 + 3 + 1``.  Within each
     uninterrupted phrase we instead choose the minimum number of cues and
     distribute the words as evenly as possible (``2 + 2`` and ``3 + 2 + 2``).
-    Pause boundaries remain authoritative and are never crossed.
+    When ASR sentence timing maps unambiguously to transcript word IDs, those
+    semantic boundaries are authoritative too.  A replay remains correct
+    because the grouping reads the occurrence's output timing but asks only
+    whether its real source word ends a mapped sentence.  Without sentences,
+    this is exactly the existing pause-aware/balancing path.
     """
 
     if max_words <= 0:
@@ -288,7 +407,8 @@ def _groups(words: tuple[CaptionWord, ...], *, max_words: int) -> list[tuple[Cap
     current: list[CaptionWord] = []
     for word in words:
         gap = word.timeline_in_ms - current[-1].timeline_out_ms if current else 0
-        if current and gap >= _PAUSE_CUT_MS:
+        semantic_boundary = bool(current and current[-1].word_id in semantic_break_after_word_ids)
+        if current and (semantic_boundary or gap >= _PAUSE_CUT_MS):
             phrases.append(tuple(current))
             current = []
         current.append(word)
@@ -326,6 +446,7 @@ def build_caption_plan(
         raise EDLCaptionError("a transcript is required for EDL captions")
 
     cues: list[CaptionCue] = []
+    semantic_break_after_word_ids = _semantic_break_after_word_ids(transcript)
     for shot_index, shot in enumerate(edl.shots):
         if shot.caption_theme not in _THEMES:
             raise EDLCaptionError(f"shot {shot.shot_id}: unsupported caption theme")
@@ -334,7 +455,13 @@ def build_caption_plan(
         style = THEME_STYLES[shot.caption_theme]
         zone = _safe_zone_for_shot(shot, safe_zones)
         words = _caption_words_for_shot(shot, transcript)
-        for group_index, group in enumerate(_groups(words, max_words=style.max_words)):
+        for group_index, group in enumerate(
+            _groups(
+                words,
+                max_words=style.max_words,
+                semantic_break_after_word_ids=semantic_break_after_word_ids,
+            )
+        ):
             start, end = group[0].timeline_in_ms, group[-1].timeline_out_ms
             if not 0 <= start < end <= edl.duration_ms:
                 raise EDLCaptionError(f"shot {shot.shot_id}: cue lies outside EDL timeline")

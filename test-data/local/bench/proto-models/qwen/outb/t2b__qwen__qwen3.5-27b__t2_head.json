@@ -1,0 +1,31 @@
+{
+ "model": "qwen/qwen3.5-27b",
+ "set": "t2_head",
+ "latency_s": 2.2,
+ "usage": {
+  "prompt_tokens": 1236,
+  "completion_tokens": 99,
+  "total_tokens": 1335,
+  "cost": 0.00039546,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00039546,
+   "upstream_inference_prompt_cost": 0.00024102,
+   "upstream_inference_completions_cost": 0.00015444
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"decor\": \"other\",\n  \"person_visible\": true,\n  \"energy\": 85,\n  \"action\": \"pointing at screen\",\n  \"proof_objects\": [\"smartphone showing sales dashboard\", \"revenue figures on screen\"],\n  \"problems\": [],\n  \"visual_score\": 92,\n  \"face_center_x\": 0.72,\n  \"burned_captions\": false\n}",
+ "provider": "Alibaba"
+}

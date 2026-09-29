@@ -1,0 +1,16 @@
+{
+  "model": "deepseek/deepseek-v4-flash-0731",
+  "ok": false,
+  "error": "ProviderError: http error: ",
+  "latency_seconds": 588.173,
+  "tokens": 0,
+  "arcs": [],
+  "raw_video_read": {
+    "n_events": 79,
+    "n_events_in_fixture": 79,
+    "video_map_summary_chars": 600,
+    "n_transcript_words": 2864,
+    "n_transcript_words_in_fixture": 2864,
+    "transcript_lines_chars": 14977
+  }
+}

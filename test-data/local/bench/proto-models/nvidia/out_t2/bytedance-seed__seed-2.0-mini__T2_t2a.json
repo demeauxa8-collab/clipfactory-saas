@@ -1,0 +1,32 @@
+{
+ "model": "bytedance-seed/seed-2.0-mini",
+ "tag": "T2_t2a",
+ "latency_s": 4.4,
+ "usage": {
+  "prompt_tokens": 6702,
+  "completion_tokens": 87,
+  "total_tokens": 6789,
+  "cost": 0.000705,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.000705,
+   "upstream_inference_prompt_cost": 0.0006702,
+   "upstream_inference_completions_cost": 3.48e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\"decor\":\"Terrasse urbaine avec palmiers et gratte-ciel\",\"person_visible\":true,\"face_center_x\":0.55,\"energy\":7,\"action\":\"parler et presenter un objet\",\"proof_objects\":[\"pièce de 1€\",\"logo Google Ads\"],\"problems\":[\"texte superpose en haut a droite sur certaines frames\"],\"visual_score\":8,\"burned_captions\":true}",
+ "reasoning": "",
+ "provider": "Seed"
+}

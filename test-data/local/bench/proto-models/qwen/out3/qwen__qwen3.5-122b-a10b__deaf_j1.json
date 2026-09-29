@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.5-122b-a10b",
+ "tag": "deaf_j1",
+ "kind": "video",
+ "latency_s": 19.7,
+ "usage": {
+  "prompt_tokens": 5538,
+  "completion_tokens": 222,
+  "total_tokens": 5760,
+  "cost": 0.00190164,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00190164,
+   "upstream_inference_prompt_cost": 0.00143988,
+   "upstream_inference_completions_cost": 0.00046176
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"entends_le_son\": true,\n  \"transcription_orale\": \"J'ai seulement une pièce de monnaie et en moins d'une minute je vais vous montrer comment j'ai pu transformer cette pièce en 4,5 millions d'euros. C'est la première fois que je partage ce secret avec vous alors restez bien jusqu'à la fin pour ne pas le rater. Je m'appelle Thomas et je suis un entrepreneur qui a réussi à créer plusieurs entreprises rentables en ligne. Aujourd'hui, je vais vous révéler ma méthode secrète pour générer des revenus passifs sans avoir besoin de compétences techniques ou d'un gros capital de départ. Tout ce dont vous avez besoin, c'est d'une connexion internet et de quelques heures par jour. Si vous êtes prêt à changer votre vie financière, cliquez sur le lien dans la description pour accéder à ma formation gratuite.\",\n  \"texte_incruste_a_l_ecran\": [\n    \"J'AI SEULEMENT\",\n    \"4,5 MILLIONS €\"\n  ]\n}",
+ "provider": "Alibaba"
+}

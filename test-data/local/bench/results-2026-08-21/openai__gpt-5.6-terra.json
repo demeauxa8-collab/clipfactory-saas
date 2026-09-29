@@ -1,0 +1,266 @@
+{
+  "model": "openai/gpt-5.6-terra",
+  "ok": true,
+  "error": null,
+  "latency_seconds": 89.319,
+  "tokens": 26197,
+  "arcs": [
+    {
+      "title": "Transformer 1 euro en boutique rentable en 24 heures",
+      "arc_type": "challenge_result",
+      "segments": [
+        {
+          "role": "setup",
+          "start": 0.0,
+          "end": 24.5,
+          "transcript_excerpt": "J’ai seulement un euro pour lancer une boutique rentable en dropshipping et le tout en 24 heures Moi c’est Gaspar j’ai fait 4 millions et demi en e commerce et l’objectif ça va être simple aujourd’hui C’est juste de prouver qu’en 2025 tu peux lancer un business avec",
+          "why": "It establishes an unusually concrete challenge, the deadline, and Gaspar’s e-commerce credibility.",
+          "start_anchor": "J’ai seulement un euro pour lancer une boutique rentable",
+          "end_anchor": "ou est ce que je vais vraiment tout perdre",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        },
+        {
+          "role": "payoff",
+          "start": 457.5,
+          "end": 481.8,
+          "transcript_excerpt": "Et le tout les gars On n’oublie pas On est parti avec un euro Donc rendez vous demain Pour voir si on a eu des clics Et puis surtout Pour voir si on a eu des ventes On se retrouve 24 heures plus tard Et on va voir combien Est ce qu’on a fait sur la boutique",
+          "why": "It jumps from the one-euro premise to the 24-hour reveal and delivers a concrete 69-euro sale.",
+          "start_anchor": "Et le tout les gars On n’oublie pas",
+          "end_anchor": "Une grande nouvelle On a fait une vente à 69 euros",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The clip opens on an extreme financial constraint and holds the answer until a real Shopify result lands.",
+      "estimated_retention": 94,
+      "continuity_risk": "low",
+      "suggested_hook": "1€ pour lancer une boutique rentable en 24h",
+      "link_reason": "The second segment directly answers whether the one-euro challenge produced a real sale after 24 hours.",
+      "campaign_fit_llm": 96,
+      "campaign_fit_reason": "It combines Gaspar’s 4.5-million-euro credential with a clear e-commerce result that creates demand for his expertise.",
+      "opening_words": "J’ai seulement un euro pour lancer une boutique rentable",
+      "self_contained": true,
+      "payoff_line": "Une grande nouvelle On a fait une vente à 69 euros"
+    },
+    {
+      "title": "Une vente avec seulement 10 visites",
+      "arc_type": "question_revelation",
+      "segments": [
+        {
+          "role": "single",
+          "start": 469.6,
+          "end": 494.0,
+          "transcript_excerpt": "Est ce qu’on va gagner de l’argent Est ce qu’on va perdre de l’argent Est ce qu’on a fait vraiment tout ça pour rien C’est ce qu’on va voir Maintenant On se retrouve directement sur Shopify Et oui Dans la nuit Les amis Une grande nouvelle On a fait une vente à 69 euros Et je ne m’y attendais vraimen",
+          "why": "The direct win-or-loss question resolves with a 69-euro sale and an unusually strong conversion figure.",
+          "start_anchor": "Est ce qu’on va gagner de l’argent Est",
+          "end_anchor": "Donc ça nous fait un taux de conversion A 10",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "A binary money question creates immediate suspense before the viewer learns that 10 visits generated a sale.",
+      "estimated_retention": 92,
+      "continuity_risk": "low",
+      "suggested_hook": "10 visites seulement… est-ce que le shop a vendu ?",
+      "link_reason": null,
+      "campaign_fit_llm": 91,
+      "campaign_fit_reason": "It gives aspiring entrepreneurs a concrete proof point that supports Gaspar’s authority in acquisition and conversion.",
+      "opening_words": "Est ce qu’on va gagner de l’argent Est",
+      "self_contained": true,
+      "payoff_line": "Une grande nouvelle On a fait une vente à 69 euros"
+    },
+    {
+      "title": "Une boutique à 4 500€ par jour avec Google",
+      "arc_type": "phrase_visual_proof",
+      "segments": [
+        {
+          "role": "single",
+          "start": 170.8,
+          "end": 195.0,
+          "transcript_excerpt": "Il y a quelques mois J’ai trouvé un produit avec ce site justement Et regardez où est ce qu’il en est aujourd’hui Ça c’était sur la journée d’hier Et dites vous que j’ai 5 autres boutiques qui tournent de la même manière Donc juste sur 24h Elle a fait 4500€ Et",
+          "why": "It provides a dashboard-backed case study, then ties the method to the result promised in his accompaniment.",
+          "start_anchor": "Il y a quelques mois J’ai trouvé un produit",
+          "end_anchor": "Et c’est garanti sous contrat",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The viewer waits to see what happened to a product he found months earlier, then gets a high-value revenue and profit reveal.",
+      "estimated_retention": 90,
+      "continuity_risk": "low",
+      "suggested_hook": "Le produit trouvé avec ce site fait combien aujourd’hui ?",
+      "link_reason": null,
+      "campaign_fit_llm": 95,
+      "campaign_fit_reason": "This is high-status proof of Gaspar’s operating results and directly positions his Google e-commerce method as valuable training.",
+      "opening_words": "Il y a quelques mois J’ai trouvé un produit",
+      "self_contained": true,
+      "payoff_line": "juste sur 24h Elle a fait 4500€ Et là dessus je prends 45 de marge Donc presque 2000€ en une journée de bénéfice"
+    },
+    {
+      "title": "La première étape : passer de 1€ à 100€",
+      "arc_type": "decision_consequence",
+      "segments": [
+        {
+          "role": "setup",
+          "start": 48.6,
+          "end": 60.7,
+          "transcript_excerpt": "La première étape ça va être de transformer ces un euro en 100 euros Ce que j’ai réfléchi pour faire ça c’est que le plus simple ça serait juste que je demande à ma meuf 100 euros Je pense que ça ira plus vite Et en échange je lui donne des parts après Le but c’est quand même de montrer que c’est po",
+          "why": "It names the exact 1-to-100-euro obstacle and shows his decision not to fake the challenge.",
+          "start_anchor": "La première étape ça va être de transformer ces",
+          "end_anchor": "Donc ce qu’on va faire tout simplement on va aller bosser",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        },
+        {
+          "role": "payoff",
+          "start": 109.3,
+          "end": 117.0,
+          "transcript_excerpt": "On a désormais les 100 euros J’espère juste qu’il va pas faire trop caca Bon ça y est maintenant qu’on a 100 euros Et qu’on a un chien en plus de ça Maintenant on va enfin pouvoir commencer à faire la boutique",
+          "why": "It pays off the initial funding obstacle and moves him into the actual business build.",
+          "start_anchor": "On a désormais les 100 euros J’espère juste",
+          "end_anchor": "Maintenant on va enfin pouvoir commencer à faire la boutique",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The simple 1€ to 100€ target is easy to understand and creates a satisfying mini-transformation.",
+      "estimated_retention": 84,
+      "continuity_risk": "low",
+      "suggested_hook": "Avant les pubs Google, il faut résoudre ce problème",
+      "link_reason": "The second segment confirms that his decision to work rather than borrow successfully produced the required 100 euros.",
+      "campaign_fit_llm": 77,
+      "campaign_fit_reason": "It presents the entrepreneur as resourceful and disciplined, reinforcing the work ethic behind the business training.",
+      "opening_words": "La première étape ça va être de transformer ces",
+      "self_contained": true,
+      "payoff_line": "On a désormais les 100 euros"
+    },
+    {
+      "title": "Pourquoi il préfère Google à TikTok",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 36.6,
+          "end": 48.6,
+          "transcript_excerpt": "Je préfère faire du dropshipping sur Google Vu que c’est des meilleures marges je vais faire plus de profit En plus de ça c’est beaucoup plus long terme que TikTok et surtout tu vend tes produits à des gens qui recherchent déjà ton produit Donc vraiment à ce niveau là moi je m’en fais pas que ça va ",
+          "why": "It gives a concise contrarian explanation of why Google search traffic can outperform TikTok for durable margins.",
+          "start_anchor": "Je préfère faire du dropshipping sur Google Vu que",
+          "end_anchor": "même si on part avec juste un euro",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "It challenges the default TikTok-first assumption with a practical advantage that aspiring sellers want to understand.",
+      "estimated_retention": 82,
+      "continuity_risk": "low",
+      "suggested_hook": "Pourquoi Google peut être plus rentable que TikTok",
+      "link_reason": null,
+      "campaign_fit_llm": 88,
+      "campaign_fit_reason": "It showcases a differentiated acquisition strategy, giving viewers a reason to seek deeper Google e-commerce instruction.",
+      "opening_words": "Je préfère faire du dropshipping sur Google Vu que",
+      "self_contained": true,
+      "payoff_line": "tu vend tes produits à des gens qui recherchent déjà ton produit"
+    },
+    {
+      "title": "Le vrai coût de l’e-commerce : les connaissances",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 566.0,
+          "end": 584.0,
+          "transcript_excerpt": "Ce qui coûte le plus cher C’est quand même les connaissances J’ai du mettre plus de 30 000 balles Dans des coachings Là actuellement J’ai un coaching avec un américain Pour chiffrer encore un e commerce Et c’est ça qui coûte le plus cher Et c’est pour ça que j’ai réussi aussi ce challenge Et si dema",
+          "why": "It reframes the investment from ad spend to skill acquisition and explains why he succeeded where a beginner may struggle.",
+          "start_anchor": "Ce qui coûte le plus cher C’est quand même",
+          "end_anchor": "Pour réussir en e commerce",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The contrarian cost reveal is backed by a large personal investment and a direct explanation of the challenge result.",
+      "estimated_retention": 86,
+      "continuity_risk": "low",
+      "suggested_hook": "Le plus gros investissement en e-commerce n’est pas celui que tu crois",
+      "link_reason": null,
+      "campaign_fit_llm": 94,
+      "campaign_fit_reason": "This is the clearest bridge from an impressive challenge result to the value of paid guidance and Gaspar’s accompaniment.",
+      "opening_words": "Ce qui coûte le plus cher C’est quand même",
+      "self_contained": true,
+      "payoff_line": "J’ai du mettre plus de 30 000 balles Dans des coachings"
+    },
+    {
+      "title": "69€ de vente et environ 50€ de bénéfice",
+      "arc_type": "setup_payoff",
+      "segments": [
+        {
+          "role": "setup",
+          "start": 469.6,
+          "end": 494.0,
+          "transcript_excerpt": "Est ce qu’on va gagner de l’argent Est ce qu’on va perdre de l’argent Est ce qu’on a fait vraiment tout ça pour rien C’est ce qu’on va voir Maintenant On se retrouve directement sur Shopify Et oui Dans la nuit Les amis Une grande nouvelle On a fait une vente à 69 euros Et je ne m’y attendais vraimen",
+          "why": "It sets up the business question and reveals that only 10 visits produced a 69-euro order.",
+          "start_anchor": "Est ce qu’on va gagner de l’argent Est",
+          "end_anchor": "Donc ça nous fait un taux de conversion A 10",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        },
+        {
+          "role": "payoff",
+          "start": 524.5,
+          "end": 549.6,
+          "transcript_excerpt": "Franchement C’est vraiment bien Pour du Google Qui met environ 4 à 5 jours A bien s’optimiser habituellement Bon On va quand même regarder Si je suis rentable sur la commande Et combien est ce qu’on a dépensé en publicité Et pour envoyer du coup Le produit Et on va directement sur Google Bon Ça a du",
+          "why": "It answers the sale reveal with the actual unit economics: 3 dollars spent and roughly 50 euros in profit.",
+          "start_anchor": "Franchement C’est vraiment bien Pour du Google Qui met",
+          "end_anchor": "On est à environ 50 euros bénéfice Donc c’est vraiment",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "It does not stop at revenue: viewers stay for the unit-economics reveal that proves whether the result actually matters.",
+      "estimated_retention": 89,
+      "continuity_risk": "medium",
+      "suggested_hook": "Une vente suffit-elle à rendre ce shop rentable ?",
+      "link_reason": "The second segment answers whether the 69-euro order was truly profitable by showing ad spend, product cost, and net profit.",
+      "campaign_fit_llm": 93,
+      "campaign_fit_reason": "Concrete spend, cost, and profit figures demonstrate the commercial competence that a prospective training buyer wants to see.",
+      "opening_words": "Est ce qu’on va gagner de l’argent Est",
+      "self_contained": true,
+      "payoff_line": "On est à environ 50 euros bénéfice"
+    },
+    {
+      "title": "Il part laver des voitures pour financer ses pubs",
+      "arc_type": "before_after",
+      "segments": [
+        {
+          "role": "single",
+          "start": 85.0,
+          "end": 109.3,
+          "transcript_excerpt": "Je finis par laver des voitures sérieux Bon les gars pour faire mes premiers 100 euros J’étais préparateur de commande Je peux vous dire qu’on se tuait bien plus que là Bon même s’il fait 40 degrés là Bon allez on a bien nettoyé Je suis bien transpirant On a maintenant 31 euros Vu qu’on a que 24 heu",
+          "why": "It turns the resourcefulness claim into an energetic visual hustle sequence that ends at the 100-euro target.",
+          "start_anchor": "Je finis par laver des voitures sérieux Bon",
+          "end_anchor": "On a désormais les 100 euros J’espère juste qu’il va pas faire trop caca",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The unexpected shift from e-commerce to physically earning the ad budget creates a relatable and satisfying transformation.",
+      "estimated_retention": 78,
+      "continuity_risk": "low",
+      "suggested_hook": "Pour lancer ses pubs, il a dû faire ça",
+      "link_reason": null,
+      "campaign_fit_llm": 72,
+      "campaign_fit_reason": "It humanizes Gaspar’s entrepreneurial drive and reinforces a no-excuses identity without undermining his expertise.",
+      "opening_words": "Je finis par laver des voitures sérieux Bon",
+      "self_contained": true,
+      "payoff_line": "On a désormais les 100 euros"
+    }
+  ],
+  "raw_video_read": {
+    "n_events": 79,
+    "n_events_in_fixture": 79,
+    "video_map_summary_chars": 600,
+    "n_transcript_words": 2864,
+    "n_transcript_words_in_fixture": 2864,
+    "transcript_lines_chars": 14977
+  }
+}

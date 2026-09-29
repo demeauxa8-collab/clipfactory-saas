@@ -1,0 +1,31 @@
+{
+ "model": "qwen/qwen3.6-35b-a3b",
+ "set": "t2_head",
+ "latency_s": 6.6,
+ "usage": {
+  "prompt_tokens": 1235,
+  "completion_tokens": 105,
+  "total_tokens": 1340,
+  "cost": 0.0005566,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0005566,
+   "upstream_inference_prompt_cost": 0.00035815,
+   "upstream_inference_completions_cost": 0.00019845
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"decor\": \"other\",\n  \"person_visible\": true,\n  \"energy\": 75,\n  \"action\": \"demo\",\n  \"proof_objects\": [\n    \"smartphone screen showing sales dashboard\"\n  ],\n  \"problems\": [\n    \"blurry\"\n  ],\n  \"visual_score\": 65,\n  \"face_center_x\": 0.65,\n  \"burned_captions\": false\n}",
+ "provider": "Io Net"
+}

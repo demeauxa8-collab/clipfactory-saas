@@ -1,0 +1,3145 @@
+{
+  "schema_version": "1.0",
+  "renderer": "compiled_edl_v2",
+  "source_sha256": "ea12a4869887ce814629ea29ec22b053a70826ddbe2c7deb2d15bf2ef2902bbe",
+  "transcript_sha256": "f912c78fa3cc1bd367c3c5470cbd8d9adb2e66cb87d417cea05df4356271254f",
+  "output_sha256": "59740436c3ca383e973f4f89bc7bbc5f83d840753452b76b0fa41f297bb6d10a",
+  "captions_sha256": "3844f3562247bb4360eea6d40c01a9c2eaf6ad2509bf7f22aa9db5c417b71f47",
+  "edl": {
+    "schema_version": "2.0",
+    "editorial_thesis": "The clip showcases a dramatic transformation from a tiny investment to significant profit in a short time, appealing to aspiring entrepreneurs.",
+    "fps": 30,
+    "width": 1080,
+    "height": 1920,
+    "duration_ms": 29033,
+    "duration_frames": 871,
+    "shots": [
+      {
+        "shot_id": "segment_00",
+        "role": "hook",
+        "from_word_id": 0,
+        "to_word_id": 53,
+        "source_in_ms": 0,
+        "source_out_ms": 13660,
+        "timeline_in_ms": 0,
+        "timeline_out_ms": 13667,
+        "timeline_in_frame": 0,
+        "timeline_out_frame": 410,
+        "speed": 1.0,
+        "framing": {
+          "mode": "fit_blur",
+          "center_x": 0.5,
+          "base_scale": 1.0,
+          "screen_region": null
+        },
+        "effects": [],
+        "transition_out": "hard_cut",
+        "caption_theme": "standard_karaoke",
+        "word_occurrences": [
+          {
+            "occurrence_id": "segment_00:w_000000",
+            "shot_id": "segment_00",
+            "word_id": 0,
+            "source_in_ms": 0,
+            "source_out_ms": 540,
+            "timeline_in_ms": 0,
+            "timeline_out_ms": 533,
+            "timeline_in_frame": 0,
+            "timeline_out_frame": 16
+          },
+          {
+            "occurrence_id": "segment_00:w_000001",
+            "shot_id": "segment_00",
+            "word_id": 1,
+            "source_in_ms": 540,
+            "source_out_ms": 740,
+            "timeline_in_ms": 533,
+            "timeline_out_ms": 733,
+            "timeline_in_frame": 16,
+            "timeline_out_frame": 22
+          },
+          {
+            "occurrence_id": "segment_00:w_000002",
+            "shot_id": "segment_00",
+            "word_id": 2,
+            "source_in_ms": 740,
+            "source_out_ms": 1440,
+            "timeline_in_ms": 733,
+            "timeline_out_ms": 1433,
+            "timeline_in_frame": 22,
+            "timeline_out_frame": 43
+          },
+          {
+            "occurrence_id": "segment_00:w_000003",
+            "shot_id": "segment_00",
+            "word_id": 3,
+            "source_in_ms": 1440,
+            "source_out_ms": 1760,
+            "timeline_in_ms": 1433,
+            "timeline_out_ms": 1767,
+            "timeline_in_frame": 43,
+            "timeline_out_frame": 53
+          },
+          {
+            "occurrence_id": "segment_00:w_000004",
+            "shot_id": "segment_00",
+            "word_id": 4,
+            "source_in_ms": 1760,
+            "source_out_ms": 2220,
+            "timeline_in_ms": 1767,
+            "timeline_out_ms": 2233,
+            "timeline_in_frame": 53,
+            "timeline_out_frame": 67
+          },
+          {
+            "occurrence_id": "segment_00:w_000005",
+            "shot_id": "segment_00",
+            "word_id": 5,
+            "source_in_ms": 2220,
+            "source_out_ms": 2360,
+            "timeline_in_ms": 2233,
+            "timeline_out_ms": 2367,
+            "timeline_in_frame": 67,
+            "timeline_out_frame": 71
+          },
+          {
+            "occurrence_id": "segment_00:w_000006",
+            "shot_id": "segment_00",
+            "word_id": 6,
+            "source_in_ms": 2360,
+            "source_out_ms": 2940,
+            "timeline_in_ms": 2367,
+            "timeline_out_ms": 2933,
+            "timeline_in_frame": 71,
+            "timeline_out_frame": 88
+          },
+          {
+            "occurrence_id": "segment_00:w_000007",
+            "shot_id": "segment_00",
+            "word_id": 7,
+            "source_in_ms": 2940,
+            "source_out_ms": 2940,
+            "timeline_in_ms": 2933,
+            "timeline_out_ms": 2967,
+            "timeline_in_frame": 88,
+            "timeline_out_frame": 89
+          },
+          {
+            "occurrence_id": "segment_00:w_000008",
+            "shot_id": "segment_00",
+            "word_id": 8,
+            "source_in_ms": 2940,
+            "source_out_ms": 3380,
+            "timeline_in_ms": 2933,
+            "timeline_out_ms": 3367,
+            "timeline_in_frame": 88,
+            "timeline_out_frame": 101
+          },
+          {
+            "occurrence_id": "segment_00:w_000009",
+            "shot_id": "segment_00",
+            "word_id": 9,
+            "source_in_ms": 3380,
+            "source_out_ms": 3600,
+            "timeline_in_ms": 3367,
+            "timeline_out_ms": 3600,
+            "timeline_in_frame": 101,
+            "timeline_out_frame": 108
+          },
+          {
+            "occurrence_id": "segment_00:w_000010",
+            "shot_id": "segment_00",
+            "word_id": 10,
+            "source_in_ms": 3600,
+            "source_out_ms": 4100,
+            "timeline_in_ms": 3600,
+            "timeline_out_ms": 4100,
+            "timeline_in_frame": 108,
+            "timeline_out_frame": 123
+          },
+          {
+            "occurrence_id": "segment_00:w_000011",
+            "shot_id": "segment_00",
+            "word_id": 11,
+            "source_in_ms": 4100,
+            "source_out_ms": 4440,
+            "timeline_in_ms": 4100,
+            "timeline_out_ms": 4433,
+            "timeline_in_frame": 123,
+            "timeline_out_frame": 133
+          },
+          {
+            "occurrence_id": "segment_00:w_000012",
+            "shot_id": "segment_00",
+            "word_id": 12,
+            "source_in_ms": 4440,
+            "source_out_ms": 4640,
+            "timeline_in_ms": 4433,
+            "timeline_out_ms": 4633,
+            "timeline_in_frame": 133,
+            "timeline_out_frame": 139
+          },
+          {
+            "occurrence_id": "segment_00:w_000013",
+            "shot_id": "segment_00",
+            "word_id": 13,
+            "source_in_ms": 4640,
+            "source_out_ms": 4760,
+            "timeline_in_ms": 4633,
+            "timeline_out_ms": 4767,
+            "timeline_in_frame": 139,
+            "timeline_out_frame": 143
+          },
+          {
+            "occurrence_id": "segment_00:w_000014",
+            "shot_id": "segment_00",
+            "word_id": 14,
+            "source_in_ms": 4760,
+            "source_out_ms": 4960,
+            "timeline_in_ms": 4767,
+            "timeline_out_ms": 4967,
+            "timeline_in_frame": 143,
+            "timeline_out_frame": 149
+          },
+          {
+            "occurrence_id": "segment_00:w_000015",
+            "shot_id": "segment_00",
+            "word_id": 15,
+            "source_in_ms": 4960,
+            "source_out_ms": 5380,
+            "timeline_in_ms": 4967,
+            "timeline_out_ms": 5367,
+            "timeline_in_frame": 149,
+            "timeline_out_frame": 161
+          },
+          {
+            "occurrence_id": "segment_00:w_000016",
+            "shot_id": "segment_00",
+            "word_id": 16,
+            "source_in_ms": 5380,
+            "source_out_ms": 5480,
+            "timeline_in_ms": 5367,
+            "timeline_out_ms": 5467,
+            "timeline_in_frame": 161,
+            "timeline_out_frame": 164
+          },
+          {
+            "occurrence_id": "segment_00:w_000017",
+            "shot_id": "segment_00",
+            "word_id": 17,
+            "source_in_ms": 5700,
+            "source_out_ms": 5700,
+            "timeline_in_ms": 5700,
+            "timeline_out_ms": 5733,
+            "timeline_in_frame": 171,
+            "timeline_out_frame": 172
+          },
+          {
+            "occurrence_id": "segment_00:w_000018",
+            "shot_id": "segment_00",
+            "word_id": 18,
+            "source_in_ms": 5700,
+            "source_out_ms": 5780,
+            "timeline_in_ms": 5700,
+            "timeline_out_ms": 5767,
+            "timeline_in_frame": 171,
+            "timeline_out_frame": 173
+          },
+          {
+            "occurrence_id": "segment_00:w_000019",
+            "shot_id": "segment_00",
+            "word_id": 19,
+            "source_in_ms": 5780,
+            "source_out_ms": 6080,
+            "timeline_in_ms": 5767,
+            "timeline_out_ms": 6067,
+            "timeline_in_frame": 173,
+            "timeline_out_frame": 182
+          },
+          {
+            "occurrence_id": "segment_00:w_000020",
+            "shot_id": "segment_00",
+            "word_id": 20,
+            "source_in_ms": 6220,
+            "source_out_ms": 6240,
+            "timeline_in_ms": 6233,
+            "timeline_out_ms": 6267,
+            "timeline_in_frame": 187,
+            "timeline_out_frame": 188
+          },
+          {
+            "occurrence_id": "segment_00:w_000021",
+            "shot_id": "segment_00",
+            "word_id": 21,
+            "source_in_ms": 6240,
+            "source_out_ms": 6380,
+            "timeline_in_ms": 6233,
+            "timeline_out_ms": 6367,
+            "timeline_in_frame": 187,
+            "timeline_out_frame": 191
+          },
+          {
+            "occurrence_id": "segment_00:w_000022",
+            "shot_id": "segment_00",
+            "word_id": 22,
+            "source_in_ms": 6380,
+            "source_out_ms": 6640,
+            "timeline_in_ms": 6367,
+            "timeline_out_ms": 6633,
+            "timeline_in_frame": 191,
+            "timeline_out_frame": 199
+          },
+          {
+            "occurrence_id": "segment_00:w_000023",
+            "shot_id": "segment_00",
+            "word_id": 23,
+            "source_in_ms": 6640,
+            "source_out_ms": 6820,
+            "timeline_in_ms": 6633,
+            "timeline_out_ms": 6833,
+            "timeline_in_frame": 199,
+            "timeline_out_frame": 205
+          },
+          {
+            "occurrence_id": "segment_00:w_000024",
+            "shot_id": "segment_00",
+            "word_id": 24,
+            "source_in_ms": 6820,
+            "source_out_ms": 7040,
+            "timeline_in_ms": 6833,
+            "timeline_out_ms": 7033,
+            "timeline_in_frame": 205,
+            "timeline_out_frame": 211
+          },
+          {
+            "occurrence_id": "segment_00:w_000025",
+            "shot_id": "segment_00",
+            "word_id": 25,
+            "source_in_ms": 7040,
+            "source_out_ms": 7040,
+            "timeline_in_ms": 7033,
+            "timeline_out_ms": 7067,
+            "timeline_in_frame": 211,
+            "timeline_out_frame": 212
+          },
+          {
+            "occurrence_id": "segment_00:w_000026",
+            "shot_id": "segment_00",
+            "word_id": 26,
+            "source_in_ms": 7040,
+            "source_out_ms": 7300,
+            "timeline_in_ms": 7033,
+            "timeline_out_ms": 7300,
+            "timeline_in_frame": 211,
+            "timeline_out_frame": 219
+          },
+          {
+            "occurrence_id": "segment_00:w_000027",
+            "shot_id": "segment_00",
+            "word_id": 27,
+            "source_in_ms": 7300,
+            "source_out_ms": 7600,
+            "timeline_in_ms": 7300,
+            "timeline_out_ms": 7600,
+            "timeline_in_frame": 219,
+            "timeline_out_frame": 228
+          },
+          {
+            "occurrence_id": "segment_00:w_000028",
+            "shot_id": "segment_00",
+            "word_id": 28,
+            "source_in_ms": 7600,
+            "source_out_ms": 7780,
+            "timeline_in_ms": 7600,
+            "timeline_out_ms": 7767,
+            "timeline_in_frame": 228,
+            "timeline_out_frame": 233
+          },
+          {
+            "occurrence_id": "segment_00:w_000029",
+            "shot_id": "segment_00",
+            "word_id": 29,
+            "source_in_ms": 7780,
+            "source_out_ms": 8000,
+            "timeline_in_ms": 7767,
+            "timeline_out_ms": 8000,
+            "timeline_in_frame": 233,
+            "timeline_out_frame": 240
+          },
+          {
+            "occurrence_id": "segment_00:w_000030",
+            "shot_id": "segment_00",
+            "word_id": 30,
+            "source_in_ms": 8000,
+            "source_out_ms": 8440,
+            "timeline_in_ms": 8000,
+            "timeline_out_ms": 8433,
+            "timeline_in_frame": 240,
+            "timeline_out_frame": 253
+          },
+          {
+            "occurrence_id": "segment_00:w_000031",
+            "shot_id": "segment_00",
+            "word_id": 31,
+            "source_in_ms": 8440,
+            "source_out_ms": 8640,
+            "timeline_in_ms": 8433,
+            "timeline_out_ms": 8633,
+            "timeline_in_frame": 253,
+            "timeline_out_frame": 259
+          },
+          {
+            "occurrence_id": "segment_00:w_000032",
+            "shot_id": "segment_00",
+            "word_id": 32,
+            "source_in_ms": 8640,
+            "source_out_ms": 8680,
+            "timeline_in_ms": 8633,
+            "timeline_out_ms": 8667,
+            "timeline_in_frame": 259,
+            "timeline_out_frame": 260
+          },
+          {
+            "occurrence_id": "segment_00:w_000033",
+            "shot_id": "segment_00",
+            "word_id": 33,
+            "source_in_ms": 8680,
+            "source_out_ms": 8800,
+            "timeline_in_ms": 8667,
+            "timeline_out_ms": 8800,
+            "timeline_in_frame": 260,
+            "timeline_out_frame": 264
+          },
+          {
+            "occurrence_id": "segment_00:w_000034",
+            "shot_id": "segment_00",
+            "word_id": 34,
+            "source_in_ms": 8800,
+            "source_out_ms": 9040,
+            "timeline_in_ms": 8800,
+            "timeline_out_ms": 9033,
+            "timeline_in_frame": 264,
+            "timeline_out_frame": 271
+          },
+          {
+            "occurrence_id": "segment_00:w_000035",
+            "shot_id": "segment_00",
+            "word_id": 35,
+            "source_in_ms": 9040,
+            "source_out_ms": 9380,
+            "timeline_in_ms": 9033,
+            "timeline_out_ms": 9367,
+            "timeline_in_frame": 271,
+            "timeline_out_frame": 281
+          },
+          {
+            "occurrence_id": "segment_00:w_000036",
+            "shot_id": "segment_00",
+            "word_id": 36,
+            "source_in_ms": 9600,
+            "source_out_ms": 9600,
+            "timeline_in_ms": 9600,
+            "timeline_out_ms": 9633,
+            "timeline_in_frame": 288,
+            "timeline_out_frame": 289
+          },
+          {
+            "occurrence_id": "segment_00:w_000037",
+            "shot_id": "segment_00",
+            "word_id": 37,
+            "source_in_ms": 9600,
+            "source_out_ms": 9740,
+            "timeline_in_ms": 9600,
+            "timeline_out_ms": 9733,
+            "timeline_in_frame": 288,
+            "timeline_out_frame": 292
+          },
+          {
+            "occurrence_id": "segment_00:w_000038",
+            "shot_id": "segment_00",
+            "word_id": 38,
+            "source_in_ms": 9740,
+            "source_out_ms": 10180,
+            "timeline_in_ms": 9733,
+            "timeline_out_ms": 10167,
+            "timeline_in_frame": 292,
+            "timeline_out_frame": 305
+          },
+          {
+            "occurrence_id": "segment_00:w_000039",
+            "shot_id": "segment_00",
+            "word_id": 39,
+            "source_in_ms": 10180,
+            "source_out_ms": 10180,
+            "timeline_in_ms": 10167,
+            "timeline_out_ms": 10200,
+            "timeline_in_frame": 305,
+            "timeline_out_frame": 306
+          },
+          {
+            "occurrence_id": "segment_00:w_000040",
+            "shot_id": "segment_00",
+            "word_id": 40,
+            "source_in_ms": 10180,
+            "source_out_ms": 10520,
+            "timeline_in_ms": 10167,
+            "timeline_out_ms": 10533,
+            "timeline_in_frame": 305,
+            "timeline_out_frame": 316
+          },
+          {
+            "occurrence_id": "segment_00:w_000041",
+            "shot_id": "segment_00",
+            "word_id": 41,
+            "source_in_ms": 10520,
+            "source_out_ms": 10920,
+            "timeline_in_ms": 10533,
+            "timeline_out_ms": 10933,
+            "timeline_in_frame": 316,
+            "timeline_out_frame": 328
+          },
+          {
+            "occurrence_id": "segment_00:w_000042",
+            "shot_id": "segment_00",
+            "word_id": 42,
+            "source_in_ms": 10920,
+            "source_out_ms": 11080,
+            "timeline_in_ms": 10933,
+            "timeline_out_ms": 11067,
+            "timeline_in_frame": 328,
+            "timeline_out_frame": 332
+          },
+          {
+            "occurrence_id": "segment_00:w_000043",
+            "shot_id": "segment_00",
+            "word_id": 43,
+            "source_in_ms": 11080,
+            "source_out_ms": 11180,
+            "timeline_in_ms": 11067,
+            "timeline_out_ms": 11167,
+            "timeline_in_frame": 332,
+            "timeline_out_frame": 335
+          },
+          {
+            "occurrence_id": "segment_00:w_000044",
+            "shot_id": "segment_00",
+            "word_id": 44,
+            "source_in_ms": 11180,
+            "source_out_ms": 11360,
+            "timeline_in_ms": 11167,
+            "timeline_out_ms": 11367,
+            "timeline_in_frame": 335,
+            "timeline_out_frame": 341
+          },
+          {
+            "occurrence_id": "segment_00:w_000045",
+            "shot_id": "segment_00",
+            "word_id": 45,
+            "source_in_ms": 11360,
+            "source_out_ms": 11560,
+            "timeline_in_ms": 11367,
+            "timeline_out_ms": 11567,
+            "timeline_in_frame": 341,
+            "timeline_out_frame": 347
+          },
+          {
+            "occurrence_id": "segment_00:w_000046",
+            "shot_id": "segment_00",
+            "word_id": 46,
+            "source_in_ms": 11560,
+            "source_out_ms": 11980,
+            "timeline_in_ms": 11567,
+            "timeline_out_ms": 11967,
+            "timeline_in_frame": 347,
+            "timeline_out_frame": 359
+          },
+          {
+            "occurrence_id": "segment_00:w_000047",
+            "shot_id": "segment_00",
+            "word_id": 47,
+            "source_in_ms": 11980,
+            "source_out_ms": 12260,
+            "timeline_in_ms": 11967,
+            "timeline_out_ms": 12267,
+            "timeline_in_frame": 359,
+            "timeline_out_frame": 368
+          },
+          {
+            "occurrence_id": "segment_00:w_000048",
+            "shot_id": "segment_00",
+            "word_id": 48,
+            "source_in_ms": 12260,
+            "source_out_ms": 12580,
+            "timeline_in_ms": 12267,
+            "timeline_out_ms": 12567,
+            "timeline_in_frame": 368,
+            "timeline_out_frame": 377
+          },
+          {
+            "occurrence_id": "segment_00:w_000049",
+            "shot_id": "segment_00",
+            "word_id": 49,
+            "source_in_ms": 12580,
+            "source_out_ms": 12940,
+            "timeline_in_ms": 12567,
+            "timeline_out_ms": 12933,
+            "timeline_in_frame": 377,
+            "timeline_out_frame": 388
+          },
+          {
+            "occurrence_id": "segment_00:w_000050",
+            "shot_id": "segment_00",
+            "word_id": 50,
+            "source_in_ms": 12940,
+            "source_out_ms": 13180,
+            "timeline_in_ms": 12933,
+            "timeline_out_ms": 13167,
+            "timeline_in_frame": 388,
+            "timeline_out_frame": 395
+          },
+          {
+            "occurrence_id": "segment_00:w_000051",
+            "shot_id": "segment_00",
+            "word_id": 51,
+            "source_in_ms": 13180,
+            "source_out_ms": 13180,
+            "timeline_in_ms": 13167,
+            "timeline_out_ms": 13200,
+            "timeline_in_frame": 395,
+            "timeline_out_frame": 396
+          },
+          {
+            "occurrence_id": "segment_00:w_000052",
+            "shot_id": "segment_00",
+            "word_id": 52,
+            "source_in_ms": 13500,
+            "source_out_ms": 13520,
+            "timeline_in_ms": 13500,
+            "timeline_out_ms": 13533,
+            "timeline_in_frame": 405,
+            "timeline_out_frame": 406
+          },
+          {
+            "occurrence_id": "segment_00:w_000053",
+            "shot_id": "segment_00",
+            "word_id": 53,
+            "source_in_ms": 13520,
+            "source_out_ms": 13660,
+            "timeline_in_ms": 13533,
+            "timeline_out_ms": 13667,
+            "timeline_in_frame": 406,
+            "timeline_out_frame": 410
+          }
+        ]
+      },
+      {
+        "shot_id": "segment_01",
+        "role": "bridge",
+        "from_word_id": 250,
+        "to_word_id": 285,
+        "source_in_ms": 48900,
+        "source_out_ms": 54740,
+        "timeline_in_ms": 13667,
+        "timeline_out_ms": 19500,
+        "timeline_in_frame": 410,
+        "timeline_out_frame": 585,
+        "speed": 1.0,
+        "framing": {
+          "mode": "fit_blur",
+          "center_x": 0.5,
+          "base_scale": 1.0,
+          "screen_region": null
+        },
+        "effects": [],
+        "transition_out": "hard_cut",
+        "caption_theme": "standard_karaoke",
+        "word_occurrences": [
+          {
+            "occurrence_id": "segment_01:w_000250",
+            "shot_id": "segment_01",
+            "word_id": 250,
+            "source_in_ms": 49020,
+            "source_out_ms": 49080,
+            "timeline_in_ms": 13800,
+            "timeline_out_ms": 13833,
+            "timeline_in_frame": 414,
+            "timeline_out_frame": 415
+          },
+          {
+            "occurrence_id": "segment_01:w_000251",
+            "shot_id": "segment_01",
+            "word_id": 251,
+            "source_in_ms": 49080,
+            "source_out_ms": 49140,
+            "timeline_in_ms": 13833,
+            "timeline_out_ms": 13900,
+            "timeline_in_frame": 415,
+            "timeline_out_frame": 417
+          },
+          {
+            "occurrence_id": "segment_01:w_000252",
+            "shot_id": "segment_01",
+            "word_id": 252,
+            "source_in_ms": 49140,
+            "source_out_ms": 49480,
+            "timeline_in_ms": 13900,
+            "timeline_out_ms": 14233,
+            "timeline_in_frame": 417,
+            "timeline_out_frame": 427
+          },
+          {
+            "occurrence_id": "segment_01:w_000253",
+            "shot_id": "segment_01",
+            "word_id": 253,
+            "source_in_ms": 49480,
+            "source_out_ms": 49480,
+            "timeline_in_ms": 14233,
+            "timeline_out_ms": 14267,
+            "timeline_in_frame": 427,
+            "timeline_out_frame": 428
+          },
+          {
+            "occurrence_id": "segment_01:w_000254",
+            "shot_id": "segment_01",
+            "word_id": 254,
+            "source_in_ms": 49480,
+            "source_out_ms": 49600,
+            "timeline_in_ms": 14233,
+            "timeline_out_ms": 14367,
+            "timeline_in_frame": 427,
+            "timeline_out_frame": 431
+          },
+          {
+            "occurrence_id": "segment_01:w_000255",
+            "shot_id": "segment_01",
+            "word_id": 255,
+            "source_in_ms": 49600,
+            "source_out_ms": 49680,
+            "timeline_in_ms": 14367,
+            "timeline_out_ms": 14433,
+            "timeline_in_frame": 431,
+            "timeline_out_frame": 433
+          },
+          {
+            "occurrence_id": "segment_01:w_000256",
+            "shot_id": "segment_01",
+            "word_id": 256,
+            "source_in_ms": 49680,
+            "source_out_ms": 49880,
+            "timeline_in_ms": 14433,
+            "timeline_out_ms": 14633,
+            "timeline_in_frame": 433,
+            "timeline_out_frame": 439
+          },
+          {
+            "occurrence_id": "segment_01:w_000257",
+            "shot_id": "segment_01",
+            "word_id": 257,
+            "source_in_ms": 49880,
+            "source_out_ms": 50020,
+            "timeline_in_ms": 14633,
+            "timeline_out_ms": 14800,
+            "timeline_in_frame": 439,
+            "timeline_out_frame": 444
+          },
+          {
+            "occurrence_id": "segment_01:w_000258",
+            "shot_id": "segment_01",
+            "word_id": 258,
+            "source_in_ms": 50020,
+            "source_out_ms": 50220,
+            "timeline_in_ms": 14800,
+            "timeline_out_ms": 15000,
+            "timeline_in_frame": 444,
+            "timeline_out_frame": 450
+          },
+          {
+            "occurrence_id": "segment_01:w_000259",
+            "shot_id": "segment_01",
+            "word_id": 259,
+            "source_in_ms": 50220,
+            "source_out_ms": 50220,
+            "timeline_in_ms": 15000,
+            "timeline_out_ms": 15033,
+            "timeline_in_frame": 450,
+            "timeline_out_frame": 451
+          },
+          {
+            "occurrence_id": "segment_01:w_000260",
+            "shot_id": "segment_01",
+            "word_id": 260,
+            "source_in_ms": 50220,
+            "source_out_ms": 50540,
+            "timeline_in_ms": 15000,
+            "timeline_out_ms": 15300,
+            "timeline_in_frame": 450,
+            "timeline_out_frame": 459
+          },
+          {
+            "occurrence_id": "segment_01:w_000261",
+            "shot_id": "segment_01",
+            "word_id": 261,
+            "source_in_ms": 50540,
+            "source_out_ms": 50540,
+            "timeline_in_ms": 15300,
+            "timeline_out_ms": 15333,
+            "timeline_in_frame": 459,
+            "timeline_out_frame": 460
+          },
+          {
+            "occurrence_id": "segment_01:w_000262",
+            "shot_id": "segment_01",
+            "word_id": 262,
+            "source_in_ms": 50540,
+            "source_out_ms": 50840,
+            "timeline_in_ms": 15300,
+            "timeline_out_ms": 15600,
+            "timeline_in_frame": 459,
+            "timeline_out_frame": 468
+          },
+          {
+            "occurrence_id": "segment_01:w_000263",
+            "shot_id": "segment_01",
+            "word_id": 263,
+            "source_in_ms": 50840,
+            "source_out_ms": 50960,
+            "timeline_in_ms": 15600,
+            "timeline_out_ms": 15733,
+            "timeline_in_frame": 468,
+            "timeline_out_frame": 472
+          },
+          {
+            "occurrence_id": "segment_01:w_000264",
+            "shot_id": "segment_01",
+            "word_id": 264,
+            "source_in_ms": 50960,
+            "source_out_ms": 51140,
+            "timeline_in_ms": 15733,
+            "timeline_out_ms": 15900,
+            "timeline_in_frame": 472,
+            "timeline_out_frame": 477
+          },
+          {
+            "occurrence_id": "segment_01:w_000265",
+            "shot_id": "segment_01",
+            "word_id": 265,
+            "source_in_ms": 51140,
+            "source_out_ms": 51280,
+            "timeline_in_ms": 15900,
+            "timeline_out_ms": 16033,
+            "timeline_in_frame": 477,
+            "timeline_out_frame": 481
+          },
+          {
+            "occurrence_id": "segment_01:w_000266",
+            "shot_id": "segment_01",
+            "word_id": 266,
+            "source_in_ms": 51280,
+            "source_out_ms": 51480,
+            "timeline_in_ms": 16033,
+            "timeline_out_ms": 16233,
+            "timeline_in_frame": 481,
+            "timeline_out_frame": 487
+          },
+          {
+            "occurrence_id": "segment_01:w_000267",
+            "shot_id": "segment_01",
+            "word_id": 267,
+            "source_in_ms": 51480,
+            "source_out_ms": 51660,
+            "timeline_in_ms": 16233,
+            "timeline_out_ms": 16433,
+            "timeline_in_frame": 487,
+            "timeline_out_frame": 493
+          },
+          {
+            "occurrence_id": "segment_01:w_000268",
+            "shot_id": "segment_01",
+            "word_id": 268,
+            "source_in_ms": 51820,
+            "source_out_ms": 51900,
+            "timeline_in_ms": 16600,
+            "timeline_out_ms": 16667,
+            "timeline_in_frame": 498,
+            "timeline_out_frame": 500
+          },
+          {
+            "occurrence_id": "segment_01:w_000269",
+            "shot_id": "segment_01",
+            "word_id": 269,
+            "source_in_ms": 51900,
+            "source_out_ms": 52260,
+            "timeline_in_ms": 16667,
+            "timeline_out_ms": 17033,
+            "timeline_in_frame": 500,
+            "timeline_out_frame": 511
+          },
+          {
+            "occurrence_id": "segment_01:w_000270",
+            "shot_id": "segment_01",
+            "word_id": 270,
+            "source_in_ms": 52260,
+            "source_out_ms": 52260,
+            "timeline_in_ms": 17033,
+            "timeline_out_ms": 17067,
+            "timeline_in_frame": 511,
+            "timeline_out_frame": 512
+          },
+          {
+            "occurrence_id": "segment_01:w_000271",
+            "shot_id": "segment_01",
+            "word_id": 271,
+            "source_in_ms": 52260,
+            "source_out_ms": 52480,
+            "timeline_in_ms": 17033,
+            "timeline_out_ms": 17233,
+            "timeline_in_frame": 511,
+            "timeline_out_frame": 517
+          },
+          {
+            "occurrence_id": "segment_01:w_000272",
+            "shot_id": "segment_01",
+            "word_id": 272,
+            "source_in_ms": 52480,
+            "source_out_ms": 52620,
+            "timeline_in_ms": 17233,
+            "timeline_out_ms": 17400,
+            "timeline_in_frame": 517,
+            "timeline_out_frame": 522
+          },
+          {
+            "occurrence_id": "segment_01:w_000273",
+            "shot_id": "segment_01",
+            "word_id": 273,
+            "source_in_ms": 52620,
+            "source_out_ms": 52720,
+            "timeline_in_ms": 17400,
+            "timeline_out_ms": 17500,
+            "timeline_in_frame": 522,
+            "timeline_out_frame": 525
+          },
+          {
+            "occurrence_id": "segment_01:w_000274",
+            "shot_id": "segment_01",
+            "word_id": 274,
+            "source_in_ms": 52720,
+            "source_out_ms": 52740,
+            "timeline_in_ms": 17500,
+            "timeline_out_ms": 17533,
+            "timeline_in_frame": 525,
+            "timeline_out_frame": 526
+          },
+          {
+            "occurrence_id": "segment_01:w_000275",
+            "shot_id": "segment_01",
+            "word_id": 275,
+            "source_in_ms": 52740,
+            "source_out_ms": 53060,
+            "timeline_in_ms": 17500,
+            "timeline_out_ms": 17833,
+            "timeline_in_frame": 525,
+            "timeline_out_frame": 535
+          },
+          {
+            "occurrence_id": "segment_01:w_000276",
+            "shot_id": "segment_01",
+            "word_id": 276,
+            "source_in_ms": 53060,
+            "source_out_ms": 53240,
+            "timeline_in_ms": 17833,
+            "timeline_out_ms": 18000,
+            "timeline_in_frame": 535,
+            "timeline_out_frame": 540
+          },
+          {
+            "occurrence_id": "segment_01:w_000277",
+            "shot_id": "segment_01",
+            "word_id": 277,
+            "source_in_ms": 53240,
+            "source_out_ms": 53520,
+            "timeline_in_ms": 18000,
+            "timeline_out_ms": 18300,
+            "timeline_in_frame": 540,
+            "timeline_out_frame": 549
+          },
+          {
+            "occurrence_id": "segment_01:w_000278",
+            "shot_id": "segment_01",
+            "word_id": 278,
+            "source_in_ms": 53520,
+            "source_out_ms": 53700,
+            "timeline_in_ms": 18300,
+            "timeline_out_ms": 18467,
+            "timeline_in_frame": 549,
+            "timeline_out_frame": 554
+          },
+          {
+            "occurrence_id": "segment_01:w_000279",
+            "shot_id": "segment_01",
+            "word_id": 279,
+            "source_in_ms": 53700,
+            "source_out_ms": 53800,
+            "timeline_in_ms": 18467,
+            "timeline_out_ms": 18567,
+            "timeline_in_frame": 554,
+            "timeline_out_frame": 557
+          },
+          {
+            "occurrence_id": "segment_01:w_000280",
+            "shot_id": "segment_01",
+            "word_id": 280,
+            "source_in_ms": 53800,
+            "source_out_ms": 54000,
+            "timeline_in_ms": 18567,
+            "timeline_out_ms": 18767,
+            "timeline_in_frame": 557,
+            "timeline_out_frame": 563
+          },
+          {
+            "occurrence_id": "segment_01:w_000281",
+            "shot_id": "segment_01",
+            "word_id": 281,
+            "source_in_ms": 54000,
+            "source_out_ms": 54200,
+            "timeline_in_ms": 18767,
+            "timeline_out_ms": 18967,
+            "timeline_in_frame": 563,
+            "timeline_out_frame": 569
+          },
+          {
+            "occurrence_id": "segment_01:w_000282",
+            "shot_id": "segment_01",
+            "word_id": 282,
+            "source_in_ms": 54200,
+            "source_out_ms": 54360,
+            "timeline_in_ms": 18967,
+            "timeline_out_ms": 19133,
+            "timeline_in_frame": 569,
+            "timeline_out_frame": 574
+          },
+          {
+            "occurrence_id": "segment_01:w_000283",
+            "shot_id": "segment_01",
+            "word_id": 283,
+            "source_in_ms": 54360,
+            "source_out_ms": 54540,
+            "timeline_in_ms": 19133,
+            "timeline_out_ms": 19300,
+            "timeline_in_frame": 574,
+            "timeline_out_frame": 579
+          },
+          {
+            "occurrence_id": "segment_01:w_000284",
+            "shot_id": "segment_01",
+            "word_id": 284,
+            "source_in_ms": 54540,
+            "source_out_ms": 54600,
+            "timeline_in_ms": 19300,
+            "timeline_out_ms": 19367,
+            "timeline_in_frame": 579,
+            "timeline_out_frame": 581
+          },
+          {
+            "occurrence_id": "segment_01:w_000285",
+            "shot_id": "segment_01",
+            "word_id": 285,
+            "source_in_ms": 54600,
+            "source_out_ms": 54740,
+            "timeline_in_ms": 19367,
+            "timeline_out_ms": 19500,
+            "timeline_in_frame": 581,
+            "timeline_out_frame": 585
+          }
+        ]
+      },
+      {
+        "shot_id": "segment_02",
+        "role": "payoff",
+        "from_word_id": 2486,
+        "to_word_id": 2525,
+        "source_in_ms": 539440,
+        "source_out_ms": 548980,
+        "timeline_in_ms": 19500,
+        "timeline_out_ms": 29033,
+        "timeline_in_frame": 585,
+        "timeline_out_frame": 871,
+        "speed": 1.0,
+        "framing": {
+          "mode": "fit_blur",
+          "center_x": 0.5,
+          "base_scale": 1.0,
+          "screen_region": null
+        },
+        "effects": [],
+        "transition_out": "hard_cut",
+        "caption_theme": "standard_karaoke",
+        "word_occurrences": [
+          {
+            "occurrence_id": "segment_02:w_002486",
+            "shot_id": "segment_02",
+            "word_id": 2486,
+            "source_in_ms": 539560,
+            "source_out_ms": 539860,
+            "timeline_in_ms": 19633,
+            "timeline_out_ms": 19933,
+            "timeline_in_frame": 589,
+            "timeline_out_frame": 598
+          },
+          {
+            "occurrence_id": "segment_02:w_002487",
+            "shot_id": "segment_02",
+            "word_id": 2487,
+            "source_in_ms": 539860,
+            "source_out_ms": 540040,
+            "timeline_in_ms": 19933,
+            "timeline_out_ms": 20100,
+            "timeline_in_frame": 598,
+            "timeline_out_frame": 603
+          },
+          {
+            "occurrence_id": "segment_02:w_002488",
+            "shot_id": "segment_02",
+            "word_id": 2488,
+            "source_in_ms": 540040,
+            "source_out_ms": 540180,
+            "timeline_in_ms": 20100,
+            "timeline_out_ms": 20233,
+            "timeline_in_frame": 603,
+            "timeline_out_frame": 607
+          },
+          {
+            "occurrence_id": "segment_02:w_002489",
+            "shot_id": "segment_02",
+            "word_id": 2489,
+            "source_in_ms": 540180,
+            "source_out_ms": 540300,
+            "timeline_in_ms": 20233,
+            "timeline_out_ms": 20367,
+            "timeline_in_frame": 607,
+            "timeline_out_frame": 611
+          },
+          {
+            "occurrence_id": "segment_02:w_002490",
+            "shot_id": "segment_02",
+            "word_id": 2490,
+            "source_in_ms": 540400,
+            "source_out_ms": 540460,
+            "timeline_in_ms": 20467,
+            "timeline_out_ms": 20533,
+            "timeline_in_frame": 614,
+            "timeline_out_frame": 616
+          },
+          {
+            "occurrence_id": "segment_02:w_002491",
+            "shot_id": "segment_02",
+            "word_id": 2491,
+            "source_in_ms": 540460,
+            "source_out_ms": 540540,
+            "timeline_in_ms": 20533,
+            "timeline_out_ms": 20600,
+            "timeline_in_frame": 616,
+            "timeline_out_frame": 618
+          },
+          {
+            "occurrence_id": "segment_02:w_002492",
+            "shot_id": "segment_02",
+            "word_id": 2492,
+            "source_in_ms": 540540,
+            "source_out_ms": 540960,
+            "timeline_in_ms": 20600,
+            "timeline_out_ms": 21033,
+            "timeline_in_frame": 618,
+            "timeline_out_frame": 631
+          },
+          {
+            "occurrence_id": "segment_02:w_002493",
+            "shot_id": "segment_02",
+            "word_id": 2493,
+            "source_in_ms": 541180,
+            "source_out_ms": 541480,
+            "timeline_in_ms": 21233,
+            "timeline_out_ms": 21533,
+            "timeline_in_frame": 637,
+            "timeline_out_frame": 646
+          },
+          {
+            "occurrence_id": "segment_02:w_002494",
+            "shot_id": "segment_02",
+            "word_id": 2494,
+            "source_in_ms": 541480,
+            "source_out_ms": 541780,
+            "timeline_in_ms": 21533,
+            "timeline_out_ms": 21833,
+            "timeline_in_frame": 646,
+            "timeline_out_frame": 655
+          },
+          {
+            "occurrence_id": "segment_02:w_002495",
+            "shot_id": "segment_02",
+            "word_id": 2495,
+            "source_in_ms": 541780,
+            "source_out_ms": 542360,
+            "timeline_in_ms": 21833,
+            "timeline_out_ms": 22433,
+            "timeline_in_frame": 655,
+            "timeline_out_frame": 673
+          },
+          {
+            "occurrence_id": "segment_02:w_002496",
+            "shot_id": "segment_02",
+            "word_id": 2496,
+            "source_in_ms": 542600,
+            "source_out_ms": 542680,
+            "timeline_in_ms": 22667,
+            "timeline_out_ms": 22733,
+            "timeline_in_frame": 680,
+            "timeline_out_frame": 682
+          },
+          {
+            "occurrence_id": "segment_02:w_002497",
+            "shot_id": "segment_02",
+            "word_id": 2497,
+            "source_in_ms": 542680,
+            "source_out_ms": 542720,
+            "timeline_in_ms": 22733,
+            "timeline_out_ms": 22767,
+            "timeline_in_frame": 682,
+            "timeline_out_frame": 683
+          },
+          {
+            "occurrence_id": "segment_02:w_002498",
+            "shot_id": "segment_02",
+            "word_id": 2498,
+            "source_in_ms": 542720,
+            "source_out_ms": 543040,
+            "timeline_in_ms": 22767,
+            "timeline_out_ms": 23100,
+            "timeline_in_frame": 683,
+            "timeline_out_frame": 693
+          },
+          {
+            "occurrence_id": "segment_02:w_002499",
+            "shot_id": "segment_02",
+            "word_id": 2499,
+            "source_in_ms": 543040,
+            "source_out_ms": 543200,
+            "timeline_in_ms": 23100,
+            "timeline_out_ms": 23267,
+            "timeline_in_frame": 693,
+            "timeline_out_frame": 698
+          },
+          {
+            "occurrence_id": "segment_02:w_002500",
+            "shot_id": "segment_02",
+            "word_id": 2500,
+            "source_in_ms": 543200,
+            "source_out_ms": 543440,
+            "timeline_in_ms": 23267,
+            "timeline_out_ms": 23500,
+            "timeline_in_frame": 698,
+            "timeline_out_frame": 705
+          },
+          {
+            "occurrence_id": "segment_02:w_002501",
+            "shot_id": "segment_02",
+            "word_id": 2501,
+            "source_in_ms": 543440,
+            "source_out_ms": 543720,
+            "timeline_in_ms": 23500,
+            "timeline_out_ms": 23767,
+            "timeline_in_frame": 705,
+            "timeline_out_frame": 713
+          },
+          {
+            "occurrence_id": "segment_02:w_002502",
+            "shot_id": "segment_02",
+            "word_id": 2502,
+            "source_in_ms": 543860,
+            "source_out_ms": 543920,
+            "timeline_in_ms": 23933,
+            "timeline_out_ms": 23967,
+            "timeline_in_frame": 718,
+            "timeline_out_frame": 719
+          },
+          {
+            "occurrence_id": "segment_02:w_002503",
+            "shot_id": "segment_02",
+            "word_id": 2503,
+            "source_in_ms": 543920,
+            "source_out_ms": 544020,
+            "timeline_in_ms": 23967,
+            "timeline_out_ms": 24067,
+            "timeline_in_frame": 719,
+            "timeline_out_frame": 722
+          },
+          {
+            "occurrence_id": "segment_02:w_002504",
+            "shot_id": "segment_02",
+            "word_id": 2504,
+            "source_in_ms": 544080,
+            "source_out_ms": 544140,
+            "timeline_in_ms": 24133,
+            "timeline_out_ms": 24200,
+            "timeline_in_frame": 724,
+            "timeline_out_frame": 726
+          },
+          {
+            "occurrence_id": "segment_02:w_002505",
+            "shot_id": "segment_02",
+            "word_id": 2505,
+            "source_in_ms": 544140,
+            "source_out_ms": 544360,
+            "timeline_in_ms": 24200,
+            "timeline_out_ms": 24433,
+            "timeline_in_frame": 726,
+            "timeline_out_frame": 733
+          },
+          {
+            "occurrence_id": "segment_02:w_002506",
+            "shot_id": "segment_02",
+            "word_id": 2506,
+            "source_in_ms": 544360,
+            "source_out_ms": 544440,
+            "timeline_in_ms": 24433,
+            "timeline_out_ms": 24500,
+            "timeline_in_frame": 733,
+            "timeline_out_frame": 735
+          },
+          {
+            "occurrence_id": "segment_02:w_002507",
+            "shot_id": "segment_02",
+            "word_id": 2507,
+            "source_in_ms": 544440,
+            "source_out_ms": 544560,
+            "timeline_in_ms": 24500,
+            "timeline_out_ms": 24633,
+            "timeline_in_frame": 735,
+            "timeline_out_frame": 739
+          },
+          {
+            "occurrence_id": "segment_02:w_002508",
+            "shot_id": "segment_02",
+            "word_id": 2508,
+            "source_in_ms": 544560,
+            "source_out_ms": 544760,
+            "timeline_in_ms": 24633,
+            "timeline_out_ms": 24833,
+            "timeline_in_frame": 739,
+            "timeline_out_frame": 745
+          },
+          {
+            "occurrence_id": "segment_02:w_002509",
+            "shot_id": "segment_02",
+            "word_id": 2509,
+            "source_in_ms": 544980,
+            "source_out_ms": 544980,
+            "timeline_in_ms": 25033,
+            "timeline_out_ms": 25067,
+            "timeline_in_frame": 751,
+            "timeline_out_frame": 752
+          },
+          {
+            "occurrence_id": "segment_02:w_002510",
+            "shot_id": "segment_02",
+            "word_id": 2510,
+            "source_in_ms": 544980,
+            "source_out_ms": 545220,
+            "timeline_in_ms": 25033,
+            "timeline_out_ms": 25267,
+            "timeline_in_frame": 751,
+            "timeline_out_frame": 758
+          },
+          {
+            "occurrence_id": "segment_02:w_002511",
+            "shot_id": "segment_02",
+            "word_id": 2511,
+            "source_in_ms": 545220,
+            "source_out_ms": 545260,
+            "timeline_in_ms": 25267,
+            "timeline_out_ms": 25333,
+            "timeline_in_frame": 758,
+            "timeline_out_frame": 760
+          },
+          {
+            "occurrence_id": "segment_02:w_002512",
+            "shot_id": "segment_02",
+            "word_id": 2512,
+            "source_in_ms": 545260,
+            "source_out_ms": 545740,
+            "timeline_in_ms": 25333,
+            "timeline_out_ms": 25800,
+            "timeline_in_frame": 760,
+            "timeline_out_frame": 774
+          },
+          {
+            "occurrence_id": "segment_02:w_002513",
+            "shot_id": "segment_02",
+            "word_id": 2513,
+            "source_in_ms": 545740,
+            "source_out_ms": 545920,
+            "timeline_in_ms": 25800,
+            "timeline_out_ms": 25967,
+            "timeline_in_frame": 774,
+            "timeline_out_frame": 779
+          },
+          {
+            "occurrence_id": "segment_02:w_002514",
+            "shot_id": "segment_02",
+            "word_id": 2514,
+            "source_in_ms": 546060,
+            "source_out_ms": 546060,
+            "timeline_in_ms": 26133,
+            "timeline_out_ms": 26167,
+            "timeline_in_frame": 784,
+            "timeline_out_frame": 785
+          },
+          {
+            "occurrence_id": "segment_02:w_002515",
+            "shot_id": "segment_02",
+            "word_id": 2515,
+            "source_in_ms": 546060,
+            "source_out_ms": 546440,
+            "timeline_in_ms": 26133,
+            "timeline_out_ms": 26500,
+            "timeline_in_frame": 784,
+            "timeline_out_frame": 795
+          },
+          {
+            "occurrence_id": "segment_02:w_002516",
+            "shot_id": "segment_02",
+            "word_id": 2516,
+            "source_in_ms": 546560,
+            "source_out_ms": 546600,
+            "timeline_in_ms": 26633,
+            "timeline_out_ms": 26667,
+            "timeline_in_frame": 799,
+            "timeline_out_frame": 800
+          },
+          {
+            "occurrence_id": "segment_02:w_002517",
+            "shot_id": "segment_02",
+            "word_id": 2517,
+            "source_in_ms": 546600,
+            "source_out_ms": 546700,
+            "timeline_in_ms": 26667,
+            "timeline_out_ms": 26767,
+            "timeline_in_frame": 800,
+            "timeline_out_frame": 803
+          },
+          {
+            "occurrence_id": "segment_02:w_002518",
+            "shot_id": "segment_02",
+            "word_id": 2518,
+            "source_in_ms": 546700,
+            "source_out_ms": 546800,
+            "timeline_in_ms": 26767,
+            "timeline_out_ms": 26867,
+            "timeline_in_frame": 803,
+            "timeline_out_frame": 806
+          },
+          {
+            "occurrence_id": "segment_02:w_002519",
+            "shot_id": "segment_02",
+            "word_id": 2519,
+            "source_in_ms": 546800,
+            "source_out_ms": 547100,
+            "timeline_in_ms": 26867,
+            "timeline_out_ms": 27167,
+            "timeline_in_frame": 806,
+            "timeline_out_frame": 815
+          },
+          {
+            "occurrence_id": "segment_02:w_002520",
+            "shot_id": "segment_02",
+            "word_id": 2520,
+            "source_in_ms": 547100,
+            "source_out_ms": 547540,
+            "timeline_in_ms": 27167,
+            "timeline_out_ms": 27600,
+            "timeline_in_frame": 815,
+            "timeline_out_frame": 828
+          },
+          {
+            "occurrence_id": "segment_02:w_002521",
+            "shot_id": "segment_02",
+            "word_id": 2521,
+            "source_in_ms": 547540,
+            "source_out_ms": 547700,
+            "timeline_in_ms": 27600,
+            "timeline_out_ms": 27767,
+            "timeline_in_frame": 828,
+            "timeline_out_frame": 833
+          },
+          {
+            "occurrence_id": "segment_02:w_002522",
+            "shot_id": "segment_02",
+            "word_id": 2522,
+            "source_in_ms": 547700,
+            "source_out_ms": 548060,
+            "timeline_in_ms": 27767,
+            "timeline_out_ms": 28133,
+            "timeline_in_frame": 833,
+            "timeline_out_frame": 844
+          },
+          {
+            "occurrence_id": "segment_02:w_002523",
+            "shot_id": "segment_02",
+            "word_id": 2523,
+            "source_in_ms": 548140,
+            "source_out_ms": 548240,
+            "timeline_in_ms": 28200,
+            "timeline_out_ms": 28300,
+            "timeline_in_frame": 846,
+            "timeline_out_frame": 849
+          },
+          {
+            "occurrence_id": "segment_02:w_002524",
+            "shot_id": "segment_02",
+            "word_id": 2524,
+            "source_in_ms": 548240,
+            "source_out_ms": 548440,
+            "timeline_in_ms": 28300,
+            "timeline_out_ms": 28500,
+            "timeline_in_frame": 849,
+            "timeline_out_frame": 855
+          },
+          {
+            "occurrence_id": "segment_02:w_002525",
+            "shot_id": "segment_02",
+            "word_id": 2525,
+            "source_in_ms": 548440,
+            "source_out_ms": 548760,
+            "timeline_in_ms": 28500,
+            "timeline_out_ms": 28833,
+            "timeline_in_frame": 855,
+            "timeline_out_frame": 865
+          }
+        ]
+      }
+    ],
+    "music": [],
+    "sfx": [],
+    "decode_islands": [
+      {
+        "island_id": "island_00",
+        "source_in_ms": 0,
+        "source_out_ms": 13660,
+        "shot_ids": [
+          "segment_00"
+        ]
+      },
+      {
+        "island_id": "island_01",
+        "source_in_ms": 48900,
+        "source_out_ms": 54740,
+        "shot_ids": [
+          "segment_01"
+        ]
+      },
+      {
+        "island_id": "island_02",
+        "source_in_ms": 539440,
+        "source_out_ms": 548980,
+        "shot_ids": [
+          "segment_02"
+        ]
+      }
+    ]
+  },
+  "editorial_qc": {
+    "status": "pass",
+    "findings": [],
+    "caption_occurrences": 130,
+    "captioned_occurrences": 130,
+    "caption_coverage": 1.0,
+    "effect_count": 0,
+    "effect_density_per_second": 0.0,
+    "cut_count": 2,
+    "cut_density_per_second": 0.06888712844005097
+  },
+  "captions": {
+    "duration_ms": 29033,
+    "cues": [
+      {
+        "cue_id": "cue_00_00",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000000",
+            "shot_id": "segment_00",
+            "word_id": 0,
+            "text": "J’ai",
+            "timeline_in_ms": 0,
+            "timeline_out_ms": 533
+          },
+          {
+            "occurrence_id": "segment_00:w_000001",
+            "shot_id": "segment_00",
+            "word_id": 1,
+            "text": "seulement",
+            "timeline_in_ms": 533,
+            "timeline_out_ms": 733
+          },
+          {
+            "occurrence_id": "segment_00:w_000002",
+            "shot_id": "segment_00",
+            "word_id": 2,
+            "text": "un",
+            "timeline_in_ms": 733,
+            "timeline_out_ms": 1433
+          }
+        ],
+        "timeline_in_ms": 0,
+        "timeline_out_ms": 1433
+      },
+      {
+        "cue_id": "cue_00_01",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000003",
+            "shot_id": "segment_00",
+            "word_id": 3,
+            "text": "euro",
+            "timeline_in_ms": 1433,
+            "timeline_out_ms": 1767
+          },
+          {
+            "occurrence_id": "segment_00:w_000004",
+            "shot_id": "segment_00",
+            "word_id": 4,
+            "text": "pour",
+            "timeline_in_ms": 1767,
+            "timeline_out_ms": 2233
+          },
+          {
+            "occurrence_id": "segment_00:w_000005",
+            "shot_id": "segment_00",
+            "word_id": 5,
+            "text": "lancer",
+            "timeline_in_ms": 2233,
+            "timeline_out_ms": 2367
+          }
+        ],
+        "timeline_in_ms": 1433,
+        "timeline_out_ms": 2367
+      },
+      {
+        "cue_id": "cue_00_02",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000006",
+            "shot_id": "segment_00",
+            "word_id": 6,
+            "text": "une",
+            "timeline_in_ms": 2367,
+            "timeline_out_ms": 2933
+          },
+          {
+            "occurrence_id": "segment_00:w_000007",
+            "shot_id": "segment_00",
+            "word_id": 7,
+            "text": "boutique",
+            "timeline_in_ms": 2933,
+            "timeline_out_ms": 2967
+          },
+          {
+            "occurrence_id": "segment_00:w_000008",
+            "shot_id": "segment_00",
+            "word_id": 8,
+            "text": "rentable",
+            "timeline_in_ms": 2933,
+            "timeline_out_ms": 3367
+          }
+        ],
+        "timeline_in_ms": 2367,
+        "timeline_out_ms": 3367
+      },
+      {
+        "cue_id": "cue_00_03",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000009",
+            "shot_id": "segment_00",
+            "word_id": 9,
+            "text": "en",
+            "timeline_in_ms": 3367,
+            "timeline_out_ms": 3600
+          },
+          {
+            "occurrence_id": "segment_00:w_000010",
+            "shot_id": "segment_00",
+            "word_id": 10,
+            "text": "dropshipping",
+            "timeline_in_ms": 3600,
+            "timeline_out_ms": 4100
+          },
+          {
+            "occurrence_id": "segment_00:w_000011",
+            "shot_id": "segment_00",
+            "word_id": 11,
+            "text": "et",
+            "timeline_in_ms": 4100,
+            "timeline_out_ms": 4433
+          }
+        ],
+        "timeline_in_ms": 3367,
+        "timeline_out_ms": 4433
+      },
+      {
+        "cue_id": "cue_00_04",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000012",
+            "shot_id": "segment_00",
+            "word_id": 12,
+            "text": "le",
+            "timeline_in_ms": 4433,
+            "timeline_out_ms": 4633
+          },
+          {
+            "occurrence_id": "segment_00:w_000013",
+            "shot_id": "segment_00",
+            "word_id": 13,
+            "text": "tout",
+            "timeline_in_ms": 4633,
+            "timeline_out_ms": 4767
+          },
+          {
+            "occurrence_id": "segment_00:w_000014",
+            "shot_id": "segment_00",
+            "word_id": 14,
+            "text": "en",
+            "timeline_in_ms": 4767,
+            "timeline_out_ms": 4967
+          }
+        ],
+        "timeline_in_ms": 4433,
+        "timeline_out_ms": 4967
+      },
+      {
+        "cue_id": "cue_00_05",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000015",
+            "shot_id": "segment_00",
+            "word_id": 15,
+            "text": "24",
+            "timeline_in_ms": 4967,
+            "timeline_out_ms": 5367
+          },
+          {
+            "occurrence_id": "segment_00:w_000016",
+            "shot_id": "segment_00",
+            "word_id": 16,
+            "text": "heures",
+            "timeline_in_ms": 5367,
+            "timeline_out_ms": 5467
+          }
+        ],
+        "timeline_in_ms": 4967,
+        "timeline_out_ms": 5467
+      },
+      {
+        "cue_id": "cue_00_06",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000017",
+            "shot_id": "segment_00",
+            "word_id": 17,
+            "text": "Moi",
+            "timeline_in_ms": 5700,
+            "timeline_out_ms": 5733
+          },
+          {
+            "occurrence_id": "segment_00:w_000018",
+            "shot_id": "segment_00",
+            "word_id": 18,
+            "text": "c’est",
+            "timeline_in_ms": 5700,
+            "timeline_out_ms": 5767
+          },
+          {
+            "occurrence_id": "segment_00:w_000019",
+            "shot_id": "segment_00",
+            "word_id": 19,
+            "text": "Gaspar",
+            "timeline_in_ms": 5767,
+            "timeline_out_ms": 6067
+          }
+        ],
+        "timeline_in_ms": 5700,
+        "timeline_out_ms": 6067
+      },
+      {
+        "cue_id": "cue_00_07",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000020",
+            "shot_id": "segment_00",
+            "word_id": 20,
+            "text": "j’ai",
+            "timeline_in_ms": 6233,
+            "timeline_out_ms": 6267
+          },
+          {
+            "occurrence_id": "segment_00:w_000021",
+            "shot_id": "segment_00",
+            "word_id": 21,
+            "text": "fait",
+            "timeline_in_ms": 6233,
+            "timeline_out_ms": 6367
+          },
+          {
+            "occurrence_id": "segment_00:w_000022",
+            "shot_id": "segment_00",
+            "word_id": 22,
+            "text": "4",
+            "timeline_in_ms": 6367,
+            "timeline_out_ms": 6633
+          }
+        ],
+        "timeline_in_ms": 6233,
+        "timeline_out_ms": 6633
+      },
+      {
+        "cue_id": "cue_00_08",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000023",
+            "shot_id": "segment_00",
+            "word_id": 23,
+            "text": "millions",
+            "timeline_in_ms": 6633,
+            "timeline_out_ms": 6833
+          },
+          {
+            "occurrence_id": "segment_00:w_000024",
+            "shot_id": "segment_00",
+            "word_id": 24,
+            "text": "et",
+            "timeline_in_ms": 6833,
+            "timeline_out_ms": 7033
+          },
+          {
+            "occurrence_id": "segment_00:w_000025",
+            "shot_id": "segment_00",
+            "word_id": 25,
+            "text": "demi",
+            "timeline_in_ms": 7033,
+            "timeline_out_ms": 7067
+          }
+        ],
+        "timeline_in_ms": 6633,
+        "timeline_out_ms": 7067
+      },
+      {
+        "cue_id": "cue_00_09",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000026",
+            "shot_id": "segment_00",
+            "word_id": 26,
+            "text": "en",
+            "timeline_in_ms": 7033,
+            "timeline_out_ms": 7300
+          },
+          {
+            "occurrence_id": "segment_00:w_000027",
+            "shot_id": "segment_00",
+            "word_id": 27,
+            "text": "e",
+            "timeline_in_ms": 7300,
+            "timeline_out_ms": 7600
+          },
+          {
+            "occurrence_id": "segment_00:w_000028",
+            "shot_id": "segment_00",
+            "word_id": 28,
+            "text": "commerce",
+            "timeline_in_ms": 7600,
+            "timeline_out_ms": 7767
+          }
+        ],
+        "timeline_in_ms": 7033,
+        "timeline_out_ms": 7767
+      },
+      {
+        "cue_id": "cue_00_10",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000029",
+            "shot_id": "segment_00",
+            "word_id": 29,
+            "text": "et",
+            "timeline_in_ms": 7767,
+            "timeline_out_ms": 8000
+          },
+          {
+            "occurrence_id": "segment_00:w_000030",
+            "shot_id": "segment_00",
+            "word_id": 30,
+            "text": "l’objectif",
+            "timeline_in_ms": 8000,
+            "timeline_out_ms": 8433
+          },
+          {
+            "occurrence_id": "segment_00:w_000031",
+            "shot_id": "segment_00",
+            "word_id": 31,
+            "text": "ça",
+            "timeline_in_ms": 8433,
+            "timeline_out_ms": 8633
+          }
+        ],
+        "timeline_in_ms": 7767,
+        "timeline_out_ms": 8633
+      },
+      {
+        "cue_id": "cue_00_11",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000032",
+            "shot_id": "segment_00",
+            "word_id": 32,
+            "text": "va",
+            "timeline_in_ms": 8633,
+            "timeline_out_ms": 8667
+          },
+          {
+            "occurrence_id": "segment_00:w_000033",
+            "shot_id": "segment_00",
+            "word_id": 33,
+            "text": "être",
+            "timeline_in_ms": 8667,
+            "timeline_out_ms": 8800
+          }
+        ],
+        "timeline_in_ms": 8633,
+        "timeline_out_ms": 8800
+      },
+      {
+        "cue_id": "cue_00_12",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000034",
+            "shot_id": "segment_00",
+            "word_id": 34,
+            "text": "simple",
+            "timeline_in_ms": 8800,
+            "timeline_out_ms": 9033
+          },
+          {
+            "occurrence_id": "segment_00:w_000035",
+            "shot_id": "segment_00",
+            "word_id": 35,
+            "text": "aujourd’hui",
+            "timeline_in_ms": 9033,
+            "timeline_out_ms": 9367
+          }
+        ],
+        "timeline_in_ms": 8800,
+        "timeline_out_ms": 9367
+      },
+      {
+        "cue_id": "cue_00_13",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000036",
+            "shot_id": "segment_00",
+            "word_id": 36,
+            "text": "C’est",
+            "timeline_in_ms": 9600,
+            "timeline_out_ms": 9633
+          },
+          {
+            "occurrence_id": "segment_00:w_000037",
+            "shot_id": "segment_00",
+            "word_id": 37,
+            "text": "juste",
+            "timeline_in_ms": 9600,
+            "timeline_out_ms": 9733
+          },
+          {
+            "occurrence_id": "segment_00:w_000038",
+            "shot_id": "segment_00",
+            "word_id": 38,
+            "text": "de",
+            "timeline_in_ms": 9733,
+            "timeline_out_ms": 10167
+          }
+        ],
+        "timeline_in_ms": 9600,
+        "timeline_out_ms": 10167
+      },
+      {
+        "cue_id": "cue_00_14",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000039",
+            "shot_id": "segment_00",
+            "word_id": 39,
+            "text": "prouver",
+            "timeline_in_ms": 10167,
+            "timeline_out_ms": 10200
+          },
+          {
+            "occurrence_id": "segment_00:w_000040",
+            "shot_id": "segment_00",
+            "word_id": 40,
+            "text": "qu’en",
+            "timeline_in_ms": 10167,
+            "timeline_out_ms": 10533
+          },
+          {
+            "occurrence_id": "segment_00:w_000041",
+            "shot_id": "segment_00",
+            "word_id": 41,
+            "text": "2025",
+            "timeline_in_ms": 10533,
+            "timeline_out_ms": 10933
+          }
+        ],
+        "timeline_in_ms": 10167,
+        "timeline_out_ms": 10933
+      },
+      {
+        "cue_id": "cue_00_15",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000042",
+            "shot_id": "segment_00",
+            "word_id": 42,
+            "text": "tu",
+            "timeline_in_ms": 10933,
+            "timeline_out_ms": 11067
+          },
+          {
+            "occurrence_id": "segment_00:w_000043",
+            "shot_id": "segment_00",
+            "word_id": 43,
+            "text": "peux",
+            "timeline_in_ms": 11067,
+            "timeline_out_ms": 11167
+          },
+          {
+            "occurrence_id": "segment_00:w_000044",
+            "shot_id": "segment_00",
+            "word_id": 44,
+            "text": "lancer",
+            "timeline_in_ms": 11167,
+            "timeline_out_ms": 11367
+          }
+        ],
+        "timeline_in_ms": 10933,
+        "timeline_out_ms": 11367
+      },
+      {
+        "cue_id": "cue_00_16",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000045",
+            "shot_id": "segment_00",
+            "word_id": 45,
+            "text": "un",
+            "timeline_in_ms": 11367,
+            "timeline_out_ms": 11567
+          },
+          {
+            "occurrence_id": "segment_00:w_000046",
+            "shot_id": "segment_00",
+            "word_id": 46,
+            "text": "business",
+            "timeline_in_ms": 11567,
+            "timeline_out_ms": 11967
+          },
+          {
+            "occurrence_id": "segment_00:w_000047",
+            "shot_id": "segment_00",
+            "word_id": 47,
+            "text": "avec",
+            "timeline_in_ms": 11967,
+            "timeline_out_ms": 12267
+          }
+        ],
+        "timeline_in_ms": 11367,
+        "timeline_out_ms": 12267
+      },
+      {
+        "cue_id": "cue_00_17",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000048",
+            "shot_id": "segment_00",
+            "word_id": 48,
+            "text": "quasiment",
+            "timeline_in_ms": 12267,
+            "timeline_out_ms": 12567
+          },
+          {
+            "occurrence_id": "segment_00:w_000049",
+            "shot_id": "segment_00",
+            "word_id": 49,
+            "text": "rien",
+            "timeline_in_ms": 12567,
+            "timeline_out_ms": 12933
+          }
+        ],
+        "timeline_in_ms": 12267,
+        "timeline_out_ms": 12933
+      },
+      {
+        "cue_id": "cue_00_18",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000050",
+            "shot_id": "segment_00",
+            "word_id": 50,
+            "text": "du",
+            "timeline_in_ms": 12933,
+            "timeline_out_ms": 13167
+          },
+          {
+            "occurrence_id": "segment_00:w_000051",
+            "shot_id": "segment_00",
+            "word_id": 51,
+            "text": "tout",
+            "timeline_in_ms": 13167,
+            "timeline_out_ms": 13200
+          }
+        ],
+        "timeline_in_ms": 12933,
+        "timeline_out_ms": 13200
+      },
+      {
+        "cue_id": "cue_00_19",
+        "shot_id": "segment_00",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_00:w_000052",
+            "shot_id": "segment_00",
+            "word_id": 52,
+            "text": "Aujourd’hui",
+            "timeline_in_ms": 13500,
+            "timeline_out_ms": 13533
+          },
+          {
+            "occurrence_id": "segment_00:w_000053",
+            "shot_id": "segment_00",
+            "word_id": 53,
+            "text": "ça",
+            "timeline_in_ms": 13533,
+            "timeline_out_ms": 13667
+          }
+        ],
+        "timeline_in_ms": 13500,
+        "timeline_out_ms": 13667
+      },
+      {
+        "cue_id": "cue_01_00",
+        "shot_id": "segment_01",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_01:w_000250",
+            "shot_id": "segment_01",
+            "word_id": 250,
+            "text": "Par",
+            "timeline_in_ms": 13800,
+            "timeline_out_ms": 13833
+          },
+          {
+            "occurrence_id": "segment_01:w_000251",
+            "shot_id": "segment_01",
+            "word_id": 251,
+            "text": "contre",
+            "timeline_in_ms": 13833,
+            "timeline_out_ms": 13900
+          },
+          {
+            "occurrence_id": "segment_01:w_000252",
+            "shot_id": "segment_01",
+            "word_id": 252,
+            "text": "le",
+            "timeline_in_ms": 13900,
+            "timeline_out_ms": 14233
+          }
+        ],
+        "timeline_in_ms": 13800,
+        "timeline_out_ms": 14233
+      },
+      {
+        "cue_id": "cue_01_01",
+        "shot_id": "segment_01",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_01:w_000253",
+            "shot_id": "segment_01",
+            "word_id": 253,
+            "text": "problème",
+            "timeline_in_ms": 14233,
+            "timeline_out_ms": 14267
+          },
+          {
+            "occurrence_id": "segment_01:w_000254",
+            "shot_id": "segment_01",
+            "word_id": 254,
+            "text": "c’est",
+            "timeline_in_ms": 14233,
+            "timeline_out_ms": 14367
+          },
+          {
+            "occurrence_id": "segment_01:w_000255",
+            "shot_id": "segment_01",
+            "word_id": 255,
+            "text": "que",
+            "timeline_in_ms": 14367,
+            "timeline_out_ms": 14433
+          }
+        ],
+        "timeline_in_ms": 14233,
+        "timeline_out_ms": 14433
+      },
+      {
+        "cue_id": "cue_01_02",
+        "shot_id": "segment_01",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_01:w_000256",
+            "shot_id": "segment_01",
+            "word_id": 256,
+            "text": "sur",
+            "timeline_in_ms": 14433,
+            "timeline_out_ms": 14633
+          },
+          {
+            "occurrence_id": "segment_01:w_000257",
+            "shot_id": "segment_01",
+            "word_id": 257,
+            "text": "Google",
+            "timeline_in_ms": 14633,
+            "timeline_out_ms": 14800
+          },
+          {
+            "occurrence_id": "segment_01:w_000258",
+            "shot_id": "segment_01",
+            "word_id": 258,
+            "text": "il",
+            "timeline_in_ms": 14800,
+            "timeline_out_ms": 15000
+          }
+        ],
+        "timeline_in_ms": 14433,
+        "timeline_out_ms": 15000
+      },
+      {
+        "cue_id": "cue_01_03",
+        "shot_id": "segment_01",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_01:w_000259",
+            "shot_id": "segment_01",
+            "word_id": 259,
+            "text": "faut",
+            "timeline_in_ms": 15000,
+            "timeline_out_ms": 15033
+          },
+          {
+            "occurrence_id": "segment_01:w_000260",
+            "shot_id": "segment_01",
+            "word_id": 260,
+            "text": "au",
+            "timeline_in_ms": 15000,
+            "timeline_out_ms": 15300
+          },
+          {
+            "occurrence_id": "segment_01:w_000261",
+            "shot_id": "segment_01",
+            "word_id": 261,
+            "text": "minimum",
+            "timeline_in_ms": 15300,
+            "timeline_out_ms": 15333
+          }
+        ],
+        "timeline_in_ms": 15000,
+        "timeline_out_ms": 15333
+      },
+      {
+        "cue_id": "cue_01_04",
+        "shot_id": "segment_01",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_01:w_000262",
+            "shot_id": "segment_01",
+            "word_id": 262,
+            "text": "100",
+            "timeline_in_ms": 15300,
+            "timeline_out_ms": 15600
+          },
+          {
+            "occurrence_id": "segment_01:w_000263",
+            "shot_id": "segment_01",
+            "word_id": 263,
+            "text": "euros",
+            "timeline_in_ms": 15600,
+            "timeline_out_ms": 15733
+          },
+          {
+            "occurrence_id": "segment_01:w_000264",
+            "shot_id": "segment_01",
+            "word_id": 264,
+            "text": "pour",
+            "timeline_in_ms": 15733,
+            "timeline_out_ms": 15900
+          }
+        ],
+        "timeline_in_ms": 15300,
+        "timeline_out_ms": 15900
+      },
+      {
+        "cue_id": "cue_01_05",
+        "shot_id": "segment_01",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_01:w_000265",
+            "shot_id": "segment_01",
+            "word_id": 265,
+            "text": "lancer",
+            "timeline_in_ms": 15900,
+            "timeline_out_ms": 16033
+          },
+          {
+            "occurrence_id": "segment_01:w_000266",
+            "shot_id": "segment_01",
+            "word_id": 266,
+            "text": "une",
+            "timeline_in_ms": 16033,
+            "timeline_out_ms": 16233
+          },
+          {
+            "occurrence_id": "segment_01:w_000267",
+            "shot_id": "segment_01",
+            "word_id": 267,
+            "text": "boutique",
+            "timeline_in_ms": 16233,
+            "timeline_out_ms": 16433
+          }
+        ],
+        "timeline_in_ms": 15900,
+        "timeline_out_ms": 16433
+      },
+      {
+        "cue_id": "cue_01_06",
+        "shot_id": "segment_01",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_01:w_000268",
+            "shot_id": "segment_01",
+            "word_id": 268,
+            "text": "Donc",
+            "timeline_in_ms": 16600,
+            "timeline_out_ms": 16667
+          },
+          {
+            "occurrence_id": "segment_01:w_000269",
+            "shot_id": "segment_01",
+            "word_id": 269,
+            "text": "la",
+            "timeline_in_ms": 16667,
+            "timeline_out_ms": 17033
+          },
+          {
+            "occurrence_id": "segment_01:w_000270",
+            "shot_id": "segment_01",
+            "word_id": 270,
+            "text": "première",
+            "timeline_in_ms": 17033,
+            "timeline_out_ms": 17067
+          }
+        ],
+        "timeline_in_ms": 16600,
+        "timeline_out_ms": 17067
+      },
+      {
+        "cue_id": "cue_01_07",
+        "shot_id": "segment_01",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_01:w_000271",
+            "shot_id": "segment_01",
+            "word_id": 271,
+            "text": "étape",
+            "timeline_in_ms": 17033,
+            "timeline_out_ms": 17233
+          },
+          {
+            "occurrence_id": "segment_01:w_000272",
+            "shot_id": "segment_01",
+            "word_id": 272,
+            "text": "ça",
+            "timeline_in_ms": 17233,
+            "timeline_out_ms": 17400
+          },
+          {
+            "occurrence_id": "segment_01:w_000273",
+            "shot_id": "segment_01",
+            "word_id": 273,
+            "text": "va",
+            "timeline_in_ms": 17400,
+            "timeline_out_ms": 17500
+          }
+        ],
+        "timeline_in_ms": 17033,
+        "timeline_out_ms": 17500
+      },
+      {
+        "cue_id": "cue_01_08",
+        "shot_id": "segment_01",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_01:w_000274",
+            "shot_id": "segment_01",
+            "word_id": 274,
+            "text": "être",
+            "timeline_in_ms": 17500,
+            "timeline_out_ms": 17533
+          },
+          {
+            "occurrence_id": "segment_01:w_000275",
+            "shot_id": "segment_01",
+            "word_id": 275,
+            "text": "de",
+            "timeline_in_ms": 17500,
+            "timeline_out_ms": 17833
+          },
+          {
+            "occurrence_id": "segment_01:w_000276",
+            "shot_id": "segment_01",
+            "word_id": 276,
+            "text": "transformer",
+            "timeline_in_ms": 17833,
+            "timeline_out_ms": 18000
+          }
+        ],
+        "timeline_in_ms": 17500,
+        "timeline_out_ms": 18000
+      },
+      {
+        "cue_id": "cue_01_09",
+        "shot_id": "segment_01",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_01:w_000277",
+            "shot_id": "segment_01",
+            "word_id": 277,
+            "text": "ces",
+            "timeline_in_ms": 18000,
+            "timeline_out_ms": 18300
+          },
+          {
+            "occurrence_id": "segment_01:w_000278",
+            "shot_id": "segment_01",
+            "word_id": 278,
+            "text": "un",
+            "timeline_in_ms": 18300,
+            "timeline_out_ms": 18467
+          },
+          {
+            "occurrence_id": "segment_01:w_000279",
+            "shot_id": "segment_01",
+            "word_id": 279,
+            "text": "euro",
+            "timeline_in_ms": 18467,
+            "timeline_out_ms": 18567
+          }
+        ],
+        "timeline_in_ms": 18000,
+        "timeline_out_ms": 18567
+      },
+      {
+        "cue_id": "cue_01_10",
+        "shot_id": "segment_01",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_01:w_000280",
+            "shot_id": "segment_01",
+            "word_id": 280,
+            "text": "en",
+            "timeline_in_ms": 18567,
+            "timeline_out_ms": 18767
+          },
+          {
+            "occurrence_id": "segment_01:w_000281",
+            "shot_id": "segment_01",
+            "word_id": 281,
+            "text": "100",
+            "timeline_in_ms": 18767,
+            "timeline_out_ms": 18967
+          },
+          {
+            "occurrence_id": "segment_01:w_000282",
+            "shot_id": "segment_01",
+            "word_id": 282,
+            "text": "euros",
+            "timeline_in_ms": 18967,
+            "timeline_out_ms": 19133
+          }
+        ],
+        "timeline_in_ms": 18567,
+        "timeline_out_ms": 19133
+      },
+      {
+        "cue_id": "cue_01_11",
+        "shot_id": "segment_01",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_01:w_000283",
+            "shot_id": "segment_01",
+            "word_id": 283,
+            "text": "Ce",
+            "timeline_in_ms": 19133,
+            "timeline_out_ms": 19300
+          },
+          {
+            "occurrence_id": "segment_01:w_000284",
+            "shot_id": "segment_01",
+            "word_id": 284,
+            "text": "que",
+            "timeline_in_ms": 19300,
+            "timeline_out_ms": 19367
+          },
+          {
+            "occurrence_id": "segment_01:w_000285",
+            "shot_id": "segment_01",
+            "word_id": 285,
+            "text": "j’ai",
+            "timeline_in_ms": 19367,
+            "timeline_out_ms": 19500
+          }
+        ],
+        "timeline_in_ms": 19133,
+        "timeline_out_ms": 19500
+      },
+      {
+        "cue_id": "cue_02_00",
+        "shot_id": "segment_02",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_02:w_002486",
+            "shot_id": "segment_02",
+            "word_id": 2486,
+            "text": "Et",
+            "timeline_in_ms": 19633,
+            "timeline_out_ms": 19933
+          },
+          {
+            "occurrence_id": "segment_02:w_002487",
+            "shot_id": "segment_02",
+            "word_id": 2487,
+            "text": "on",
+            "timeline_in_ms": 19933,
+            "timeline_out_ms": 20100
+          }
+        ],
+        "timeline_in_ms": 19633,
+        "timeline_out_ms": 20100
+      },
+      {
+        "cue_id": "cue_02_01",
+        "shot_id": "segment_02",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_02:w_002488",
+            "shot_id": "segment_02",
+            "word_id": 2488,
+            "text": "peut",
+            "timeline_in_ms": 20100,
+            "timeline_out_ms": 20233
+          },
+          {
+            "occurrence_id": "segment_02:w_002489",
+            "shot_id": "segment_02",
+            "word_id": 2489,
+            "text": "voir",
+            "timeline_in_ms": 20233,
+            "timeline_out_ms": 20367
+          }
+        ],
+        "timeline_in_ms": 20100,
+        "timeline_out_ms": 20367
+      },
+      {
+        "cue_id": "cue_02_02",
+        "shot_id": "segment_02",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_02:w_002490",
+            "shot_id": "segment_02",
+            "word_id": 2490,
+            "text": "Qu’on",
+            "timeline_in_ms": 20467,
+            "timeline_out_ms": 20533
+          },
+          {
+            "occurrence_id": "segment_02:w_002491",
+            "shot_id": "segment_02",
+            "word_id": 2491,
+            "text": "a",
+            "timeline_in_ms": 20533,
+            "timeline_out_ms": 20600
+          },
+          {
+            "occurrence_id": "segment_02:w_002492",
+            "shot_id": "segment_02",
+            "word_id": 2492,
+            "text": "dépensé",
+            "timeline_in_ms": 20600,
+            "timeline_out_ms": 21033
+          }
+        ],
+        "timeline_in_ms": 20467,
+        "timeline_out_ms": 21033
+      },
+      {
+        "cue_id": "cue_02_03",
+        "shot_id": "segment_02",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_02:w_002493",
+            "shot_id": "segment_02",
+            "word_id": 2493,
+            "text": "Que",
+            "timeline_in_ms": 21233,
+            "timeline_out_ms": 21533
+          },
+          {
+            "occurrence_id": "segment_02:w_002494",
+            "shot_id": "segment_02",
+            "word_id": 2494,
+            "text": "3",
+            "timeline_in_ms": 21533,
+            "timeline_out_ms": 21833
+          },
+          {
+            "occurrence_id": "segment_02:w_002495",
+            "shot_id": "segment_02",
+            "word_id": 2495,
+            "text": "dollars",
+            "timeline_in_ms": 21833,
+            "timeline_out_ms": 22433
+          }
+        ],
+        "timeline_in_ms": 21233,
+        "timeline_out_ms": 22433
+      },
+      {
+        "cue_id": "cue_02_04",
+        "shot_id": "segment_02",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_02:w_002496",
+            "shot_id": "segment_02",
+            "word_id": 2496,
+            "text": "On",
+            "timeline_in_ms": 22667,
+            "timeline_out_ms": 22733
+          },
+          {
+            "occurrence_id": "segment_02:w_002497",
+            "shot_id": "segment_02",
+            "word_id": 2497,
+            "text": "a",
+            "timeline_in_ms": 22733,
+            "timeline_out_ms": 22767
+          },
+          {
+            "occurrence_id": "segment_02:w_002498",
+            "shot_id": "segment_02",
+            "word_id": 2498,
+            "text": "dépensé",
+            "timeline_in_ms": 22767,
+            "timeline_out_ms": 23100
+          }
+        ],
+        "timeline_in_ms": 22667,
+        "timeline_out_ms": 23100
+      },
+      {
+        "cue_id": "cue_02_05",
+        "shot_id": "segment_02",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_02:w_002499",
+            "shot_id": "segment_02",
+            "word_id": 2499,
+            "text": "que",
+            "timeline_in_ms": 23100,
+            "timeline_out_ms": 23267
+          },
+          {
+            "occurrence_id": "segment_02:w_002500",
+            "shot_id": "segment_02",
+            "word_id": 2500,
+            "text": "3",
+            "timeline_in_ms": 23267,
+            "timeline_out_ms": 23500
+          },
+          {
+            "occurrence_id": "segment_02:w_002501",
+            "shot_id": "segment_02",
+            "word_id": 2501,
+            "text": "dollars",
+            "timeline_in_ms": 23500,
+            "timeline_out_ms": 23767
+          }
+        ],
+        "timeline_in_ms": 23100,
+        "timeline_out_ms": 23767
+      },
+      {
+        "cue_id": "cue_02_06",
+        "shot_id": "segment_02",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_02:w_002502",
+            "shot_id": "segment_02",
+            "word_id": 2502,
+            "text": "Donc",
+            "timeline_in_ms": 23933,
+            "timeline_out_ms": 23967
+          },
+          {
+            "occurrence_id": "segment_02:w_002503",
+            "shot_id": "segment_02",
+            "word_id": 2503,
+            "text": "là",
+            "timeline_in_ms": 23967,
+            "timeline_out_ms": 24067
+          }
+        ],
+        "timeline_in_ms": 23933,
+        "timeline_out_ms": 24067
+      },
+      {
+        "cue_id": "cue_02_07",
+        "shot_id": "segment_02",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_02:w_002504",
+            "shot_id": "segment_02",
+            "word_id": 2504,
+            "text": "En",
+            "timeline_in_ms": 24133,
+            "timeline_out_ms": 24200
+          },
+          {
+            "occurrence_id": "segment_02:w_002505",
+            "shot_id": "segment_02",
+            "word_id": 2505,
+            "text": "sachant",
+            "timeline_in_ms": 24200,
+            "timeline_out_ms": 24433
+          },
+          {
+            "occurrence_id": "segment_02:w_002506",
+            "shot_id": "segment_02",
+            "word_id": 2506,
+            "text": "que",
+            "timeline_in_ms": 24433,
+            "timeline_out_ms": 24500
+          }
+        ],
+        "timeline_in_ms": 24133,
+        "timeline_out_ms": 24500
+      },
+      {
+        "cue_id": "cue_02_08",
+        "shot_id": "segment_02",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_02:w_002507",
+            "shot_id": "segment_02",
+            "word_id": 2507,
+            "text": "le",
+            "timeline_in_ms": 24500,
+            "timeline_out_ms": 24633
+          },
+          {
+            "occurrence_id": "segment_02:w_002508",
+            "shot_id": "segment_02",
+            "word_id": 2508,
+            "text": "produit",
+            "timeline_in_ms": 24633,
+            "timeline_out_ms": 24833
+          }
+        ],
+        "timeline_in_ms": 24500,
+        "timeline_out_ms": 24833
+      },
+      {
+        "cue_id": "cue_02_09",
+        "shot_id": "segment_02",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_02:w_002509",
+            "shot_id": "segment_02",
+            "word_id": 2509,
+            "text": "Nous",
+            "timeline_in_ms": 25033,
+            "timeline_out_ms": 25067
+          },
+          {
+            "occurrence_id": "segment_02:w_002510",
+            "shot_id": "segment_02",
+            "word_id": 2510,
+            "text": "a",
+            "timeline_in_ms": 25033,
+            "timeline_out_ms": 25267
+          },
+          {
+            "occurrence_id": "segment_02:w_002511",
+            "shot_id": "segment_02",
+            "word_id": 2511,
+            "text": "coûté",
+            "timeline_in_ms": 25267,
+            "timeline_out_ms": 25333
+          }
+        ],
+        "timeline_in_ms": 25033,
+        "timeline_out_ms": 25333
+      },
+      {
+        "cue_id": "cue_02_10",
+        "shot_id": "segment_02",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_02:w_002512",
+            "shot_id": "segment_02",
+            "word_id": 2512,
+            "text": "14",
+            "timeline_in_ms": 25333,
+            "timeline_out_ms": 25800
+          },
+          {
+            "occurrence_id": "segment_02:w_002513",
+            "shot_id": "segment_02",
+            "word_id": 2513,
+            "text": "euros",
+            "timeline_in_ms": 25800,
+            "timeline_out_ms": 25967
+          }
+        ],
+        "timeline_in_ms": 25333,
+        "timeline_out_ms": 25967
+      },
+      {
+        "cue_id": "cue_02_11",
+        "shot_id": "segment_02",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_02:w_002514",
+            "shot_id": "segment_02",
+            "word_id": 2514,
+            "text": "A",
+            "timeline_in_ms": 26133,
+            "timeline_out_ms": 26167
+          },
+          {
+            "occurrence_id": "segment_02:w_002515",
+            "shot_id": "segment_02",
+            "word_id": 2515,
+            "text": "envoyer",
+            "timeline_in_ms": 26133,
+            "timeline_out_ms": 26500
+          }
+        ],
+        "timeline_in_ms": 26133,
+        "timeline_out_ms": 26500
+      },
+      {
+        "cue_id": "cue_02_12",
+        "shot_id": "segment_02",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_02:w_002516",
+            "shot_id": "segment_02",
+            "word_id": 2516,
+            "text": "On",
+            "timeline_in_ms": 26633,
+            "timeline_out_ms": 26667
+          },
+          {
+            "occurrence_id": "segment_02:w_002517",
+            "shot_id": "segment_02",
+            "word_id": 2517,
+            "text": "est",
+            "timeline_in_ms": 26667,
+            "timeline_out_ms": 26767
+          },
+          {
+            "occurrence_id": "segment_02:w_002518",
+            "shot_id": "segment_02",
+            "word_id": 2518,
+            "text": "à",
+            "timeline_in_ms": 26767,
+            "timeline_out_ms": 26867
+          }
+        ],
+        "timeline_in_ms": 26633,
+        "timeline_out_ms": 26867
+      },
+      {
+        "cue_id": "cue_02_13",
+        "shot_id": "segment_02",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_02:w_002519",
+            "shot_id": "segment_02",
+            "word_id": 2519,
+            "text": "environ",
+            "timeline_in_ms": 26867,
+            "timeline_out_ms": 27167
+          },
+          {
+            "occurrence_id": "segment_02:w_002520",
+            "shot_id": "segment_02",
+            "word_id": 2520,
+            "text": "50",
+            "timeline_in_ms": 27167,
+            "timeline_out_ms": 27600
+          }
+        ],
+        "timeline_in_ms": 26867,
+        "timeline_out_ms": 27600
+      },
+      {
+        "cue_id": "cue_02_14",
+        "shot_id": "segment_02",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_02:w_002521",
+            "shot_id": "segment_02",
+            "word_id": 2521,
+            "text": "euros",
+            "timeline_in_ms": 27600,
+            "timeline_out_ms": 27767
+          },
+          {
+            "occurrence_id": "segment_02:w_002522",
+            "shot_id": "segment_02",
+            "word_id": 2522,
+            "text": "bénéfice",
+            "timeline_in_ms": 27767,
+            "timeline_out_ms": 28133
+          }
+        ],
+        "timeline_in_ms": 27600,
+        "timeline_out_ms": 28133
+      },
+      {
+        "cue_id": "cue_02_15",
+        "shot_id": "segment_02",
+        "theme": "standard_karaoke",
+        "style_name": "CFStandard",
+        "margin_v": 400,
+        "words": [
+          {
+            "occurrence_id": "segment_02:w_002523",
+            "shot_id": "segment_02",
+            "word_id": 2523,
+            "text": "Donc",
+            "timeline_in_ms": 28200,
+            "timeline_out_ms": 28300
+          },
+          {
+            "occurrence_id": "segment_02:w_002524",
+            "shot_id": "segment_02",
+            "word_id": 2524,
+            "text": "c’est",
+            "timeline_in_ms": 28300,
+            "timeline_out_ms": 28500
+          },
+          {
+            "occurrence_id": "segment_02:w_002525",
+            "shot_id": "segment_02",
+            "word_id": 2525,
+            "text": "vraiment",
+            "timeline_in_ms": 28500,
+            "timeline_out_ms": 28833
+          }
+        ],
+        "timeline_in_ms": 28200,
+        "timeline_out_ms": 28833
+      }
+    ]
+  },
+  "technical_qc": {
+    "ok": true,
+    "problems": [],
+    "duration_seconds": 29.033333,
+    "expected_duration_seconds": 29.033333333333335,
+    "has_audio": true,
+    "mean_volume_db": -15.7,
+    "mid_frame_luma": 126.955,
+    "black_intervals": [],
+    "silence_intervals": [],
+    "max_volume_db": 0.0
+  }
+}

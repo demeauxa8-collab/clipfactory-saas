@@ -1,0 +1,255 @@
+{
+  "model": "google/gemini-2.5-flash",
+  "ok": true,
+  "error": null,
+  "latency_seconds": 25.342,
+  "tokens": 24935,
+  "arcs": [
+    {
+      "title": "4 millions et demi en e-commerce avec 1 euro",
+      "arc_type": "challenge_result",
+      "segments": [
+        {
+          "role": "setup",
+          "start": 0.0,
+          "end": 12.0,
+          "transcript_excerpt": "J’ai seulement un euro pour lancer une boutique rentable en dropshipping et le tout en 24 heures Moi c’est Gaspar j’ai fait 4 millions et demi en e commerce et l’objectif ça va être simple aujourd’hui C’est juste de prouver qu’en 2025 tu peux lancer un business avec quasiment rien du tout",
+          "why": "This segment introduces the ambitious challenge and establishes the speaker's credibility with his past e-commerce success.",
+          "start_anchor": "J’ai seulement un euro pour lancer une boutique rentable en dropshipping",
+          "end_anchor": "lancer un business avec quasiment rien du tout",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        },
+        {
+          "role": "payoff",
+          "start": 561.0,
+          "end": 573.0,
+          "transcript_excerpt": "Cette vidéo Elle prouve quand même Que tu peux te lancer avec pas grand chose Par contre Ce qui coûte le plus cher C’est quand même les connaissances J’ai du mettre plus de 30 000 balles Dans des coachings",
+          "why": "This segment delivers the core message: starting with little is possible, but knowledge is the real investment, linking to his coaching.",
+          "start_anchor": "Cette vidéo Elle prouve quand même Que tu peux te lancer avec pas grand chose",
+          "end_anchor": "J’ai du mettre plus de 30 000 balles Dans des coachings",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The audacious challenge of starting with 1 euro and the speaker's impressive past results create a strong hook, followed by a valuable lesson for aspiring entrepreneurs.",
+      "estimated_retention": 85,
+      "continuity_risk": "low",
+      "suggested_hook": "Lancer une boutique rentable avec seulement 1 euro en 24h",
+      "link_reason": "The payoff directly answers the initial challenge by proving it's possible to start with little, then immediately pivots to the true cost: knowledge, which his coaching provides.",
+      "campaign_fit_llm": 95,
+      "campaign_fit_reason": "This clip valorizes the entrepreneur by showcasing his expertise and the results of his knowledge, directly promoting his coaching as the key to success.",
+      "opening_words": "J’ai seulement un euro pour lancer une boutique rentable en dropshipping",
+      "self_contained": true,
+      "payoff_line": "Ce qui coûte le plus cher C’est quand même les connaissances J’ai du mettre plus de 30 000 balles Dans des coachings"
+    },
+    {
+      "title": "50 euros de bénéfice avec 3 dollars de pub en 24h",
+      "arc_type": "challenge_result",
+      "segments": [
+        {
+          "role": "setup",
+          "start": 469.0,
+          "end": 472.0,
+          "transcript_excerpt": "On se retrouve 24 heures plus tard Et on va voir combien Est ce qu’on a fait sur la boutique Est ce qu’on a fait des ventes Est ce qu’on va gagner de l’argent Est ce qu’on va perdre de l’argent",
+          "why": "This segment sets up the anticipation for the results of the 24-hour challenge, posing the central question of success or failure.",
+          "start_anchor": "On se retrouve 24 heures plus tard Et on va voir combien Est ce qu’on a fait",
+          "end_anchor": "Est ce qu’on va perdre de l’argent",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        },
+        {
+          "role": "payoff",
+          "start": 536.0,
+          "end": 549.0,
+          "transcript_excerpt": "On peut voir qu’on a dépensé que 3 dollars On a dépensé que 3 dollars Donc là En sachant que le produit nous a coûté 14 euros à envoyer On est à environ 50 euros bénéfice Donc c’est vraiment Très très bien Parce que là Du coup C’est un retour sur investissement Où on sait plus tard Que quand on mett",
+          "why": "This segment delivers the concrete results: minimal ad spend for significant profit, proving the viability of the method and hinting at scalability.",
+          "start_anchor": "On peut voir qu’on a dépensé que 3 dollars On a dépensé que 3 dollars",
+          "end_anchor": "on va faire de très bonnes marges",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "",
+      "estimated_retention": 0,
+      "continuity_risk": "medium",
+      "suggested_hook": "Le résultat de ma boutique dropshipping en 24h",
+      "link_reason": null,
+      "campaign_fit_llm": null,
+      "campaign_fit_reason": null,
+      "opening_words": "On se retrouve 24 heures plus tard Et on va voir combien Est ce qu’on a fait",
+      "self_contained": true,
+      "payoff_line": "On est à environ 50 euros bénéfice"
+    },
+    {
+      "title": "Google Ads vs TikTok pour le dropshipping",
+      "arc_type": "counterintuitive",
+      "segments": [
+        {
+          "role": "single",
+          "start": 36.0,
+          "end": 48.0,
+          "transcript_excerpt": "En vrai de vrai avec un euro je pourrais faire du dropshipping sur TikTok mais le truc c’est que je préfère faire du dropshipping sur Google Vu que c’est des meilleures marges je vais faire plus de profit En plus de ça c’est beaucoup plus long terme que TikTok et surtout tu vend tes produits à des g",
+          "why": "This segment explains the strategic choice of Google Ads over TikTok for better margins and long-term success, despite the initial budget constraint.",
+          "start_anchor": "En vrai de vrai avec un euro je pourrais faire du dropshipping sur TikTok",
+          "end_anchor": "même si on part avec juste un euro",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "This clip offers a contrarian view on dropshipping platforms, providing valuable strategic insight that can attract entrepreneurs looking for better results.",
+      "estimated_retention": 70,
+      "continuity_risk": "low",
+      "suggested_hook": "Pourquoi Google Ads est mieux que TikTok pour le dropshipping",
+      "link_reason": null,
+      "campaign_fit_llm": 85,
+      "campaign_fit_reason": "This clip positions the entrepreneur as an expert with nuanced strategic advice, highlighting the advantages of his preferred method for business growth.",
+      "opening_words": "En vrai de vrai avec un euro je pourrais faire du dropshipping sur TikTok",
+      "self_contained": true,
+      "payoff_line": "tu vend tes produits à des gens qui recherchent déjà ton produit"
+    },
+    {
+      "title": "L'erreur des débutants en e-commerce",
+      "arc_type": "mistake_reveal",
+      "segments": [
+        {
+          "role": "single",
+          "start": 573.0,
+          "end": 585.0,
+          "transcript_excerpt": "Si demain un débutant Essaye tout seul Avec 1 euro ou 100 euros Il n’y arrivera pas Honnêtement Et si justement Tu as du budget Que tu veux gagner du temps Et te faire accompagner Pour réussir en e commerce",
+          "why": "This segment highlights a common mistake made by beginners and positions coaching as the solution to avoid failure and achieve success faster.",
+          "start_anchor": "Si demain un débutant Essaye tout seul Avec 1 euro ou 100 euros",
+          "end_anchor": "gagner du temps Et te faire accompagner Pour réussir en e commerce",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "This clip directly addresses a pain point for aspiring entrepreneurs, offering a clear solution (coaching) to a common problem, making it highly relevant.",
+      "estimated_retention": 80,
+      "continuity_risk": "low",
+      "suggested_hook": "L'erreur fatale des débutants en e-commerce",
+      "link_reason": null,
+      "campaign_fit_llm": 90,
+      "campaign_fit_reason": "This clip directly promotes the entrepreneur's coaching by explaining why it's essential for beginners to succeed, aligning perfectly with the campaign goal.",
+      "opening_words": "Si demain un débutant Essaye tout seul Avec 1 euro ou 100 euros",
+      "self_contained": true,
+      "payoff_line": "Il n’y arrivera pas Honnêtement Et si justement Tu as du budget Que tu veux gagner du temps Et te faire accompagner Pour réussir en e commerce"
+    },
+    {
+      "title": "Trouver un produit gagnant en dropshipping",
+      "arc_type": "transformation",
+      "segments": [
+        {
+          "role": "single",
+          "start": 119.0,
+          "end": 134.0,
+          "transcript_excerpt": "L’étape numéro 1 pour commencer en e commerce Du coup ça va être la recherche produit Pour savoir ce qu’on va vendre La première chose à faire pour trouver des produits Faut déjà que j’ai des idées de produits à vendre sur Google Parce qu’en fait sur Google on peut vendre tout et n’importe quoi Donc",
+          "why": "This segment introduces the crucial first step of product research and hints at a specific tool used by the entrepreneur.",
+          "start_anchor": "L’étape numéro 1 pour commencer en e commerce Du coup ça va être la recherche produit",
+          "end_anchor": "un maximum d’idées Moi ce que j’utilise habituellement c’est mots aléatoires",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "This clip offers a practical, actionable tip for finding profitable products, appealing to entrepreneurs seeking concrete strategies.",
+      "estimated_retention": 65,
+      "continuity_risk": "low",
+      "suggested_hook": "Ma méthode pour trouver un produit gagnant en e-commerce",
+      "link_reason": null,
+      "campaign_fit_llm": 75,
+      "campaign_fit_reason": "This clip demonstrates the entrepreneur's practical knowledge and provides a glimpse into his methods, building trust and interest in his expertise.",
+      "opening_words": "L’étape numéro 1 pour commencer en e commerce Du coup ça va être la recherche produit",
+      "self_contained": true,
+      "payoff_line": "Moi ce que j’utilise habituellement c’est mots aléatoires"
+    },
+    {
+      "title": "4500€ en 24h avec une seule boutique",
+      "arc_type": "transformation",
+      "segments": [
+        {
+          "role": "single",
+          "start": 170.0,
+          "end": 182.0,
+          "transcript_excerpt": "D’ailleurs les gars il y a quelques mois J’ai trouvé un produit avec ce site justement Et regardez où est ce qu’il en est aujourd’hui Ça c’était sur la journée d’hier Et dites vous que j’ai 5 autres boutiques qui tournent de la même manière Donc juste sur 24h Elle a fait 4500€ Et là dessus je prends",
+          "why": "This segment provides a powerful example of the entrepreneur's success, showcasing a high revenue and profit figure from a single store in a short period.",
+          "start_anchor": "D’ailleurs les gars il y a quelques mois J’ai trouvé un produit avec ce site justement",
+          "end_anchor": "presque 2000€ en une journée de bénéfice",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The impressive figures (4500€ revenue, 2000€ profit in 24h) are highly attention-grabbing and motivate viewers to learn his methods.",
+      "estimated_retention": 90,
+      "continuity_risk": "low",
+      "suggested_hook": "Comment j'ai fait 4500€ en 24h avec une boutique",
+      "link_reason": null,
+      "campaign_fit_llm": 95,
+      "campaign_fit_reason": "This clip directly showcases the entrepreneur's proven ability to generate significant income, making his training highly desirable for those seeking similar results.",
+      "opening_words": "D’ailleurs les gars il y a quelques mois J’ai trouvé un produit avec ce site justement",
+      "self_contained": true,
+      "payoff_line": "Donc juste sur 24h Elle a fait 4500€ Et là dessus je prends 45 de marge Donc presque 2000€ en une journée de bénéfice"
+    },
+    {
+      "title": "Mon accompagnement garanti 1000€ par jour",
+      "arc_type": "transformation",
+      "segments": [
+        {
+          "role": "single",
+          "start": 182.0,
+          "end": 194.0,
+          "transcript_excerpt": "D’ailleurs c’est cette méthode que j’apprends aux élèves de mon accompagnement En gros avec pile cette méthode Qui est de faire du e commerce sur Google J’accompagne jusqu’au 1000€ par jour de chiffre d’affaires Et c’est garanti sous contrat",
+          "why": "This segment explicitly links his success to his coaching program and offers a strong, guaranteed outcome for his students.",
+          "start_anchor": "D’ailleurs c’est cette méthode que j’apprends aux élèves de mon accompagnement",
+          "end_anchor": "1000€ par jour de chiffre d’affaires Et c’est garanti sous contrat",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "The promise of a guaranteed 1000€ per day in revenue is a powerful incentive for anyone looking to start or scale an e-commerce business.",
+      "estimated_retention": 90,
+      "continuity_risk": "low",
+      "suggested_hook": "Mon coaching garanti 1000€ par jour en e-commerce",
+      "link_reason": null,
+      "campaign_fit_llm": 100,
+      "campaign_fit_reason": "This clip is a direct and compelling advertisement for his business training, highlighting a guaranteed high-value outcome for potential students.",
+      "opening_words": "D’ailleurs c’est cette méthode que j’apprends aux élèves de mon accompagnement",
+      "self_contained": true,
+      "payoff_line": "J’accompagne jusqu’au 1000€ par jour de chiffre d’affaires Et c’est garanti sous contrat"
+    },
+    {
+      "title": "Le secret des connaissances en e-commerce",
+      "arc_type": "insider_secret",
+      "segments": [
+        {
+          "role": "single",
+          "start": 564.0,
+          "end": 579.0,
+          "transcript_excerpt": "Ce qui coûte le plus cher C’est quand même les connaissances J’ai du mettre plus de 30 000 balles Dans des coachings Là actuellement J’ai un coaching avec un américain Pour chiffrer encore un e commerce Et c’est ça qui coûte le plus cher Et c’est pour ça que j’ai réussi aussi ce challenge",
+          "why": "This segment reveals the true investment behind his success: extensive coaching and knowledge, positioning it as the key differentiator.",
+          "start_anchor": "Ce qui coûte le plus cher C’est quand même les connaissances J’ai du mettre plus de 30 000 balles",
+          "end_anchor": "c’est pour ça que j’ai réussi aussi ce challenge",
+          "start_anchor_resolved": false,
+          "end_anchor_resolved": false
+        }
+      ],
+      "viral_reason": "This clip offers a powerful insight into the often-hidden cost of expertise, making viewers understand the value of investing in knowledge.",
+      "estimated_retention": 80,
+      "continuity_risk": "low",
+      "suggested_hook": "Le vrai coût de la réussite en e-commerce",
+      "link_reason": null,
+      "campaign_fit_llm": 90,
+      "campaign_fit_reason": "This clip validates the importance of his coaching and knowledge, directly supporting the campaign's goal of selling his business training by demonstrating its value.",
+      "opening_words": "Ce qui coûte le plus cher C’est quand même les connaissances J’ai du mettre plus de 30 000 balles",
+      "self_contained": true,
+      "payoff_line": "Et c’est ça qui coûte le plus cher Et c’est pour ça que j’é réussi aussi ce challenge"
+    }
+  ],
+  "raw_video_read": {
+    "n_events": 79,
+    "n_events_in_fixture": 79,
+    "video_map_summary_chars": 600,
+    "n_transcript_words": 2864,
+    "n_transcript_words_in_fixture": 2864,
+    "transcript_lines_chars": 14977
+  }
+}

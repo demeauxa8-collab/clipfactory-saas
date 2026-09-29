@@ -1,0 +1,104 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Inter,110,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,6,2,2,80,80,400,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:00.54,Default,,0,0,620,,J’AI SEULEMENT\NUN
+Dialogue: 0,0:00:00.54,0:00:00.74,Default,,0,0,620,,J’AI {\c&H76E600&\fscx112\fscy112}SEULEMENT{\c&HFFFFFF&\fscx100\fscy100}\NUN
+Dialogue: 0,0:00:00.74,0:00:01.44,Default,,0,0,620,,J’AI SEULEMENT\NUN
+Dialogue: 0,0:00:01.44,0:00:01.76,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}EURO{\c&HFFFFFF&\fscx100\fscy100} POUR\NLANCER
+Dialogue: 0,0:00:01.76,0:00:02.22,Default,,0,0,620,,EURO POUR\NLANCER
+Dialogue: 0,0:00:02.22,0:00:02.36,Default,,0,0,620,,EURO POUR\N{\c&H76E600&\fscx112\fscy112}LANCER{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:02.36,0:00:02.94,Default,,0,0,620,,UNE RENTABLE EN
+Dialogue: 0,0:00:02.94,0:00:03.38,Default,,0,0,620,,UNE {\c&H76E600&\fscx112\fscy112}RENTABLE{\c&HFFFFFF&\fscx100\fscy100} EN
+Dialogue: 0,0:00:03.38,0:00:03.60,Default,,0,0,620,,UNE RENTABLE EN
+Dialogue: 0,0:00:03.60,0:00:04.10,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}DROPSHIPPING{\c&HFFFFFF&\fscx100\fscy100} ET\NLE
+Dialogue: 0,0:00:04.10,0:00:04.44,Default,,0,0,620,,DROPSHIPPING ET\NLE
+Dialogue: 0,0:00:04.44,0:00:04.64,Default,,0,0,620,,DROPSHIPPING ET\NLE
+Dialogue: 0,0:00:04.64,0:00:04.76,Default,,0,0,620,,TOUT EN 24
+Dialogue: 0,0:00:04.76,0:00:04.96,Default,,0,0,620,,TOUT EN 24
+Dialogue: 0,0:00:04.96,0:00:05.38,Default,,0,0,620,,TOUT EN 24
+Dialogue: 0,0:00:05.38,0:00:05.70,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}HEURES{\c&HFFFFFF&\fscx100\fscy100} C’EST\NGASPAR
+Dialogue: 0,0:00:05.70,0:00:05.78,Default,,0,0,620,,HEURES C’EST\NGASPAR
+Dialogue: 0,0:00:05.78,0:00:06.08,Default,,0,0,620,,HEURES C’EST\N{\c&H76E600&\fscx112\fscy112}GASPAR{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:06.22,0:00:06.24,Default,,0,0,620,,J’AI FAIT 4
+Dialogue: 0,0:00:06.24,0:00:06.38,Default,,0,0,620,,J’AI {\c&H76E600&\fscx112\fscy112}FAIT{\c&HFFFFFF&\fscx100\fscy100} 4
+Dialogue: 0,0:00:06.38,0:00:06.64,Default,,0,0,620,,J’AI FAIT 4
+Dialogue: 0,0:00:06.64,0:00:06.82,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}MILLIONS{\c&HFFFFFF&\fscx100\fscy100} ET EN
+Dialogue: 0,0:00:06.82,0:00:07.04,Default,,0,0,620,,MILLIONS ET EN
+Dialogue: 0,0:00:07.04,0:00:07.30,Default,,0,0,620,,MILLIONS ET EN
+Dialogue: 0,0:00:07.30,0:00:07.60,Default,,0,0,620,,E COMMERCE ET
+Dialogue: 0,0:00:07.60,0:00:07.78,Default,,0,0,620,,E {\c&H76E600&\fscx112\fscy112}COMMERCE{\c&HFFFFFF&\fscx100\fscy100} ET
+Dialogue: 0,0:00:07.78,0:00:08.00,Default,,0,0,620,,E COMMERCE ET
+Dialogue: 0,0:00:08.00,0:00:08.44,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}L’OBJECTIF{\c&HFFFFFF&\fscx100\fscy100} ÇA\NVA
+Dialogue: 0,0:00:08.44,0:00:08.64,Default,,0,0,620,,L’OBJECTIF ÇA\NVA
+Dialogue: 0,0:00:08.64,0:00:08.68,Default,,0,0,620,,L’OBJECTIF ÇA\NVA
+Dialogue: 0,0:00:08.68,0:00:08.80,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}ÊTRE{\c&HFFFFFF&\fscx100\fscy100} SIMPLE\NAUJOURD’HUI
+Dialogue: 0,0:00:08.80,0:00:09.04,Default,,0,0,620,,ÊTRE {\c&H76E600&\fscx112\fscy112}SIMPLE{\c&HFFFFFF&\fscx100\fscy100}\NAUJOURD’HUI
+Dialogue: 0,0:00:09.04,0:00:09.38,Default,,0,0,620,,ÊTRE SIMPLE\N{\c&H76E600&\fscx112\fscy112}AUJOURD’HUI{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:09.60,0:00:09.74,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}JUSTE{\c&HFFFFFF&\fscx100\fscy100} DE QU’EN
+Dialogue: 0,0:00:09.74,0:00:10.18,Default,,0,0,620,,JUSTE DE QU’EN
+Dialogue: 0,0:00:10.18,0:00:10.52,Default,,0,0,620,,JUSTE DE QU’EN
+Dialogue: 0,0:00:10.52,0:00:10.92,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}2025{\c&HFFFFFF&\fscx100\fscy100} TU PEUX
+Dialogue: 0,0:00:10.92,0:00:11.08,Default,,0,0,620,,2025 TU PEUX
+Dialogue: 0,0:00:11.08,0:00:11.18,Default,,0,0,620,,2025 TU {\c&H76E600&\fscx112\fscy112}PEUX{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:11.18,0:00:11.36,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}LANCER{\c&HFFFFFF&\fscx100\fscy100} UN\NBUSINESS
+Dialogue: 0,0:00:11.36,0:00:11.56,Default,,0,0,620,,LANCER UN\NBUSINESS
+Dialogue: 0,0:00:11.56,0:00:11.98,Default,,0,0,620,,LANCER UN\N{\c&H76E600&\fscx112\fscy112}BUSINESS{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:11.98,0:00:12.26,Default,,0,0,620,,AVEC QUASIMENT
+Dialogue: 0,0:00:12.26,0:00:12.58,Default,,0,0,620,,AVEC {\c&H76E600&\fscx112\fscy112}QUASIMENT{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:12.58,0:00:12.94,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}RIEN{\c&HFFFFFF&\fscx100\fscy100} DU
+Dialogue: 0,0:00:12.94,0:00:13.18,Default,,0,0,620,,RIEN DU
+Dialogue: 0,0:00:13.40,0:00:13.52,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}MAINTENANT{\c&HFFFFFF&\fscx100\fscy100} ON\NSE
+Dialogue: 0,0:00:13.52,0:00:13.58,Default,,0,0,620,,MAINTENANT ON\NSE
+Dialogue: 0,0:00:13.58,0:00:13.76,Default,,0,0,620,,MAINTENANT ON\NSE
+Dialogue: 0,0:00:13.76,0:00:13.84,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}RETROUVE{\c&HFFFFFF&\fscx100\fscy100}\NDIRECTEMENT SUR
+Dialogue: 0,0:00:13.84,0:00:14.28,Default,,0,0,620,,RETROUVE\N{\c&H76E600&\fscx112\fscy112}DIRECTEMENT{\c&HFFFFFF&\fscx100\fscy100} SUR
+Dialogue: 0,0:00:14.28,0:00:14.48,Default,,0,0,620,,RETROUVE\NDIRECTEMENT SUR
+Dialogue: 0,0:00:14.48,0:00:15.12,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}SHOPIFY{\c&HFFFFFF&\fscx100\fscy100} ET OUI
+Dialogue: 0,0:00:15.12,0:00:15.18,Default,,0,0,620,,SHOPIFY ET OUI
+Dialogue: 0,0:00:15.18,0:00:15.40,Default,,0,0,620,,SHOPIFY ET {\c&H76E600&\fscx112\fscy112}OUI{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:15.54,0:00:15.66,Default,,0,0,620,,DANS LA
+Dialogue: 0,0:00:15.66,0:00:16.00,Default,,0,0,620,,DANS LA
+Dialogue: 0,0:00:16.50,0:00:16.68,Default,,0,0,620,,LES AMIS GRANDE
+Dialogue: 0,0:00:16.68,0:00:16.98,Default,,0,0,620,,LES {\c&H76E600&\fscx112\fscy112}AMIS{\c&HFFFFFF&\fscx100\fscy100} GRANDE
+Dialogue: 0,0:00:16.98,0:00:17.10,Default,,0,0,620,,LES AMIS {\c&H76E600&\fscx112\fscy112}GRANDE{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:17.10,0:00:17.54,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}NOUVELLE{\c&HFFFFFF&\fscx100\fscy100} ON A
+Dialogue: 0,0:00:17.54,0:00:17.56,Default,,0,0,620,,NOUVELLE ON A
+Dialogue: 0,0:00:17.56,0:00:17.72,Default,,0,0,620,,NOUVELLE ON A
+Dialogue: 0,0:00:17.72,0:00:17.84,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}FAIT{\c&HFFFFFF&\fscx100\fscy100} UNE VENTE
+Dialogue: 0,0:00:17.84,0:00:18.08,Default,,0,0,620,,FAIT UNE VENTE
+Dialogue: 0,0:00:18.08,0:00:18.22,Default,,0,0,620,,FAIT UNE {\c&H76E600&\fscx112\fscy112}VENTE{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:18.22,0:00:18.40,Default,,0,0,620,,À 69 EUROS
+Dialogue: 0,0:00:18.40,0:00:18.90,Default,,0,0,620,,À 69 EUROS
+Dialogue: 0,0:00:18.90,0:00:19.10,Default,,0,0,620,,À 69 {\c&H76E600&\fscx112\fscy112}EUROS{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:19.18,0:00:19.34,Default,,0,0,620,,ET JE NE
+Dialogue: 0,0:00:19.34,0:00:19.42,Default,,0,0,620,,ET JE NE
+Dialogue: 0,0:00:19.42,0:00:19.56,Default,,0,0,620,,ET JE NE
+Dialogue: 0,0:00:19.56,0:00:19.58,Default,,0,0,620,,M’Y ATTENDAIS\NVRAIMENT
+Dialogue: 0,0:00:19.58,0:00:19.82,Default,,0,0,620,,M’Y {\c&H76E600&\fscx112\fscy112}ATTENDAIS{\c&HFFFFFF&\fscx100\fscy100}\NVRAIMENT
+Dialogue: 0,0:00:19.82,0:00:20.14,Default,,0,0,620,,M’Y ATTENDAIS\N{\c&H76E600&\fscx112\fscy112}VRAIMENT{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:20.14,0:00:20.50,Default,,0,0,620,,PAS PARCE QUE
+Dialogue: 0,0:00:20.50,0:00:20.66,Default,,0,0,620,,PAS {\c&H76E600&\fscx112\fscy112}PARCE{\c&HFFFFFF&\fscx100\fscy100} QUE
+Dialogue: 0,0:00:20.66,0:00:20.74,Default,,0,0,620,,PAS PARCE QUE
+Dialogue: 0,0:00:20.74,0:00:21.00,Default,,0,0,620,,LÀ EN 24
+Dialogue: 0,0:00:21.00,0:00:21.02,Default,,0,0,620,,LÀ EN 24
+Dialogue: 0,0:00:21.02,0:00:21.54,Default,,0,0,620,,LÀ EN 24
+Dialogue: 0,0:00:21.54,0:00:21.78,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}HEURES{\c&HFFFFFF&\fscx100\fscy100} EN 24
+Dialogue: 0,0:00:21.78,0:00:21.90,Default,,0,0,620,,HEURES EN 24
+Dialogue: 0,0:00:21.90,0:00:22.28,Default,,0,0,620,,HEURES EN 24
+Dialogue: 0,0:00:22.28,0:00:22.50,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}HEURES{\c&HFFFFFF&\fscx100\fscy100} N’AI\NJAMAIS
+Dialogue: 0,0:00:22.50,0:00:22.54,Default,,0,0,620,,HEURES N’AI\NJAMAIS
+Dialogue: 0,0:00:22.54,0:00:22.78,Default,,0,0,620,,HEURES N’AI\N{\c&H76E600&\fscx112\fscy112}JAMAIS{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:22.78,0:00:22.90,Default,,0,0,620,,{\c&H76E600&\fscx112\fscy112}FAIT{\c&HFFFFFF&\fscx100\fscy100} ÇA
+Dialogue: 0,0:00:22.90,0:00:23.02,Default,,0,0,620,,FAIT ÇA
+Dialogue: 0,0:00:23.12,0:00:23.20,Default,,0,0,620,,ON VA
+Dialogue: 0,0:00:23.20,0:00:23.24,Default,,0,0,620,,ON VA

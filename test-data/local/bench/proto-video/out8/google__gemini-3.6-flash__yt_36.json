@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.6-flash",
+ "tag": "yt_36",
+ "latency_s": 56.0,
+ "usage": {
+  "prompt_tokens": 54322,
+  "completion_tokens": 3896,
+  "total_tokens": 58218,
+  "cost": 0.110703,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 14880,
+   "video_tokens": 39270
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.110703,
+   "upstream_inference_prompt_cost": 0.081483,
+   "upstream_inference_completions_cost": 0.02922
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2805,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"segments_clipables\": [\n    {\n      \"start_s\": 0,\n      \"end_s\": 31,\n      \"titre\": \"1€ pour créer un business rentable en 24h\",\n      \"hook_score\": 10,\n      \"energie\": 9,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Hook ultra-impactant avec un accessoire visuel (pièce de 1€), une promesse forte et un compte à rebours de 24h.\"\n    },\n    {\n      \"start_s\": 34,\n      \"end_s\": 54,\n      \"titre\": \"Pourquoi choisir Google Ads plutôt que TikTok\",\n      \"hook_score\": 8,\n      \"energie\": 8,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Comparaison stratégique concrète entre TikTok et Google Ads pour le dropshipping avec argument de rentabilité.\"\n    },\n    {\n      \"start_s\": 119,\n      \"end_s\": 138,\n      \"titre\": \"Nettoyer une Porsche à Dubaï pour financer son projet\",\n      \"hook_score\": 8,\n      \"energie\": 8,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Séquence drôle et concrète de 'galère' où un millionnaire lave une voiture au parking pour obtenir son capital de départ.\"\n    },\n    {\n      \"start_s\": 123,\n      \"end_s\": 171,\n      \"titre\": \"La méthode gratuite pour trouver des produits gagnants\",\n      \"hook_score\": 8,\n      \"energie\": 7,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Tutoriel contre-intuitif et surprenant utilisant un générateur de mots aléatoires pour dénicher des niches e-commerce.\"\n    },\n    {\n      \"start_s\": 172,\n      \"end_s\": 206,\n      \"titre\": \"4500€/jour avec une seule boutique Shopify\",\n      \"hook_score\": 9,\n      \"energie\": 8,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Preuve sociale percutante avec capture d'écran du tableau de bord Shopify affichant des milliers d'euros de ventes.\"\n    },\n    {\n      \"start_s\": 465,\n      \"end_s\": 506,\n      \"titre\": \"Résultats après 24h : Première vente débloquée !\",\n      \"hook_score\": 9,\n      \"energie\": 9,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Le climax de la vidéo où le résultat du défi est révélé avec le résultat chiffré en direct.\"\n    },\n    {\n      \"start_s\": 529,\n      \"end_s\": 556,\n      \"titre\": \"Combien j'ai VRAIMENT gagné avec 3$ de publicité\",\n      \"hook_score\": 8,\n      \"energie\": 8,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Décomposition transparente des coûts (Shopify, domaine, ads) et calcul du bénéfice net exact.\"\n    },\n    {\n      \"start_s\": 564,\n      \"end_s\": 595,\n      \"titre\": \"Ce qui coûte le plus cher quand on se lance en business\",\n      \"hook_score\": 8,\n      \"energie\": 8,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Conclusion inspirante sur l'importance de l'investissement dans les connaissances plutôt que le capital de départ.\"\n    }\n  ],\n  \"moments_morts\": [\n    [31, 34],\n    [86, 89],\n    [117, 122],\n    [354, 360],\n    [410, 416],\n    [428, 431],\n    [463, 465]\n  ],\n  \"meilleur_hook_absolu\": {\n    \"start_s\": 0,\n    \"end_s\": 31,\n    \"pourquoi\": \"C'est l'accroche idéale pour TikTok/Reels : enjeu fort (1€ -> boutique rentable en 24h), storytelling immédiat, preuve d'autorité (4,5M€ générés) et élément visuel captivant (pièce tenue en main).\"\n  }\n}\n```",
+ "provider": "Google"
+}

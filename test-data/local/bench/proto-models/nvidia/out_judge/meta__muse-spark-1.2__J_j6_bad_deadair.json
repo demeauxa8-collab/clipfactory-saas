@@ -1,0 +1,32 @@
+{
+ "model": "meta/muse-spark-1.2",
+ "tag": "J_j6_bad_deadair",
+ "latency_s": 10.7,
+ "usage": {
+  "prompt_tokens": 2824,
+  "completion_tokens": 1660,
+  "total_tokens": 4484,
+  "cost": 0.0104057,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 163,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0104057,
+   "upstream_inference_prompt_cost": 0.0033507,
+   "upstream_inference_completions_cost": 0.007055
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1474,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\"publiable\":false,\"score_global\":4,\"hook_2s\":8,\"phrase_coupee_au_debut\":false,\"phrase_coupee_a_la_fin\":true,\"premier_mot_entendu\":\"Entrepreneur\",\"dernier_mot_entendu\":\"vendre\",\"raccords\":[{\"at_s\":1.9,\"ca_se_comprend\":true,\"pourquoi\":\"jump cut même locuteur/même lieu, continuité du discours sans rupture sémantique\"},{\"at_s\":5.3,\"ca_se_comprend\":true,\"pourquoi\":\"léger recadrage/jump cut, même locuteur poursuit sa phrase\"}],\"moment_mort\":false,\"raison_du_refus\":\"phrase finale tronquée (se termine sur 'je peux pas vendre...' coupé net en milieu de phrase) - critère bloquant, clip non publiable\"}",
+ "reasoning": "",
+ "provider": "Meta"
+}

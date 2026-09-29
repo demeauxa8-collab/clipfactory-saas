@@ -1,0 +1,707 @@
+[
+  {
+    "source_id": "pipeline-current",
+    "path": ".ruff_cache/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "pipeline-current",
+    "path": ".git",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "pipeline-current",
+    "path": "apps/worker/.pytest_cache/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "pipeline-current",
+    "path": "apps/worker/.ruff_cache/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "pipeline-current",
+    "path": "apps/worker/app/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "pipeline-current",
+    "path": "apps/worker/app/pipeline/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "pipeline-current",
+    "path": "apps/worker/app/providers/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "pipeline-current",
+    "path": "apps/worker/tests/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": ".git/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": ".ruff_cache/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": ".DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "dump.rdb",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "saas-main",
+    "path": ".claude/worktrees/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/api/.ruff_cache/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/api/.venv/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/api/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/api/.env",
+    "reason": "secret-or-runtime"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/api/app/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/api/app/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/api/app/routers/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/api/app/services/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/e2e/node_modules/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/web/.next/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/web/node_modules/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/web/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/web/.env.local",
+    "reason": "secret-or-runtime"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/web/tsconfig.tsbuildinfo",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/worker/.pytest_cache/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/worker/.ruff_cache/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/worker/.venv/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/worker/.env",
+    "reason": "secret-or-runtime"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/worker/dump.rdb",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/worker/app/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/worker/app/parallel/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/worker/app/pipeline/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/worker/app/providers/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/worker/scripts/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "apps/worker/tests/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "saas-main",
+    "path": "docs/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "prototype",
+    "path": ".git/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": ".ruff_cache/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": ".DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/api/.ruff_cache/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/api/.venv/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/api/app/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/api/app/routers/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/api/app/services/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/e2e/node_modules/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/web/.next/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/web/node_modules/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/web/tsconfig.tsbuildinfo",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/worker/.pytest_cache/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/worker/.ruff_cache/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/worker/.venv/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/worker/app/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/worker/app/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/worker/app/pipeline/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/worker/app/providers/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/worker/scripts/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": "apps/worker/tests/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "prototype",
+    "path": "ugc-ai/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "prototype",
+    "path": "ugc-ai/assets/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "prototype",
+    "path": "ugc-ai/tools/node_modules/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "ui-ux-lab",
+    "path": ".git/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "ui-ux-lab",
+    "path": ".vercel/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "ui-ux-lab",
+    "path": ".DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "ui-ux-lab",
+    "path": "apps/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "ui-ux-lab",
+    "path": "apps/web/.next/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "ui-ux-lab",
+    "path": "apps/web/node_modules/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "ui-ux-lab",
+    "path": "apps/web/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "ui-ux-lab",
+    "path": "apps/web/tsconfig.tsbuildinfo",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "seo",
+    "path": ".vercel/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "seo",
+    "path": ".git",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "seo",
+    "path": "apps/web/.next/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "seo",
+    "path": "apps/web/node_modules/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "seo",
+    "path": "apps/web/.env.local",
+    "reason": "secret-or-runtime"
+  },
+  {
+    "source_id": "seo",
+    "path": "apps/web/tsconfig.tsbuildinfo",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "seo",
+    "path": "artifacts/seo/build-ui-refresh.log",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "seo",
+    "path": "artifacts/seo/build.log",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "seo",
+    "path": "artifacts/seo/format-ui-refresh.log",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "seo",
+    "path": "artifacts/seo/promotion.log",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "seo",
+    "path": "artifacts/seo/staged-deployment-final.log",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "seo",
+    "path": "artifacts/seo/staged-deployment.log",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "seo",
+    "path": "artifacts/seo/staged-ui-refresh.log",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "seo",
+    "path": "scripts/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "beige",
+    "path": ".DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "beige",
+    "path": ".git",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "beige",
+    "path": "apps/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "beige",
+    "path": "apps/web/.next/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "beige",
+    "path": "apps/web/node_modules/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "beige",
+    "path": "apps/web/.env.local",
+    "reason": "secret-or-runtime"
+  },
+  {
+    "source_id": "apple-premium",
+    "path": ".DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "apple-premium",
+    "path": ".git",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "apple-premium",
+    "path": "apps/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "apple-premium",
+    "path": "apps/web/.next/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "apple-premium",
+    "path": "apps/web/node_modules/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "apple-premium",
+    "path": "apps/web/.env.local",
+    "reason": "secret-or-runtime"
+  },
+  {
+    "source_id": "google-verification",
+    "path": ".vercel/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "google-verification",
+    "path": ".git",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "free-trial",
+    "path": ".git",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "free-trial",
+    "path": "apps/api/.ruff_cache/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "free-trial",
+    "path": "apps/web/.next/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "free-trial",
+    "path": "apps/web/node_modules/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "free-trial",
+    "path": "apps/web/tsconfig.tsbuildinfo",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "free-trial",
+    "path": "apps/worker/.ruff_cache/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "free-trial",
+    "path": "apps/worker/app/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "free-trial",
+    "path": "apps/worker/scripts/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "legacy-desktop",
+    "path": ".git/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "legacy-desktop",
+    "path": "__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "legacy-desktop",
+    "path": "bin/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "legacy-desktop",
+    "path": "build/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "legacy-desktop",
+    "path": "models/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "legacy-desktop",
+    "path": "venv/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "legacy-desktop",
+    "path": ".DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "legacy-desktop",
+    "path": "yt-dlp",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "legacy-desktop",
+    "path": "clips/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "legacy-desktop",
+    "path": "config/.env",
+    "reason": "secret-or-runtime"
+  },
+  {
+    "source_id": "legacy-desktop",
+    "path": "docs/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "legacy-desktop",
+    "path": "docs/~$nchmark-concurrents-saas.md",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "legacy-desktop",
+    "path": "logs/clipfactory.log",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "legacy-desktop",
+    "path": "mac-app/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "legacy-desktop",
+    "path": "workers/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": ".DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": "bench/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": "bench/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": "bench/craft-refs/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": "bench/proto-models/nvidia/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": "bench/proto-models/nvidia/judge_reason.log",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": "bench/proto-models/nvidia/judge_run.log",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": "bench/proto-models/nvidia/judge_run2.log",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": "bench/proto-models/nvidia/t2_run.log",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": "bench/proto-models/qwen/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": "bench/proto-models/qwen/logs/judge6.log",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": "bench/proto-video/__pycache__/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": "bench/proto-video/out6/judge_run.log",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": "bench/results/text-2026-08-08.log",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": "bench/results/vision-switch-2026-08-08.log",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": "bench/source/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": "clips/.DS_Store",
+    "reason": "dependency-cache-build-git-or-runtime"
+  },
+  {
+    "source_id": "benchmarks",
+    "path": "quality-run-2026-09-05/pg-runtime/pgserver/pginstall/bin/",
+    "reason": "dependency-cache-build-git-or-symlink"
+  }
+]

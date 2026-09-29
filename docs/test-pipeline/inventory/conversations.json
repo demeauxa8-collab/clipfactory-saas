@@ -1,0 +1,164 @@
+[
+  {
+    "kind": "codex",
+    "id": "019c65e0-89d1-7963-9591-3e713b1f38bd",
+    "title": "parle en francais, j'ai un bot discird qui me fais de clips, j'aimerai que tu me fassent une interface graphique pour l'allumer, cherche dans mes dossier, je l'ai fais avec claude ",
+    "source": "/Users/augustindemeaux/.codex/archived_sessions/rollout-2026-02-16T10-55-40-019c65e0-89d1-7963-9591-3e713b1f38bd.jsonl",
+    "path": "docs/test-pipeline/conversations/codex/019c65e0-89d1-7963-9591-3e713b1f38bd.md",
+    "messages": 12,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  },
+  {
+    "kind": "codex",
+    "id": "019df7f2-9850-7112-83ba-ec6cf8cdc216",
+    "title": "c est censé entre un alog conecter a une API claude  pour cliper des video youtube t en pense quoi ? ClipFactory_venv_new_1771236615",
+    "source": "/Users/augustindemeaux/.codex/archived_sessions/rollout-2026-05-05T13-42-44-019df7f2-9850-7112-83ba-ec6cf8cdc216.jsonl",
+    "path": "docs/test-pipeline/conversations/codex/019df7f2-9850-7112-83ba-ec6cf8cdc216.md",
+    "messages": 24,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  },
+  {
+    "kind": "codex",
+    "id": "019e0733-9adb-7a03-8d12-d12e9f51a794",
+    "title": "regarde le projet clip factory maintenant",
+    "source": "/Users/augustindemeaux/.codex/archived_sessions/rollout-2026-05-08T12-48-03-019e0733-9adb-7a03-8d12-d12e9f51a794.jsonl",
+    "path": "docs/test-pipeline/conversations/codex/019e0733-9adb-7a03-8d12-d12e9f51a794.md",
+    "messages": 346,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  },
+  {
+    "kind": "codex",
+    "id": "019e4bab-55b3-70e2-917a-6c42077a2d6e",
+    "title": "stratégie 1",
+    "source": "/Users/augustindemeaux/.codex/sessions/2026/05/21/rollout-2026-05-21T19-53-00-019e4bab-55b3-70e2-917a-6c42077a2d6e.jsonl",
+    "path": "docs/test-pipeline/conversations/codex/019e4bab-55b3-70e2-917a-6c42077a2d6e.md",
+    "messages": 495,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  },
+  {
+    "kind": "codex",
+    "id": "019ed4fc-8f24-7d31-94e6-b4e71c9c91a5",
+    "title": "Ouvrir page avec computer use",
+    "source": "/Users/augustindemeaux/.codex/archived_sessions/rollout-2026-06-17T11-49-42-019ed4fc-8f24-7d31-94e6-b4e71c9c91a5.jsonl",
+    "path": "docs/test-pipeline/conversations/codex/019ed4fc-8f24-7d31-94e6-b4e71c9c91a5.md",
+    "messages": 15,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  },
+  {
+    "kind": "codex",
+    "id": "019fdcf3-b038-7071-a024-e0ac67122a72",
+    "title": "review code",
+    "source": "/Users/augustindemeaux/.codex/sessions/2026/08/07/rollout-2026-08-07T16-59-45-019fdcf3-b038-7071-a024-e0ac67122a72.jsonl",
+    "path": "docs/test-pipeline/conversations/codex/019fdcf3-b038-7071-a024-e0ac67122a72.md",
+    "messages": 11,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  },
+  {
+    "kind": "codex",
+    "id": "019fdd17-0c18-74e1-a0bb-27c12ae6a0dd",
+    "title": "technique 1",
+    "source": "/Users/augustindemeaux/.codex/sessions/2026/08/07/rollout-2026-08-07T17-38-23-019fdd17-0c18-74e1-a0bb-27c12ae6a0dd.jsonl",
+    "path": "docs/test-pipeline/conversations/codex/019fdd17-0c18-74e1-a0bb-27c12ae6a0dd.md",
+    "messages": 172,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  },
+  {
+    "kind": "codex",
+    "id": "019fec3e-8b05-7483-afbf-cf21ebe0f40a",
+    "title": "Tu écris des scripts de publicité UGC pour un SaaS. Réponds en JSON strict,\nconforme au schéma fourni, sans aucun texte autour.\n\nCONTEXTE PRODUIT\nProduit : ClipFactory. Tu déposes ",
+    "source": "/Users/augustindemeaux/.codex/sessions/2026/08/10/rollout-2026-08-10T16-15-49-019fec3e-8b05-7483-afbf-cf21ebe0f40a.jsonl",
+    "path": "docs/test-pipeline/conversations/codex/019fec3e-8b05-7483-afbf-cf21ebe0f40a.md",
+    "messages": 1,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  },
+  {
+    "kind": "codex",
+    "id": "01a024a8-8321-7291-8bc5-46d3d0bdde12",
+    "title": "UI-ux 1",
+    "source": "/Users/augustindemeaux/.codex/sessions/2026/08/21/rollout-2026-08-21T16-10-18-01a024a8-8321-7291-8bc5-46d3d0bdde12.jsonl",
+    "path": "docs/test-pipeline/conversations/codex/01a024a8-8321-7291-8bc5-46d3d0bdde12.md",
+    "messages": 326,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  },
+  {
+    "kind": "codex",
+    "id": "01a0715f-a981-7d91-a475-472064d7f2ab",
+    "title": "Vérifie GitHub et déploiements",
+    "source": "/Users/augustindemeaux/.codex/sessions/2026/09/05/rollout-2026-09-05T13-41-29-01a0715f-a981-7d91-a475-472064d7f2ab.jsonl",
+    "path": "docs/test-pipeline/conversations/codex/01a0715f-a981-7d91-a475-472064d7f2ab.md",
+    "messages": 37,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  },
+  {
+    "kind": "codex",
+    "id": "01a07278-259d-73f3-9592-1a00af0df731",
+    "title": "ok la but c est de faire un gros run long pour ameliorer le plus possible le system de clipping et la pipeline, regarde tt les fichier en local, les branche du git hub tt faut que ",
+    "source": "/Users/augustindemeaux/.codex/archived_sessions/rollout-2026-09-05T18-47-51-01a07278-259d-73f3-9592-1a00af0df731.jsonl",
+    "path": "docs/test-pipeline/conversations/codex/01a07278-259d-73f3-9592-1a00af0df731.md",
+    "messages": 1,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  },
+  {
+    "kind": "codex",
+    "id": "01a07278-7467-76f1-a291-58d4249996fc",
+    "title": "Optimiser pipeline de clipping",
+    "source": "/Users/augustindemeaux/.codex/sessions/2026/09/05/rollout-2026-09-05T18-48-11-01a07278-7467-76f1-a291-58d4249996fc.jsonl",
+    "path": "docs/test-pipeline/conversations/codex/01a07278-7467-76f1-a291-58d4249996fc.md",
+    "messages": 15,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  },
+  {
+    "kind": "codex",
+    "id": "01a07714-4da1-7f21-b51c-5099949113d5",
+    "title": "SEO",
+    "source": "/Users/augustindemeaux/.codex/sessions/2026/09/06/rollout-2026-09-06T16-17-56-01a07714-4da1-7f21-b51c-5099949113d5_01a07715-3ff0-7851-b45d-0a3af7805afd.jsonl",
+    "path": "docs/test-pipeline/conversations/codex/01a07714-4da1-7f21-b51c-5099949113d5.md",
+    "messages": 27,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  },
+  {
+    "kind": "chatgpt",
+    "id": "6a882363-eb70-83eb-a6c6-7497fa37c640",
+    "title": "Analyse pour Clip Factory",
+    "source": "Codex app read_thread",
+    "path": "docs/test-pipeline/conversations/chatgpt/6a882363-eb70-83eb-a6c6-7497fa37c640.md",
+    "messages": 12,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  },
+  {
+    "kind": "chatgpt",
+    "id": "6a750314-2edc-83eb-83f0-905aa0ee74e5",
+    "title": "Ressources sur le clipping",
+    "source": "Codex app read_thread",
+    "path": "docs/test-pipeline/conversations/chatgpt/6a750314-2edc-83eb-83f0-905aa0ee74e5.md",
+    "messages": 2,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  },
+  {
+    "kind": "chatgpt",
+    "id": "6a68d62d-baf8-83eb-878e-eb9f86ad898f",
+    "title": "Ressources SaaS et Clipping IA",
+    "source": "Codex app read_thread",
+    "path": "docs/test-pipeline/conversations/chatgpt/6a68d62d-baf8-83eb-878e-eb9f86ad898f.md",
+    "messages": 10,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  },
+  {
+    "kind": "chatgpt",
+    "id": "6a6891a3-d884-83eb-a72f-bf6cb3eda4eb",
+    "title": "Ressources SaaS et Clipping",
+    "source": "Codex app read_thread",
+    "path": "docs/test-pipeline/conversations/chatgpt/6a6891a3-d884-83eb-a72f-bf6cb3eda4eb.md",
+    "messages": 2,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  },
+  {
+    "kind": "claude",
+    "id": "496f6272-737e-4362-afdf-95ceb9457e94",
+    "title": "-Users-augustindemeaux-clipfactory-saas--claude-worktrees-free-trial-paywall",
+    "source": "/Users/augustindemeaux/.claude/projects/-Users-augustindemeaux-clipfactory-saas--claude-worktrees-free-trial-paywall/496f6272-737e-4362-afdf-95ceb9457e94.jsonl",
+    "path": "docs/test-pipeline/conversations/claude/496f6272-737e-4362-afdf-95ceb9457e94.md",
+    "messages": 66,
+    "captured_at": "2026-09-07T15:01:09.344003+00:00"
+  }
+]

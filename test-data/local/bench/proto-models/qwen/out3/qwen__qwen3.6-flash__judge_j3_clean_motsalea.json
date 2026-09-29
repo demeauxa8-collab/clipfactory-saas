@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.6-flash",
+ "tag": "judge_j3_clean_motsalea",
+ "kind": "video",
+ "latency_s": 8.9,
+ "usage": {
+  "prompt_tokens": 3808,
+  "completion_tokens": 124,
+  "total_tokens": 3932,
+  "cost": 0.0008535,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0008535,
+   "upstream_inference_prompt_cost": 0.000714,
+   "upstream_inference_completions_cost": 0.0001395
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\"publiable\":false,\"score_global\":3.5,\"hook_2s\":4,\"phrase_coupee_au_debut\":true,\"phrase_coupee_a_la_fin\":false,\"premier_mot_entendu\":\"alors\",\"dernier_mot_entendu\":\"ça\",\"raccords\":[{\"at_s\":0,\"ca_se_comprend\":false,\"pourquoi\":\"Le clip commence au milieu d'une phrase, sans contexte.\"}],\"moment_mort\":false,\"raison_du_refus\":\"La première phrase est tronquée, ce qui rend le début du clip confus et peu engageant.\"}",
+ "provider": "Alibaba"
+}

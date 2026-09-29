@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.6-flash",
+ "tag": "audio595_segments_36",
+ "latency_s": 17.2,
+ "usage": {
+  "prompt_tokens": 15053,
+  "completion_tokens": 2238,
+  "total_tokens": 17291,
+  "cost": 0.0393645,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 14881,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0393645,
+   "upstream_inference_prompt_cost": 0.0225795,
+   "upstream_inference_completions_cost": 0.016785
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1199,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"segments_clipables\": [\n    {\n      \"start_s\": 0,\n      \"end_s\": 29,\n      \"titre\": \"1€ pour créer un business rentable en 24h\",\n      \"hook_score\": 10,\n      \"energie\": 9,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Accroche ultra-percutante avec un concept fort, des chiffres clairs (1€, 4.5 millions, 24h) et un fort enjeu immédiat.\"\n    },\n    {\n      \"start_s\": 35,\n      \"end_s\": 63,\n      \"titre\": \"Pourquoi Google Ads est meilleur que TikTok pour le Dropshipping\",\n      \"hook_score\": 8,\n      \"energie\": 7,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Positionnement à contre-courant des idées reçues sur TikTok vs Google, apporte une vraie valeur éducative.\"\n    },\n    {\n      \"start_s\": 125,\n      \"end_s\": 171,\n      \"titre\": \"Trouver des produits gagnants gratuitement\",\n      \"hook_score\": 8,\n      \"energie\": 8,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Tutoriel concis et pratique sur une méthode originale de recherche de produit sans budget.\"\n    },\n    {\n      \"start_s\": 172,\n      \"end_s\": 200,\n      \"titre\": \"4 500€ en 24h grâce à Google Ads\",\n      \"hook_score\": 9,\n      \"energie\": 9,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Preuve sociale et démonstration de résultats réels très engageante pour le public e-commerce/business.\"\n    },\n    {\n      \"start_s\": 201,\n      \"end_s\": 251,\n      \"titre\": \"Comment valider un produit en dropshipping\",\n      \"hook_score\": 7,\n      \"energie\": 7,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Explication claire et méthodique étape par étape pour vérifier la faisabilité d'un produit e-commerce.\"\n    },\n    {\n      \"start_s\": 252,\n      \"end_s\": 310,\n      \"titre\": \"Savoir si ton produit va se vendre avant de te lancer\",\n      \"hook_score\": 8,\n      \"energie\": 8,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Démonstration concrète de l'utilisation d'outils SEO (Semrush/Google Trends) pour valider la demande.\"\n    },\n    {\n      \"start_s\": 465,\n      \"end_s\": 512,\n      \"titre\": \"Résultats : Première vente en 24h avec 1€ !\",\n      \"hook_score\": 10,\n      \"energie\": 10,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Moment fort de révélation des résultats du challenge, suscite une forte curiosité et de la satisfaction.\"\n    },\n    {\n      \"start_s\": 513,\n      \"end_s\": 565,\n      \"titre\": \"50€ de bénéfice net avec seulement 3$ de pub\",\n      \"hook_score\": 9,\n      \"energie\": 8,\n      \"phrase_complete\": true,\n      \"pourquoi\": \"Analyse de la rentabilité réelle et conclusion inspirante sur le potentiel du business en ligne.\"\n    }\n  ],\n  \"moments_morts\": [\n    [112, 124],\n    [355, 359],\n    [419, 428],\n    [435, 464]\n  ],\n  \"meilleur_hook_absolu\": {\n    \"start_s\": 0,\n    \"end_s\": 29,\n    \"pourquoi\": \"Condensé parfait de storytelling, d'autorité (4.5M de chiffre d'affaires), de défi extrême (1€ / 24h) et de promesse de valeur. Idéal pour capter l'attention dans les 3 premières secondes.\"\n  }\n}\n```",
+ "provider": "Google"
+}

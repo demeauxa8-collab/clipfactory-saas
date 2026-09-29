@@ -1,0 +1,31 @@
+{
+ "model": "qwen/qwen3.5-122b-a10b",
+ "set": "t2_head",
+ "latency_s": 3.9,
+ "usage": {
+  "prompt_tokens": 1239,
+  "completion_tokens": 115,
+  "total_tokens": 1354,
+  "cost": 0.00056134,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00056134,
+   "upstream_inference_prompt_cost": 0.00032214,
+   "upstream_inference_completions_cost": 0.0002392
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"decor\": \"other\",\n  \"person_visible\": true,\n  \"energy\": 75,\n  \"action\": \"pointing at screen\",\n  \"proof_objects\": [\"smartphone screen showing sales analytics\", \"revenue figure 4543.50€\", \"profit margin percentage\"],\n  \"problems\": [\"blurry\"],\n  \"visual_score\": 78,\n  \"face_center_x\": 0.65,\n  \"burned_captions\": false\n}",
+ "provider": "SiliconFlow"
+}

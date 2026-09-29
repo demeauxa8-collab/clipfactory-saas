@@ -1,0 +1,79 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Inter,110,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,6,2,2,80,80,620,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:00.12,Default,,0,0,0,,EN CETTE VIDÉO
+Dialogue: 0,0:00:00.12,0:00:00.28,Default,,0,0,0,,EN CETTE VIDÉO
+Dialogue: 0,0:00:00.28,0:00:00.42,Default,,0,0,0,,EN CETTE {\c&H76E600&\fscx112\fscy112}VIDÉO{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:00.80,0:00:01.04,Default,,0,0,0,,QUAND MÊME TU
+Dialogue: 0,0:00:01.04,0:00:01.32,Default,,0,0,0,,QUAND MÊME TU
+Dialogue: 0,0:00:01.32,0:00:01.40,Default,,0,0,0,,QUAND MÊME TU
+Dialogue: 0,0:00:01.40,0:00:01.48,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}PEUX{\c&HFFFFFF&\fscx100\fscy100} TE AVEC
+Dialogue: 0,0:00:01.48,0:00:01.76,Default,,0,0,0,,PEUX TE AVEC
+Dialogue: 0,0:00:01.76,0:00:01.96,Default,,0,0,0,,PEUX TE AVEC
+Dialogue: 0,0:00:01.96,0:00:02.18,Default,,0,0,0,,PAS GRAND CHOSE
+Dialogue: 0,0:00:02.18,0:00:02.36,Default,,0,0,0,,PAS {\c&H76E600&\fscx112\fscy112}GRAND{\c&HFFFFFF&\fscx100\fscy100} CHOSE
+Dialogue: 0,0:00:02.36,0:00:02.48,Default,,0,0,0,,PAS GRAND {\c&H76E600&\fscx112\fscy112}CHOSE{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:02.54,0:00:02.72,Default,,0,0,0,,PAR CONTRE QUI
+Dialogue: 0,0:00:02.72,0:00:03.36,Default,,0,0,0,,PAR {\c&H76E600&\fscx112\fscy112}CONTRE{\c&HFFFFFF&\fscx100\fscy100} QUI
+Dialogue: 0,0:00:03.36,0:00:03.42,Default,,0,0,0,,PAR CONTRE QUI
+Dialogue: 0,0:00:03.42,0:00:03.52,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}COÛTE{\c&HFFFFFF&\fscx100\fscy100} LE PLUS
+Dialogue: 0,0:00:03.52,0:00:03.70,Default,,0,0,0,,COÛTE LE PLUS
+Dialogue: 0,0:00:03.70,0:00:03.82,Default,,0,0,0,,COÛTE LE PLUS
+Dialogue: 0,0:00:03.82,0:00:03.98,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}CHER{\c&HFFFFFF&\fscx100\fscy100} C’EST\NQUAND
+Dialogue: 0,0:00:03.98,0:00:04.00,Default,,0,0,0,,CHER C’EST\NQUAND
+Dialogue: 0,0:00:04.00,0:00:04.16,Default,,0,0,0,,CHER C’EST\NQUAND
+Dialogue: 0,0:00:04.16,0:00:04.30,Default,,0,0,0,,LES\NCONNAISSANCES\NMOI
+Dialogue: 0,0:00:04.30,0:00:04.86,Default,,0,0,0,,LES\N{\c&H76E600&\fscx112\fscy112}CONNAISSANCES{\c&HFFFFFF&\fscx100\fscy100}\NMOI
+Dialogue: 0,0:00:04.86,0:00:04.92,Default,,0,0,0,,LES\NCONNAISSANCES\N{\c&H76E600&\fscx112\fscy112}MOI{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:04.92,0:00:05.00,Default,,0,0,0,,J’AI DÛ METTRE
+Dialogue: 0,0:00:05.00,0:00:05.14,Default,,0,0,0,,J’AI DÛ METTRE
+Dialogue: 0,0:00:05.14,0:00:05.26,Default,,0,0,0,,J’AI DÛ {\c&H76E600&\fscx112\fscy112}METTRE{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:05.26,0:00:05.46,Default,,0,0,0,,PLUS DE 30
+Dialogue: 0,0:00:05.46,0:00:05.58,Default,,0,0,0,,PLUS DE 30
+Dialogue: 0,0:00:05.58,0:00:05.84,Default,,0,0,0,,PLUS DE 30
+Dialogue: 0,0:00:05.84,0:00:05.98,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}000{\c&HFFFFFF&\fscx100\fscy100} BALLES DES
+Dialogue: 0,0:00:05.98,0:00:06.28,Default,,0,0,0,,000 {\c&H76E600&\fscx112\fscy112}BALLES{\c&HFFFFFF&\fscx100\fscy100} DES
+Dialogue: 0,0:00:06.28,0:00:06.44,Default,,0,0,0,,000 BALLES DES
+Dialogue: 0,0:00:06.44,0:00:06.86,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}COACHINGS{\c&HFFFFFF&\fscx100\fscy100} LÀ\NACTUELLEMENT
+Dialogue: 0,0:00:06.86,0:00:07.00,Default,,0,0,0,,COACHINGS LÀ\NACTUELLEMENT
+Dialogue: 0,0:00:07.00,0:00:07.26,Default,,0,0,0,,COACHINGS LÀ\N{\c&H76E600&\fscx112\fscy112}ACTUELLEMENT{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:07.38,0:00:07.74,Default,,0,0,0,,UN AVEC UN
+Dialogue: 0,0:00:07.74,0:00:07.94,Default,,0,0,0,,UN AVEC UN
+Dialogue: 0,0:00:07.94,0:00:08.16,Default,,0,0,0,,UN AVEC UN
+Dialogue: 0,0:00:08.16,0:00:08.64,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}AMÉRICAIN{\c&HFFFFFF&\fscx100\fscy100} POUR\NCHIFFRER
+Dialogue: 0,0:00:08.64,0:00:08.72,Default,,0,0,0,,AMÉRICAIN POUR\NCHIFFRER
+Dialogue: 0,0:00:08.72,0:00:09.06,Default,,0,0,0,,AMÉRICAIN POUR\N{\c&H76E600&\fscx112\fscy112}CHIFFRER{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:09.06,0:00:09.28,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}ENCORE{\c&HFFFFFF&\fscx100\fscy100} UN E
+Dialogue: 0,0:00:09.28,0:00:09.46,Default,,0,0,0,,ENCORE UN E
+Dialogue: 0,0:00:09.46,0:00:09.52,Default,,0,0,0,,ENCORE UN E
+Dialogue: 0,0:00:09.52,0:00:09.74,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}COMMERCE{\c&HFFFFFF&\fscx100\fscy100} ET\NC’EST
+Dialogue: 0,0:00:09.74,0:00:09.90,Default,,0,0,0,,COMMERCE ET\NC’EST
+Dialogue: 0,0:00:09.90,0:00:09.98,Default,,0,0,0,,COMMERCE ET\NC’EST
+Dialogue: 0,0:00:09.98,0:00:10.10,Default,,0,0,0,,ÇA QUI COÛTE
+Dialogue: 0,0:00:10.10,0:00:10.30,Default,,0,0,0,,ÇA QUI COÛTE
+Dialogue: 0,0:00:10.30,0:00:10.32,Default,,0,0,0,,ÇA QUI {\c&H76E600&\fscx112\fscy112}COÛTE{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:10.32,0:00:10.54,Default,,0,0,0,,LE PLUS CHER
+Dialogue: 0,0:00:10.54,0:00:10.72,Default,,0,0,0,,LE PLUS CHER
+Dialogue: 0,0:00:10.72,0:00:10.80,Default,,0,0,0,,LE PLUS {\c&H76E600&\fscx112\fscy112}CHER{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:11.08,0:00:11.24,Default,,0,0,0,,ET C’EST POUR
+Dialogue: 0,0:00:11.24,0:00:11.28,Default,,0,0,0,,ET C’EST POUR
+Dialogue: 0,0:00:11.28,0:00:11.44,Default,,0,0,0,,ET C’EST POUR
+Dialogue: 0,0:00:11.44,0:00:11.52,Default,,0,0,0,,ÇA QUE J’AI
+Dialogue: 0,0:00:11.52,0:00:11.60,Default,,0,0,0,,ÇA QUE J’AI
+Dialogue: 0,0:00:11.60,0:00:11.74,Default,,0,0,0,,ÇA QUE J’AI
+Dialogue: 0,0:00:11.74,0:00:12.04,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}RÉUSSI{\c&HFFFFFF&\fscx100\fscy100} AUSSI CE
+Dialogue: 0,0:00:12.04,0:00:12.32,Default,,0,0,0,,RÉUSSI AUSSI CE
+Dialogue: 0,0:00:12.32,0:00:12.48,Default,,0,0,0,,RÉUSSI AUSSI CE
+Dialogue: 0,0:00:12.48,0:00:12.84,Default,,0,0,0,,{\c&H76E600&\fscx112\fscy112}CHALLENGE{\c&HFFFFFF&\fscx100\fscy100} ET SI
+Dialogue: 0,0:00:12.84,0:00:12.96,Default,,0,0,0,,CHALLENGE ET SI
+Dialogue: 0,0:00:12.96,0:00:12.98,Default,,0,0,0,,CHALLENGE ET SI

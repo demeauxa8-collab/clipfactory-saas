@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.6-plus",
+ "tag": "judge_j1_clean_intro",
+ "kind": "video",
+ "latency_s": 10.0,
+ "usage": {
+  "prompt_tokens": 5608,
+  "completion_tokens": 325,
+  "total_tokens": 5933,
+  "cost": 0.00245635,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00245635,
+   "upstream_inference_prompt_cost": 0.0018226,
+   "upstream_inference_completions_cost": 0.00063375
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": false,\n  \"score_global\": 3,\n  \"hook_2s\": 8,\n  \"phrase_coupee_au_debut\": true,\n  \"phrase_coupee_a_la_fin\": true,\n  \"premier_mot_entendu\": \"SEULEMENT\",\n  \"dernier_mot_entendu\": \"\",\n  \"raccords\": [\n    {\n      \"at_s\": 7,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Cut rapide avec incrustation texte '4,5 MILLIONS €' pour illustrer le propos, raccord fluide.\"\n    },\n    {\n      \"at_s\": 17,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Insertion d'une image pixelisée (preuve/document), retour au sujet principal, logique narrative respectée.\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"Le clip commence par le mot 'SEULEMENT' (issu de la phrase 'J'ai seulement...'), ce qui indique une coupe en milieu de phrase au début. De plus, la vidéo s'arrête brusquement alors que le sujet est encore en train de parler et de gesticuler à la fin, laissant la pensée inachevée. Conformément aux règles strictes, les phrases tronquées au début ou à la fin rendent le contenu non publiable.\"\n}\n```",
+ "provider": "Alibaba"
+}

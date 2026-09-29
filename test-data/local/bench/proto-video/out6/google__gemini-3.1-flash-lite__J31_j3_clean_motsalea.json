@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.1-flash-lite",
+ "tag": "J31_j3_clean_motsalea",
+ "latency_s": 5.0,
+ "usage": {
+  "prompt_tokens": 2035,
+  "completion_tokens": 328,
+  "total_tokens": 2363,
+  "cost": 0.00112575,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 500,
+   "video_tokens": 1320
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00112575,
+   "upstream_inference_prompt_cost": 0.00063375,
+   "upstream_inference_completions_cost": 0.000492
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": false,\n  \"score_global\": 4,\n  \"hook_2s\": 3,\n  \"phrase_coupee_au_debut\": true,\n  \"phrase_coupee_a_la_fin\": true,\n  \"premier_mot_entendu\": \"actuellement\",\n  \"dernier_mot_entendu\": \"ça\",\n  \"raccords\": [\n    {\n      \"at_s\": 0.07,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Le début est brutal, on commence en plein milieu d'une phrase.\"\n    },\n    {\n      \"at_s\": 0.08,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Transition abrupte entre l'écran et le visage.\"\n    },\n    {\n      \"at_s\": 0.11,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Retour à l'écran, le rythme est saccadé.\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"Le clip commence par une phrase tronquée ('actuellement') et se termine brutalement en plein milieu d'une phrase ('ça me fait...'). Le montage est trop haché et manque de fluidité pour une publication professionnelle.\"\n}\n```",
+ "provider": "Google"
+}

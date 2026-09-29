@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.7-flash",
+ "tag": "T2_t2a",
+ "latency_s": 16.5,
+ "usage": {
+  "prompt_tokens": 903,
+  "completion_tokens": 609,
+  "total_tokens": 1512,
+  "cost": 0.00010626,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00010626,
+   "upstream_inference_prompt_cost": 2.709e-05,
+   "upstream_inference_completions_cost": 7.917e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n[\n  {\n    \"decor\": \"Terrasse urbaine ensoleillée avec gratte-ciel et palmiers (Dubai)\",\n    \"person_visible\": true,\n    \"face_center_x\": 0.50,\n    \"energy\": 7,\n    \"action\": \"Parle à la caméra (selfie), expression neutre/serious\",\n    \"proof_objects\": [],\n    \"problems\": [],\n    \"visual_score\": 8,\n    \"burned_captions\": false\n  },\n  {\n    \"decor\": \"Même terrasse, lumière forte\",\n    \"person_visible\": true,\n    \"face_center_x\": 0.50,\n    \"energy\": 8,\n    \"action\": \"Montre une pièce de monnaie vers l'objectif tout en parlant\",\n    \"proof_objects\": [\"pièce de monnaie\", \"text overlay '24H00 1€'\"],\n    \"problems\": [],\n    \"visual_score\": 9,\n    \"burned_captions\": true\n  },\n  {\n    \"decor\": \"Même terrasse\",\n    \"person_visible\": true,\n    \"face_center_x\": 0.50,\n    \"energy\": 8,\n    \"action\": \"Gestique avec la main tenant la pièce, parler activement\",\n    \"proof_objects\": [\"pièce de monnaie\", \"text overlay '24H00 1€'\"],\n    \"problems\": [],\n    \"visual_score\": 9,\n    \"burned_captions\": true\n  },\n  {\n    \"decor\": \"Même terrasse, arrière-plan légèrement flou ou changement de focale\",\n    \"person_visible\": true,\n    \"face_center_x\": 0.50,\n    \"energy\": 6,\n    \"action\": \"Yeux fermés / expression réfléchie ou fatiguée, pause narrative\",\n    \"proof_objects\": [],\n    \"problems\": [\"Expression trop passive pour un clip vertical dynamique\"],\n    \"visual_score\": 6,\n    \"burned_captions\": false\n  },\n  {\n    \"decor\": \"Même terrasse\",\n    \"person_visible\": true,\n    \"face_center_x\": 0.50,\n    \"energy\": 7,\n    \"action\": \"Parle directement, superposition graphique apparait\",\n    \"proof_objects\": [\"logo Google Ads\"],\n    \"problems\": [\"Le logo Google Ads occupe trop d'espace à droite, peut gêner le recadrage 9:16 si non positionné correctement\"],\n    \"visual_score\": 7,\n    \"burned_captions\": false\n  }\n]\n```",
+ "reasoning": "",
+ "provider": "Alibaba"
+}

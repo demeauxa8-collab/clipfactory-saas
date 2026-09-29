@@ -1,0 +1,570 @@
+[
+  {
+    "model": "qwen/qwen3-vl-32b-instruct",
+    "payload": {
+      "video_summary": "Gaspar attempts to launch a profitable dropshipping store with just one euro in 24 hours. He earns his advertising budget, selects a product, launches Google Ads, and achieves his first sale, demonstrating the process step-by-step.",
+      "events": [
+        {
+          "id": "evt_001",
+          "start": 0,
+          "end": 30,
+          "decor": "outdoor",
+          "people": "Man with dark hair and beard, wearing a beige sweater",
+          "objects": [
+            "coin",
+            "city skyline",
+            "palm trees"
+          ],
+          "action": "Man holds up a coin, looking directly at camera with focused expression",
+          "transcript_summary": "Introduces challenge: launching a profitable dropshipping store with only one euro in 24 hours.",
+          "visual_importance": 95,
+          "narrative_role": "setup"
+        },
+        {
+          "id": "evt_002",
+          "start": 30,
+          "end": 60,
+          "decor": "outdoor",
+          "people": "Same man, now speaking with animated expression",
+          "objects": [
+            "coin",
+            "city skyline"
+          ],
+          "action": "Continues speaking while holding coin, emphasizing point with hand gesture",
+          "transcript_summary": "Explains the goal: earn ad budget, pick product, run ads, make first sale.",
+          "visual_importance": 85,
+          "narrative_role": "setup"
+        },
+        {
+          "id": "evt_003",
+          "start": 60,
+          "end": 95,
+          "decor": "underground parking garage",
+          "people": "Same man, standing in parking lot",
+          "objects": [
+            "cars",
+            "concrete pillars",
+            "red pipes"
+          ],
+          "action": "Speaks directly to camera, explaining next steps",
+          "transcript_summary": "Discusses how to earn the initial euro for advertising through content creation.",
+          "visual_importance": 75,
+          "narrative_role": "transition"
+        },
+        {
+          "id": "evt_004",
+          "start": 95,
+          "end": 130,
+          "decor": "desktop",
+          "people": "Man appears in small window on screen",
+          "objects": [
+            "Google homepage",
+            "browser tabs",
+            "computer screen"
+          ],
+          "action": "Screen shows Google search page; man speaks from inset video",
+          "transcript_summary": "Demonstrates starting research by searching for profitable products online.",
+          "visual_importance": 80,
+          "narrative_role": "setup"
+        },
+        {
+          "id": "evt_005",
+          "start": 130,
+          "end": 165,
+          "decor": "desktop",
+          "people": "Man in inset video, speaking calmly",
+          "objects": [
+            "Google search results",
+            "browser interface"
+          ],
+          "action": "Scrolls through search results, selecting potential products",
+          "transcript_summary": "Filters product ideas based on demand, competition, and profit margin.",
+          "visual_importance": 70,
+          "narrative_role": "neutral"
+        },
+        {
+          "id": "evt_006",
+          "start": 165,
+          "end": 210,
+          "decor": "desktop",
+          "people": "Man in inset video, focused on screen",
+          "objects": [
+            "product listing",
+            "e-commerce platform interface"
+          ],
+          "action": "Views product details and pricing on an e-commerce site",
+          "transcript_summary": "Chooses a specific product with high perceived value and low cost.",
+          "visual_importance": 75,
+          "narrative_role": "setup"
+        },
+        {
+          "id": "evt_007",
+          "start": 210,
+          "end": 245,
+          "decor": "modern indoor space",
+          "people": "Man sitting, facing camera",
+          "objects": [
+            "glass walls",
+            "ceiling lights",
+            "furniture"
+          ],
+          "action": "Speaks directly to camera, explaining strategy",
+          "transcript_summary": "Outlines plan to create landing page and set up Google Ads campaign.",
+          "visual_importance": 85,
+          "narrative_role": "setup"
+        },
+        {
+          "id": "evt_008",
+          "start": 245,
+          "end": 280,
+          "decor": "desktop",
+          "people": "Man in inset video, typing",
+          "objects": [
+            "Google Ads dashboard",
+            "keyboard",
+            "monitor"
+          ],
+          "action": "Sets up Google Ads campaign with minimal budget",
+          "transcript_summary": "Configures ad targeting, keywords, and budget using one euro.",
+          "visual_importance": 80,
+          "narrative_role": "setup"
+        },
+        {
+          "id": "evt_009",
+          "start": 280,
+          "end": 320,
+          "decor": "desktop",
+          "people": "Man in inset video, reviewing analytics",
+          "objects": [
+            "Google Ads interface",
+            "campaign stats"
+          ],
+          "action": "Monitors initial ad performance and impressions",
+          "transcript_summary": "Checks if ads are running and getting clicks despite low budget.",
+          "visual_importance": 70,
+          "narrative_role": "neutral"
+        },
+        {
+          "id": "evt_010",
+          "start": 320,
+          "end": 355,
+          "decor": "modern indoor space",
+          "people": "Man speaking with hopeful expression",
+          "objects": [
+            "glass walls",
+            "lighting fixtures"
+          ],
+          "action": "Expresses anticipation for first conversion",
+          "transcript_summary": "Shares excitement about potential first sale despite limited resources.",
+          "visual_importance": 85,
+          "narrative_role": "setup"
+        },
+        {
+          "id": "evt_011",
+          "start": 355,
+          "end": 400,
+          "decor": "desktop",
+          "people": "Man in inset video, reacting to data",
+          "objects": [
+            "sales dashboard",
+            "graphs",
+            "analytics"
+          ],
+          "action": "Views sales graph showing spike in revenue",
+          "transcript_summary": "First sale confirmed — revenue jumps to 69 euros.",
+          "visual_importance": 95,
+          "narrative_role": "payoff"
+        },
+        {
+          "id": "evt_012",
+          "start": 400,
+          "end": 435,
+          "decor": "modern indoor space",
+          "people": "Man smiling, looking pleased",
+          "objects": [
+            "glass walls",
+            "interior decor"
+          ],
+          "action": "Celebrates success of first sale",
+          "transcript_summary": "Reacts positively to first sale, confirming profitability.",
+          "visual_importance": 90,
+          "narrative_role": "payoff"
+        },
+        {
+          "id": "evt_013",
+          "start": 435,
+          "end": 470,
+          "decor": "desktop",
+          "people": "Man in inset video, analyzing metrics",
+          "objects": [
+            "conversion rate chart",
+            "sales breakdown"
+          ],
+          "action": "Reviews detailed analytics including conversion rate and order value",
+          "transcript_summary": "Analyzes performance: 10% conversion rate, single order worth 69 euros.",
+          "visual_importance": 80,
+          "narrative_role": "neutral"
+        },
+        {
+          "id": "evt_014",
+          "start": 470,
+          "end": 505,
+          "decor": "modern indoor space",
+          "people": "Man speaking confidently",
+          "objects": [
+            "glass walls",
+            "lighting"
+          ],
+          "action": "Summarizes key takeaways from the experiment",
+          "transcript_summary": "Highlights that even with one euro, a profitable sale is possible with right strategy.",
+          "visual_importance": 85,
+          "narrative_role": "payoff"
+        },
+        {
+          "id": "evt_015",
+          "start": 505,
+          "end": 540,
+          "decor": "bedroom or hotel room",
+          "people": "Man sitting, slightly pensive",
+          "objects": [
+            "curtains",
+            "bed",
+            "chair"
+          ],
+          "action": "Reflects on the experience with thoughtful expression",
+          "transcript_summary": "Considers scalability and next steps for growing the business.",
+          "visual_importance": 75,
+          "narrative_role": "neutral"
+        },
+        {
+          "id": "evt_016",
+          "start": 540,
+          "end": 560,
+          "decor": "bedroom or hotel room",
+          "people": "Man looking off-camera, then back",
+          "objects": [
+            "curtains",
+            "door",
+            "chair"
+          ],
+          "action": "Looks away thoughtfully, then returns gaze to camera",
+          "transcript_summary": "Encourages viewers to try the method themselves.",
+          "visual_importance": 70,
+          "narrative_role": "payoff"
+        },
+        {
+          "id": "evt_017",
+          "start": 560,
+          "end": 595,
+          "decor": "bedroom or hotel room",
+          "people": "Man smiling, concluding",
+          "objects": [
+            "curtains",
+            "chair"
+          ],
+          "action": "Ends video with positive message and call to action",
+          "transcript_summary": "Thanks viewers and invites them to follow future experiments.",
+          "visual_importance": 85,
+          "narrative_role": "payoff"
+        }
+      ]
+    },
+    "tokens_in": 1382,
+    "tokens_out": 2158
+  },
+  {
+    "model": "google/gemini-2.5-flash",
+    "payload": {
+      "video_summary": "Gaspar attempts to launch a profitable dropshipping store with only one euro in 24 hours. He starts by winning his advertising budget, then selects a product, launches Google Ads, and successfully makes his first sale.",
+      "events": [
+        {
+          "id": "evt_001",
+          "start": 0.0,
+          "end": 45.0,
+          "decor": "outdoor",
+          "people": "A man with dark curly hair and a beard, wearing a brown sweater, is speaking to the camera.",
+          "objects": [
+            "coin",
+            "buildings",
+            "palm trees"
+          ],
+          "action": "A man introduces his challenge of starting a dropshipping business with one euro, holding a coin.",
+          "transcript_summary": "The man explains his challenge to start a dropshipping business with just one euro, showing a coin.",
+          "visual_importance": 90,
+          "narrative_role": "setup"
+        },
+        {
+          "id": "evt_002",
+          "start": 45.0,
+          "end": 80.0,
+          "decor": "other",
+          "people": "The man is walking and talking to the camera.",
+          "objects": [
+            "parking garage",
+            "cars"
+          ],
+          "action": "The man walks through a parking garage, discussing his plan.",
+          "transcript_summary": "He walks through a parking garage, detailing his strategy for the challenge.",
+          "visual_importance": 70,
+          "narrative_role": "neutral"
+        },
+        {
+          "id": "evt_003",
+          "start": 80.0,
+          "end": 110.0,
+          "decor": "other",
+          "people": "The man is walking and talking to the camera.",
+          "objects": [
+            "parking garage",
+            "cars"
+          ],
+          "action": "The man continues walking in the parking garage, explaining how he will get his initial budget.",
+          "transcript_summary": "He explains his method for acquiring the initial budget for his dropshipping venture.",
+          "visual_importance": 80,
+          "narrative_role": "setup"
+        },
+        {
+          "id": "evt_004",
+          "start": 110.0,
+          "end": 140.0,
+          "decor": "desktop",
+          "people": "The man is visible in a small window at the bottom left of the screen.",
+          "objects": [
+            "computer screen",
+            "Google search page"
+          ],
+          "action": "The man shows a Google search page on his computer, preparing to search for products.",
+          "transcript_summary": "He shows his computer screen, ready to search for products to sell.",
+          "visual_importance": 85,
+          "narrative_role": "setup"
+        },
+        {
+          "id": "evt_005",
+          "start": 140.0,
+          "end": 170.0,
+          "decor": "desktop",
+          "people": "The man is visible in a small window at the bottom left of the screen.",
+          "objects": [
+            "computer screen",
+            "product research"
+          ],
+          "action": "The man researches potential dropshipping products on his computer.",
+          "transcript_summary": "He conducts product research, looking for profitable items for his store.",
+          "visual_importance": 80,
+          "narrative_role": "neutral"
+        },
+        {
+          "id": "evt_006",
+          "start": 170.0,
+          "end": 200.0,
+          "decor": "desktop",
+          "people": "The man is visible in a small window at the bottom left of the screen.",
+          "objects": [
+            "computer screen",
+            "Shopify store setup"
+          ],
+          "action": "The man begins setting up his Shopify store, focusing on product details.",
+          "transcript_summary": "He starts setting up his Shopify store, adding product information.",
+          "visual_importance": 85,
+          "narrative_role": "neutral"
+        },
+        {
+          "id": "evt_007",
+          "start": 200.0,
+          "end": 230.0,
+          "decor": "desktop",
+          "people": "The man is visible in a small window at the bottom left of the screen.",
+          "objects": [
+            "computer screen",
+            "Google Ads interface"
+          ],
+          "action": "The man navigates to Google Ads to set up his advertising campaign.",
+          "transcript_summary": "He moves to Google Ads to configure his advertising campaign.",
+          "visual_importance": 90,
+          "narrative_role": "setup"
+        },
+        {
+          "id": "evt_008",
+          "start": 230.0,
+          "end": 260.0,
+          "decor": "desktop",
+          "people": "The man is visible in a small window at the bottom left of the screen.",
+          "objects": [
+            "computer screen",
+            "Google Ads campaign"
+          ],
+          "action": "The man sets up the parameters for his Google Ads campaign.",
+          "transcript_summary": "He configures the settings for his Google Ads campaign.",
+          "visual_importance": 85,
+          "narrative_role": "neutral"
+        },
+        {
+          "id": "evt_009",
+          "start": 260.0,
+          "end": 290.0,
+          "decor": "desktop",
+          "people": "The man is visible in a small window at the bottom left of the screen.",
+          "objects": [
+            "computer screen",
+            "Google Ads budget"
+          ],
+          "action": "The man finalizes the budget and targeting for his Google Ads.",
+          "transcript_summary": "He finalizes the budget and targeting for his Google Ads campaign.",
+          "visual_importance": 80,
+          "narrative_role": "neutral"
+        },
+        {
+          "id": "evt_010",
+          "start": 290.0,
+          "end": 320.0,
+          "decor": "desktop",
+          "people": "The man is visible in a small window at the bottom left of the screen.",
+          "objects": [
+            "computer screen",
+            "Shopify dashboard"
+          ],
+          "action": "The man checks his Shopify dashboard, waiting for sales.",
+          "transcript_summary": "He monitors his Shopify dashboard, anticipating sales.",
+          "visual_importance": 85,
+          "narrative_role": "neutral"
+        },
+        {
+          "id": "evt_011",
+          "start": 320.0,
+          "end": 350.0,
+          "decor": "desktop",
+          "people": "The man is visible in a small window at the bottom left of the screen.",
+          "objects": [
+            "computer screen",
+            "Shopify dashboard"
+          ],
+          "action": "The man expresses his anticipation and nervousness while waiting for results.",
+          "transcript_summary": "He expresses his anticipation and nervousness, waiting for sales to come in.",
+          "visual_importance": 80,
+          "narrative_role": "neutral"
+        },
+        {
+          "id": "evt_012",
+          "start": 350.0,
+          "end": 380.0,
+          "decor": "other",
+          "people": "The man is speaking directly to the camera in a modern living space.",
+          "objects": [
+            "modern furniture",
+            "large windows"
+          ],
+          "action": "The man talks about the waiting period and the challenges of dropshipping.",
+          "transcript_summary": "He discusses the waiting period and the inherent challenges of dropshipping.",
+          "visual_importance": 90,
+          "narrative_role": "neutral"
+        },
+        {
+          "id": "evt_013",
+          "start": 380.0,
+          "end": 410.0,
+          "decor": "desktop",
+          "people": "The man is visible in a small window at the bottom left of the screen.",
+          "objects": [
+            "computer screen",
+            "Shopify dashboard"
+          ],
+          "action": "The man excitedly discovers his first sale on the Shopify dashboard.",
+          "transcript_summary": "He excitedly finds his first sale notification on the Shopify dashboard.",
+          "visual_importance": 95,
+          "narrative_role": "payoff"
+        },
+        {
+          "id": "evt_014",
+          "start": 410.0,
+          "end": 440.0,
+          "decor": "desktop",
+          "people": "The man is visible in a small window at the bottom left of the screen.",
+          "objects": [
+            "computer screen",
+            "Shopify sales graph"
+          ],
+          "action": "The man shows the sales graph on his Shopify dashboard, confirming the sale.",
+          "transcript_summary": "He displays the sales graph on his Shopify dashboard, confirming the successful sale.",
+          "visual_importance": 90,
+          "narrative_role": "payoff"
+        },
+        {
+          "id": "evt_015",
+          "start": 440.0,
+          "end": 470.0,
+          "decor": "other",
+          "people": "The man is speaking directly to the camera, expressing his joy.",
+          "objects": [
+            "modern living space"
+          ],
+          "action": "The man celebrates his first sale, explaining the significance of the achievement.",
+          "transcript_summary": "He celebrates his first sale, emphasizing the importance of this milestone.",
+          "visual_importance": 95,
+          "narrative_role": "payoff"
+        },
+        {
+          "id": "evt_016",
+          "start": 470.0,
+          "end": 500.0,
+          "decor": "desktop",
+          "people": "The man is visible in a small window at the bottom left of the screen.",
+          "objects": [
+            "computer screen",
+            "Shopify analytics"
+          ],
+          "action": "The man reviews the analytics of his first sale, showing the profit.",
+          "transcript_summary": "He reviews the analytics of his first sale, highlighting the profit made.",
+          "visual_importance": 90,
+          "narrative_role": "payoff"
+        },
+        {
+          "id": "evt_017",
+          "start": 500.0,
+          "end": 530.0,
+          "decor": "desktop",
+          "people": "The man is visible in a small window at the bottom left of the screen.",
+          "objects": [
+            "computer screen",
+            "Shopify dashboard"
+          ],
+          "action": "The man discusses the next steps and potential for scaling the business.",
+          "transcript_summary": "He discusses future steps and the potential for scaling his business.",
+          "visual_importance": 85,
+          "narrative_role": "neutral"
+        },
+        {
+          "id": "evt_018",
+          "start": 530.0,
+          "end": 560.0,
+          "decor": "other",
+          "people": "The man is speaking directly to the camera, reflecting on the challenge.",
+          "objects": [
+            "bedroom",
+            "bed"
+          ],
+          "action": "The man reflects on the success of the challenge and the lessons learned.",
+          "transcript_summary": "He reflects on the successful challenge and the valuable lessons learned.",
+          "visual_importance": 95,
+          "narrative_role": "payoff"
+        },
+        {
+          "id": "evt_019",
+          "start": 560.0,
+          "end": 595.0,
+          "decor": "other",
+          "people": "The man is speaking directly to the camera, concluding the video.",
+          "objects": [
+            "bedroom",
+            "bed"
+          ],
+          "action": "The man thanks the viewers and encourages them to try dropshipping.",
+          "transcript_summary": "He thanks his viewers and encourages them to try dropshipping themselves.",
+          "visual_importance": 90,
+          "narrative_role": "payoff"
+        }
+      ]
+    },
+    "tokens_in": 2064,
+    "tokens_out": 2864
+  }
+]

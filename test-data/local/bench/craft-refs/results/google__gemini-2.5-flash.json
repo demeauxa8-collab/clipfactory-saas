@@ -1,0 +1,162 @@
+{
+  "model": "google/gemini-2.5-flash",
+  "ok": true,
+  "error": null,
+  "latency_seconds": 16.869,
+  "tokens": 22248,
+  "arcs": [
+    {
+      "title": "De 1€ à 50€ de bénéfice en 24h",
+      "arc_type": "challenge_result",
+      "segments": [
+        {
+          "role": "setup",
+          "start": 0.0,
+          "end": 12.3,
+          "transcript_excerpt": "J’ai seulement un euro pour lancer une boutique rentable en dropshipping et le tout en 24 heures Moi c’est Gaspar j’ai fait 4 millions et demi en e commerce et l’objectif ça va être simple aujourd’hui C’est juste de prouver qu’en 2025 tu peux lancer un business avec",
+          "why": "Introduces the challenge and the ambitious goal of starting with one euro to prove business viability."
+        },
+        {
+          "role": "payoff",
+          "start": 549.6,
+          "end": 561.6,
+          "transcript_excerpt": "On est à environ 50 euros bénéfice Donc c’est vraiment Très très bien Parce que là Du coup C’est un retour sur investissement Où on sait plus tard Que quand on mettra plus d’argent dans le budget On va faire de très bonnes marges Et ça C’est le plus important Vous pouvez vous abonner sur Instagram J",
+          "why": "Reveals the successful outcome of the challenge, showing a significant profit from a minimal initial investment."
+        }
+      ],
+      "viral_reason": "This clip shows a clear, impressive result from a seemingly impossible challenge, making it highly shareable.",
+      "estimated_retention": 90,
+      "continuity_risk": "low",
+      "suggested_hook": "1€ pour lancer un business rentable en 24h",
+      "link_reason": "The payoff segment directly answers the challenge set in the setup, showing the financial result achieved.",
+      "campaign_fit_llm": 95,
+      "campaign_fit_reason": "Directly demonstrates the potential for profitability with minimal starting capital, encouraging viewers to believe in the business model.",
+      "opening_words": "J’ai seulement un euro pour lancer une boutique rentable en dropshipping",
+      "self_contained": true,
+      "payoff_line": "On est à environ 50 euros bénéfice"
+    },
+    {
+      "title": "Le secret pour réussir en e-commerce",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 561.6,
+          "end": 585.9,
+          "transcript_excerpt": "Cette vidéo Elle prouve quand même Que tu peux te lancer avec pas grand chose Par contre Ce qui coûte le plus cher C’est quand même les connaissances J’ai du mettre plus de 30 000 balles Dans des coachings Là actuellement J’ai un coaching avec un américain Pour chiffrer encore un e commerce Et c’est",
+          "why": "Explains that while starting with little is possible, knowledge and coaching are the real investments for success, positioning his expertise."
+        }
+      ],
+      "viral_reason": "Offers a contrarian insight that knowledge is more valuable than initial capital, which resonates with aspiring entrepreneurs.",
+      "estimated_retention": 85,
+      "continuity_risk": "low",
+      "suggested_hook": "Le vrai coût de l'e-commerce : pas l'argent, mais...",
+      "link_reason": null,
+      "campaign_fit_llm": 98,
+      "campaign_fit_reason": "Highlights the value of coaching and knowledge, directly leading to the promotion of his business formation and accompaniment.",
+      "opening_words": "Cette vidéo Elle prouve quand même Que tu peux te lancer avec pas grand chose",
+      "self_contained": true,
+      "payoff_line": "Ce qui coûte le plus cher C’est quand même les connaissances"
+    },
+    {
+      "title": "Pourquoi Google Ads est mieux que TikTok pour le dropshipping",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 36.6,
+          "end": 48.6,
+          "transcript_excerpt": "je préfère faire du dropshipping sur Google Vu que c’est des meilleures marges je vais faire plus de profit En plus de ça c’est beaucoup plus long terme que TikTok et surtout tu vend tes produits à des gens qui recherchent déjà ton produit Donc vraiment à ce niveau là moi je m’en fais pas que ça va ",
+          "why": "Explains the strategic advantage of using Google Ads for dropshipping, emphasizing higher margins and long-term potential."
+        }
+      ],
+      "viral_reason": "Provides a clear, actionable business strategy that challenges common assumptions about dropshipping platforms.",
+      "estimated_retention": 80,
+      "continuity_risk": "low",
+      "suggested_hook": "Google Ads vs TikTok: la meilleure marge",
+      "link_reason": null,
+      "campaign_fit_llm": 90,
+      "campaign_fit_reason": "Showcases the entrepreneur's strategic thinking and expertise, building credibility for his business advice and training.",
+      "opening_words": "Je préfère faire du dropshipping sur Google Vu que c’est des meilleures marges",
+      "self_contained": true,
+      "payoff_line": "je vais faire plus de profit"
+    },
+    {
+      "title": "Comment trouver un produit qui marche en dropshipping",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 121.6,
+          "end": 134.2,
+          "transcript_excerpt": "La première chose à faire pour trouver des produits Faut déjà que j’ai des idées de produits à vendre sur Google Parce qu’en fait sur Google on peut vendre tout et n’importe quoi Donc l’objectif c’est juste trouver un maximum d’idées Moi ce que j’utilise habituellement c’est mots aléatoires Donc c’e",
+          "why": "Explains his initial approach to product research, focusing on generating ideas for Google dropshipping."
+        }
+      ],
+      "viral_reason": "Offers practical advice and a specific tool for product research, appealing to aspiring dropshippers.",
+      "estimated_retention": 75,
+      "continuity_risk": "low",
+      "suggested_hook": "Ma méthode pour trouver un produit gagnant",
+      "link_reason": null,
+      "campaign_fit_llm": 85,
+      "campaign_fit_reason": "Provides valuable insight into the product selection process, showcasing the type of knowledge shared in his training.",
+      "opening_words": "La première chose à faire pour trouver des produits Faut déjà que j’ai des idées",
+      "self_contained": true,
+      "payoff_line": "Moi ce que j’utilise habituellement c’est mots aléatoires"
+    },
+    {
+      "title": "Preuve de ma méthode: 4500€ en 24h",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 170.8,
+          "end": 182.9,
+          "transcript_excerpt": "D’ailleurs les gars il y a quelques mois J’ai trouvé un produit avec ce site justement Et regardez où est ce qu’il en est aujourd’hui Ça c’était sur la journée d’hier Et dites vous que j’ai 5 autres boutiques qui tournent de la même manière Donc juste sur 24h Elle a fait 4500€ Et",
+          "why": "Provides concrete proof of his method's effectiveness by showing a high revenue figure from another store."
+        }
+      ],
+      "viral_reason": "The impressive financial result is a strong hook, demonstrating the potential of his methods.",
+      "estimated_retention": 90,
+      "continuity_risk": "low",
+      "suggested_hook": "4500€ en 24h avec ma méthode",
+      "link_reason": null,
+      "campaign_fit_llm": 95,
+      "campaign_fit_reason": "Showcases the financial success achievable with his strategies, directly motivating viewers to consider his training.",
+      "opening_words": "D’ailleurs les gars il y a quelques mois J’ai trouvé un produit avec ce site",
+      "self_contained": true,
+      "payoff_line": "juste sur 24h Elle a fait 4500€"
+    },
+    {
+      "title": "Mon accompagnement garanti 1000€/jour",
+      "arc_type": "continuous",
+      "segments": [
+        {
+          "role": "single",
+          "start": 182.9,
+          "end": 195.0,
+          "transcript_excerpt": "D’ailleurs c’est cette méthode que j’apprends aux élèves de mon accompagnement En gros avec pile cette méthode Qui est de faire du e commerce sur Google J’accompagne jusqu’au 1000€ par jour de chiffre d’affaires Et c’est garanti sous contrat",
+          "why": "Directly links his proven methods to his coaching program, highlighting the guaranteed results for students."
+        }
+      ],
+      "viral_reason": "The promise of guaranteed daily revenue is a powerful motivator for potential students.",
+      "estimated_retention": 92,
+      "continuity_risk": "low",
+      "suggested_hook": "1000€/jour garantis avec mon coaching",
+      "link_reason": null,
+      "campaign_fit_llm": 98,
+      "campaign_fit_reason": "Explicitly promotes his coaching program with a strong, quantifiable guarantee, directly serving the campaign's goal.",
+      "opening_words": "D’ailleurs c’est cette méthode que j’apprends aux élèves de mon accompagnement",
+      "self_contained": true,
+      "payoff_line": "J’accompagne jusqu’au 1000€ par jour de chiffre d’affaires Et c’est garanti sous contrat"
+    }
+  ],
+  "raw_video_read": {
+    "n_events": 79,
+    "n_events_in_fixture": 79,
+    "video_map_summary_chars": 600,
+    "n_transcript_words": 2864,
+    "n_transcript_words_in_fixture": 2864,
+    "transcript_lines_chars": 14977
+  }
+}

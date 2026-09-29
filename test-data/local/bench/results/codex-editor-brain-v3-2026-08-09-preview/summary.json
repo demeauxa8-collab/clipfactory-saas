@@ -1,0 +1,1377 @@
+{
+  "fixture": "/Users/augustindemeaux/clipfactory-data/bench/fixture_2221f645-ed0e-47b2-8201-417d7c517a39.json",
+  "source": "/Users/augustindemeaux/clipfactory-data/bench/source/2221f645-ed0e-47b2-8201-417d7c517a39/source.mp4",
+  "canvas": {
+    "width": 540,
+    "height": 960,
+    "fps": 30
+  },
+  "variants": {
+    "curiosity": {
+      "source_path": "/Users/augustindemeaux/clipfactory-data/bench/source/2221f645-ed0e-47b2-8201-417d7c517a39/source.mp4",
+      "output_path": "/Users/augustindemeaux/clipfactory-data/bench/results/codex-editor-brain-v3-2026-08-09-preview/curiosity.mp4",
+      "subtitles_path": "/Users/augustindemeaux/clipfactory-data/bench/results/codex-editor-brain-v3-2026-08-09-preview/curiosity.ass",
+      "rendered_duration_seconds": 18.5,
+      "black_frame_seconds": 0,
+      "black_frame_ratio": 0.0,
+      "resolved_audio_asset_ids": [],
+      "render_wall_seconds": 2.433904875011649,
+      "realtime_factor": 0.13156242567630536,
+      "edl": {
+        "schema_version": "2.0",
+        "editorial_thesis": "Create loss-versus-win tension, reveal the sale, prove it with conversion, then ask for the next challenge.",
+        "fps": 30,
+        "width": 540,
+        "height": 960,
+        "duration_ms": 18500,
+        "duration_frames": 555,
+        "shots": [
+          {
+            "shot_id": "risk_hook",
+            "role": "hook",
+            "from_word_id": 2264,
+            "to_word_id": 2289,
+            "source_in_ms": 469680,
+            "source_out_ms": 473600,
+            "timeline_in_ms": 0,
+            "timeline_out_ms": 3633,
+            "timeline_in_frame": 0,
+            "timeline_out_frame": 109,
+            "speed": 1.08,
+            "framing": {
+              "mode": "locked_face",
+              "center_x": 0.5,
+              "base_scale": 1.06,
+              "screen_region": null
+            },
+            "effects": [
+              {
+                "kind": "zoom_out",
+                "at_word_id": 2280,
+                "duration_ms": 500,
+                "intensity": 0.45
+              }
+            ],
+            "transition_out": "reveal",
+            "caption_theme": "hook_bold",
+            "word_occurrences": [
+              {
+                "occurrence_id": "risk_hook:w_002264",
+                "shot_id": "risk_hook",
+                "word_id": 2264,
+                "source_in_ms": 469680,
+                "source_out_ms": 469800,
+                "timeline_in_ms": 0,
+                "timeline_out_ms": 100,
+                "timeline_in_frame": 0,
+                "timeline_out_frame": 3
+              },
+              {
+                "occurrence_id": "risk_hook:w_002265",
+                "shot_id": "risk_hook",
+                "word_id": 2265,
+                "source_in_ms": 469800,
+                "source_out_ms": 469800,
+                "timeline_in_ms": 100,
+                "timeline_out_ms": 133,
+                "timeline_in_frame": 3,
+                "timeline_out_frame": 4
+              },
+              {
+                "occurrence_id": "risk_hook:w_002266",
+                "shot_id": "risk_hook",
+                "word_id": 2266,
+                "source_in_ms": 469800,
+                "source_out_ms": 469900,
+                "timeline_in_ms": 100,
+                "timeline_out_ms": 200,
+                "timeline_in_frame": 3,
+                "timeline_out_frame": 6
+              },
+              {
+                "occurrence_id": "risk_hook:w_002267",
+                "shot_id": "risk_hook",
+                "word_id": 2267,
+                "source_in_ms": 469900,
+                "source_out_ms": 470060,
+                "timeline_in_ms": 200,
+                "timeline_out_ms": 367,
+                "timeline_in_frame": 6,
+                "timeline_out_frame": 11
+              },
+              {
+                "occurrence_id": "risk_hook:w_002268",
+                "shot_id": "risk_hook",
+                "word_id": 2268,
+                "source_in_ms": 470060,
+                "source_out_ms": 470240,
+                "timeline_in_ms": 367,
+                "timeline_out_ms": 533,
+                "timeline_in_frame": 11,
+                "timeline_out_frame": 16
+              },
+              {
+                "occurrence_id": "risk_hook:w_002269",
+                "shot_id": "risk_hook",
+                "word_id": 2269,
+                "source_in_ms": 470240,
+                "source_out_ms": 470400,
+                "timeline_in_ms": 533,
+                "timeline_out_ms": 667,
+                "timeline_in_frame": 16,
+                "timeline_out_frame": 20
+              },
+              {
+                "occurrence_id": "risk_hook:w_002270",
+                "shot_id": "risk_hook",
+                "word_id": 2270,
+                "source_in_ms": 470400,
+                "source_out_ms": 470640,
+                "timeline_in_ms": 667,
+                "timeline_out_ms": 900,
+                "timeline_in_frame": 20,
+                "timeline_out_frame": 27
+              },
+              {
+                "occurrence_id": "risk_hook:w_002271",
+                "shot_id": "risk_hook",
+                "word_id": 2271,
+                "source_in_ms": 470640,
+                "source_out_ms": 470860,
+                "timeline_in_ms": 900,
+                "timeline_out_ms": 1100,
+                "timeline_in_frame": 27,
+                "timeline_out_frame": 33
+              },
+              {
+                "occurrence_id": "risk_hook:w_002272",
+                "shot_id": "risk_hook",
+                "word_id": 2272,
+                "source_in_ms": 470860,
+                "source_out_ms": 471000,
+                "timeline_in_ms": 1100,
+                "timeline_out_ms": 1233,
+                "timeline_in_frame": 33,
+                "timeline_out_frame": 37
+              },
+              {
+                "occurrence_id": "risk_hook:w_002273",
+                "shot_id": "risk_hook",
+                "word_id": 2273,
+                "source_in_ms": 471000,
+                "source_out_ms": 471000,
+                "timeline_in_ms": 1233,
+                "timeline_out_ms": 1267,
+                "timeline_in_frame": 37,
+                "timeline_out_frame": 38
+              },
+              {
+                "occurrence_id": "risk_hook:w_002274",
+                "shot_id": "risk_hook",
+                "word_id": 2274,
+                "source_in_ms": 471000,
+                "source_out_ms": 471020,
+                "timeline_in_ms": 1233,
+                "timeline_out_ms": 1267,
+                "timeline_in_frame": 37,
+                "timeline_out_frame": 38
+              },
+              {
+                "occurrence_id": "risk_hook:w_002275",
+                "shot_id": "risk_hook",
+                "word_id": 2275,
+                "source_in_ms": 471020,
+                "source_out_ms": 471140,
+                "timeline_in_ms": 1233,
+                "timeline_out_ms": 1367,
+                "timeline_in_frame": 37,
+                "timeline_out_frame": 41
+              },
+              {
+                "occurrence_id": "risk_hook:w_002276",
+                "shot_id": "risk_hook",
+                "word_id": 2276,
+                "source_in_ms": 471140,
+                "source_out_ms": 471360,
+                "timeline_in_ms": 1367,
+                "timeline_out_ms": 1567,
+                "timeline_in_frame": 41,
+                "timeline_out_frame": 47
+              },
+              {
+                "occurrence_id": "risk_hook:w_002277",
+                "shot_id": "risk_hook",
+                "word_id": 2277,
+                "source_in_ms": 471360,
+                "source_out_ms": 471540,
+                "timeline_in_ms": 1567,
+                "timeline_out_ms": 1733,
+                "timeline_in_frame": 47,
+                "timeline_out_frame": 52
+              },
+              {
+                "occurrence_id": "risk_hook:w_002278",
+                "shot_id": "risk_hook",
+                "word_id": 2278,
+                "source_in_ms": 471540,
+                "source_out_ms": 471800,
+                "timeline_in_ms": 1733,
+                "timeline_out_ms": 1967,
+                "timeline_in_frame": 52,
+                "timeline_out_frame": 59
+              },
+              {
+                "occurrence_id": "risk_hook:w_002279",
+                "shot_id": "risk_hook",
+                "word_id": 2279,
+                "source_in_ms": 471800,
+                "source_out_ms": 472040,
+                "timeline_in_ms": 1967,
+                "timeline_out_ms": 2200,
+                "timeline_in_frame": 59,
+                "timeline_out_frame": 66
+              },
+              {
+                "occurrence_id": "risk_hook:w_002280",
+                "shot_id": "risk_hook",
+                "word_id": 2280,
+                "source_in_ms": 472040,
+                "source_out_ms": 472100,
+                "timeline_in_ms": 2200,
+                "timeline_out_ms": 2233,
+                "timeline_in_frame": 66,
+                "timeline_out_frame": 67
+              },
+              {
+                "occurrence_id": "risk_hook:w_002281",
+                "shot_id": "risk_hook",
+                "word_id": 2281,
+                "source_in_ms": 472100,
+                "source_out_ms": 472100,
+                "timeline_in_ms": 2233,
+                "timeline_out_ms": 2267,
+                "timeline_in_frame": 67,
+                "timeline_out_frame": 68
+              },
+              {
+                "occurrence_id": "risk_hook:w_002282",
+                "shot_id": "risk_hook",
+                "word_id": 2282,
+                "source_in_ms": 472100,
+                "source_out_ms": 472200,
+                "timeline_in_ms": 2233,
+                "timeline_out_ms": 2333,
+                "timeline_in_frame": 67,
+                "timeline_out_frame": 70
+              },
+              {
+                "occurrence_id": "risk_hook:w_002283",
+                "shot_id": "risk_hook",
+                "word_id": 2283,
+                "source_in_ms": 472200,
+                "source_out_ms": 472400,
+                "timeline_in_ms": 2333,
+                "timeline_out_ms": 2533,
+                "timeline_in_frame": 70,
+                "timeline_out_frame": 76
+              },
+              {
+                "occurrence_id": "risk_hook:w_002284",
+                "shot_id": "risk_hook",
+                "word_id": 2284,
+                "source_in_ms": 472400,
+                "source_out_ms": 472460,
+                "timeline_in_ms": 2533,
+                "timeline_out_ms": 2567,
+                "timeline_in_frame": 76,
+                "timeline_out_frame": 77
+              },
+              {
+                "occurrence_id": "risk_hook:w_002285",
+                "shot_id": "risk_hook",
+                "word_id": 2285,
+                "source_in_ms": 472460,
+                "source_out_ms": 472920,
+                "timeline_in_ms": 2567,
+                "timeline_out_ms": 3000,
+                "timeline_in_frame": 77,
+                "timeline_out_frame": 90
+              },
+              {
+                "occurrence_id": "risk_hook:w_002286",
+                "shot_id": "risk_hook",
+                "word_id": 2286,
+                "source_in_ms": 472920,
+                "source_out_ms": 473080,
+                "timeline_in_ms": 3000,
+                "timeline_out_ms": 3133,
+                "timeline_in_frame": 90,
+                "timeline_out_frame": 94
+              },
+              {
+                "occurrence_id": "risk_hook:w_002287",
+                "shot_id": "risk_hook",
+                "word_id": 2287,
+                "source_in_ms": 473080,
+                "source_out_ms": 473220,
+                "timeline_in_ms": 3133,
+                "timeline_out_ms": 3267,
+                "timeline_in_frame": 94,
+                "timeline_out_frame": 98
+              },
+              {
+                "occurrence_id": "risk_hook:w_002288",
+                "shot_id": "risk_hook",
+                "word_id": 2288,
+                "source_in_ms": 473220,
+                "source_out_ms": 473440,
+                "timeline_in_ms": 3267,
+                "timeline_out_ms": 3467,
+                "timeline_in_frame": 98,
+                "timeline_out_frame": 104
+              },
+              {
+                "occurrence_id": "risk_hook:w_002289",
+                "shot_id": "risk_hook",
+                "word_id": 2289,
+                "source_in_ms": 473440,
+                "source_out_ms": 473600,
+                "timeline_in_ms": 3467,
+                "timeline_out_ms": 3633,
+                "timeline_in_frame": 104,
+                "timeline_out_frame": 109
+              }
+            ]
+          },
+          {
+            "shot_id": "day_later",
+            "role": "setup",
+            "from_word_id": 2235,
+            "to_word_id": 2254,
+            "source_in_ms": 464780,
+            "source_out_ms": 468640,
+            "timeline_in_ms": 3633,
+            "timeline_out_ms": 7200,
+            "timeline_in_frame": 109,
+            "timeline_out_frame": 216,
+            "speed": 1.08,
+            "framing": {
+              "mode": "locked_face",
+              "center_x": 0.5,
+              "base_scale": 1.06,
+              "screen_region": null
+            },
+            "effects": [],
+            "transition_out": "time_jump",
+            "caption_theme": "standard_karaoke",
+            "word_occurrences": [
+              {
+                "occurrence_id": "day_later:w_002235",
+                "shot_id": "day_later",
+                "word_id": 2235,
+                "source_in_ms": 464780,
+                "source_out_ms": 465060,
+                "timeline_in_ms": 3633,
+                "timeline_out_ms": 3900,
+                "timeline_in_frame": 109,
+                "timeline_out_frame": 117
+              },
+              {
+                "occurrence_id": "day_later:w_002236",
+                "shot_id": "day_later",
+                "word_id": 2236,
+                "source_in_ms": 465060,
+                "source_out_ms": 465340,
+                "timeline_in_ms": 3900,
+                "timeline_out_ms": 4167,
+                "timeline_in_frame": 117,
+                "timeline_out_frame": 125
+              },
+              {
+                "occurrence_id": "day_later:w_002237",
+                "shot_id": "day_later",
+                "word_id": 2237,
+                "source_in_ms": 465340,
+                "source_out_ms": 465440,
+                "timeline_in_ms": 4167,
+                "timeline_out_ms": 4233,
+                "timeline_in_frame": 125,
+                "timeline_out_frame": 127
+              },
+              {
+                "occurrence_id": "day_later:w_002238",
+                "shot_id": "day_later",
+                "word_id": 2238,
+                "source_in_ms": 465440,
+                "source_out_ms": 465840,
+                "timeline_in_ms": 4233,
+                "timeline_out_ms": 4600,
+                "timeline_in_frame": 127,
+                "timeline_out_frame": 138
+              },
+              {
+                "occurrence_id": "day_later:w_002239",
+                "shot_id": "day_later",
+                "word_id": 2239,
+                "source_in_ms": 465840,
+                "source_out_ms": 465900,
+                "timeline_in_ms": 4600,
+                "timeline_out_ms": 4667,
+                "timeline_in_frame": 138,
+                "timeline_out_frame": 140
+              },
+              {
+                "occurrence_id": "day_later:w_002240",
+                "shot_id": "day_later",
+                "word_id": 2240,
+                "source_in_ms": 465900,
+                "source_out_ms": 466220,
+                "timeline_in_ms": 4667,
+                "timeline_out_ms": 4967,
+                "timeline_in_frame": 140,
+                "timeline_out_frame": 149
+              },
+              {
+                "occurrence_id": "day_later:w_002241",
+                "shot_id": "day_later",
+                "word_id": 2241,
+                "source_in_ms": 466220,
+                "source_out_ms": 466320,
+                "timeline_in_ms": 4967,
+                "timeline_out_ms": 5067,
+                "timeline_in_frame": 149,
+                "timeline_out_frame": 152
+              },
+              {
+                "occurrence_id": "day_later:w_002242",
+                "shot_id": "day_later",
+                "word_id": 2242,
+                "source_in_ms": 466460,
+                "source_out_ms": 466600,
+                "timeline_in_ms": 5200,
+                "timeline_out_ms": 5333,
+                "timeline_in_frame": 156,
+                "timeline_out_frame": 160
+              },
+              {
+                "occurrence_id": "day_later:w_002243",
+                "shot_id": "day_later",
+                "word_id": 2243,
+                "source_in_ms": 466600,
+                "source_out_ms": 466700,
+                "timeline_in_ms": 5333,
+                "timeline_out_ms": 5400,
+                "timeline_in_frame": 160,
+                "timeline_out_frame": 162
+              },
+              {
+                "occurrence_id": "day_later:w_002244",
+                "shot_id": "day_later",
+                "word_id": 2244,
+                "source_in_ms": 466700,
+                "source_out_ms": 466740,
+                "timeline_in_ms": 5400,
+                "timeline_out_ms": 5433,
+                "timeline_in_frame": 162,
+                "timeline_out_frame": 163
+              },
+              {
+                "occurrence_id": "day_later:w_002245",
+                "shot_id": "day_later",
+                "word_id": 2245,
+                "source_in_ms": 466740,
+                "source_out_ms": 466940,
+                "timeline_in_ms": 5433,
+                "timeline_out_ms": 5633,
+                "timeline_in_frame": 163,
+                "timeline_out_frame": 169
+              },
+              {
+                "occurrence_id": "day_later:w_002246",
+                "shot_id": "day_later",
+                "word_id": 2246,
+                "source_in_ms": 466940,
+                "source_out_ms": 467360,
+                "timeline_in_ms": 5633,
+                "timeline_out_ms": 6033,
+                "timeline_in_frame": 169,
+                "timeline_out_frame": 181
+              },
+              {
+                "occurrence_id": "day_later:w_002247",
+                "shot_id": "day_later",
+                "word_id": 2247,
+                "source_in_ms": 467500,
+                "source_out_ms": 467620,
+                "timeline_in_ms": 6167,
+                "timeline_out_ms": 6267,
+                "timeline_in_frame": 185,
+                "timeline_out_frame": 188
+              },
+              {
+                "occurrence_id": "day_later:w_002248",
+                "shot_id": "day_later",
+                "word_id": 2248,
+                "source_in_ms": 467620,
+                "source_out_ms": 467620,
+                "timeline_in_ms": 6267,
+                "timeline_out_ms": 6300,
+                "timeline_in_frame": 188,
+                "timeline_out_frame": 189
+              },
+              {
+                "occurrence_id": "day_later:w_002249",
+                "shot_id": "day_later",
+                "word_id": 2249,
+                "source_in_ms": 467620,
+                "source_out_ms": 467720,
+                "timeline_in_ms": 6267,
+                "timeline_out_ms": 6367,
+                "timeline_in_frame": 188,
+                "timeline_out_frame": 191
+              },
+              {
+                "occurrence_id": "day_later:w_002250",
+                "shot_id": "day_later",
+                "word_id": 2250,
+                "source_in_ms": 467720,
+                "source_out_ms": 467960,
+                "timeline_in_ms": 6367,
+                "timeline_out_ms": 6567,
+                "timeline_in_frame": 191,
+                "timeline_out_frame": 197
+              },
+              {
+                "occurrence_id": "day_later:w_002251",
+                "shot_id": "day_later",
+                "word_id": 2251,
+                "source_in_ms": 467960,
+                "source_out_ms": 468000,
+                "timeline_in_ms": 6567,
+                "timeline_out_ms": 6600,
+                "timeline_in_frame": 197,
+                "timeline_out_frame": 198
+              },
+              {
+                "occurrence_id": "day_later:w_002252",
+                "shot_id": "day_later",
+                "word_id": 2252,
+                "source_in_ms": 468000,
+                "source_out_ms": 468180,
+                "timeline_in_ms": 6600,
+                "timeline_out_ms": 6767,
+                "timeline_in_frame": 198,
+                "timeline_out_frame": 203
+              },
+              {
+                "occurrence_id": "day_later:w_002253",
+                "shot_id": "day_later",
+                "word_id": 2253,
+                "source_in_ms": 468180,
+                "source_out_ms": 468440,
+                "timeline_in_ms": 6767,
+                "timeline_out_ms": 7033,
+                "timeline_in_frame": 203,
+                "timeline_out_frame": 211
+              },
+              {
+                "occurrence_id": "day_later:w_002254",
+                "shot_id": "day_later",
+                "word_id": 2254,
+                "source_in_ms": 468440,
+                "source_out_ms": 468640,
+                "timeline_in_ms": 7033,
+                "timeline_out_ms": 7200,
+                "timeline_in_frame": 211,
+                "timeline_out_frame": 216
+              }
+            ]
+          },
+          {
+            "shot_id": "sale_reveal",
+            "role": "proof",
+            "from_word_id": 2310,
+            "to_word_id": 2320,
+            "source_in_ms": 478640,
+            "source_out_ms": 480760,
+            "timeline_in_ms": 7200,
+            "timeline_out_ms": 9333,
+            "timeline_in_frame": 216,
+            "timeline_out_frame": 280,
+            "speed": 1.0,
+            "framing": {
+              "mode": "fit_blur",
+              "center_x": 0.5,
+              "base_scale": 1.06,
+              "screen_region": null
+            },
+            "effects": [
+              {
+                "kind": "flash",
+                "at_word_id": 2313,
+                "duration_ms": 140,
+                "intensity": 0.45
+              }
+            ],
+            "transition_out": "hard_impact",
+            "caption_theme": "reaction_pop",
+            "word_occurrences": [
+              {
+                "occurrence_id": "sale_reveal:w_002310",
+                "shot_id": "sale_reveal",
+                "word_id": 2310,
+                "source_in_ms": 478640,
+                "source_out_ms": 478640,
+                "timeline_in_ms": 7200,
+                "timeline_out_ms": 7233,
+                "timeline_in_frame": 216,
+                "timeline_out_frame": 217
+              },
+              {
+                "occurrence_id": "sale_reveal:w_002311",
+                "shot_id": "sale_reveal",
+                "word_id": 2311,
+                "source_in_ms": 478640,
+                "source_out_ms": 478760,
+                "timeline_in_ms": 7200,
+                "timeline_out_ms": 7333,
+                "timeline_in_frame": 216,
+                "timeline_out_frame": 220
+              },
+              {
+                "occurrence_id": "sale_reveal:w_002312",
+                "shot_id": "sale_reveal",
+                "word_id": 2312,
+                "source_in_ms": 478760,
+                "source_out_ms": 479040,
+                "timeline_in_ms": 7333,
+                "timeline_out_ms": 7600,
+                "timeline_in_frame": 220,
+                "timeline_out_frame": 228
+              },
+              {
+                "occurrence_id": "sale_reveal:w_002313",
+                "shot_id": "sale_reveal",
+                "word_id": 2313,
+                "source_in_ms": 479200,
+                "source_out_ms": 479220,
+                "timeline_in_ms": 7767,
+                "timeline_out_ms": 7800,
+                "timeline_in_frame": 233,
+                "timeline_out_frame": 234
+              },
+              {
+                "occurrence_id": "sale_reveal:w_002314",
+                "shot_id": "sale_reveal",
+                "word_id": 2314,
+                "source_in_ms": 479220,
+                "source_out_ms": 479380,
+                "timeline_in_ms": 7767,
+                "timeline_out_ms": 7933,
+                "timeline_in_frame": 233,
+                "timeline_out_frame": 238
+              },
+              {
+                "occurrence_id": "sale_reveal:w_002315",
+                "shot_id": "sale_reveal",
+                "word_id": 2315,
+                "source_in_ms": 479380,
+                "source_out_ms": 479500,
+                "timeline_in_ms": 7933,
+                "timeline_out_ms": 8067,
+                "timeline_in_frame": 238,
+                "timeline_out_frame": 242
+              },
+              {
+                "occurrence_id": "sale_reveal:w_002316",
+                "shot_id": "sale_reveal",
+                "word_id": 2316,
+                "source_in_ms": 479500,
+                "source_out_ms": 479740,
+                "timeline_in_ms": 8067,
+                "timeline_out_ms": 8300,
+                "timeline_in_frame": 242,
+                "timeline_out_frame": 249
+              },
+              {
+                "occurrence_id": "sale_reveal:w_002317",
+                "shot_id": "sale_reveal",
+                "word_id": 2317,
+                "source_in_ms": 479740,
+                "source_out_ms": 479880,
+                "timeline_in_ms": 8300,
+                "timeline_out_ms": 8433,
+                "timeline_in_frame": 249,
+                "timeline_out_frame": 253
+              },
+              {
+                "occurrence_id": "sale_reveal:w_002318",
+                "shot_id": "sale_reveal",
+                "word_id": 2318,
+                "source_in_ms": 479880,
+                "source_out_ms": 480060,
+                "timeline_in_ms": 8433,
+                "timeline_out_ms": 8633,
+                "timeline_in_frame": 253,
+                "timeline_out_frame": 259
+              },
+              {
+                "occurrence_id": "sale_reveal:w_002319",
+                "shot_id": "sale_reveal",
+                "word_id": 2319,
+                "source_in_ms": 480060,
+                "source_out_ms": 480560,
+                "timeline_in_ms": 8633,
+                "timeline_out_ms": 9133,
+                "timeline_in_frame": 259,
+                "timeline_out_frame": 274
+              },
+              {
+                "occurrence_id": "sale_reveal:w_002320",
+                "shot_id": "sale_reveal",
+                "word_id": 2320,
+                "source_in_ms": 480560,
+                "source_out_ms": 480760,
+                "timeline_in_ms": 9133,
+                "timeline_out_ms": 9333,
+                "timeline_in_frame": 274,
+                "timeline_out_frame": 280
+              }
+            ]
+          },
+          {
+            "shot_id": "conversion_payoff",
+            "role": "payoff",
+            "from_word_id": 2356,
+            "to_word_id": 2388,
+            "source_in_ms": 486580,
+            "source_out_ms": 493860,
+            "timeline_in_ms": 9333,
+            "timeline_out_ms": 16067,
+            "timeline_in_frame": 280,
+            "timeline_out_frame": 482,
+            "speed": 1.08,
+            "framing": {
+              "mode": "fit_blur",
+              "center_x": 0.5,
+              "base_scale": 1.06,
+              "screen_region": null
+            },
+            "effects": [
+              {
+                "kind": "color_pop",
+                "at_word_id": 2379,
+                "duration_ms": 450,
+                "intensity": 0.4
+              }
+            ],
+            "transition_out": "contrast",
+            "caption_theme": "proof_clean",
+            "word_occurrences": [
+              {
+                "occurrence_id": "conversion_payoff:w_002356",
+                "shot_id": "conversion_payoff",
+                "word_id": 2356,
+                "source_in_ms": 486580,
+                "source_out_ms": 486780,
+                "timeline_in_ms": 9333,
+                "timeline_out_ms": 9533,
+                "timeline_in_frame": 280,
+                "timeline_out_frame": 286
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002357",
+                "shot_id": "conversion_payoff",
+                "word_id": 2357,
+                "source_in_ms": 486880,
+                "source_out_ms": 487000,
+                "timeline_in_ms": 9600,
+                "timeline_out_ms": 9733,
+                "timeline_in_frame": 288,
+                "timeline_out_frame": 292
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002358",
+                "shot_id": "conversion_payoff",
+                "word_id": 2358,
+                "source_in_ms": 487000,
+                "source_out_ms": 487180,
+                "timeline_in_ms": 9733,
+                "timeline_out_ms": 9900,
+                "timeline_in_frame": 292,
+                "timeline_out_frame": 297
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002359",
+                "shot_id": "conversion_payoff",
+                "word_id": 2359,
+                "source_in_ms": 487180,
+                "source_out_ms": 487300,
+                "timeline_in_ms": 9900,
+                "timeline_out_ms": 10000,
+                "timeline_in_frame": 297,
+                "timeline_out_frame": 300
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002360",
+                "shot_id": "conversion_payoff",
+                "word_id": 2360,
+                "source_in_ms": 487300,
+                "source_out_ms": 487740,
+                "timeline_in_ms": 10000,
+                "timeline_out_ms": 10400,
+                "timeline_in_frame": 300,
+                "timeline_out_frame": 312
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002361",
+                "shot_id": "conversion_payoff",
+                "word_id": 2361,
+                "source_in_ms": 487740,
+                "source_out_ms": 488060,
+                "timeline_in_ms": 10400,
+                "timeline_out_ms": 10700,
+                "timeline_in_frame": 312,
+                "timeline_out_frame": 321
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002362",
+                "shot_id": "conversion_payoff",
+                "word_id": 2362,
+                "source_in_ms": 488060,
+                "source_out_ms": 488260,
+                "timeline_in_ms": 10700,
+                "timeline_out_ms": 10900,
+                "timeline_in_frame": 321,
+                "timeline_out_frame": 327
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002363",
+                "shot_id": "conversion_payoff",
+                "word_id": 2363,
+                "source_in_ms": 488260,
+                "source_out_ms": 488520,
+                "timeline_in_ms": 10900,
+                "timeline_out_ms": 11133,
+                "timeline_in_frame": 327,
+                "timeline_out_frame": 334
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002364",
+                "shot_id": "conversion_payoff",
+                "word_id": 2364,
+                "source_in_ms": 488520,
+                "source_out_ms": 488520,
+                "timeline_in_ms": 11133,
+                "timeline_out_ms": 11167,
+                "timeline_in_frame": 334,
+                "timeline_out_frame": 335
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002365",
+                "shot_id": "conversion_payoff",
+                "word_id": 2365,
+                "source_in_ms": 488520,
+                "source_out_ms": 488720,
+                "timeline_in_ms": 11133,
+                "timeline_out_ms": 11300,
+                "timeline_in_frame": 334,
+                "timeline_out_frame": 339
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002366",
+                "shot_id": "conversion_payoff",
+                "word_id": 2366,
+                "source_in_ms": 488720,
+                "source_out_ms": 488840,
+                "timeline_in_ms": 11300,
+                "timeline_out_ms": 11433,
+                "timeline_in_frame": 339,
+                "timeline_out_frame": 343
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002367",
+                "shot_id": "conversion_payoff",
+                "word_id": 2367,
+                "source_in_ms": 488920,
+                "source_out_ms": 489020,
+                "timeline_in_ms": 11500,
+                "timeline_out_ms": 11600,
+                "timeline_in_frame": 345,
+                "timeline_out_frame": 348
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002368",
+                "shot_id": "conversion_payoff",
+                "word_id": 2368,
+                "source_in_ms": 489020,
+                "source_out_ms": 489100,
+                "timeline_in_ms": 11600,
+                "timeline_out_ms": 11667,
+                "timeline_in_frame": 348,
+                "timeline_out_frame": 350
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002369",
+                "shot_id": "conversion_payoff",
+                "word_id": 2369,
+                "source_in_ms": 489100,
+                "source_out_ms": 489300,
+                "timeline_in_ms": 11667,
+                "timeline_out_ms": 11867,
+                "timeline_in_frame": 350,
+                "timeline_out_frame": 356
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002370",
+                "shot_id": "conversion_payoff",
+                "word_id": 2370,
+                "source_in_ms": 489300,
+                "source_out_ms": 489500,
+                "timeline_in_ms": 11867,
+                "timeline_out_ms": 12033,
+                "timeline_in_frame": 356,
+                "timeline_out_frame": 361
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002371",
+                "shot_id": "conversion_payoff",
+                "word_id": 2371,
+                "source_in_ms": 489500,
+                "source_out_ms": 489660,
+                "timeline_in_ms": 12033,
+                "timeline_out_ms": 12200,
+                "timeline_in_frame": 361,
+                "timeline_out_frame": 366
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002372",
+                "shot_id": "conversion_payoff",
+                "word_id": 2372,
+                "source_in_ms": 489660,
+                "source_out_ms": 489740,
+                "timeline_in_ms": 12200,
+                "timeline_out_ms": 12267,
+                "timeline_in_frame": 366,
+                "timeline_out_frame": 368
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002373",
+                "shot_id": "conversion_payoff",
+                "word_id": 2373,
+                "source_in_ms": 489740,
+                "source_out_ms": 489920,
+                "timeline_in_ms": 12267,
+                "timeline_out_ms": 12433,
+                "timeline_in_frame": 368,
+                "timeline_out_frame": 373
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002374",
+                "shot_id": "conversion_payoff",
+                "word_id": 2374,
+                "source_in_ms": 489920,
+                "source_out_ms": 490100,
+                "timeline_in_ms": 12433,
+                "timeline_out_ms": 12600,
+                "timeline_in_frame": 373,
+                "timeline_out_frame": 378
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002375",
+                "shot_id": "conversion_payoff",
+                "word_id": 2375,
+                "source_in_ms": 490260,
+                "source_out_ms": 490320,
+                "timeline_in_ms": 12733,
+                "timeline_out_ms": 12800,
+                "timeline_in_frame": 382,
+                "timeline_out_frame": 384
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002376",
+                "shot_id": "conversion_payoff",
+                "word_id": 2376,
+                "source_in_ms": 490320,
+                "source_out_ms": 490600,
+                "timeline_in_ms": 12800,
+                "timeline_out_ms": 13067,
+                "timeline_in_frame": 384,
+                "timeline_out_frame": 392
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002377",
+                "shot_id": "conversion_payoff",
+                "word_id": 2377,
+                "source_in_ms": 490600,
+                "source_out_ms": 490940,
+                "timeline_in_ms": 13067,
+                "timeline_out_ms": 13367,
+                "timeline_in_frame": 392,
+                "timeline_out_frame": 401
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002378",
+                "shot_id": "conversion_payoff",
+                "word_id": 2378,
+                "source_in_ms": 490940,
+                "source_out_ms": 491220,
+                "timeline_in_ms": 13367,
+                "timeline_out_ms": 13633,
+                "timeline_in_frame": 401,
+                "timeline_out_frame": 409
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002379",
+                "shot_id": "conversion_payoff",
+                "word_id": 2379,
+                "source_in_ms": 491560,
+                "source_out_ms": 491780,
+                "timeline_in_ms": 13933,
+                "timeline_out_ms": 14133,
+                "timeline_in_frame": 418,
+                "timeline_out_frame": 424
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002380",
+                "shot_id": "conversion_payoff",
+                "word_id": 2380,
+                "source_in_ms": 491780,
+                "source_out_ms": 491820,
+                "timeline_in_ms": 14133,
+                "timeline_out_ms": 14200,
+                "timeline_in_frame": 424,
+                "timeline_out_frame": 426
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002381",
+                "shot_id": "conversion_payoff",
+                "word_id": 2381,
+                "source_in_ms": 491820,
+                "source_out_ms": 492020,
+                "timeline_in_ms": 14200,
+                "timeline_out_ms": 14367,
+                "timeline_in_frame": 426,
+                "timeline_out_frame": 431
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002382",
+                "shot_id": "conversion_payoff",
+                "word_id": 2382,
+                "source_in_ms": 492020,
+                "source_out_ms": 492120,
+                "timeline_in_ms": 14367,
+                "timeline_out_ms": 14467,
+                "timeline_in_frame": 431,
+                "timeline_out_frame": 434
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002383",
+                "shot_id": "conversion_payoff",
+                "word_id": 2383,
+                "source_in_ms": 492120,
+                "source_out_ms": 492420,
+                "timeline_in_ms": 14467,
+                "timeline_out_ms": 14733,
+                "timeline_in_frame": 434,
+                "timeline_out_frame": 442
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002384",
+                "shot_id": "conversion_payoff",
+                "word_id": 2384,
+                "source_in_ms": 492420,
+                "source_out_ms": 492420,
+                "timeline_in_ms": 14733,
+                "timeline_out_ms": 14767,
+                "timeline_in_frame": 442,
+                "timeline_out_frame": 443
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002385",
+                "shot_id": "conversion_payoff",
+                "word_id": 2385,
+                "source_in_ms": 492420,
+                "source_out_ms": 493000,
+                "timeline_in_ms": 14733,
+                "timeline_out_ms": 15267,
+                "timeline_in_frame": 442,
+                "timeline_out_frame": 458
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002386",
+                "shot_id": "conversion_payoff",
+                "word_id": 2386,
+                "source_in_ms": 493000,
+                "source_out_ms": 493000,
+                "timeline_in_ms": 15267,
+                "timeline_out_ms": 15300,
+                "timeline_in_frame": 458,
+                "timeline_out_frame": 459
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002387",
+                "shot_id": "conversion_payoff",
+                "word_id": 2387,
+                "source_in_ms": 493220,
+                "source_out_ms": 493540,
+                "timeline_in_ms": 15467,
+                "timeline_out_ms": 15767,
+                "timeline_in_frame": 464,
+                "timeline_out_frame": 473
+              },
+              {
+                "occurrence_id": "conversion_payoff:w_002388",
+                "shot_id": "conversion_payoff",
+                "word_id": 2388,
+                "source_in_ms": 493540,
+                "source_out_ms": 493860,
+                "timeline_in_ms": 15767,
+                "timeline_out_ms": 16067,
+                "timeline_in_frame": 473,
+                "timeline_out_frame": 482
+              }
+            ]
+          },
+          {
+            "shot_id": "comment_cta",
+            "role": "cta",
+            "from_word_id": 2845,
+            "to_word_id": 2859,
+            "source_in_ms": 591420,
+            "source_out_ms": 593940,
+            "timeline_in_ms": 16067,
+            "timeline_out_ms": 18500,
+            "timeline_in_frame": 482,
+            "timeline_out_frame": 555,
+            "speed": 1.04,
+            "framing": {
+              "mode": "locked_face",
+              "center_x": 0.5,
+              "base_scale": 1.06,
+              "screen_region": null
+            },
+            "effects": [],
+            "transition_out": "hard_cut",
+            "caption_theme": "standard_karaoke",
+            "word_occurrences": [
+              {
+                "occurrence_id": "comment_cta:w_002845",
+                "shot_id": "comment_cta",
+                "word_id": 2845,
+                "source_in_ms": 591420,
+                "source_out_ms": 591420,
+                "timeline_in_ms": 16067,
+                "timeline_out_ms": 16100,
+                "timeline_in_frame": 482,
+                "timeline_out_frame": 483
+              },
+              {
+                "occurrence_id": "comment_cta:w_002846",
+                "shot_id": "comment_cta",
+                "word_id": 2846,
+                "source_in_ms": 591420,
+                "source_out_ms": 591540,
+                "timeline_in_ms": 16067,
+                "timeline_out_ms": 16167,
+                "timeline_in_frame": 482,
+                "timeline_out_frame": 485
+              },
+              {
+                "occurrence_id": "comment_cta:w_002847",
+                "shot_id": "comment_cta",
+                "word_id": 2847,
+                "source_in_ms": 591540,
+                "source_out_ms": 591620,
+                "timeline_in_ms": 16167,
+                "timeline_out_ms": 16267,
+                "timeline_in_frame": 485,
+                "timeline_out_frame": 488
+              },
+              {
+                "occurrence_id": "comment_cta:w_002848",
+                "shot_id": "comment_cta",
+                "word_id": 2848,
+                "source_in_ms": 591620,
+                "source_out_ms": 591680,
+                "timeline_in_ms": 16267,
+                "timeline_out_ms": 16333,
+                "timeline_in_frame": 488,
+                "timeline_out_frame": 490
+              },
+              {
+                "occurrence_id": "comment_cta:w_002849",
+                "shot_id": "comment_cta",
+                "word_id": 2849,
+                "source_in_ms": 591680,
+                "source_out_ms": 591800,
+                "timeline_in_ms": 16333,
+                "timeline_out_ms": 16433,
+                "timeline_in_frame": 490,
+                "timeline_out_frame": 493
+              },
+              {
+                "occurrence_id": "comment_cta:w_002850",
+                "shot_id": "comment_cta",
+                "word_id": 2850,
+                "source_in_ms": 591800,
+                "source_out_ms": 591920,
+                "timeline_in_ms": 16433,
+                "timeline_out_ms": 16533,
+                "timeline_in_frame": 493,
+                "timeline_out_frame": 496
+              },
+              {
+                "occurrence_id": "comment_cta:w_002851",
+                "shot_id": "comment_cta",
+                "word_id": 2851,
+                "source_in_ms": 591920,
+                "source_out_ms": 592140,
+                "timeline_in_ms": 16533,
+                "timeline_out_ms": 16767,
+                "timeline_in_frame": 496,
+                "timeline_out_frame": 503
+              },
+              {
+                "occurrence_id": "comment_cta:w_002852",
+                "shot_id": "comment_cta",
+                "word_id": 2852,
+                "source_in_ms": 592140,
+                "source_out_ms": 592400,
+                "timeline_in_ms": 16767,
+                "timeline_out_ms": 17000,
+                "timeline_in_frame": 503,
+                "timeline_out_frame": 510
+              },
+              {
+                "occurrence_id": "comment_cta:w_002853",
+                "shot_id": "comment_cta",
+                "word_id": 2853,
+                "source_in_ms": 592400,
+                "source_out_ms": 592560,
+                "timeline_in_ms": 17000,
+                "timeline_out_ms": 17167,
+                "timeline_in_frame": 510,
+                "timeline_out_frame": 515
+              },
+              {
+                "occurrence_id": "comment_cta:w_002854",
+                "shot_id": "comment_cta",
+                "word_id": 2854,
+                "source_in_ms": 592560,
+                "source_out_ms": 592720,
+                "timeline_in_ms": 17167,
+                "timeline_out_ms": 17333,
+                "timeline_in_frame": 515,
+                "timeline_out_frame": 520
+              },
+              {
+                "occurrence_id": "comment_cta:w_002855",
+                "shot_id": "comment_cta",
+                "word_id": 2855,
+                "source_in_ms": 592720,
+                "source_out_ms": 592900,
+                "timeline_in_ms": 17333,
+                "timeline_out_ms": 17500,
+                "timeline_in_frame": 520,
+                "timeline_out_frame": 525
+              },
+              {
+                "occurrence_id": "comment_cta:w_002856",
+                "shot_id": "comment_cta",
+                "word_id": 2856,
+                "source_in_ms": 593020,
+                "source_out_ms": 593180,
+                "timeline_in_ms": 17600,
+                "timeline_out_ms": 17767,
+                "timeline_in_frame": 528,
+                "timeline_out_frame": 533
+              },
+              {
+                "occurrence_id": "comment_cta:w_002857",
+                "shot_id": "comment_cta",
+                "word_id": 2857,
+                "source_in_ms": 593180,
+                "source_out_ms": 593300,
+                "timeline_in_ms": 17767,
+                "timeline_out_ms": 17867,
+                "timeline_in_frame": 533,
+                "timeline_out_frame": 536
+              },
+              {
+                "occurrence_id": "comment_cta:w_002858",
+                "shot_id": "comment_cta",
+                "word_id": 2858,
+                "source_in_ms": 593300,
+                "source_out_ms": 593420,
+                "timeline_in_ms": 17867,
+                "timeline_out_ms": 18000,
+                "timeline_in_frame": 536,
+                "timeline_out_frame": 540
+              },
+              {
+                "occurrence_id": "comment_cta:w_002859",
+                "shot_id": "comment_cta",
+                "word_id": 2859,
+                "source_in_ms": 593420,
+                "source_out_ms": 593940,
+                "timeline_in_ms": 18000,
+                "timeline_out_ms": 18500,
+                "timeline_in_frame": 540,
+                "timeline_out_frame": 555
+              }
+            ]
+          }
+        ],
+        "music": [],
+        "sfx": [],
+        "decode_islands": [
+          {
+            "island_id": "island_00",
+            "source_in_ms": 464780,
+            "source_out_ms": 473600,
+            "shot_ids": [
+              "day_later",
+              "risk_hook"
+            ]
+          },
+          {
+            "island_id": "island_01",
+            "source_in_ms": 478640,
+            "source_out_ms": 480760,
+            "shot_ids": [
+              "sale_reveal"
+            ]
+          },
+          {
+            "island_id": "island_02",
+            "source_in_ms": 486580,
+            "source_out_ms": 493860,
+            "shot_ids": [
+              "conversion_payoff"
+            ]
+          },
+          {
+            "island_id": "island_03",
+            "source_in_ms": 591420,
+            "source_out_ms": 593940,
+            "shot_ids": [
+              "comment_cta"
+            ]
+          }
+        ]
+      },
+      "editorial_qc": {
+        "status": "pass",
+        "findings": [],
+        "caption_occurrences": 105,
+        "captioned_occurrences": 105,
+        "caption_coverage": 1.0,
+        "effect_count": 3,
+        "effect_density_per_second": 0.16216216216216217,
+        "cut_count": 4,
+        "cut_density_per_second": 0.21621621621621623
+      }
+    }
+  }
+}

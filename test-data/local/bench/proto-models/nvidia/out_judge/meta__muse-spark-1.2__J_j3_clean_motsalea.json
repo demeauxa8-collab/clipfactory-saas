@@ -1,0 +1,32 @@
+{
+ "model": "meta/muse-spark-1.2",
+ "tag": "J_j3_clean_motsalea",
+ "latency_s": 12.4,
+ "usage": {
+  "prompt_tokens": 3482,
+  "completion_tokens": 1797,
+  "total_tokens": 5279,
+  "cost": 0.01181045,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 163,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.01181045,
+   "upstream_inference_prompt_cost": 0.0041732,
+   "upstream_inference_completions_cost": 0.00763725
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1557,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\"publiable\":false,\"score_global\":4,\"hook_2s\":3,\"phrase_coupee_au_debut\":false,\"phrase_coupee_a_la_fin\":true,\"premier_mot_entendu\":\"Totalement\",\"dernier_mot_entendu\":\"fait\",\"raccords\":[{\"at_s\":0.8,\"ca_se_comprend\":true,\"pourquoi\":\"cut plein écran -> screen-share mais continuité audio parfaite, même phrase\"},{\"at_s\":8.2,\"ca_se_comprend\":true,\"pourquoi\":\"retour screen-share -> plein écran, audio continue sans rupture de sens\"},{\"at_s\":11.2,\"ca_se_comprend\":true,\"pourquoi\":\"re-passage en screen-share, même discours sur les mots-clés\"},{\"at_s\":19.0,\"ca_se_comprend\":true,\"pourquoi\":\"retour plein écran final, continuité du propos\"}],\"moment_mort\":false,\"raison_du_refus\":\"phrase finale tronquée net en milieu de phrase sur 'mais souvent ça me fait...' - clip coupé avant fin de phrase, non publiable en l'état\"}",
+ "reasoning": "",
+ "provider": "Meta"
+}

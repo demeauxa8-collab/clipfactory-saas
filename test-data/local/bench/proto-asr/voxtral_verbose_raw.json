@@ -1,0 +1,1 @@
+{"error":{"message":"The selected model does not support response_format \"verbose_json\". Use \"json\" instead.","code":400}}

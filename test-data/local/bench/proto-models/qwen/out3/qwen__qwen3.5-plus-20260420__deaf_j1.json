@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.5-plus-20260420",
+ "tag": "deaf_j1",
+ "kind": "video",
+ "latency_s": 5.7,
+ "usage": {
+  "prompt_tokens": 103,
+  "completion_tokens": 67,
+  "total_tokens": 170,
+  "cost": 0,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0001515,
+   "upstream_inference_prompt_cost": 3.09e-05,
+   "upstream_inference_completions_cost": 0.0001206
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "error",
+ "text": "```json\n{\n  \"entends_le_son\": true,\n  \"transcription_orale\": \"J'ai seulement une pièce de monnaie et je vais la transformer en quatre millions cinq cent mille euros. Comment? En moins d'une heure. Je suis parti de zéro il y a quelques années et j'ai réussi",
+ "provider": "Alibaba"
+}

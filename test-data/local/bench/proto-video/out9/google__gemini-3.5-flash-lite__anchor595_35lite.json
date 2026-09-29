@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.5-flash-lite",
+ "tag": "anchor595_35lite",
+ "latency_s": 21.9,
+ "usage": {
+  "prompt_tokens": 54353,
+  "completion_tokens": 73,
+  "total_tokens": 54426,
+  "cost": 0.0164884,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 54145
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0164884,
+   "upstream_inference_prompt_cost": 0.0163059,
+   "upstream_inference_completions_cost": 0.0001825
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\"A\":36.9,\"B\":56.5,\"C\":-1.0,\"D\":143.4,\"E\":212.4,\"F\":351.9,\"G\":434.9,\"duree_video_s\":957.0}\n```",
+ "provider": "Google AI Studio"
+}

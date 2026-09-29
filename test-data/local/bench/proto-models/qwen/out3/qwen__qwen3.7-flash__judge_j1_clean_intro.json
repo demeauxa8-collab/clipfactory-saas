@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.7-flash",
+ "tag": "judge_j1_clean_intro",
+ "kind": "video",
+ "latency_s": 13.4,
+ "usage": {
+  "prompt_tokens": 5608,
+  "completion_tokens": 268,
+  "total_tokens": 5876,
+  "cost": 0.00020308,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00020308,
+   "upstream_inference_prompt_cost": 0.00016824,
+   "upstream_inference_completions_cost": 3.484e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": false,\n  \"score_global\": 2,\n  \"hook_2s\": 8,\n  \"phrase_coupee_au_debut\": true,\n  \"phrase_coupee_a_la_fin\": true,\n  \"premier_mot_entendu\": \"J'ai\",\n  \"dernier_mot_entendu\": \"pièce\",\n  \"raccords\": [\n    {\n      \"at_s\": 6,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Coupe noire avec texte d'accroche pour le contraste\"\n    },\n    {\n      \"at_s\": 17,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Insert visuel (brouillage) pour illustrer la preuve\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"Le clip est tronqué au début (début de phrase 'J’ai seulement...') et surtout à la fin (la phrase sur la valeur de la pièce n'est pas terminée). Selon les règles strictes, un clip tronqué en début ou fin n'est pas publiable.\"\n}\n```",
+ "provider": "Alibaba"
+}

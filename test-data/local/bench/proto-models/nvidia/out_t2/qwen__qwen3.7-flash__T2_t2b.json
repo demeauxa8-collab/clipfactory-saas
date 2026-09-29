@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.7-flash",
+ "tag": "T2_t2b",
+ "latency_s": 4.9,
+ "usage": {
+  "prompt_tokens": 903,
+  "completion_tokens": 149,
+  "total_tokens": 1052,
+  "cost": 4.646e-05,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 4.646e-05,
+   "upstream_inference_prompt_cost": 2.709e-05,
+   "upstream_inference_completions_cost": 1.937e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n\"decor\":\"Salon avec tableau de photos et écran TV (Frame 1) / Capture d'écran site web 'Mots aléatoires en français' avec incrustation webcam (Frames 2-5)\",\n\"person_visible\":true,\n\"face_center_x\":0.55,\n\"energy\":6,\n\"action\":\"Parler à la caméra puis expliquer une interface web via capture d'écran\",\n\"proof_objects\":[\"Visage homme\", \"Ecrans d'ordinateur\", \"Bouton vert 'Commencer ici'\", \"Texte 'douana'\"],\n\"problems\":[],\"visual_score\":8,\n\"burned_captions\":false\n}",
+ "reasoning": "",
+ "provider": "Alibaba"
+}

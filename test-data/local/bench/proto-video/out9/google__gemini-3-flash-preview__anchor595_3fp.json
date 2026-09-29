@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3-flash-preview",
+ "tag": "anchor595_3fp",
+ "latency_s": 26.3,
+ "usage": {
+  "prompt_tokens": 54352,
+  "completion_tokens": 127,
+  "total_tokens": 54479,
+  "cost": 0.0349945,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 14875,
+   "video_tokens": 39270
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0349945,
+   "upstream_inference_prompt_cost": 0.0346135,
+   "upstream_inference_completions_cost": 0.000381
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "Bien sûr, voici les secondes exactes où chaque phrase est prononcée dans la vidéo :\n\n```json\n{\n  \"A\": 36.0,\n  \"B\": 56.0,\n  \"C\": 124.0,\n  \"D\": 142.0,\n  \"E\": 212.0,\n  \"F\": 400.0,\n  \"G\": 434.0,\n  \"duree_video_s\": 600.0\n}\n```",
+ "provider": "Google"
+}

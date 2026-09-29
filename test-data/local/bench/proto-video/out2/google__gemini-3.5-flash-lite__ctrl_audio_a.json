@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.5-flash-lite",
+ "tag": "ctrl_audio_a",
+ "latency_s": 4.4,
+ "usage": {
+  "prompt_tokens": 2901,
+  "completion_tokens": 282,
+  "total_tokens": 3183,
+  "cost": 0.0015753,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 2730
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0015753,
+   "upstream_inference_prompt_cost": 0.0008703,
+   "upstream_inference_completions_cost": 0.000705
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n \"je_percois_le_son\": true,\n \"transcription_verbatim\": \"J'ai seulement 1 euro pour lancer une boutique rentable en dropshipping et le tout en 24h. Moi c'est Gaspard, j'ai fait 4 millions et demi en e-commerce et l'objectif ça va être simple aujourd'hui, c'est juste de prouver qu'en 2025 tu peux lancer un business avec quasiment rien du tout. Aujourd'hui, ça va être chaud parce que je vais devoir tout faire avec seulement 1 euro en poche. Donc juste avec ça, on va essayer de trouver un produit, créer un site, lancer des pubs et surtout essayer de faire du profit. Il va falloir être astucieux parce que le budget là, il va être vraiment serré. Est-ce que je vais réussir à transformer ces 1 euro en une boutique rentable ou est-ce que je vais vraiment tout perdre ? Donc en gros, je vais juste perdre 1 euro donc c'est pas très grave.\",\n \"premier_mot_prononce\": \"J'ai\",\n \"dernier_mot_prononce\": \"grave\",\n \"texte_incruste_a_l_ecran\": [\n  \"J'AI\",\n  \"SEULEMENT\",\n  \"4,5 MILLIONS €\",\n  \"1\"\n ]\n}\n```",
+ "provider": "Google AI Studio"
+}

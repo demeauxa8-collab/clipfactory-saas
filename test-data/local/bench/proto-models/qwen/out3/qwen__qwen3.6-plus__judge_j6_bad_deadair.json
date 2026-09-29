@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.6-plus",
+ "tag": "judge_j6_bad_deadair",
+ "kind": "video",
+ "latency_s": 7.7,
+ "usage": {
+  "prompt_tokens": 3088,
+  "completion_tokens": 228,
+  "total_tokens": 3316,
+  "cost": 0.0014482,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0014482,
+   "upstream_inference_prompt_cost": 0.0010036,
+   "upstream_inference_completions_cost": 0.0004446
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": false,\n  \"score_global\": 3,\n  \"hook_2s\": 4,\n  \"phrase_coupee_au_debut\": true,\n  \"phrase_coupee_a_la_fin\": true,\n  \"premier_mot_entendu\": \"...revenus\",\n  \"dernier_mot_entendu\": \"...moi\",\n  \"raccords\": [\n    {\n      \"at_s\": 0,\n      \"ca_se_comprend\": false,\n      \"pourquoi\": \"Le clip commence in media res sur une liste de revenus affichée au téléphone sans introduction contextuelle. La phrase audio semble tronquée dès la première seconde.\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"Non publiable car la phrase est coupée au début (manque le sujet/verbe introductif) et à la fin (la pensée n'est pas terminée). Le contexte initial est flou sans l'audio précédent.\"\n}\n```",
+ "provider": "Alibaba"
+}

@@ -1,0 +1,32 @@
+{
+ "model": "meta/muse-spark-1.2",
+ "tag": "J_j2_clean_google",
+ "latency_s": 13.0,
+ "usage": {
+  "prompt_tokens": 2988,
+  "completion_tokens": 1634,
+  "total_tokens": 4622,
+  "cost": 0.0105002,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 163,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0105002,
+   "upstream_inference_prompt_cost": 0.0035557,
+   "upstream_inference_completions_cost": 0.0069445
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1512,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\"publiable\":false,\"score_global\":6,\"hook_2s\":5,\"phrase_coupee_au_debut\":true,\"phrase_coupee_a_la_fin\":false,\"premier_mot_entendu\":\"Affaire\",\"dernier_mot_entendu\":\"euros\",\"raccords\":[],\"moment_mort\":false,\"raison_du_refus\":\"Phrase coupée au début : le clip commence en milieu de phrase par 'Affaire de dropshipping...' (tronquée), donc non publiable malgré un propos continu et sans temps mort.\"}",
+ "reasoning": "",
+ "provider": "Meta"
+}

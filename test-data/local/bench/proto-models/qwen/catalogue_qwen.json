@@ -1,0 +1,1083 @@
+{
+ "qwen/qwen2.5-vl-72b-instruct": {
+  "input_modalities": [
+   "text",
+   "image"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "Nebius",
+    "in_per_Mtok": 0.25,
+    "out_per_Mtok": 0.75,
+    "image_flat_fee": null,
+    "ctx": 32000,
+    "max_out": null,
+    "quant": "fp8",
+    "uptime_30m": 99.5049504950495
+   },
+   {
+    "host": "Parasail",
+    "in_per_Mtok": 0.8,
+    "out_per_Mtok": 1.0,
+    "image_flat_fee": null,
+    "ctx": 128000,
+    "max_out": 128000,
+    "quant": "fp8",
+    "uptime_30m": 99.77777777777777
+   }
+  ]
+ },
+ "qwen/qwen3-vl-8b-instruct": {
+  "input_modalities": [
+   "image",
+   "text"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.117,
+    "out_per_Mtok": 0.455,
+    "image_flat_fee": null,
+    "ctx": 131072,
+    "max_out": 32768,
+    "quant": "fp8",
+    "uptime_30m": 99.98627080830616
+   },
+   {
+    "host": "Parasail",
+    "in_per_Mtok": 0.25,
+    "out_per_Mtok": 0.75,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "bf16",
+    "uptime_30m": 98.55275443510737
+   }
+  ]
+ },
+ "qwen/qwen3-vl-8b-thinking": {
+  "input_modalities": [
+   "image",
+   "text"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.18,
+    "out_per_Mtok": 2.1,
+    "image_flat_fee": null,
+    "ctx": 131072,
+    "max_out": 32768,
+    "quant": "fp8",
+    "uptime_30m": null
+   }
+  ]
+ },
+ "qwen/qwen3-vl-30b-a3b-instruct": {
+  "input_modalities": [
+   "text",
+   "image"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.13,
+    "out_per_Mtok": 0.52,
+    "image_flat_fee": null,
+    "ctx": 131072,
+    "max_out": 32768,
+    "quant": "fp8",
+    "uptime_30m": 100
+   },
+   {
+    "host": "DeepInfra",
+    "in_per_Mtok": 0.15,
+    "out_per_Mtok": 0.6,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 16384,
+    "quant": "fp8",
+    "uptime_30m": 99.48729058347776
+   },
+   {
+    "host": "Novita",
+    "in_per_Mtok": 0.2,
+    "out_per_Mtok": 0.7,
+    "image_flat_fee": null,
+    "ctx": 131072,
+    "max_out": 32768,
+    "quant": "bf16",
+    "uptime_30m": 99.0470605483067
+   },
+   {
+    "host": "SiliconFlow",
+    "in_per_Mtok": 0.29,
+    "out_per_Mtok": 1.0,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "fp8",
+    "uptime_30m": 91.23478260869565
+   }
+  ]
+ },
+ "qwen/qwen3-vl-30b-a3b-thinking": {
+  "input_modalities": [
+   "text",
+   "image"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.2,
+    "out_per_Mtok": 2.4,
+    "image_flat_fee": null,
+    "ctx": 131072,
+    "max_out": 32768,
+    "quant": "fp8",
+    "uptime_30m": 100
+   },
+   {
+    "host": "SiliconFlow",
+    "in_per_Mtok": 0.29,
+    "out_per_Mtok": 1.0,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "fp8",
+    "uptime_30m": null
+   }
+  ]
+ },
+ "qwen/qwen3-vl-32b-instruct": {
+  "input_modalities": [
+   "text",
+   "image"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.104,
+    "out_per_Mtok": 0.416,
+    "image_flat_fee": null,
+    "ctx": 131072,
+    "max_out": 32768,
+    "quant": "fp8",
+    "uptime_30m": 100
+   }
+  ]
+ },
+ "qwen/qwen3-vl-235b-a22b-instruct": {
+  "input_modalities": [
+   "text",
+   "image"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "DeepInfra",
+    "in_per_Mtok": 0.2,
+    "out_per_Mtok": 0.88,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 16384,
+    "quant": "fp8",
+    "uptime_30m": 81.08108108108108
+   },
+   {
+    "host": "Venice",
+    "in_per_Mtok": 0.21,
+    "out_per_Mtok": 1.9,
+    "image_flat_fee": null,
+    "ctx": 128000,
+    "max_out": 16384,
+    "quant": "fp8",
+    "uptime_30m": 88.08038808038809
+   },
+   {
+    "host": "Parasail",
+    "in_per_Mtok": 0.21,
+    "out_per_Mtok": 1.9,
+    "image_flat_fee": null,
+    "ctx": 131072,
+    "max_out": 32768,
+    "quant": "fp8",
+    "uptime_30m": 99.2074724030569
+   },
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.26,
+    "out_per_Mtok": 1.04,
+    "image_flat_fee": null,
+    "ctx": 131072,
+    "max_out": 32768,
+    "quant": "fp8",
+    "uptime_30m": 99.54586739327884
+   },
+   {
+    "host": "Novita",
+    "in_per_Mtok": 0.3,
+    "out_per_Mtok": 1.5,
+    "image_flat_fee": null,
+    "ctx": 131072,
+    "max_out": 32768,
+    "quant": "bf16",
+    "uptime_30m": 91.61931818181817
+   }
+  ]
+ },
+ "qwen/qwen3-vl-235b-a22b-thinking": {
+  "input_modalities": [
+   "text",
+   "image"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.4,
+    "out_per_Mtok": 4.0,
+    "image_flat_fee": null,
+    "ctx": 131072,
+    "max_out": 32768,
+    "quant": "fp8",
+    "uptime_30m": null
+   },
+   {
+    "host": "Novita",
+    "in_per_Mtok": 0.98,
+    "out_per_Mtok": 3.95,
+    "image_flat_fee": null,
+    "ctx": 131072,
+    "max_out": 32768,
+    "quant": "bf16",
+    "uptime_30m": null
+   }
+  ]
+ },
+ "qwen/qwen3.5-9b": {
+  "input_modalities": [
+   "text",
+   "image",
+   "video"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "SiliconFlow",
+    "in_per_Mtok": 0.1,
+    "out_per_Mtok": 0.15,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "fp8",
+    "uptime_30m": 99.83159312899966
+   },
+   {
+    "host": "DeepInfra",
+    "in_per_Mtok": 0.1,
+    "out_per_Mtok": 0.15,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 81920,
+    "quant": "bf16",
+    "uptime_30m": 97.90128254955304
+   },
+   {
+    "host": "Venice",
+    "in_per_Mtok": 0.1,
+    "out_per_Mtok": 0.15,
+    "image_flat_fee": null,
+    "ctx": 256000,
+    "max_out": 32768,
+    "quant": "fp8",
+    "uptime_30m": 99.73021582733813
+   },
+   {
+    "host": "Parasail",
+    "in_per_Mtok": 0.1,
+    "out_per_Mtok": 0.25,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "bf16",
+    "uptime_30m": 99.01129943502825
+   },
+   {
+    "host": "Together",
+    "in_per_Mtok": 0.17,
+    "out_per_Mtok": 0.25,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": null,
+    "quant": "unknown",
+    "uptime_30m": 100
+   }
+  ]
+ },
+ "qwen/qwen3.5-27b": {
+  "input_modalities": [
+   "text",
+   "image",
+   "video"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.195,
+    "out_per_Mtok": 1.56,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 99.92248062015504
+   },
+   {
+    "host": "SiliconFlow",
+    "in_per_Mtok": 0.25,
+    "out_per_Mtok": 2.0,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "fp8",
+    "uptime_30m": 97.84560143626571
+   },
+   {
+    "host": "DeepInfra",
+    "in_per_Mtok": 0.26,
+    "out_per_Mtok": 2.6,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 81920,
+    "quant": "fp8",
+    "uptime_30m": 97.66803840877914
+   },
+   {
+    "host": "AtlasCloud",
+    "in_per_Mtok": 0.27,
+    "out_per_Mtok": 2.16,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 100
+   },
+   {
+    "host": "Novita",
+    "in_per_Mtok": 0.3,
+    "out_per_Mtok": 2.4,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 65536,
+    "quant": "bf16",
+    "uptime_30m": 99.76470588235294
+   },
+   {
+    "host": "Phala",
+    "in_per_Mtok": 0.3,
+    "out_per_Mtok": 2.4,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 65536,
+    "quant": "unknown",
+    "uptime_30m": 99.2248062015504
+   }
+  ]
+ },
+ "qwen/qwen3.5-35b-a3b": {
+  "input_modalities": [
+   "text",
+   "image",
+   "video"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "DeepInfra",
+    "in_per_Mtok": 0.14,
+    "out_per_Mtok": 1.0,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 81920,
+    "quant": "fp8",
+    "uptime_30m": 98.4536082474227
+   },
+   {
+    "host": "AkashML",
+    "in_per_Mtok": 0.14,
+    "out_per_Mtok": 1.0,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "fp8",
+    "uptime_30m": 99.46236559139786
+   },
+   {
+    "host": "Parasail",
+    "in_per_Mtok": 0.15,
+    "out_per_Mtok": 1.0,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "fp8",
+    "uptime_30m": 84.54545454545455
+   },
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.1625,
+    "out_per_Mtok": 1.3,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 100
+   },
+   {
+    "host": "NextBit",
+    "in_per_Mtok": 0.22,
+    "out_per_Mtok": 1.4,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "fp8",
+    "uptime_30m": 0
+   },
+   {
+    "host": "AtlasCloud",
+    "in_per_Mtok": 0.225,
+    "out_per_Mtok": 1.8,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 100
+   },
+   {
+    "host": "SiliconFlow",
+    "in_per_Mtok": 0.24,
+    "out_per_Mtok": 1.8,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "fp8",
+    "uptime_30m": null
+   },
+   {
+    "host": "CoreWeave",
+    "in_per_Mtok": 0.25,
+    "out_per_Mtok": 1.25,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "fp8",
+    "uptime_30m": 100
+   },
+   {
+    "host": "Venice",
+    "in_per_Mtok": 0.3125,
+    "out_per_Mtok": 1.25,
+    "image_flat_fee": null,
+    "ctx": 256000,
+    "max_out": 16384,
+    "quant": "unknown",
+    "uptime_30m": null
+   }
+  ]
+ },
+ "qwen/qwen3.5-122b-a10b": {
+  "input_modalities": [
+   "text",
+   "image",
+   "video"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "SiliconFlow",
+    "in_per_Mtok": 0.26,
+    "out_per_Mtok": 2.08,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "fp8",
+    "uptime_30m": 100
+   },
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.26,
+    "out_per_Mtok": 2.08,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 99.93924665856622
+   },
+   {
+    "host": "DeepInfra",
+    "in_per_Mtok": 0.29,
+    "out_per_Mtok": 2.4,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 81920,
+    "quant": "fp4",
+    "uptime_30m": 100
+   },
+   {
+    "host": "AtlasCloud",
+    "in_per_Mtok": 0.3,
+    "out_per_Mtok": 2.4,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 100
+   },
+   {
+    "host": "Novita",
+    "in_per_Mtok": 0.4,
+    "out_per_Mtok": 3.2,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 65536,
+    "quant": "bf16",
+    "uptime_30m": 98.91146589259797
+   }
+  ]
+ },
+ "qwen/qwen3.5-397b-a17b": {
+  "input_modalities": [
+   "text",
+   "image",
+   "video"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "DigitalOcean",
+    "in_per_Mtok": 0.3025,
+    "out_per_Mtok": 1.925,
+    "image_flat_fee": null,
+    "ctx": 131072,
+    "max_out": null,
+    "quant": "unknown",
+    "uptime_30m": 89.94413407821229
+   },
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.39,
+    "out_per_Mtok": 2.34,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 100
+   },
+   {
+    "host": "Chutes",
+    "in_per_Mtok": 0.45,
+    "out_per_Mtok": 3.0,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 100
+   },
+   {
+    "host": "DeepInfra",
+    "in_per_Mtok": 0.45,
+    "out_per_Mtok": 3.0,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 81920,
+    "quant": "fp8",
+    "uptime_30m": 99.04009034443817
+   },
+   {
+    "host": "Parasail",
+    "in_per_Mtok": 0.5,
+    "out_per_Mtok": 3.6,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "fp8",
+    "uptime_30m": 99.53596287703016
+   },
+   {
+    "host": "AtlasCloud",
+    "in_per_Mtok": 0.55,
+    "out_per_Mtok": 3.5,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 100
+   },
+   {
+    "host": "Phala",
+    "in_per_Mtok": 0.55,
+    "out_per_Mtok": 3.5,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "unknown",
+    "uptime_30m": null
+   },
+   {
+    "host": "Novita",
+    "in_per_Mtok": 0.6,
+    "out_per_Mtok": 3.6,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 65536,
+    "quant": "unknown",
+    "uptime_30m": null
+   },
+   {
+    "host": "StreamLake",
+    "in_per_Mtok": 0.6,
+    "out_per_Mtok": 3.6,
+    "image_flat_fee": null,
+    "ctx": 256000,
+    "max_out": 64000,
+    "quant": "unknown",
+    "uptime_30m": 98.89502762430939
+   },
+   {
+    "host": "GMICloud",
+    "in_per_Mtok": 0.6,
+    "out_per_Mtok": 3.6,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": null,
+    "quant": "fp8",
+    "uptime_30m": null
+   },
+   {
+    "host": "Venice",
+    "in_per_Mtok": 0.75,
+    "out_per_Mtok": 4.5,
+    "image_flat_fee": null,
+    "ctx": 128000,
+    "max_out": 32768,
+    "quant": "unknown",
+    "uptime_30m": null
+   }
+  ]
+ },
+ "qwen/qwen3.5-flash-02-23": {
+  "input_modalities": [
+   "text",
+   "image",
+   "video"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.065,
+    "out_per_Mtok": 0.26,
+    "image_flat_fee": null,
+    "ctx": 1000000,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 100
+   }
+  ]
+ },
+ "qwen/qwen3.5-plus-02-15": {
+  "input_modalities": [
+   "text",
+   "image",
+   "video"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.26,
+    "out_per_Mtok": 1.56,
+    "image_flat_fee": null,
+    "ctx": 1000000,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 100
+   }
+  ]
+ },
+ "qwen/qwen3.5-plus-20260420": {
+  "input_modalities": [
+   "text",
+   "image",
+   "video"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.3,
+    "out_per_Mtok": 1.8,
+    "image_flat_fee": null,
+    "ctx": 1000000,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 100
+   }
+  ]
+ },
+ "qwen/qwen3.6-27b": {
+  "input_modalities": [
+   "text",
+   "image",
+   "video"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "Morph",
+    "in_per_Mtok": 0.289,
+    "out_per_Mtok": 2.4,
+    "image_flat_fee": null,
+    "ctx": 131072,
+    "max_out": 131072,
+    "quant": "unknown",
+    "uptime_30m": 99.36868686868688
+   },
+   {
+    "host": "Chutes",
+    "in_per_Mtok": 0.3,
+    "out_per_Mtok": 2.0,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 99.72129319955407
+   },
+   {
+    "host": "SiliconFlow",
+    "in_per_Mtok": 0.3,
+    "out_per_Mtok": 3.2,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "fp8",
+    "uptime_30m": 98.29545454545455
+   },
+   {
+    "host": "Io Net",
+    "in_per_Mtok": 0.31,
+    "out_per_Mtok": 2.19,
+    "image_flat_fee": null,
+    "ctx": 32768,
+    "max_out": 32768,
+    "quant": "fp8",
+    "uptime_30m": 99.2412746585736
+   },
+   {
+    "host": "Phala",
+    "in_per_Mtok": 0.32,
+    "out_per_Mtok": 2.7,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262140,
+    "quant": "unknown",
+    "uptime_30m": 99.4949494949495
+   },
+   {
+    "host": "DeepInfra",
+    "in_per_Mtok": 0.32,
+    "out_per_Mtok": 3.2,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 81920,
+    "quant": "fp8",
+    "uptime_30m": 99.48805460750853
+   },
+   {
+    "host": "Venice",
+    "in_per_Mtok": 0.325,
+    "out_per_Mtok": 3.25,
+    "image_flat_fee": null,
+    "ctx": 256000,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 98.46153846153847
+   },
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.45,
+    "out_per_Mtok": 2.7,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": null
+   },
+   {
+    "host": "CoreWeave",
+    "in_per_Mtok": 0.6,
+    "out_per_Mtok": 3.6,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "fp8",
+    "uptime_30m": 100
+   }
+  ]
+ },
+ "qwen/qwen3.6-35b-a3b": {
+  "input_modalities": [
+   "text",
+   "image",
+   "video"
+  ],
+  "context": null,
+  "json_mode": false,
+  "hosts": [
+   {
+    "host": "Venice",
+    "in_per_Mtok": 0.098,
+    "out_per_Mtok": 0.95,
+    "image_flat_fee": null,
+    "ctx": 256000,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 99.88808058198097
+   },
+   {
+    "host": "DeepInfra",
+    "in_per_Mtok": 0.1,
+    "out_per_Mtok": 0.95,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 16384,
+    "quant": "fp8",
+    "uptime_30m": 97.24228496388706
+   },
+   {
+    "host": "AkashML",
+    "in_per_Mtok": 0.14,
+    "out_per_Mtok": 1.0,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "fp8",
+    "uptime_30m": 99.46141895390988
+   },
+   {
+    "host": "Parasail",
+    "in_per_Mtok": 0.15,
+    "out_per_Mtok": 1.0,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "fp8",
+    "uptime_30m": 99.85438178448504
+   },
+   {
+    "host": "AtlasCloud",
+    "in_per_Mtok": 0.186,
+    "out_per_Mtok": 1.1138,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 99.72489683631362
+   },
+   {
+    "host": "Phala",
+    "in_per_Mtok": 0.2,
+    "out_per_Mtok": 1.27,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "unknown",
+    "uptime_30m": 100
+   },
+   {
+    "host": "SiliconFlow",
+    "in_per_Mtok": 0.2,
+    "out_per_Mtok": 1.6,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "fp8",
+    "uptime_30m": 97.94050343249427
+   },
+   {
+    "host": "CoreWeave",
+    "in_per_Mtok": 0.25,
+    "out_per_Mtok": 1.25,
+    "image_flat_fee": null,
+    "ctx": 262144,
+    "max_out": 262144,
+    "quant": "fp8",
+    "uptime_30m": 97.06342991386062
+   },
+   {
+    "host": "Io Net",
+    "in_per_Mtok": 0.29,
+    "out_per_Mtok": 1.89,
+    "image_flat_fee": null,
+    "ctx": 262140,
+    "max_out": 262140,
+    "quant": "fp8",
+    "uptime_30m": null
+   }
+  ]
+ },
+ "qwen/qwen3.6-flash": {
+  "input_modalities": [
+   "text",
+   "image",
+   "video"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.1875,
+    "out_per_Mtok": 1.125,
+    "image_flat_fee": null,
+    "ctx": 1000000,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 100
+   }
+  ]
+ },
+ "qwen/qwen3.6-plus": {
+  "input_modalities": [
+   "text",
+   "image",
+   "video"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.325,
+    "out_per_Mtok": 1.95,
+    "image_flat_fee": null,
+    "ctx": 1000000,
+    "max_out": 65536,
+    "quant": "fp8",
+    "uptime_30m": 100
+   }
+  ]
+ },
+ "qwen/qwen3.7-flash": {
+  "input_modalities": [
+   "text",
+   "image",
+   "video"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.03,
+    "out_per_Mtok": 0.13,
+    "image_flat_fee": null,
+    "ctx": 1000000,
+    "max_out": 65536,
+    "quant": "unknown",
+    "uptime_30m": 100
+   }
+  ]
+ },
+ "qwen/qwen3.7-plus": {
+  "input_modalities": [
+   "text",
+   "image"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 0.32,
+    "out_per_Mtok": 1.28,
+    "image_flat_fee": null,
+    "ctx": 1000000,
+    "max_out": 131072,
+    "quant": "fp8",
+    "uptime_30m": 99.99196851658502
+   }
+  ]
+ },
+ "qwen/qwen3.8-max": {
+  "input_modalities": [
+   "text",
+   "image",
+   "video"
+  ],
+  "context": null,
+  "json_mode": true,
+  "hosts": [
+   {
+    "host": "Alibaba",
+    "in_per_Mtok": 2.0,
+    "out_per_Mtok": 6.0,
+    "image_flat_fee": null,
+    "ctx": 1000000,
+    "max_out": 131072,
+    "quant": "unknown",
+    "uptime_30m": 100
+   }
+  ]
+ },
+ "_measured_image_billing": {
+  "note": "aucun Qwen ne facture les images au forfait; tout est facture AU TOKEN selon la resolution",
+  "measured_tokens_per_image_qwen": {
+   "256x144": 68,
+   "384x216": 86,
+   "512x288": 146,
+   "768x432": 338,
+   "1280x720": 882
+  },
+  "measured_tokens_per_image_gemini_2.5_flash_512x288": 258,
+  "method": "meme frame, meme prompt, prompt_tokens - baseline texte, via OpenRouter"
+ },
+ "_not_on_openrouter": {
+  "dashscope_only": [
+   "qwen3-vl-plus",
+   "qwen3-vl-flash",
+   "qwen-vl-max",
+   "qwen-vl-plus",
+   "qwen3-omni-flash",
+   "qwen3.5-omni-plus",
+   "qwen-omni-turbo",
+   "qwen3-asr-flash"
+  ],
+  "groq": "qwen/qwen3.6-27b uniquement, TEXTE seul, 0.60/3.00 $/Mtok — plus cher que SiliconFlow pour le meme modele",
+  "fireworks": "qwen3-vl-235b-a22b-thinking ~0.90 $/Mtok (documentaire) — plus cher que DeepInfra 0.20",
+  "audio_on_openrouter": "AUCUN modele Qwen ne declare input_modality=audio sur OpenRouter"
+ }
+}

@@ -1,0 +1,6 @@
+{
+ "model": "nvidia/nemotron-nano-12b-v2-vl:free",
+ "tag": "T2_t2a",
+ "latency_s": 122.7,
+ "error": "API error: {\"message\": \"Upstream idle timeout exceeded\", \"code\": 504}"
+}

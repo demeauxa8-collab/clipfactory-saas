@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.1-flash-lite",
+ "tag": "A31_j3_clean_motsalea",
+ "latency_s": 1.6,
+ "usage": {
+  "prompt_tokens": 693,
+  "completion_tokens": 114,
+  "total_tokens": 807,
+  "cost": 0.0004695,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 501,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0004695,
+   "upstream_inference_prompt_cost": 0.0002985,
+   "upstream_inference_completions_cost": 0.000171
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\"publiable\":false,\"score_global\":4,\"hook_2s\":3,\n \"phrase_coupee_au_debut\":true,\"phrase_coupee_a_la_fin\":true,\n \"premier_mot_entendu\":\"actuellement\",\"dernier_mot_entendu\":\"faire\",\n \n \"moment_mort\":false,\n \"raison_du_refus\":\"Le clip commence et se termine en plein milieu d'une phrase, ce qui le rend inexploitable pour une publication professionnelle.\"}",
+ "provider": "Google AI Studio"
+}

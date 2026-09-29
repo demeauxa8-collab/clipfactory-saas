@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.6-flash",
+ "tag": "judge_j4_bad_midsentence",
+ "kind": "video",
+ "latency_s": 7.4,
+ "usage": {
+  "prompt_tokens": 3088,
+  "completion_tokens": 218,
+  "total_tokens": 3306,
+  "cost": 0.00082425,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00082425,
+   "upstream_inference_prompt_cost": 0.000579,
+   "upstream_inference_completions_cost": 0.00024525
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": false,\n  \"score_global\": 2,\n  \"hook_2s\": 4,\n  \"phrase_coupee_au_debut\": true,\n  \"phrase_coupee_a_la_fin\": true,\n  \"premier_mot_entendu\": \"c'est\",\n  \"dernier_mot_entendu\": \"ça\",\n  \"raccords\": [\n    {\n      \"at_s\": 1.0,\n      \"ca_se_comprend\": false,\n      \"pourquoi\": \"Transition brutale vers un écran flouté (pixelisé) qui coupe le flux visuel et audio sans apport d'information.\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"Le clip est tronqué au début et à la fin (phrase incomplète). De plus, il contient une transition incohérente (écran pixelisé/flouté) qui casse la narration.\"\n}\n```",
+ "provider": "Alibaba"
+}

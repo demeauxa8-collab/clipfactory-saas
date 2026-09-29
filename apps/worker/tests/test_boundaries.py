@@ -692,3 +692,31 @@ def test_anchoring_near_end_of_video_keeps_the_clip_length():
     assert kept >= (declared_end - declared_start) - 0.5, (
         f"clip collapsed to {kept:.2f}s instead of keeping ~12s"
     )
+
+
+@pytest.mark.parametrize("edge", ["start_anchor", "end_anchor", "payoff"])
+def test_active_strict_anchoring_drops_unresolved_evidence(edge):
+    kwargs = {edge: "xyzzy completely fabricated words nobody spoke"}
+    arc = _arc_with(1.0, 13.0, "Le problème c est que sur Google", **kwargs)
+    kept, report = anchor_arcs_to_transcript([arc], _transcript(ANCHOR_WORDS), strict=True)
+    assert kept == []
+    assert report.arcs_dropped_unresolved == 1
+
+
+def test_duration_guard_rejects_nonfinite_or_negative_source_times():
+    arcs = [_arc_with(float("nan"), 12.0, "invalid"),
+            _arc_with(-1.0, 12.0, "invalid"),
+            _arc_with(0.0, float("inf"), "invalid")]
+    kept, _ = filter_arcs_by_duration(arcs, min_segment_seconds=3, max_segment_seconds=60,
+                                     min_clip_seconds=12, max_clip_seconds=60)
+    assert kept == []
+
+
+def test_safe_padding_never_captures_half_a_neighbouring_word():
+    words = words_from_text(" ".join(f"token{i}" for i in range(50)), 0.0, step=0.5)
+    arc = _arc_with(2.0 - 0.12, 15.0 + 0.22, "token4 token5 token6")
+    arc.segments[0].start_anchor_resolved = True
+    arc.segments[0].end_anchor_resolved = True
+    (result,), _ = snap_arc_segments([arc], words, safe_padding=True)
+    assert result.segments[0].start == 2.0
+    assert result.segments[0].end == 15.0

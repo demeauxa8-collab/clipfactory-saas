@@ -1,0 +1,6 @@
+{
+ "model": "qwen/qwen3-vl-flash",
+ "tag": "statusquo_20frames",
+ "latency_s": 1.1,
+ "error": "API error: {\"message\": \"qwen/qwen3-vl-flash is not a valid model ID\", \"code\": 400}"
+}

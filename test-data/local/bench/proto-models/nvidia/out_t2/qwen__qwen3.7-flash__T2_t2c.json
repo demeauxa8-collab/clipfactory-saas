@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.7-flash",
+ "tag": "T2_t2c",
+ "latency_s": 5.7,
+ "usage": {
+  "prompt_tokens": 903,
+  "completion_tokens": 189,
+  "total_tokens": 1092,
+  "cost": 5.166e-05,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 5.166e-05,
+   "upstream_inference_prompt_cost": 2.709e-05,
+   "upstream_inference_completions_cost": 2.457e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n\"decor\": \"Bureau avec étagères en bois et fenêtre en arrière-plan\",\n\"person_visible\": true,\n\"face_center_x\": 0.15,\n\"energy\": 6,\n\"action\": \"Présentation explicative face caméra avec capture d'écran Semrush en fond\",\n\"proof_objects\": [\n\"Interface Semrush\",\n\"Graphiques SEO\",\n\"Boîte de dialogue Copilot\",\n\"Indicateurs de trafic organique\"\n],\n\"problems\": [\n\"Captions absentes (non visibles dans les frames)\",\n\"Visage positionné très à gauche (risque de coupure si recadrage vertical strict sans ajustement)\",\n\"Interface complexe et chargée en arrière-plan (risque de distraction visuelle)\"\n],\n\"visual_score\": 7,\n\"burned_captions\": false\n}",
+ "reasoning": "",
+ "provider": "Alibaba"
+}

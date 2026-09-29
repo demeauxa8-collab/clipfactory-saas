@@ -478,7 +478,7 @@ NEXT_PUBLIC_SITE_URL=https://clipfactory.app   # used by sitemap, robots, JSON-L
 
 ```
 # Postgres (Supabase pooler eu-west-1)
-DATABASE_URL=postgresql://postgres.jsjaizcnjvghoduvyyea:<PASSWORD>@aws-0-eu-west-1.pooler.supabase.com:6543/postgres
+DATABASE_URL=postgresql://postgres.jsjaizcnjvghoduvyyea:[REDACTED_SECRET]@aws-0-eu-west-1.pooler.supabase.com:6543/postgres
 DATABASE_POOL_MIN=1
 DATABASE_POOL_MAX=10
 

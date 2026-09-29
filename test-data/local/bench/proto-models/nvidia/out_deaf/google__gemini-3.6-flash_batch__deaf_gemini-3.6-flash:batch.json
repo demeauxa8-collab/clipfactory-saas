@@ -1,0 +1,6 @@
+{
+ "model": "google/gemini-3.6-flash:batch",
+ "tag": "deaf_gemini-3.6-flash:batch",
+ "latency_s": 0.6,
+ "error": "API error: {\"message\": \"This model is only available through the Batch API. Use the /api/beta/batches endpoint instead.\", \"code\": 404}"
+}

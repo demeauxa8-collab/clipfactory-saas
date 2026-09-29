@@ -1,0 +1,31 @@
+{
+ "model": "qwen/qwen3-vl-30b-a3b-instruct",
+ "set": "t2_screen",
+ "latency_s": 3.7,
+ "usage": {
+  "prompt_tokens": 1209,
+  "completion_tokens": 112,
+  "total_tokens": 1321,
+  "cost": 0.00024855,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00024855,
+   "upstream_inference_prompt_cost": 0.00018135,
+   "upstream_inference_completions_cost": 6.72e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"decor\": \"desktop screen\",\n  \"person_visible\": true,\n  \"energy\": 65,\n  \"action\": \"pointing at screen\",\n  \"proof_objects\": [\n    \"Google Ads dashboard\",\n    \"Shopify sales data\",\n    \"conversion rate graph\"\n  ],\n  \"problems\": [\n    \"low contrast\",\n    \"unreadable slide\"\n  ],\n  \"visual_score\": 72,\n  \"face_center_x\": 0.12,\n  \"burned_captions\": false\n}",
+ "provider": "DeepInfra"
+}

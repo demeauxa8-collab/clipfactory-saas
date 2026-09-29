@@ -1,0 +1,31 @@
+{
+ "model": "google/gemini-3.6-flash",
+ "tag": "video595_anchor_36",
+ "latency_s": 46.4,
+ "usage": {
+  "prompt_tokens": 54353,
+  "completion_tokens": 1131,
+  "total_tokens": 55484,
+  "cost": 0.090012,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 54145
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.090012,
+   "upstream_inference_prompt_cost": 0.0815295,
+   "upstream_inference_completions_cost": 0.0084825
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1025,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"A\": 37.0,\n  \"B\": 56.0,\n  \"C\": 85.0,\n  \"D\": 102.0,\n  \"E\": 132.0,\n  \"F\": 240.0,\n  \"G\": 274.0,\n  \"duree_video_s\": 596.0\n}\n```",
+ "provider": "Google AI Studio"
+}

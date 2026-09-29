@@ -1,0 +1,31 @@
+{
+ "model": "qwen/qwen3.5-397b-a17b",
+ "set": "t2_head",
+ "latency_s": 3.0,
+ "usage": {
+  "prompt_tokens": 1235,
+  "completion_tokens": 102,
+  "total_tokens": 1337,
+  "cost": 0.0011082,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0011082,
+   "upstream_inference_prompt_cost": 0.000741,
+   "upstream_inference_completions_cost": 0.0003672
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"decor\": \"other\",\n  \"person_visible\": true,\n  \"energy\": 85,\n  \"action\": \"demo\",\n  \"proof_objects\": [\"smartphone screen showing sales dashboard\", \"4543.50 € revenue figure\"],\n  \"problems\": [],\n  \"visual_score\": 92,\n  \"face_center_x\": 0.65,\n  \"burned_captions\": false\n}",
+ "provider": "StreamLake"
+}

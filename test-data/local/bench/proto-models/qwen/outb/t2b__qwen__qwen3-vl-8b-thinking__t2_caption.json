@@ -1,0 +1,31 @@
+{
+ "model": "qwen/qwen3-vl-8b-thinking",
+ "set": "t2_caption",
+ "latency_s": 6.1,
+ "usage": {
+  "prompt_tokens": 1206,
+  "completion_tokens": 760,
+  "total_tokens": 1966,
+  "cost": 0.00181308,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00181308,
+   "upstream_inference_prompt_cost": 0.00021708,
+   "upstream_inference_completions_cost": 0.001596
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 676,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"decor\": \"other\",\n  \"person_visible\": true,\n  \"energy\": 85,\n  \"action\": \"talking head\",\n  \"proof_objects\": [\"text overlays showing expenses and sales\"],\n  \"problems\": [],\n  \"visual_score\": 85,\n  \"face_center_x\": 0.5,\n  \"burned_captions\": true\n}",
+ "provider": "Alibaba"
+}

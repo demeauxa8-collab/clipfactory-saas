@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.6-plus",
+ "tag": "judge_j5_bad_realmontage",
+ "kind": "video",
+ "latency_s": 8.2,
+ "usage": {
+  "prompt_tokens": 4708,
+  "completion_tokens": 251,
+  "total_tokens": 4959,
+  "cost": 0.00201955,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00201955,
+   "upstream_inference_prompt_cost": 0.0015301,
+   "upstream_inference_completions_cost": 0.00048945
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"publiable\": false,\n  \"score_global\": 3,\n  \"hook_2s\": 8,\n  \"phrase_coupee_au_debut\": false,\n  \"phrase_coupee_a_la_fin\": true,\n  \"premier_mot_entendu\": \"J'ai\",\n  \"dernier_mot_entendu\": \"micro\",\n  \"raccords\": [\n    {\n      \"at_s\": 13,\n      \"ca_se_comprend\": true,\n      \"pourquoi\": \"Changement de décor (extérieur vers intérieur) et de tenue. La transition est brutale mais le sujet continue son discours. Cependant, la fin du clip coupe la phrase en cours.\"\n    }\n  ],\n  \"moment_mort\": false,\n  \"raison_du_refus\": \"La dernière phrase est tronquée. Le locuteur dit 'donc j'ai mis un micro' et la vidéo s'arrête net alors qu'il semble vouloir continuer l'explication ou la démonstration. Conformément aux règles strictes, une phrase coupée à la fin rend le clip non publiable.\"\n}\n```",
+ "provider": "Alibaba"
+}

@@ -1,0 +1,32 @@
+{
+ "model": "google/gemini-3.5-flash-lite",
+ "tag": "T2_t2b",
+ "latency_s": 1.9,
+ "usage": {
+  "prompt_tokens": 5667,
+  "completion_tokens": 90,
+  "total_tokens": 5757,
+  "cost": 0.0019251,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0019251,
+   "upstream_inference_prompt_cost": 0.0017001,
+   "upstream_inference_completions_cost": 0.000225
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\"decor\":\"Chambre/bureau avec décoration murale et écran d'ordinateur\",\"person_visible\":true,\"face_center_x\":0.55,\"energy\":6,\"action\":\"Parler face caméra avec un site web en arrière-plan\",\"proof_objects\":[\"ordinateur\",\"site web de mots aléatoires\"],\"problems\":[],\"visual_score\":7,\"burned_captions\":false}\n```",
+ "reasoning": "",
+ "provider": "Google"
+}

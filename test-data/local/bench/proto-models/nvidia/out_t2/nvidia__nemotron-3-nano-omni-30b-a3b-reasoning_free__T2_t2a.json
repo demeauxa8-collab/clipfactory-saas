@@ -1,0 +1,32 @@
+{
+ "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+ "tag": "T2_t2a",
+ "latency_s": 6.5,
+ "usage": {
+  "prompt_tokens": 1534,
+  "completion_tokens": 880,
+  "total_tokens": 2414,
+  "cost": 0,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0,
+   "upstream_inference_prompt_cost": 0,
+   "upstream_inference_completions_cost": 0
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 745,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"decor\": \"rooftop terrace with city skyline and palm trees\",\n  \"person_visible\": true,\n  \"face_center_x\": 0.5,\n  \"energy\": 6,\n  \"action\": \"talking to camera while showing a coin and a Google Ads logo\",\n  \"proof_objects\": [\"coin\", \"Google Ads logo\"],\n  \"problems\": [],\n  \"visual_score\": 8,\n  \"burned_captions\": false\n}",
+ "reasoning": "We need to output JSON with fields: decor, person_visible, face_center_x, energy, action, proof_objects, problems, visual_score, burned_captions.\n\nWe have 5 frames. Need to analyze each? Probably aggregate? The instruction: \"Tu analyses 5 frames consecutives d'un segment de vlog FR destine a un clip vertical 9:16.\" So we need to produce a single JSON describing the segment? Probably combine info across frames. Let's examine each frame.\n\nFrame 1: No text overlay. Person visible, face_center_x approx? He is centered maybe 0.5. Energy maybe moderate (5-7). Action: speaking? He looks at camera, mouth slightly open. Decor: rooftop with city skyline, palm trees, tables. So decor: \"rooftop terrace with city skyline and palm trees\". person_visible true. face_center_x maybe 0.5 (center). energy may",
+ "provider": "Nvidia"
+}

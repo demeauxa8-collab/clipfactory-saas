@@ -1,0 +1,31 @@
+{
+ "model": "qwen/qwen3.7-flash",
+ "tag": "long300",
+ "latency_s": 35.2,
+ "usage": {
+  "prompt_tokens": 36137,
+  "completion_tokens": 958,
+  "total_tokens": 37095,
+  "cost": 0.0039969,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0039969,
+   "upstream_inference_prompt_cost": 0.0036137,
+   "upstream_inference_completions_cost": 0.0003832
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "Based on a detailed analysis of the video's narrative flow, pacing, and visual storytelling, here is the breakdown into clipable segments, dead moments, and the absolute best hook.\n\n```json\n{\n  \"segments_clipables\": [\n    {\n      \"start_s\": 0,\n      \"end_s\": 32,\n      \"titre\": \"L'accroche du défi financier\",\n      \"hook_score\": 9,\n      \"pourquoi\": \"Le视频 commence par une affirmation choc et visuelle : 'J'ai seulement 1€' suivi de '4,5 millions €'. Cette opposition extrême crée une curiosité immédiate sur la méthode pour passer de l'un à l'autre. L'utilisation d'une pièce de monnaie comme objet symbolique renforce le message.\",\n      \"energie\": 9\n    },\n    {\n      \"start_s\": 34,\n      \"end_s\": 54,\n      \"titre\": \"La promesse de résultat rapide\",\n      \"hook_score\": 8,\n      \"pourquoi\": \"Le créateur introduit la métrique clé '24H00 1€' et mentionne 'Google Ads'. Cela transforme l'affirmation initiale en un défi concret et mesurable, attirant un public intéressé par le marketing digital et les résultats rapides.\",\n      \"energie\": 8\n    },\n    {\n      \"start_s\": 77,\n      \"end_s\": 85,\n      \"titre\": \"La preuve sociale par les messages\",\n      \"hook_score\": 7,\n      \"pourquoi\": \"La montre des SMS avec des offres d'argent ('vaul live ma caisse mdr pour 30€ parcontre') sert de preuve sociale brute et authentique. C'est une démonstration directe de la demande, ce qui valide la faisabilité du projet et augmente la crédibilité.\",\n      \"energie\": 7\n    },\n    {\n      \"start_s\": 119,\n      \"end_s\": 175,\n      \"titre\": \"La méthode créative de recherche produit\",\n      \"hook_score\": 8,\n      \"pourquoi\": \"Cette section est le cœur éducatif de la vidéo. Le créateur utilise un outil inattendu (un générateur de mots aléatoires en français) pour trouver des idées de produits. C'est une approche originale et mémorable qui se distingue des tutoriels standards de dropshipping.\",\n      \"energie\": 8\n    },\n    {\n      \"start_s\": 208,\n      \"end_s\": 264,\n      \"titre\": \"La validation du marché et de la marge\",\n      \"hook_score\": 7,\n      \"pourquoi\": \"Le créateur démontre concrètement comment valider un produit (la montre GPS enfant) en comparant les prix de vente (site e-commerce) et d'achat (AliExpress). Il intègre même un calcul de marge via ChatGPT, montrant une approche analytique et complète.\",\n      \"energie\": 7\n    },\n    {\n      \"start_s\": 274,\n      \"end_s\": 299,\n      \"titre\": \"L'analyse SEO et des tendances\",\n      \"hook_score\": 6,\n      \"pourquoi\": \"En terminant par l'utilisation d'outils professionnels comme Semrush et Google Trends, le créateur montre que son approche n'est pas seulement créative mais aussi basée sur des données solides. Cela rassure le spectateur sur la sérieux de la méthode.\",\n      \"energie\": 6\n    }\n  ],\n  \"moments_morts\": [\n    [55, 76],\n    [86, 98],\n    [99, 118]\n  ],\n  \"meilleur_hook_absolu\": {\n    \"start_s\": 0,\n    \"end_s\": 8,\n    \"pourquoi\": \"C'est l'accroche la plus puissante car elle utilise un contraste radical et visuel ('1€' vs '4,5 millions €') pour capturer l'attention en moins de 2 secondes. Elle pose immédiatement la question centrale que toute la vidéo va essayer de répondre, garantissant un taux de rétention élevé au début.\"\n  }\n}\n```",
+ "provider": "Alibaba"
+}

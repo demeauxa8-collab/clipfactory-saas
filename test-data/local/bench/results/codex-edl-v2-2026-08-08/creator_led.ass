@@ -1,0 +1,128 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: CFHook,Inter,122,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,7,2,2,80,80,400,1
+Style: CFStandard,Inter,110,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,6,2,2,80,80,400,1
+Style: CFProof,Inter,94,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,5,1,2,80,80,400,1
+Style: CFReaction,Inter,116,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,7,2,2,80,80,400,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:00.03,CFHook,,0,0,400,,{\c&H76E600&\fscx118\fscy118}Moi{\c&HFFFFFF&\fscx100\fscy100} c’est
+Dialogue: 0,0:00:00.00,0:00:00.06,CFHook,,0,0,400,,Moi {\c&H76E600&\fscx118\fscy118}c’est{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:00.06,0:00:00.53,CFHook,,0,0,400,,{\c&H76E600&\fscx118\fscy118}Gaspar{\c&HFFFFFF&\fscx100\fscy100} j’ai
+Dialogue: 0,0:00:00.53,0:00:00.56,CFHook,,0,0,400,,Gaspar {\c&H76E600&\fscx118\fscy118}j’ai{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:00.53,0:00:00.66,CFHook,,0,0,400,,{\c&H76E600&\fscx118\fscy118}fait{\c&HFFFFFF&\fscx100\fscy100} 4
+Dialogue: 0,0:00:00.66,0:00:00.93,CFHook,,0,0,400,,fait 4
+Dialogue: 0,0:00:00.93,0:00:01.13,CFHook,,0,0,400,,{\c&H76E600&\fscx118\fscy118}millions{\c&HFFFFFF&\fscx100\fscy100} et
+Dialogue: 0,0:00:01.13,0:00:01.33,CFHook,,0,0,400,,millions et
+Dialogue: 0,0:00:01.33,0:00:01.36,CFHook,,0,0,400,,{\c&H76E600&\fscx118\fscy118}demi{\c&HFFFFFF&\fscx100\fscy100} en
+Dialogue: 0,0:00:01.33,0:00:01.60,CFHook,,0,0,400,,demi en
+Dialogue: 0,0:00:01.60,0:00:01.90,CFHook,,0,0,400,,e commerce
+Dialogue: 0,0:00:01.90,0:00:02.06,CFHook,,0,0,400,,e {\c&H76E600&\fscx118\fscy118}commerce{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:02.06,0:00:02.30,CFHook,,0,0,400,,et l’objectif
+Dialogue: 0,0:00:02.30,0:00:02.73,CFHook,,0,0,400,,et {\c&H76E600&\fscx118\fscy118}l’objectif{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:02.73,0:00:02.93,CFHook,,0,0,400,,ça va
+Dialogue: 0,0:00:02.93,0:00:02.96,CFHook,,0,0,400,,ça va
+Dialogue: 0,0:00:02.96,0:00:03.10,CFHook,,0,0,400,,{\c&H76E600&\fscx118\fscy118}être{\c&HFFFFFF&\fscx100\fscy100} simple
+Dialogue: 0,0:00:03.10,0:00:03.33,CFHook,,0,0,400,,être {\c&H76E600&\fscx118\fscy118}simple{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:03.33,0:00:03.66,CFHook,,0,0,400,,{\c&H76E600&\fscx118\fscy118}aujourd’hui{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:03.76,0:00:03.80,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}C’est{\c&HFFFFFF&\fscx100\fscy100} juste de
+Dialogue: 0,0:00:03.76,0:00:03.90,CFStandard,,0,0,400,,C’est {\c&H76E600&\fscx112\fscy112}juste{\c&HFFFFFF&\fscx100\fscy100} de
+Dialogue: 0,0:00:03.90,0:00:04.33,CFStandard,,0,0,400,,C’est juste de
+Dialogue: 0,0:00:04.33,0:00:04.36,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}prouver{\c&HFFFFFF&\fscx100\fscy100} qu’en 2025
+Dialogue: 0,0:00:04.33,0:00:04.66,CFStandard,,0,0,400,,prouver {\c&H76E600&\fscx112\fscy112}qu’en{\c&HFFFFFF&\fscx100\fscy100} 2025
+Dialogue: 0,0:00:04.66,0:00:05.03,CFStandard,,0,0,400,,prouver qu’en {\c&H76E600&\fscx112\fscy112}2025{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:05.03,0:00:05.20,CFStandard,,0,0,400,,tu peux lancer
+Dialogue: 0,0:00:05.20,0:00:05.30,CFStandard,,0,0,400,,tu {\c&H76E600&\fscx112\fscy112}peux{\c&HFFFFFF&\fscx100\fscy100} lancer
+Dialogue: 0,0:00:05.30,0:00:05.46,CFStandard,,0,0,400,,tu peux {\c&H76E600&\fscx112\fscy112}lancer{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:05.46,0:00:05.66,CFStandard,,0,0,400,,un business avec
+Dialogue: 0,0:00:05.66,0:00:06.06,CFStandard,,0,0,400,,un {\c&H76E600&\fscx112\fscy112}business{\c&HFFFFFF&\fscx100\fscy100} avec
+Dialogue: 0,0:00:06.06,0:00:06.33,CFStandard,,0,0,400,,un business avec
+Dialogue: 0,0:00:06.33,0:00:06.63,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}quasiment{\c&HFFFFFF&\fscx100\fscy100} rien du
+Dialogue: 0,0:00:06.63,0:00:06.96,CFStandard,,0,0,400,,quasiment {\c&H76E600&\fscx112\fscy112}rien{\c&HFFFFFF&\fscx100\fscy100} du
+Dialogue: 0,0:00:06.96,0:00:07.20,CFStandard,,0,0,400,,quasiment rien du
+Dialogue: 0,0:00:07.20,0:00:07.23,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}tout{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:07.30,0:00:07.40,CFProof,,0,0,400,,Et on peut
+Dialogue: 0,0:00:07.40,0:00:07.46,CFProof,,0,0,400,,Et on peut
+Dialogue: 0,0:00:07.46,0:00:07.60,CFProof,,0,0,400,,Et on {\c&H76E600&\fscx106\fscy106}peut{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:07.60,0:00:07.70,CFProof,,0,0,400,,{\c&H76E600&\fscx106\fscy106}voir{\c&HFFFFFF&\fscx100\fscy100} qu’on a
+Dialogue: 0,0:00:07.70,0:00:07.83,CFProof,,0,0,400,,voir {\c&H76E600&\fscx106\fscy106}qu’on{\c&HFFFFFF&\fscx100\fscy100} a
+Dialogue: 0,0:00:07.83,0:00:08.00,CFProof,,0,0,400,,voir qu’on a
+Dialogue: 0,0:00:08.00,0:00:08.33,CFProof,,0,0,400,,{\c&H76E600&\fscx106\fscy106}dépensé{\c&HFFFFFF&\fscx100\fscy100} que 3
+Dialogue: 0,0:00:08.33,0:00:08.70,CFProof,,0,0,400,,dépensé que 3
+Dialogue: 0,0:00:08.70,0:00:09.23,CFProof,,0,0,400,,dépensé que 3
+Dialogue: 0,0:00:09.23,0:00:09.86,CFProof,,0,0,400,,{\c&H76E600&\fscx106\fscy106}dollars{\c&HFFFFFF&\fscx100\fscy100} On a
+Dialogue: 0,0:00:09.86,0:00:09.93,CFProof,,0,0,400,,dollars On a
+Dialogue: 0,0:00:09.93,0:00:10.20,CFProof,,0,0,400,,dollars On a
+Dialogue: 0,0:00:10.20,0:00:10.30,CFProof,,0,0,400,,{\c&H76E600&\fscx106\fscy106}dépensé{\c&HFFFFFF&\fscx100\fscy100} que 3
+Dialogue: 0,0:00:10.30,0:00:10.50,CFProof,,0,0,400,,dépensé que 3
+Dialogue: 0,0:00:10.50,0:00:10.70,CFProof,,0,0,400,,dépensé que 3
+Dialogue: 0,0:00:10.70,0:00:11.00,CFProof,,0,0,400,,{\c&H76E600&\fscx106\fscy106}dollars{\c&HFFFFFF&\fscx100\fscy100} Donc là
+Dialogue: 0,0:00:11.00,0:00:11.20,CFProof,,0,0,400,,dollars {\c&H76E600&\fscx106\fscy106}Donc{\c&HFFFFFF&\fscx100\fscy100} là
+Dialogue: 0,0:00:11.20,0:00:11.26,CFProof,,0,0,400,,dollars Donc là
+Dialogue: 0,0:00:11.26,0:00:11.46,CFProof,,0,0,400,,En sachant que
+Dialogue: 0,0:00:11.46,0:00:11.60,CFProof,,0,0,400,,En {\c&H76E600&\fscx106\fscy106}sachant{\c&HFFFFFF&\fscx100\fscy100} que
+Dialogue: 0,0:00:11.60,0:00:11.66,CFProof,,0,0,400,,En sachant que
+Dialogue: 0,0:00:11.66,0:00:12.00,CFProof,,0,0,400,,le produit nous
+Dialogue: 0,0:00:12.00,0:00:12.03,CFProof,,0,0,400,,le {\c&H76E600&\fscx106\fscy106}produit{\c&HFFFFFF&\fscx100\fscy100} nous
+Dialogue: 0,0:00:12.00,0:00:12.20,CFProof,,0,0,400,,le produit {\c&H76E600&\fscx106\fscy106}nous{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:12.20,0:00:12.43,CFProof,,0,0,400,,a coûté 14
+Dialogue: 0,0:00:12.43,0:00:12.46,CFProof,,0,0,400,,a {\c&H76E600&\fscx106\fscy106}coûté{\c&HFFFFFF&\fscx100\fscy100} 14
+Dialogue: 0,0:00:12.46,0:00:12.93,CFProof,,0,0,400,,a coûté 14
+Dialogue: 0,0:00:12.93,0:00:13.06,CFProof,,0,0,400,,{\c&H76E600&\fscx106\fscy106}euros{\c&HFFFFFF&\fscx100\fscy100} à envoyer
+Dialogue: 0,0:00:13.06,0:00:13.23,CFProof,,0,0,400,,euros à envoyer
+Dialogue: 0,0:00:13.23,0:00:13.60,CFProof,,0,0,400,,euros à {\c&H76E600&\fscx106\fscy106}envoyer{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:13.60,0:00:13.73,CFProof,,0,0,400,,On est à
+Dialogue: 0,0:00:13.73,0:00:13.80,CFProof,,0,0,400,,On est à
+Dialogue: 0,0:00:13.80,0:00:13.90,CFProof,,0,0,400,,On est à
+Dialogue: 0,0:00:13.90,0:00:14.26,CFProof,,0,0,400,,{\c&H76E600&\fscx106\fscy106}environ{\c&HFFFFFF&\fscx100\fscy100} 50 euros
+Dialogue: 0,0:00:14.26,0:00:14.63,CFProof,,0,0,400,,environ 50 euros
+Dialogue: 0,0:00:14.63,0:00:14.83,CFProof,,0,0,400,,environ 50 {\c&H76E600&\fscx106\fscy106}euros{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:14.83,0:00:15.13,CFProof,,0,0,400,,{\c&H76E600&\fscx106\fscy106}bénéfice{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:15.20,0:00:15.33,CFReaction,,0,0,400,,{\c&H76E600&\fscx120\fscy120}Cette{\c&HFFFFFF&\fscx100\fscy100} vidéo
+Dialogue: 0,0:00:15.33,0:00:15.46,CFReaction,,0,0,400,,Cette {\c&H76E600&\fscx120\fscy120}vidéo{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:15.86,0:00:15.90,CFReaction,,0,0,400,,{\c&H76E600&\fscx120\fscy120}Elle{\c&HFFFFFF&\fscx100\fscy100} prouve
+Dialogue: 0,0:00:15.86,0:00:15.90,CFReaction,,0,0,400,,Elle {\c&H76E600&\fscx120\fscy120}prouve{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:15.86,0:00:16.10,CFReaction,,0,0,400,,{\c&H76E600&\fscx120\fscy120}quand{\c&HFFFFFF&\fscx100\fscy100} même
+Dialogue: 0,0:00:16.10,0:00:16.20,CFReaction,,0,0,400,,quand {\c&H76E600&\fscx120\fscy120}même{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:16.26,0:00:16.36,CFReaction,,0,0,400,,Que tu
+Dialogue: 0,0:00:16.36,0:00:16.46,CFReaction,,0,0,400,,Que tu
+Dialogue: 0,0:00:16.46,0:00:16.53,CFReaction,,0,0,400,,{\c&H76E600&\fscx120\fscy120}peux{\c&HFFFFFF&\fscx100\fscy100} te
+Dialogue: 0,0:00:16.53,0:00:16.83,CFReaction,,0,0,400,,peux te
+Dialogue: 0,0:00:16.83,0:00:16.86,CFReaction,,0,0,400,,{\c&H76E600&\fscx120\fscy120}lancer{\c&HFFFFFF&\fscx100\fscy100} avec
+Dialogue: 0,0:00:16.83,0:00:17.03,CFReaction,,0,0,400,,lancer avec
+Dialogue: 0,0:00:17.03,0:00:17.23,CFReaction,,0,0,400,,pas grand
+Dialogue: 0,0:00:17.23,0:00:17.43,CFReaction,,0,0,400,,pas {\c&H76E600&\fscx120\fscy120}grand{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:17.43,0:00:17.53,CFReaction,,0,0,400,,{\c&H76E600&\fscx120\fscy120}chose{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:17.63,0:00:17.70,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}Vous{\c&HFFFFFF&\fscx100\fscy100} pouvez vous
+Dialogue: 0,0:00:17.70,0:00:17.86,CFStandard,,0,0,400,,Vous {\c&H76E600&\fscx112\fscy112}pouvez{\c&HFFFFFF&\fscx100\fscy100} vous
+Dialogue: 0,0:00:17.86,0:00:18.13,CFStandard,,0,0,400,,Vous pouvez {\c&H76E600&\fscx112\fscy112}vous{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:18.13,0:00:18.33,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}abonner{\c&HFFFFFF&\fscx100\fscy100} sur Instagram
+Dialogue: 0,0:00:18.33,0:00:18.53,CFStandard,,0,0,400,,abonner {\c&H76E600&\fscx112\fscy112}sur{\c&HFFFFFF&\fscx100\fscy100} Instagram
+Dialogue: 0,0:00:18.53,0:00:18.93,CFStandard,,0,0,400,,abonner sur {\c&H76E600&\fscx112\fscy112}Instagram{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:19.10,0:00:19.13,CFStandard,,0,0,400,,Je vous mets
+Dialogue: 0,0:00:19.13,0:00:19.26,CFStandard,,0,0,400,,Je {\c&H76E600&\fscx112\fscy112}vous{\c&HFFFFFF&\fscx100\fscy100} mets
+Dialogue: 0,0:00:19.26,0:00:19.30,CFStandard,,0,0,400,,Je vous {\c&H76E600&\fscx112\fscy112}mets{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:19.30,0:00:19.50,CFStandard,,0,0,400,,le nom ici
+Dialogue: 0,0:00:19.50,0:00:19.53,CFStandard,,0,0,400,,le {\c&H76E600&\fscx112\fscy112}nom{\c&HFFFFFF&\fscx100\fscy100} ici
+Dialogue: 0,0:00:19.50,0:00:19.73,CFStandard,,0,0,400,,le nom {\c&H76E600&\fscx112\fscy112}ici{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:19.83,0:00:19.96,CFStandard,,0,0,400,,Et je vous
+Dialogue: 0,0:00:19.96,0:00:20.00,CFStandard,,0,0,400,,Et je vous
+Dialogue: 0,0:00:20.00,0:00:20.33,CFStandard,,0,0,400,,Et je {\c&H76E600&\fscx112\fscy112}vous{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:20.33,0:00:20.43,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}montrerai{\c&HFFFFFF&\fscx100\fscy100} en story
+Dialogue: 0,0:00:20.43,0:00:20.56,CFStandard,,0,0,400,,montrerai en story
+Dialogue: 0,0:00:20.56,0:00:20.86,CFStandard,,0,0,400,,montrerai en {\c&H76E600&\fscx112\fscy112}story{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:21.06,0:00:21.20,CFStandard,,0,0,400,,A combien j’ai
+Dialogue: 0,0:00:21.20,0:00:21.46,CFStandard,,0,0,400,,A {\c&H76E600&\fscx112\fscy112}combien{\c&HFFFFFF&\fscx100\fscy100} j’ai
+Dialogue: 0,0:00:21.46,0:00:21.60,CFStandard,,0,0,400,,A combien {\c&H76E600&\fscx112\fscy112}j’ai{\c&HFFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:21.60,0:00:21.80,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}fait{\c&HFFFFFF&\fscx100\fscy100} scaler ce
+Dialogue: 0,0:00:21.80,0:00:22.06,CFStandard,,0,0,400,,fait {\c&H76E600&\fscx112\fscy112}scaler{\c&HFFFFFF&\fscx100\fscy100} ce
+Dialogue: 0,0:00:22.06,0:00:22.23,CFStandard,,0,0,400,,fait scaler ce
+Dialogue: 0,0:00:22.23,0:00:22.43,CFStandard,,0,0,400,,{\c&H76E600&\fscx112\fscy112}shop{\c&HFFFFFF&\fscx100\fscy100}

@@ -1,0 +1,32 @@
+{
+ "model": "qwen/qwen3.5-27b",
+ "tag": "deaf_j1",
+ "kind": "video",
+ "latency_s": 12.3,
+ "usage": {
+  "prompt_tokens": 5549,
+  "completion_tokens": 226,
+  "total_tokens": 5775,
+  "cost": 0.00198639,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00198639,
+   "upstream_inference_prompt_cost": 0.00149823,
+   "upstream_inference_completions_cost": 0.00048816
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "```json\n{\n  \"entends_le_son\": true,\n  \"transcription_orale\": \"J'ai seulement une pièce de un euro. Je vais vous expliquer comment j'ai pu gagner 4,5 millions d'euros avec cette seule pièce. C'est une histoire incroyable qui a commencé il y a quelques années. J'étais dans une situation financière difficile et je cherchais désespérément des moyens de sortir de cette impasse. Un jour, j'ai eu l'idée de participer à un concours en ligne où il fallait deviner le résultat d'un lancer de pièce. J'ai utilisé ma seule pièce pour tenter ma chance. À mon grand étonnement, j'ai gagné le premier prix, ce qui m'a permis de commencer à investir et à faire fructifier mon argent. Aujourd'hui, grâce à cette pièce et à mes efforts, je suis devenu millionnaire.\",\n  \"texte_incruste_a_l_ecran\": [\n    \"J'AI SEULEMENT\",\n    \"4,5 MILLIONS €\"\n  ]\n}\n```",
+ "provider": "AtlasCloud"
+}

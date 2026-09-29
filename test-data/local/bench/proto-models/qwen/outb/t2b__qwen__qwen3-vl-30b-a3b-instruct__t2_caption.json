@@ -1,0 +1,31 @@
+{
+ "model": "qwen/qwen3-vl-30b-a3b-instruct",
+ "set": "t2_caption",
+ "latency_s": 2.6,
+ "usage": {
+  "prompt_tokens": 1204,
+  "completion_tokens": 84,
+  "total_tokens": 1288,
+  "cost": 0.000231,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.000231,
+   "upstream_inference_prompt_cost": 0.0001806,
+   "upstream_inference_completions_cost": 5.04e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "finish_reason": "stop",
+ "text": "{\n  \"decor\": \"studio podcast\",\n  \"person_visible\": true,\n  \"energy\": 75,\n  \"action\": \"talking head\",\n  \"proof_objects\": [\n    \"text overlay\"\n  ],\n  \"problems\": [],\n  \"visual_score\": 85,\n  \"face_center_x\": 0.52,\n  \"burned_captions\": true\n}",
+ "provider": "DeepInfra"
+}
