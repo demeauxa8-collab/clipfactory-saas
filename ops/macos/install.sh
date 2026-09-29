@@ -12,6 +12,16 @@ for name in api worker; do
     "$repo/ops/macos/$label.plist" > "$target"
   plutil -lint "$target" >/dev/null
   launchctl bootout "gui/$(id -u)/$label" >/dev/null 2>&1 || true
-  launchctl bootstrap "gui/$(id -u)" "$target"
+  # launchd may take a moment to release a label after bootout.
+  for attempt in 1 2 3 4 5; do
+    if launchctl bootstrap "gui/$(id -u)" "$target"; then
+      break
+    fi
+    if [ "$attempt" -eq 5 ]; then
+      echo "Could not register $label" >&2
+      exit 1
+    fi
+    sleep 1
+  done
   launchctl kickstart -k "gui/$(id -u)/$label"
 done
