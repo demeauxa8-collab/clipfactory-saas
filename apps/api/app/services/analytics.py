@@ -67,7 +67,7 @@ async def record_event(
             referrer,
         )
     except Exception as exc:
-        log.warning("analytics.insert_failed", event=event_name, err=str(exc))
+        log.warning("analytics.insert_failed", event_name=event_name, err=str(exc))
 
     distinct_id = user_id or anon_id
     if distinct_id:
@@ -91,7 +91,7 @@ async def track_with_pool(
         async with pool.acquire() as conn:
             await record_event(conn, event_name=event_name, **kwargs)
     except Exception as exc:
-        log.warning("analytics.track_failed", event=event_name, err=str(exc))
+        log.warning("analytics.track_failed", event_name=event_name, err=str(exc))
 
 
 async def _forward_posthog(
@@ -111,4 +111,4 @@ async def _forward_posthog(
         async with httpx.AsyncClient(timeout=3.0) as client:
             await client.post(url, json=payload)
     except Exception as exc:
-        log.debug("analytics.posthog_failed", event=event_name, err=str(exc))
+        log.debug("analytics.posthog_failed", event_name=event_name, err=str(exc))
