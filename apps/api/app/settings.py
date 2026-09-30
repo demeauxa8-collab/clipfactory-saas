@@ -46,6 +46,7 @@ class Settings(BaseSettings):
     turnstile_secret_key: str = ""
     env: Literal["dev", "prod"] = "dev"
     cors_allow_origins: str = "http://localhost:3000"
+    cors_allow_origin_regex: str = ""
     log_level: str = "INFO"
 
     # Analytics — first-party always on; PostHog mirror optional (empty key = off)
