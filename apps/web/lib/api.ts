@@ -15,7 +15,7 @@ export class ApiError extends Error {
   }
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_URL = "/api/backend";
 
 async function authHeader(): Promise<Record<string, string>> {
   const supabase = createSupabaseBrowserClient();

@@ -5,7 +5,7 @@
 //   2. First-party API sink (/events) for authenticated users.
 // Analytics must never break the UI, so every path swallows its own errors.
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_URL = "/api/backend";
 const ANON_KEY = "cf_anon_id";
 
 type Props = Record<string, unknown>;

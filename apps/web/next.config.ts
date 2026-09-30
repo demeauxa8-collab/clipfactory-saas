@@ -30,6 +30,9 @@ const config: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   typedRoutes: true,
+  async rewrites() {
+    return [{ source: "/api/backend/:path*", destination: `${apiOrigin}/:path*` }];
+  },
   async headers() {
     return [
       {
