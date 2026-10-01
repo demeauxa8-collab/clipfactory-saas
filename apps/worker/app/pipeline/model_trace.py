@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 from ..models import JobContext
@@ -66,9 +67,10 @@ class TracedProvider(LLMProvider):
         }
         try:
             result = await getattr(self.provider, operation)(**kwargs)
-        except Exception as exc:
+        except (Exception, asyncio.CancelledError) as exc:
             record_call(
-                self.ctx, self.stage, **observation, status="failed",
+                self.ctx, self.stage, **observation,
+                status="canceled" if isinstance(exc, asyncio.CancelledError) else "failed",
                 model=None, model_source=None, error_type=type(exc).__name__,
             )
             raise

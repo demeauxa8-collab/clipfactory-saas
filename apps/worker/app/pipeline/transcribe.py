@@ -271,9 +271,11 @@ async def transcribe(
         }
         try:
             result = await call()
-        except Exception as exc:
+        except (Exception, asyncio.CancelledError) as exc:
             if trace_ctx is not None:
-                record_call(trace_ctx, "transcription", **metadata, status="failed",
+                record_call(trace_ctx, "transcription", **metadata,
+                            status="canceled" if isinstance(exc, asyncio.CancelledError)
+                            else "failed",
                             model=None, model_source=None, error_type=type(exc).__name__)
             raise
         if trace_ctx is not None:

@@ -1,3 +1,4 @@
+import asyncio
 import json
 import shutil
 from types import SimpleNamespace
@@ -69,6 +70,17 @@ async def test_failed_fallback_is_attempted_but_not_reported_as_used(tmp_path):
     calls = ctx.model_trace["stages"]["vision_deep"]["calls"]
     assert [c["fallback"] for c in calls] == [False, True]
     assert all(c["model"] is None for c in calls)
+
+
+async def test_canceled_provider_call_propagates_and_is_not_marked_uncalled(tmp_path):
+    ctx = context(tmp_path)
+    wrapped = provider("openrouter", asyncio.CancelledError())
+    with pytest.raises(asyncio.CancelledError):
+        await TracedProvider(wrapped, ctx, "text", "story_arcs").chat_json(model="alias")
+    call = ctx.model_trace["stages"]["text"]["calls"][0]
+    assert call["status"] == "canceled" and call["model"] is None
+    assert call["requested_model"] == "alias"
+    assert not ctx.model_trace["fallback_used"]
 
 
 @pytest.mark.parametrize("stage,operation", [("vision_cheap", "vision_json"),
