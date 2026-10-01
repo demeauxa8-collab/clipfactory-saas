@@ -20,6 +20,8 @@ async def init_pool() -> asyncpg.Pool:
         min_size=settings.database_pool_min,
         max_size=settings.database_pool_max,
         command_timeout=30,
+        # Supabase's transaction pooler cannot reuse asyncpg prepared statements.
+        statement_cache_size=0,
     )
     log.info("db.pool.ready", min=settings.database_pool_min, max=settings.database_pool_max)
     return _pool

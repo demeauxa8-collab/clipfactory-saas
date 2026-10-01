@@ -10,6 +10,7 @@ from typing import Any
 import structlog
 
 from ..models import JobContext
+from ..settings import get_settings
 from ..storage import upload_file
 
 log = structlog.get_logger()
@@ -23,6 +24,8 @@ async def checkpoint_job(ctx: JobContext, stage: str, payload: dict[str, Any]) -
     """
     if not stage or any(c not in "abcdefghijklmnopqrstuvwxyz_" for c in stage):
         raise ValueError("invalid checkpoint stage")
+    if get_settings().storage_backend == "local":
+        return None
     path = Path(ctx.workdir) / f"{stage}.json"
     key = f"jobs/{ctx.user_id}/{ctx.job_id}/{ctx.run_token}/{stage}.json"
     document = {

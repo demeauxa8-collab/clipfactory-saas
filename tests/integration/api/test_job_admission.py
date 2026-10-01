@@ -2,7 +2,6 @@ import asyncio
 from unittest.mock import AsyncMock
 
 import pytest
-
 from app.schemas import JobCreate
 from app.services import jobs
 

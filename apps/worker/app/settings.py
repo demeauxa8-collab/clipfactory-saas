@@ -21,14 +21,14 @@ class Settings(BaseSettings):
     # Storage backend: "r2" (prod) uploads to Cloudflare R2; "local" (dev)
     # copies clips into storage_local_dir so the pipeline runs without R2 creds.
     storage_backend: Literal["r2", "local"] = "r2"
-    storage_local_dir: str = "/tmp/clipfactory-clips"
+    storage_local_dir: str = ""
 
     # R2
-    r2_account_id: str
-    r2_access_key_id: str
-    r2_secret_access_key: str
+    r2_account_id: str = ""
+    r2_access_key_id: str = ""
+    r2_secret_access_key: str = ""
     r2_bucket_clips: str = "clipfactory-clips"
-    r2_endpoint_url: str
+    r2_endpoint_url: str = ""
 
     # ---------------- Providers ----------------
 
@@ -39,6 +39,9 @@ class Settings(BaseSettings):
     # whisper-1 is required for word timestamps: the gpt-4o-*-transcribe family
     # rejects verbose_json, which transcribe() asks for.
     openai_transcribe_model: str = _locked("transcription")
+    asr_backend: Literal["openai", "mlx_whisper"] = "openai"
+    mlx_whisper_model: str = _locked("transcription_local")
+    asr_fallback_to_openai: bool = True
 
     # Primary LLM stack (OpenRouter — text + vision deep + vision cheap)
     openrouter_api_key: str = ""
@@ -73,6 +76,7 @@ class Settings(BaseSettings):
 
     worker_concurrency: int = 1
     worker_tmp_dir: str = "/tmp/clipfactory"
+    worker_state_dir: str = ""
     worker_poll_interval: int = 2
     ffmpeg_bin: str = "ffmpeg"
     ffprobe_bin: str = "ffprobe"
@@ -109,6 +113,13 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def _derive_costs(self) -> "Settings":
+        if self.storage_backend == "local" and not self.storage_local_dir:
+            raise ValueError("STORAGE_LOCAL_DIR is required for local storage")
+        if self.storage_backend == "r2" and not all(
+            (self.r2_account_id, self.r2_access_key_id,
+             self.r2_secret_access_key, self.r2_endpoint_url)
+        ):
+            raise ValueError("R2 credentials are required for R2 storage")
         if self.cost_transcribe_cents_per_min is None:
             self.cost_transcribe_cents_per_min = models_lock.transcribe_cents_per_minute(
                 self.openai_transcribe_model

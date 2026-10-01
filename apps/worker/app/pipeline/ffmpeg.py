@@ -592,43 +592,56 @@ async def yt_dlp_download(url: str, out_dir: str) -> str:
 
     # Idempotent re-runs: reuse a source already sitting in the workdir instead
     # of re-hitting YouTube (repeated downloads of the same video get 403'd).
-    cached = [p for p in Path(out_dir).glob("source.*") if p.stat().st_size > 0]
+    media_extensions = {".mp4", ".mkv", ".webm", ".mov"}
+    cached = [
+        p for p in Path(out_dir).glob("source.*")
+        if p.stem == "source" and p.suffix in media_extensions and p.stat().st_size > 0
+    ]
     if cached:
         return str(cached[0].resolve())
 
     out_template = os.path.join(out_dir, "source.%(ext)s")
-
-    cmd = [
-        settings.yt_dlp_bin,
-        "-f",
+    formats = (
+        "bv*[height<=720][vcodec^=avc1][ext=mp4]+ba[ext=m4a]/b[height<=720]/best[ext=mp4]/best",
         "bv*[height<=720][ext=mp4]+ba[ext=m4a]/b[height<=720]/best[ext=mp4]/best",
-        "--merge-output-format",
-        "mp4",
-        "--no-playlist",
-        # YouTube gates media behind a JS "n challenge": needs a JS runtime (deno)
-        # plus the EJS solver script, and browser cookies to dodge 403 bot-blocks.
-        "--remote-components",
-        "ejs:github",
-        "--retries",
-        "5",
-        "--fragment-retries",
-        "10",
-        "--quiet",
-        "--no-warnings",
-        "-o",
-        out_template,
-    ]
-    if settings.yt_dlp_cookies_from_browser:
-        cmd += ["--cookies-from-browser", settings.yt_dlp_cookies_from_browser]
-    cmd.append(url)
-    code, _, err = await _run(cmd)
-    if code != 0:
-        raise FFmpegError(f"yt-dlp failed: {err.strip()[-2000:]}")
-
-    candidates = list(Path(out_dir).glob("source.*"))
-    if not candidates:
-        raise FFmpegError("yt-dlp produced no output file")
-    return str(candidates[0].resolve())
+    )
+    for format_selection in formats:
+        cmd = [
+            settings.yt_dlp_bin,
+            "-f",
+            format_selection,
+            "--merge-output-format",
+            "mp4",
+            "--no-playlist",
+            # YouTube gates media behind a JS "n challenge": needs a JS runtime (deno)
+            # plus the EJS solver script, and browser cookies to dodge 403 bot-blocks.
+            "--remote-components",
+            "ejs:github",
+            "--retries",
+            "5",
+            "--fragment-retries",
+            "10",
+            "--quiet",
+            "--no-warnings",
+            "-o",
+            out_template,
+        ]
+        if settings.yt_dlp_cookies_from_browser:
+            cmd += ["--cookies-from-browser", settings.yt_dlp_cookies_from_browser]
+        cmd.append(url)
+        code, _, err = await _run(cmd)
+        if code == 0:
+            candidates = [
+                p for p in Path(out_dir).glob("source.*")
+                if p.stem == "source" and p.suffix in media_extensions and p.stat().st_size > 0
+            ]
+            if not candidates:
+                raise FFmpegError("yt-dlp produced no output file")
+            return str(candidates[0].resolve())
+        for partial in Path(out_dir).glob("source.*"):
+            if partial.is_file():
+                partial.unlink()
+    raise FFmpegError(f"yt-dlp failed: {err.strip()[-2000:]}")
 
 
 # ---------------- download: audience heatmap (bonus) ----------------
@@ -1101,14 +1114,7 @@ def _build_single_pass_montage(
             )
 
     if not source_has_audio:
-        silent_input_idx = n
         inputs.extend(["-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo"])
-        split_labels = "".join(f"[asilent{i}]" for i in range(n))
-        parts.append(f"[{silent_input_idx}:a:0]asplit={n}{split_labels}")
-        for idx, duration in enumerate(durations):
-            parts.append(
-                f"[asilent{idx}]atrim=start=0:end={duration:.6f},asetpts=PTS-STARTPTS[a{idx}]"
-            )
 
     parts.append("".join(f"[v{i}]" for i in range(n)) + f"concat=n={n}:v=1:a=0[vconcat]")
     intended = sum(durations)
@@ -1118,7 +1124,11 @@ def _build_single_pass_montage(
         f"trim=start=0:end={intended:.6f},setpts=PTS-STARTPTS[vraw]"
     )
 
-    if n == 1:
+    if not source_has_audio:
+        # A continuous silent bed follows the full edit timeline. Splitting and
+        # joining silence at each cut can truncate the AAC stream on some builds.
+        audio_label = f"[{n}:a:0]"
+    elif n == 1:
         audio_label = "[a0]"
     else:
         previous = "[a0]"

@@ -15,7 +15,7 @@ const STATS_FALLBACK: PublicStats = {
   creators_active: 0,
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_URL = "/api/backend";
 
 export function PublicStats() {
   const [stats, setStats] = React.useState<PublicStats>(STATS_FALLBACK);

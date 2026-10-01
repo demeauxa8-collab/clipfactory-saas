@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.clipfactory.worker</string>
+  <key>ProgramArguments</key><array>
+    <string>__REPO__/apps/worker/.venv/bin/python</string>
+    <string>-m</string><string>app.main</string>
+  </array>
+  <key>WorkingDirectory</key><string>__REPO__/apps/worker</string>
+  <key>EnvironmentVariables</key><dict>
+    <key>PATH</key><string>/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+  </dict>
+  <key>RunAtLoad</key><true/><key>KeepAlive</key><true/>
+  <key>ThrottleInterval</key><integer>10</integer>
+  <key>ProcessType</key><string>Interactive</string>
+  <key>StandardOutPath</key><string>__HOME__/Library/Logs/ClipFactory/worker.out.log</string>
+  <key>StandardErrorPath</key><string>__HOME__/Library/Logs/ClipFactory/worker.err.log</string>
+</dict></plist>

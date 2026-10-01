@@ -3,7 +3,6 @@
 import asyncio
 
 import pytest
-
 from app.pipeline.job_state import claim_job, fail_job, reserve_credits
 from app.series_queue import claim_next_series_job
 

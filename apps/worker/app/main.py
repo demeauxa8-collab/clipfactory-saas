@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import os
 import signal
 from contextlib import suppress
 from uuid import UUID
@@ -10,6 +11,7 @@ from uuid import UUID
 import redis.asyncio as redis_async
 import structlog
 
+from .attempt_journal import AttemptJournal
 from .db import close_pool, get_pool, init_pool
 from .log_sanitize import scrub_email_values
 from .pipeline.runner import run_job
@@ -34,8 +36,10 @@ def _configure_logging(level: str) -> None:
     )
 
 
-async def _run_until_stop(pool, job_id: str, stop_event: asyncio.Event) -> None:
-    job = asyncio.create_task(run_job(pool, job_id))
+async def _run_until_stop(pool, job_id: str, stop_event: asyncio.Event, journal=None) -> None:
+    job = asyncio.create_task(
+        run_job(pool, job_id) if journal is None else run_job(pool, job_id, attempt_journal=journal)
+    )
     stopping = asyncio.create_task(stop_event.wait())
     try:
         done, _ = await asyncio.wait({job, stopping}, return_when=asyncio.FIRST_COMPLETED)
@@ -55,13 +59,20 @@ async def _run_until_stop(pool, job_id: str, stop_event: asyncio.Event) -> None:
                     await task
 
 
-async def _worker_loop(stop_event: asyncio.Event) -> None:
+async def _worker_loop(stop_event: asyncio.Event, journal: AttemptJournal) -> None:
     settings = get_settings()
     pool = get_pool()
     client = redis_async.from_url(settings.redis_url, decode_responses=True)
     log.info("worker.ready", concurrency=1)
     try:
         while not stop_event.is_set():
+            try:
+                if await journal.recover(pool):
+                    log.info("worker.attempt_journal.resolved")
+            except Exception as exc:
+                log.warning("worker.attempt_recovery.error", error_type=type(exc).__name__)
+                await asyncio.sleep(2)
+                continue
             # Series sources are ordered and claimed in Postgres (SKIP LOCKED),
             # ahead of the Redis queue for ordinary single-source jobs.
             try:
@@ -71,9 +82,25 @@ async def _worker_loop(stop_event: asyncio.Event) -> None:
                 series_job_id = None
             if series_job_id:
                 try:
-                    await _run_until_stop(pool, series_job_id, stop_event)
+                    await _run_until_stop(pool, series_job_id, stop_event, journal)
                 except Exception as exc:
                     log.exception("worker.run_job.crash", job_id=series_job_id, err=str(exc))
+                continue
+
+            # Postgres is authoritative. Redis is a wake-up hint, so a lost BLPOP
+            # delivery or a Redis outage cannot strand a queued single-source job.
+            try:
+                async with pool.acquire() as conn:
+                    queued_id = await conn.fetchval(
+                        "select id from jobs where status = 'queued' and series_id is null "
+                        "order by queued_at, id limit 1"
+                    )
+                if queued_id is not None:
+                    await _run_until_stop(pool, str(queued_id), stop_event, journal)
+                    continue
+            except Exception as exc:
+                log.warning("worker.queued_job.error", error_type=type(exc).__name__)
+                await asyncio.sleep(2)
                 continue
 
             try:
@@ -97,7 +124,7 @@ async def _worker_loop(stop_event: asyncio.Event) -> None:
                 log.warning("worker.bad_payload", error_type=type(exc).__name__)
                 continue
             try:
-                await _run_until_stop(pool, job_id, stop_event)
+                await _run_until_stop(pool, job_id, stop_event, journal)
             except Exception as exc:
                 log.exception("worker.run_job.crash", job_id=job_id, err=str(exc))
     finally:
@@ -107,8 +134,6 @@ async def _worker_loop(stop_event: asyncio.Event) -> None:
 async def main() -> None:
     settings = get_settings()
     _configure_logging(settings.log_level)
-    await init_pool()
-
     stop_event = asyncio.Event()
 
     def _handle_signal(*_args: object) -> None:
@@ -122,10 +147,13 @@ async def main() -> None:
         except NotImplementedError:
             pass
 
-    try:
-        await _worker_loop(stop_event)
-    finally:
-        await close_pool()
+    state_dir = settings.worker_state_dir or os.path.join(settings.worker_tmp_dir, ".state")
+    with AttemptJournal(state_dir, settings.worker_tmp_dir) as journal:
+        try:
+            await init_pool()
+            await _worker_loop(stop_event, journal)
+        finally:
+            await close_pool()
 
 
 if __name__ == "__main__":

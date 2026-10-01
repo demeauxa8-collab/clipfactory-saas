@@ -17,6 +17,7 @@ from typing import Any
 DEFAULT_LOCK_PATH = Path(__file__).resolve().parents[1] / "models.lock.toml"
 STAGES = (
     "transcription",
+    "transcription_local",
     "text",
     "vision_deep",
     "vision_cheap",
