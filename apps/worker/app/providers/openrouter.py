@@ -146,7 +146,9 @@ class OpenRouterProvider(LLMProvider):
                 text = self._extract_text(data)
                 payload = extract_json(text)
                 return LLMCallResult(
-                    payload=payload, tokens_in=total_in, tokens_out=total_out, model=model
+                    payload=payload, tokens_in=total_in, tokens_out=total_out,
+                    model=data.get("model") or model,
+                    model_source="response" if data.get("model") else "request",
                 )
             except (ProviderError, ValueError) as exc:
                 last_exc = exc

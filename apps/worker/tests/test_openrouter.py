@@ -81,6 +81,17 @@ async def test_usage_includes_discarded_non_json_response(monkeypatch):
     assert len(requests) == 2
 
 
+@pytest.mark.parametrize("actual", ["resolved-version", None])
+async def test_model_metadata_uses_response_when_available(monkeypatch, actual):
+    data = response()
+    if actual:
+        data["model"] = actual
+    provider, _, _ = client(monkeypatch, [httpx.Response(200, json=data)])
+    result = await call(provider)
+    assert result.model == (actual or "test")
+    assert result.model_source == ("response" if actual else "request")
+
+
 async def test_rate_limit_retries_with_bounded_retry_after(monkeypatch):
     provider, requests, sleeper = client(
         monkeypatch,
