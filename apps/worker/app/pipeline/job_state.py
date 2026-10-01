@@ -35,7 +35,9 @@ def billable_minutes(duration: float, max_minutes: int) -> int:
     return max(1, math.ceil(duration / 60))
 
 
-async def claim_job(conn: asyncpg.Connection, job_id: str) -> asyncpg.Record | None:
+async def claim_job(
+    conn: asyncpg.Connection, job_id: str, *, token: str | None = None,
+) -> asyncpg.Record | None:
     """Skip duplicate, terminal and active deliveries before touching any files.
 
     A series source is first reserved in Postgres by ``claim_next_series_job``
@@ -56,7 +58,7 @@ async def claim_job(conn: asyncpg.Connection, job_id: str) -> asyncpg.Record | N
         returning *
         """,
         parsed_id,
-        str(uuid4()),
+        token or str(uuid4()),
     )
 
 

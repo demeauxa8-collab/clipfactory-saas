@@ -161,11 +161,15 @@ def storage_check():
     try:
         key = path.name
         url = presigned_get_url(key)
-        if not url.startswith(s.api_base_url.rstrip("/") + "/media/"):
+        media_base = s.media_base_url or s.api_base_url
+        if not url.startswith(media_base.rstrip("/") + "/media/"):
             raise CheckError("wrong media URL")
         response = httpx.get(url, timeout=20)
         if response.status_code != 200 or response.content != b"clipfactory-doctor":
             raise CheckError("media round trip failed")
+        partial = httpx.get(url, headers={"Range": "bytes=0-3"}, timeout=20)
+        if partial.status_code != 206 or partial.content != b"clip":
+            raise CheckError("public media seeking failed")
         download = httpx.get(url + "&download=1", timeout=20)
         if "attachment" not in download.headers.get("content-disposition", ""):
             raise CheckError("attachment download failed")

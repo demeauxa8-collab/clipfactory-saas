@@ -31,7 +31,7 @@ def presigned_get_url(key: str, expires_in: int = 600) -> str:
         exp = int(time.time()) + expires_in
         sig = hmac.new(settings.media_signing_secret.encode("utf-8"),
                        f"{key}|{exp}".encode(), hashlib.sha256).hexdigest()
-        base = settings.api_base_url.rstrip("/")
+        base = (settings.media_base_url or settings.api_base_url).rstrip("/")
         return f"{base}/media/{quote(key, safe='/')}?exp={exp}&sig={sig}"
     client = _s3_client()
     return client.generate_presigned_url(

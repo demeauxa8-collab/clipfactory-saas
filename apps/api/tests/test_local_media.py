@@ -17,7 +17,7 @@ from app.settings import Settings
 def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     settings = SimpleNamespace(
         storage_backend="local", storage_local_dir=str(tmp_path),
-        media_signing_secret="x" * 32, api_base_url="http://testserver",
+        media_signing_secret="x" * 32, api_base_url="http://testserver", media_base_url="",
     )
     monkeypatch.setattr(media, "get_settings", lambda: settings)
     monkeypatch.setattr(storage, "get_settings", lambda: settings)
@@ -38,6 +38,20 @@ def test_signed_media_and_range(client):
     assert response.headers["content-type"].startswith("video/mp4")
     assert "content-disposition" not in response.headers
     assert "attachment" in http.get(url + "&download=1").headers["content-disposition"]
+
+
+def test_local_media_can_use_public_site_proxy(client, monkeypatch):
+    _, root = client
+    monkeypatch.setattr(storage, "get_settings", lambda: SimpleNamespace(
+        storage_backend="local", media_signing_secret="x" * 32,
+        api_base_url="https://studio.example", media_base_url="https://site.example/api/backend",
+    ))
+    (root / "sample.mp4").write_bytes(b"video")
+    url = storage.presigned_get_url("sample.mp4")
+    assert url.startswith("https://site.example/api/backend/media/sample.mp4?")
+    query = parse_qs(urlparse(url).query)
+    http, _ = client
+    assert http.get("/media/sample.mp4", params={k: v[0] for k, v in query.items()}).status_code == 200
 
 
 def test_signature_expiry_tamper_and_missing(client):
@@ -69,6 +83,7 @@ def test_local_storage_configuration_validation(tmp_path: Path, monkeypatch: pyt
     monkeypatch.delenv("STORAGE_LOCAL_DIR", raising=False)
     monkeypatch.delenv("MEDIA_SIGNING_SECRET", raising=False)
     base = dict(
+        _env_file=None,
         database_url="postgres://example", supabase_url="https://example.invalid",
         supabase_service_role_key="x", supabase_jwt_secret="x",
         stripe_secret_key="x", stripe_webhook_secret="x", stripe_starter_price_id="x",

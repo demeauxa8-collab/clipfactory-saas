@@ -2,6 +2,7 @@ import asyncio
 from uuid import uuid4
 
 import pytest
+from app.attempt_journal import AttemptJournal
 from app.pipeline.job_state import (
     JobStateError,
     claim_job,
@@ -142,3 +143,32 @@ async def test_terminal_job_is_not_rerun_or_refunded(db_pool, account):
     await run_job(db_pool, job_id)
     assert not await fail(db_pool, job_id, account[0], token)
     assert await balance(db_pool, account[0]) == 6
+
+
+@pytest.mark.parametrize("completed", [False, True])
+async def test_restart_recovers_only_interrupted_owned_attempt(
+    db_pool, account, tmp_path, completed
+):
+    job_id = await new_job(db_pool, account)
+    token = str(uuid4())
+    with AttemptJournal(str(tmp_path / "state"), str(tmp_path / "work")) as journal:
+        journal.start(job_id, token)
+        async with db_pool.acquire() as conn:
+            await claim_job(conn, job_id, token=token)
+        await reserve(db_pool, job_id, account[0], token, 4)
+        if completed:
+            async with db_pool.acquire() as conn:
+                await conn.execute("update jobs set status = 'completed' where id = $1", job_id)
+    with AttemptJournal(str(tmp_path / "state"), str(tmp_path / "work")) as journal:
+        assert await journal.recover(db_pool)
+        assert not await journal.recover(db_pool)
+    assert await balance(db_pool, account[0]) == (6 if completed else 10)
+    async with db_pool.acquire() as conn:
+        row = await conn.fetchrow("select status, error_code from jobs where id = $1", job_id)
+        assert row["status"] == ("completed" if completed else "failed")
+        if not completed:
+            assert row["error_code"] == "worker_interrupted"
+        refunds = await conn.fetchval(
+            "select count(*) from credit_ledger where job_id = $1 and reason = 'job_refund'", job_id
+        )
+        assert refunds == (0 if completed else 1)

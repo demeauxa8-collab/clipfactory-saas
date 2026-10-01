@@ -22,6 +22,7 @@ import time
 from dataclasses import asdict
 from pathlib import Path
 from urllib.parse import urlparse
+from uuid import uuid4
 
 import asyncpg
 import httpx
@@ -596,14 +597,19 @@ async def _guard_black_open(
 # =============================================================
 
 
-async def run_job(pool: asyncpg.Pool, job_id: str) -> None:
+async def run_job(pool: asyncpg.Pool, job_id: str, *, attempt_journal=None) -> None:
     settings = get_settings()
     log_ctx = log.bind(job_id=job_id)
     log_ctx.info("pipeline.start")
 
+    token = str(uuid4())
+    if attempt_journal is not None:
+        # Persist before the DB claim: a kill between claim and reservation is recoverable.
+        attempt_journal.start(job_id, token)
+
     # Atomically own this delivery before clearing files, billing or doing work.
     async with pool.acquire() as conn:
-        job_row = await claim_job(conn, job_id)
+        job_row = await claim_job(conn, job_id, token=token)
     if job_row is None:
         log_ctx.info("pipeline.delivery_skipped", reason="not_queued")
         return

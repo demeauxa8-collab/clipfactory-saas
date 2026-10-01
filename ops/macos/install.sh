@@ -2,6 +2,7 @@
 set -euo pipefail
 
 repo="$(cd "$(dirname "$0")/../.." && pwd)"
+"$repo/apps/api/.venv/bin/python" "$repo/ops/macos/maintenance_guard.py"
 launch_dir="$HOME/Library/LaunchAgents"
 mkdir -p "$launch_dir" "$HOME/Library/Logs/ClipFactory"
 

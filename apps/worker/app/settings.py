@@ -76,6 +76,7 @@ class Settings(BaseSettings):
 
     worker_concurrency: int = 1
     worker_tmp_dir: str = "/tmp/clipfactory"
+    worker_state_dir: str = ""
     worker_poll_interval: int = 2
     ffmpeg_bin: str = "ffmpeg"
     ffprobe_bin: str = "ffprobe"
