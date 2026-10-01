@@ -33,6 +33,7 @@ class TranscriptWord:
     word: str
     start: float
     end: float
+    probability: float | None = None
 
 
 @dataclass
@@ -59,6 +60,7 @@ class Transcript:
     # Optional + empty by default: older cached transcripts and every hand-built
     # Transcript in the tests keep working without them.
     sentences: list[TranscriptSentence] = field(default_factory=list)
+    asr_backend: str = "openai"
 
 
 # =============================================================
@@ -318,6 +320,7 @@ class JobContext:
     source_url: str
     target_clip_count: int
     workdir: str
+    run_token: str = ""
 
     # Filled as the pipeline progresses
     source_path: str | None = None

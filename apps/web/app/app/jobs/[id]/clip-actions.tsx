@@ -26,7 +26,9 @@ export function ClipActions({ clipId }: { clipId: string }) {
       const response = await apiFetch<DownloadResponse>(
         `/clips/${clipId}/download`,
       );
-      window.open(response.url, "_blank", "noopener,noreferrer");
+      const downloadUrl = new URL(response.url);
+      downloadUrl.searchParams.set("download", "1");
+      window.open(downloadUrl.toString(), "_blank", "noopener,noreferrer");
       setMessage("A fresh download link opened in a new tab.");
     } catch (caught) {
       setError(humanizeActionError(caught));

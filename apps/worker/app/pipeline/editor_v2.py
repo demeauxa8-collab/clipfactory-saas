@@ -1,7 +1,7 @@
 """Local-first orchestration for ClipFactory's compiled V2 edit path.
 
-This module deliberately stops short of activating V2 in the production job
-runner.  It connects the provider-independent pieces behind one explicit API:
+The job runner adapts selected candidates through ``clip_render`` to this
+compiler. The explicit local director API shares its provider-independent pieces:
 compile an untrusted edit intent, run deterministic editorial QC, build
 occurrence-accurate captions, then execute the trusted FFmpeg plan.
 

@@ -26,6 +26,7 @@ from .routers import (
     health,
     jobs,
     me,
+    media,
     public,
     series,
 )
@@ -117,7 +118,9 @@ def create_app() -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins_list,
+        allow_origin_regex=settings.cors_allow_origin_regex or None,
         allow_credentials=True,
+        allow_private_network=True,
         allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
         allow_headers=["authorization", "content-type", "stripe-signature"],
     )
@@ -131,6 +134,7 @@ def create_app() -> FastAPI:
     app.include_router(jobs.router)
     app.include_router(series.router)
     app.include_router(clips.router)
+    app.include_router(media.router)
     app.include_router(feedback.router)
     app.include_router(billing.router)
     app.include_router(events.router)

@@ -5,6 +5,7 @@ import json
 import math
 import os
 import re
+import signal
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
@@ -44,6 +45,8 @@ class MediaProbe:
     video_fps: float | None = None
     audio_sample_rate: int | None = None
     audio_channels: int | None = None
+    width: int | None = None
+    height: int | None = None
 
 
 @dataclass(frozen=True)
@@ -55,13 +58,52 @@ class RenderQualityReport:
     has_audio: bool
     mean_volume_db: float | None
     mid_frame_luma: float | None
+    black_intervals: tuple[tuple[float, float], ...] = ()
+    silence_intervals: tuple[tuple[float, float], ...] = ()
+    max_volume_db: float | None = None
 
 
-async def _run(cmd: list[str]) -> tuple[int, str, str]:
-    proc = await asyncio.create_subprocess_exec(
-        *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+async def _run(
+    cmd: list[str], *, timeout_seconds: float | None = None
+) -> tuple[int, str, str]:
+    timeout = (
+        get_settings().subprocess_timeout_seconds
+        if timeout_seconds is None else timeout_seconds
     )
-    stdout, stderr = await proc.communicate()
+    if not math.isfinite(timeout) or timeout <= 0:
+        raise FFmpegError("subprocess timeout must be finite and positive")
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+            start_new_session=os.name == "posix",
+        )
+    except OSError as exc:
+        raise FFmpegError(f"cannot start {Path(cmd[0]).name}: {exc}") from exc
+    communication = asyncio.create_task(proc.communicate())
+
+    def stop(sig: int) -> None:
+        try:
+            if os.name == "posix":
+                os.killpg(proc.pid, sig)
+            elif sig == signal.SIGTERM:
+                proc.terminate()
+            else:
+                proc.kill()
+        except ProcessLookupError:
+            pass
+
+    try:
+        stdout, stderr = await asyncio.wait_for(asyncio.shield(communication), timeout)
+    except (TimeoutError, asyncio.CancelledError) as exc:
+        stop(signal.SIGTERM)
+        try:
+            await asyncio.wait_for(asyncio.shield(communication), 2.0)
+        except TimeoutError:
+            stop(signal.SIGKILL)
+            await communication
+        if isinstance(exc, asyncio.CancelledError):
+            raise
+        raise FFmpegError(f"{Path(cmd[0]).name} timed out after {timeout:g}s") from exc
     return (
         proc.returncode or 0,
         stdout.decode("utf-8", "replace"),
@@ -70,6 +112,17 @@ async def _run(cmd: list[str]) -> tuple[int, str, str]:
 
 
 # ---------------- probe / scene detection ----------------
+
+
+def _probe_json(output: str) -> tuple[dict, float]:
+    try:
+        data = json.loads(output)
+        duration = float(data["format"]["duration"])
+        if not math.isfinite(duration) or duration <= 0:
+            raise ValueError("duration must be finite and positive")
+    except (ValueError, TypeError, KeyError) as exc:
+        raise FFmpegError(f"unreadable ffprobe metadata: {exc}") from exc
+    return data, duration
 
 
 async def probe_duration_seconds(path: str) -> float:
@@ -88,8 +141,7 @@ async def probe_duration_seconds(path: str) -> float:
     )
     if code != 0:
         raise FFmpegError(f"ffprobe failed: {err.strip()}")
-    data = json.loads(out)
-    return float(data["format"]["duration"])
+    return _probe_json(out)[1]
 
 
 async def probe_media(path: str, *, ffprobe_bin: str | None = None) -> MediaProbe:
@@ -109,14 +161,17 @@ async def probe_media(path: str, *, ffprobe_bin: str | None = None) -> MediaProb
     )
     if code != 0:
         raise FFmpegError(f"ffprobe failed: {err.strip()}")
-    data = json.loads(out)
+    data, duration = _probe_json(out)
     streams = data.get("streams") or []
+    if not isinstance(streams, list) or any(not isinstance(stream, dict) for stream in streams):
+        raise FFmpegError("ffprobe returned invalid stream metadata")
     video = next((s for s in streams if s.get("codec_type") == "video"), None)
     audio = next((s for s in streams if s.get("codec_type") == "audio"), None)
 
     def optional_float(value: object) -> float | None:
         try:
-            return float(value) if value not in (None, "N/A") else None
+            number = float(value) if value not in (None, "N/A") else None
+            return number if number is not None and math.isfinite(number) else None
         except (TypeError, ValueError):
             return None
 
@@ -131,7 +186,7 @@ async def probe_media(path: str, *, ffprobe_bin: str | None = None) -> MediaProb
         if ticks is not None and "/" in time_base:
             numerator, denominator = time_base.split("/", 1)
             try:
-                return ticks * float(numerator) / float(denominator)
+                return optional_float(ticks * float(numerator) / float(denominator))
             except (TypeError, ValueError, ZeroDivisionError):
                 return None
         return None
@@ -145,21 +200,27 @@ async def probe_media(path: str, *, ffprobe_bin: str | None = None) -> MediaProb
         numerator, denominator = rate.split("/", 1)
         try:
             value = float(numerator) / float(denominator)
-            return value if value > 0 else None
+            return value if math.isfinite(value) and value > 0 else None
         except (TypeError, ValueError, ZeroDivisionError):
             return None
 
+    def optional_int(value: object) -> int | None:
+        number = optional_float(value)
+        return int(number) if number is not None and number > 0 and number.is_integer() else None
+
     return MediaProbe(
-        duration_seconds=float(data["format"]["duration"]),
+        duration_seconds=duration,
         has_audio=audio is not None,
         has_video=video is not None,
         video_duration_seconds=stream_duration(video),
         audio_duration_seconds=stream_duration(audio),
         video_fps=frame_rate(video),
         audio_sample_rate=(
-            int(str(audio["sample_rate"])) if audio and audio.get("sample_rate") else None
+            optional_int(audio.get("sample_rate")) if audio else None
         ),
-        audio_channels=(int(str(audio["channels"])) if audio and audio.get("channels") else None),
+        audio_channels=optional_int(audio.get("channels")) if audio else None,
+        width=optional_int(video.get("width")) if video else None,
+        height=optional_int(video.get("height")) if video else None,
     )
 
 
@@ -407,8 +468,23 @@ async def validate_rendered_clip(
     duration_tolerance_seconds: float = 0.5,
     min_mean_volume_db: float = -55.0,
     min_mid_frame_luma: float = 4.0,
+    expected_width: int | None = None,
+    expected_height: int | None = None,
+    max_black_edge_seconds: float = 0.25,
+    max_black_ratio: float = 0.15,
+    max_silent_edge_seconds: float = 0.8,
+    expected_fps: float = OUTPUT_VIDEO_FPS,
 ) -> RenderQualityReport:
+    """Inspect the complete output timeline, including its opening and landing.
+
+    Silence inside the edit is reported, not automatically deleted: a deliberate
+    pause can carry the payoff. Unreadable measurements cannot pass QC.
+    """
+    from .audio_map import parse_silencedetect
+
     problems: list[str] = []
+    if not math.isfinite(expected_duration_seconds) or expected_duration_seconds <= 0:
+        raise FFmpegError("expected render duration must be finite and positive")
     try:
         probe = await probe_media(path)
     except FFmpegError as exc:
@@ -422,7 +498,11 @@ async def validate_rendered_clip(
             mid_frame_luma=None,
         )
 
-    if abs(probe.duration_seconds - expected_duration_seconds) > duration_tolerance_seconds:
+    if (
+        not math.isfinite(probe.duration_seconds)
+        or probe.duration_seconds <= 0
+        or abs(probe.duration_seconds - expected_duration_seconds) > duration_tolerance_seconds
+    ):
         problems.append(
             f"duration_mismatch:{probe.duration_seconds:.2f}!={expected_duration_seconds:.2f}"
         )
@@ -430,8 +510,54 @@ async def validate_rendered_clip(
         problems.append("missing_video")
     if not probe.has_audio:
         problems.append("missing_audio")
+    if expected_width is not None and probe.width != expected_width:
+        problems.append(f"width_mismatch:{probe.width}!={expected_width}")
+    if expected_height is not None and probe.height != expected_height:
+        problems.append(f"height_mismatch:{probe.height}!={expected_height}")
+    try:
+        _validate_mux_timeline(probe, expected_duration_seconds, expected_fps=expected_fps)
+    except FFmpegError as exc:
+        problems.append(f"timeline_mismatch:{exc}")
 
-    mean_volume = await measure_mean_volume_db(path) if probe.has_audio else None
+    mean_volume = None
+    max_volume = None
+    black: tuple[tuple[float, float], ...] = ()
+    silences: tuple[tuple[float, float], ...] = ()
+    if probe.has_audio and probe.has_video:
+        try:
+            code, _, diagnostic = await _run([
+                get_settings().ffmpeg_bin, "-hide_banner", "-nostats", "-i", path,
+                "-vf", "scale=320:-2,blackdetect=d=0.1:pix_th=0.10",
+                "-af", "silencedetect=noise=-50dB:d=0.2,volumedetect",
+                "-f", "null", "-",
+            ])
+            if code != 0:
+                raise FFmpegError("temporal analysis failed")
+            mean_match = _MEAN_VOLUME_RE.search(diagnostic)
+            peak_match = re.search(r"max_volume:\s*(-?\d+(?:\.\d+)?)\s*dB", diagnostic)
+            mean_volume = float(mean_match.group(1)) if mean_match else None
+            max_volume = float(peak_match.group(1)) if peak_match else None
+            black = tuple((float(m[1]), float(m[2])) for m in _BLACK_RE.finditer(diagnostic))
+            silences = tuple(
+                (s.start, s.end)
+                for s in parse_silencedetect(diagnostic, duration_seconds=probe.duration_seconds)
+            )
+        except (FFmpegError, ValueError):
+            problems.append("temporal_analysis_unreadable")
+        for label, intervals, limit in (
+            ("black", black, max_black_edge_seconds),
+            ("silence", silences, max_silent_edge_seconds),
+        ):
+            if any(start <= 0.05 and end - start > limit for start, end in intervals):
+                problems.append(f"{label}_opening")
+            if any(
+                end >= probe.duration_seconds - 0.05 and end - start > limit
+                for start, end in intervals
+            ):
+                problems.append(f"{label}_ending")
+        black_duration = sum(max(0.0, end - start) for start, end in black)
+        if black_duration > max_black_ratio * probe.duration_seconds:
+            problems.append("excessive_black_coverage")
     if probe.has_audio and mean_volume is None:
         problems.append("volume_unreadable")
     elif mean_volume is not None and mean_volume < min_mean_volume_db:
@@ -451,6 +577,9 @@ async def validate_rendered_clip(
         has_audio=probe.has_audio,
         mean_volume_db=mean_volume,
         mid_frame_luma=luma,
+        black_intervals=black,
+        silence_intervals=silences,
+        max_volume_db=max_volume,
     )
 
 
@@ -463,43 +592,56 @@ async def yt_dlp_download(url: str, out_dir: str) -> str:
 
     # Idempotent re-runs: reuse a source already sitting in the workdir instead
     # of re-hitting YouTube (repeated downloads of the same video get 403'd).
-    cached = [p for p in Path(out_dir).glob("source.*") if p.stat().st_size > 0]
+    media_extensions = {".mp4", ".mkv", ".webm", ".mov"}
+    cached = [
+        p for p in Path(out_dir).glob("source.*")
+        if p.stem == "source" and p.suffix in media_extensions and p.stat().st_size > 0
+    ]
     if cached:
         return str(cached[0].resolve())
 
     out_template = os.path.join(out_dir, "source.%(ext)s")
-
-    cmd = [
-        settings.yt_dlp_bin,
-        "-f",
+    formats = (
+        "bv*[height<=720][vcodec^=avc1][ext=mp4]+ba[ext=m4a]/b[height<=720]/best[ext=mp4]/best",
         "bv*[height<=720][ext=mp4]+ba[ext=m4a]/b[height<=720]/best[ext=mp4]/best",
-        "--merge-output-format",
-        "mp4",
-        "--no-playlist",
-        # YouTube gates media behind a JS "n challenge": needs a JS runtime (deno)
-        # plus the EJS solver script, and browser cookies to dodge 403 bot-blocks.
-        "--remote-components",
-        "ejs:github",
-        "--retries",
-        "5",
-        "--fragment-retries",
-        "10",
-        "--quiet",
-        "--no-warnings",
-        "-o",
-        out_template,
-    ]
-    if settings.yt_dlp_cookies_from_browser:
-        cmd += ["--cookies-from-browser", settings.yt_dlp_cookies_from_browser]
-    cmd.append(url)
-    code, _, err = await _run(cmd)
-    if code != 0:
-        raise FFmpegError(f"yt-dlp failed: {err.strip()[-2000:]}")
-
-    candidates = list(Path(out_dir).glob("source.*"))
-    if not candidates:
-        raise FFmpegError("yt-dlp produced no output file")
-    return str(candidates[0].resolve())
+    )
+    for format_selection in formats:
+        cmd = [
+            settings.yt_dlp_bin,
+            "-f",
+            format_selection,
+            "--merge-output-format",
+            "mp4",
+            "--no-playlist",
+            # YouTube gates media behind a JS "n challenge": needs a JS runtime (deno)
+            # plus the EJS solver script, and browser cookies to dodge 403 bot-blocks.
+            "--remote-components",
+            "ejs:github",
+            "--retries",
+            "5",
+            "--fragment-retries",
+            "10",
+            "--quiet",
+            "--no-warnings",
+            "-o",
+            out_template,
+        ]
+        if settings.yt_dlp_cookies_from_browser:
+            cmd += ["--cookies-from-browser", settings.yt_dlp_cookies_from_browser]
+        cmd.append(url)
+        code, _, err = await _run(cmd)
+        if code == 0:
+            candidates = [
+                p for p in Path(out_dir).glob("source.*")
+                if p.stem == "source" and p.suffix in media_extensions and p.stat().st_size > 0
+            ]
+            if not candidates:
+                raise FFmpegError("yt-dlp produced no output file")
+            return str(candidates[0].resolve())
+        for partial in Path(out_dir).glob("source.*"):
+            if partial.is_file():
+                partial.unlink()
+    raise FFmpegError(f"yt-dlp failed: {err.strip()[-2000:]}")
 
 
 # ---------------- download: audience heatmap (bonus) ----------------
@@ -565,20 +707,10 @@ async def fetch_audience_heatmap(url: str, out_dir: str) -> list[dict[str, float
 
     points: list[dict[str, float]] | None = None
     try:
-        proc = await asyncio.create_subprocess_exec(
-            *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
-        )
-        try:
-            stdout, _ = await asyncio.wait_for(
-                proc.communicate(), timeout=HEATMAP_TIMEOUT_SECONDS
-            )
-        except TimeoutError:
-            proc.kill()
-            await proc.wait()
-            raise
-        if proc.returncode == 0:
+        code, stdout, _ = await _run(cmd, timeout_seconds=HEATMAP_TIMEOUT_SECONDS)
+        if code == 0:
             # "NA" is what yt-dlp prints for a field the video does not have.
-            raw = stdout.decode("utf-8", "replace").strip()
+            raw = stdout.strip()
             parsed = json.loads(raw) if raw and raw != "NA" else None
             if isinstance(parsed, list):
                 points = [p for p in parsed if isinstance(p, dict)]
@@ -982,14 +1114,7 @@ def _build_single_pass_montage(
             )
 
     if not source_has_audio:
-        silent_input_idx = n
         inputs.extend(["-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo"])
-        split_labels = "".join(f"[asilent{i}]" for i in range(n))
-        parts.append(f"[{silent_input_idx}:a:0]asplit={n}{split_labels}")
-        for idx, duration in enumerate(durations):
-            parts.append(
-                f"[asilent{idx}]atrim=start=0:end={duration:.6f},asetpts=PTS-STARTPTS[a{idx}]"
-            )
 
     parts.append("".join(f"[v{i}]" for i in range(n)) + f"concat=n={n}:v=1:a=0[vconcat]")
     intended = sum(durations)
@@ -999,7 +1124,11 @@ def _build_single_pass_montage(
         f"trim=start=0:end={intended:.6f},setpts=PTS-STARTPTS[vraw]"
     )
 
-    if n == 1:
+    if not source_has_audio:
+        # A continuous silent bed follows the full edit timeline. Splitting and
+        # joining silence at each cut can truncate the AAC stream on some builds.
+        audio_label = f"[{n}:a:0]"
+    elif n == 1:
         audio_label = "[a0]"
     else:
         previous = "[a0]"
@@ -1044,7 +1173,9 @@ def _validate_mux_timeline(
     the container must stay within one frame (plus a small mux allowance) of
     the intended edit timeline, and audio/video may not drift further apart.
     """
-    fps = probe.video_fps or expected_fps
+    if probe.video_fps is None or not math.isfinite(probe.video_fps) or probe.video_fps <= 0:
+        raise FFmpegError("output frame rate is unreadable")
+    fps = probe.video_fps
     tolerance = (1.0 / fps) + 0.012
     measured = {
         "container": probe.duration_seconds,
@@ -1052,7 +1183,9 @@ def _validate_mux_timeline(
         "audio": probe.audio_duration_seconds,
     }
     for label, duration in measured.items():
-        if duration is not None and abs(duration - intended_seconds) > tolerance:
+        if duration is None or not math.isfinite(duration):
+            raise FFmpegError(f"{label} duration is unreadable")
+        if abs(duration - intended_seconds) > tolerance:
             raise FFmpegError(
                 f"{label} timeline drift {duration:.6f}s vs "
                 f"{intended_seconds:.6f}s exceeds {tolerance:.6f}s"

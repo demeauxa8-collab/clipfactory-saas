@@ -178,15 +178,15 @@ def test_next_phrase_end_after_walks_forward() -> None:
 # (the [t] marker of the transcript line) but quotes words that only start at
 # 5.4 — 11 words later. The payoff line lands further out still, at 19.8.
 ANCHOR_TEXT = (
-    "c est beaucoup plus long terme que TikTok et surtout tu "           # 0-10
+    "c est beaucoup plus long terme que TikTok et surtout tu "  # 0-10
     "le problème c est que sur Google il faut au minimum cent euros pour lancer "  # 11-25
-    "on va faire ça ensemble tranquillement sans se presser du tout maintenant "   # 26-37
-    "et là on est vraiment content du résultat obtenu "                  # 38-46
-    "voilà c est fini pour cette vidéo à très vite les amis"             # 47-57
+    "on va faire ça ensemble tranquillement sans se presser du tout maintenant "  # 26-37
+    "et là on est vraiment content du résultat obtenu "  # 38-46
+    "voilà c est fini pour cette vidéo à très vite les amis"  # 47-57
 )
 ANCHOR_WORDS = words_from_text(ANCHOR_TEXT, 1.0)
-QUOTED_START = 1.0 + 11 * 0.4      # 5.40 — where the quoted words really are
-PAYOFF_END = 1.4 + 46 * 0.4        # 19.80 — end of the payoff line
+QUOTED_START = 1.0 + 11 * 0.4  # 5.40 — where the quoted words really are
+PAYOFF_END = 1.4 + 46 * 0.4  # 19.80 — end of the payoff line
 
 
 def _arc_with(
@@ -336,7 +336,7 @@ def test_payoff_after_the_window_pulls_the_end_forward() -> None:
 def test_payoff_already_inside_the_window_changes_nothing() -> None:
     arc = _arc_with(
         1.0,
-        19.0,   # 18s window: once anchored it already covers the payoff
+        19.0,  # 18s window: once anchored it already covers the payoff
         "Le problème c'est que sur Google il faut au minimum 100 euros",
         payoff="on est vraiment content du résultat obtenu",
     )
@@ -504,7 +504,7 @@ def test_preroll_clamps_at_zero_and_padding_applied() -> None:
     ]
     words = words_from(spans)
     start, end = snap_segment(words, 0.30, 9.00)
-    assert start == 0.0                       # 0.05 - 0.12 preroll clamps to 0
+    assert start == 0.0  # 0.05 - 0.12 preroll clamps to 0
     assert end == pytest.approx(10.00 + 0.22)  # padding on the last word
 
 
@@ -588,8 +588,8 @@ def test_snap_arc_segments_preserves_why_and_reports() -> None:
         segments=[
             ArcSegmentSpec(
                 role="single",
-                start=14.20,   # anchored start: must stay put
-                end=20.00,     # mid phrase C -> extend to C end
+                start=14.20,  # anchored start: must stay put
+                end=20.00,  # mid phrase C -> extend to C end
                 transcript_excerpt="Setup clair",
                 why="pose le contexte",
             )
@@ -692,3 +692,52 @@ def test_anchoring_near_end_of_video_keeps_the_clip_length():
     assert kept >= (declared_end - declared_start) - 0.5, (
         f"clip collapsed to {kept:.2f}s instead of keeping ~12s"
     )
+
+
+@pytest.mark.parametrize("edge", ["start_anchor", "end_anchor", "payoff"])
+def test_active_strict_anchoring_drops_unresolved_evidence(edge):
+    kwargs = {edge: "xyzzy completely fabricated words nobody spoke"}
+    arc = _arc_with(1.0, 13.0, "Le problème c est que sur Google", **kwargs)
+    kept, report = anchor_arcs_to_transcript([arc], _transcript(ANCHOR_WORDS), strict=True)
+    assert kept == []
+    assert report.arcs_dropped_unresolved == 1
+
+
+def test_duration_guard_rejects_nonfinite_or_negative_source_times():
+    arcs = [
+        _arc_with(float("nan"), 12.0, "invalid"),
+        _arc_with(-1.0, 12.0, "invalid"),
+        _arc_with(0.0, float("inf"), "invalid"),
+    ]
+    kept, _ = filter_arcs_by_duration(
+        arcs,
+        min_segment_seconds=3,
+        max_segment_seconds=60,
+        min_clip_seconds=12,
+        max_clip_seconds=60,
+    )
+    assert kept == []
+
+
+def test_safe_padding_never_captures_half_a_neighbouring_word():
+    words = words_from_text(" ".join(f"token{i}" for i in range(50)), 0.0, step=0.5)
+    arc = _arc_with(2.0 - 0.12, 15.0 + 0.22, "token4 token5 token6")
+    arc.segments[0].start_anchor_resolved = True
+    arc.segments[0].end_anchor_resolved = True
+    (result,), _ = snap_arc_segments([arc], words, safe_padding=True)
+    assert result.segments[0].start == 2.0
+    assert result.segments[0].end == 15.0
+
+
+def test_overlapping_asr_words_cannot_be_silently_deleted_by_padding_repair():
+    words = [
+        TranscriptWord("previous", 0, 1.3),
+        TranscriptWord("selected", 1.0, 1.6),
+        TranscriptWord("ending", 13, 14),
+    ]
+    arc = _arc_with(0.9, 14, "selected ending")
+    arc.segments[0].start_anchor_resolved = True
+    arc.segments[0].end_anchor_resolved = True
+    (result,), report = snap_arc_segments([arc], words, safe_padding=True)
+    assert result.segments[0].start == 0.9
+    assert report.segments_failed == 1

@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import hashlib
+import hmac
+import time
 from functools import lru_cache
+from urllib.parse import quote
 
 import boto3
 from botocore.config import Config
@@ -23,6 +27,12 @@ def _s3_client():
 
 def presigned_get_url(key: str, expires_in: int = 600) -> str:
     settings = get_settings()
+    if settings.storage_backend == "local":
+        exp = int(time.time()) + expires_in
+        sig = hmac.new(settings.media_signing_secret.encode("utf-8"),
+                       f"{key}|{exp}".encode(), hashlib.sha256).hexdigest()
+        base = (settings.media_base_url or settings.api_base_url).rstrip("/")
+        return f"{base}/media/{quote(key, safe='/')}?exp={exp}&sig={sig}"
     client = _s3_client()
     return client.generate_presigned_url(
         "get_object",

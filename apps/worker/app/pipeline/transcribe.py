@@ -35,6 +35,8 @@ def _merge_two(a: TranscriptWord, b: TranscriptWord) -> TranscriptWord:
         word=f"{a.word.strip()}{_APOSTROPHE}{b.word.strip()}",
         start=a.start,
         end=b.end,
+        probability=min(p for p in (a.probability, b.probability) if p is not None)
+        if a.probability is not None or b.probability is not None else None,
     )
 
 
@@ -105,6 +107,82 @@ async def _extract_audio(src_path: str, ffmpeg_bin: str) -> str:
     return out_path
 
 
+ZERO_DURATION_EPSILON = 1e-3
+
+
+def repair_zero_duration_words(
+    words: list[TranscriptWord],
+    *,
+    min_duration: float = 0.05,
+    target_duration: float = 0.2,
+) -> list[TranscriptWord]:
+    """Give whisper's zero-length words a real, non-overlapping time span.
+
+    whisper-1 sometimes returns ``start == end`` for short words (often packed
+    against a neighbour). Captions and cut snapping then see a word that is never
+    on screen. Deterministic repair, per run of consecutive zero-length words:
+
+    1. the run may use the room between the previous word's end and the next
+       word's start, at most ``target_duration`` per word, centred on the
+       original timestamp (a word never swallows a long silence);
+    2. if that room is below ``min_duration`` per word, time is borrowed from
+       the neighbours, each keeping at least ``min_duration`` itself;
+    3. the resulting span is split evenly across the run.
+
+    Words with a positive duration are only touched when they lend time. If no
+    room can be found at all, the run is left unchanged. Returns new objects.
+    """
+    out = [
+        TranscriptWord(word=w.word, start=w.start, end=w.end, probability=w.probability)
+        for w in words
+    ]
+    i = 0
+    while i < len(out):
+        if out[i].end - out[i].start >= ZERO_DURATION_EPSILON:
+            i += 1
+            continue
+        j = i
+        while j + 1 < len(out) and out[j + 1].end - out[j + 1].start < ZERO_DURATION_EPSILON:
+            j += 1
+        n = j - i + 1
+        prev = out[i - 1] if i > 0 else None
+        nxt = out[j + 1] if j + 1 < len(out) else None
+        run_lo = min(w.start for w in out[i : j + 1])
+        run_hi = max(w.end for w in out[i : j + 1])
+        lo = prev.end if prev else max(0.0, run_lo - n * target_duration)
+        hi = nxt.start if nxt else run_hi + n * target_duration
+        if hi < lo:
+            hi = lo
+        want = n * target_duration
+        center = min(max((run_lo + run_hi) / 2, lo), hi)
+        a = max(lo, center - want / 2)
+        b = min(hi, center + want / 2)
+        if b - a < want:
+            a = max(lo, b - want)
+        if b - a < want:
+            b = min(hi, a + want)
+        need = n * min_duration
+        if b - a < need and prev is not None:
+            slack = max(0.0, prev.end - prev.start - min_duration)
+            take = min(slack, need - (b - a))
+            if take > 0 and a <= prev.end + 1e-9:
+                prev.end -= take
+                a = prev.end
+        if b - a < need and nxt is not None:
+            slack = max(0.0, nxt.end - nxt.start - min_duration)
+            take = min(slack, need - (b - a))
+            if take > 0 and b >= nxt.start - 1e-9:
+                nxt.start += take
+                b = nxt.start
+        if b - a >= ZERO_DURATION_EPSILON * n:
+            step = (b - a) / n
+            for k in range(n):
+                out[i + k].start = a + k * step
+                out[i + k].end = a + (k + 1) * step
+        i = j + 1
+    return out
+
+
 def _field(obj: object, name: str) -> object:
     """Read a field off a verbose_json entry, dict or pydantic object alike."""
     if isinstance(obj, dict):
@@ -136,63 +214,67 @@ def parse_sentences(raw_segments: object) -> list[TranscriptSentence]:
     return out
 
 
-async def transcribe(audio_or_video_path: str) -> Transcript:
-    settings = get_settings()
+def build_transcript(
+    *, text: str, raw_words: object, raw_segments: object,
+    language: str | None, backend: str,
+) -> Transcript:
+    """Apply the same word and sentence cleanup to every ASR provider."""
+    words: list[TranscriptWord] = []
+    for entry in raw_words if isinstance(raw_words, (list, tuple)) else []:
+        try:
+            probability = _field(entry, "probability")
+            words.append(TranscriptWord(
+                word=str(_field(entry, "word") or "").strip(),
+                start=float(_field(entry, "start")),  # type: ignore[arg-type]
+                end=float(_field(entry, "end")),  # type: ignore[arg-type]
+                probability=float(probability) if probability is not None else None,
+            ))
+        except (TypeError, ValueError):
+            continue
+    words = repair_zero_duration_words(merge_french_elisions([w for w in words if w.word]))
+    sentences = parse_sentences(raw_segments)
+    log.info("transcribe.done", backend=backend, words=len(words),
+             sentences=len(sentences), language=language)
+    if not sentences:
+        log.warning("transcribe.no_sentences", backend=backend)
+    return Transcript(text=text, words=words, language=language,
+                      sentences=sentences, asr_backend=backend)
+
+
+async def _transcribe_openai(audio_path: str, settings: object) -> Transcript:
     # Generous timeout + retries: whisper-1 on a ~30 min clip can be slow, and a
     # single transient timeout should not fail the whole job.
     client = AsyncOpenAI(api_key=settings.openai_api_key, timeout=180.0, max_retries=3)
 
+    with open(audio_path, "rb") as fh:
+        resp = await client.audio.transcriptions.create(
+            file=fh, model=settings.openai_transcribe_model,
+            response_format="verbose_json", timestamp_granularities=["word", "segment"],
+        )
+    return build_transcript(text=getattr(resp, "text", "") or "",
+                            raw_words=getattr(resp, "words", None),
+                            raw_segments=getattr(resp, "segments", None),
+                            language=getattr(resp, "language", None), backend="openai")
+
+
+async def transcribe(audio_or_video_path: str) -> Transcript:
+    settings = get_settings()
     audio_path = await _extract_audio(audio_or_video_path, settings.ffmpeg_bin)
     try:
-        with open(audio_path, "rb") as fh:
-            resp = await client.audio.transcriptions.create(
-                file=fh,
-                model=settings.openai_transcribe_model,
-                response_format="verbose_json",
-                # "segment" costs nothing extra and is the only place we get
-                # punctuation: sentence boundaries come from there, not from
-                # guessing silences between packed-together words.
-                timestamp_granularities=["word", "segment"],
-            )
+        if settings.asr_backend == "mlx_whisper":
+            try:
+                from .asr_mlx import transcribe_mlx
+                return await transcribe_mlx(audio_path, settings.mlx_whisper_model)
+            except Exception as exc:
+                if not settings.asr_fallback_to_openai:
+                    raise
+                log.warning("transcribe.mlx_failed", error_type=type(exc).__name__)
+        return await _transcribe_openai(audio_path, settings)
     finally:
         try:
             os.remove(audio_path)
         except OSError:
             pass
-
-    text = getattr(resp, "text", "") or ""
-    words: list[TranscriptWord] = []
-    raw_words = getattr(resp, "words", None) or []
-    for w in raw_words:
-        try:
-            words.append(
-                TranscriptWord(
-                    word=str(w.get("word") if isinstance(w, dict) else w.word),
-                    start=float(w.get("start") if isinstance(w, dict) else w.start),
-                    end=float(w.get("end") if isinstance(w, dict) else w.end),
-                )
-            )
-        except Exception:
-            continue
-
-    # Repair French elisions before anything downstream (LLM prompt text and
-    # burned-in captions both read from these words).
-    words = merge_french_elisions(words)
-
-    sentences = parse_sentences(getattr(resp, "segments", None))
-
-    lang = getattr(resp, "language", None)
-    log.info(
-        "transcribe.done",
-        words=len(words),
-        sentences=len(sentences),
-        language=lang,
-    )
-    if not sentences:
-        # Not fatal (boundaries.py degrades to gap detection) but worth seeing:
-        # every downstream cut is less precise without punctuation.
-        log.warning("transcribe.no_sentences", model=settings.openai_transcribe_model)
-    return Transcript(text=text, words=words, language=lang, sentences=sentences)
 
 
 def transcript_to_timestamped_lines(t: Transcript, line_seconds: float = 12.0) -> str:

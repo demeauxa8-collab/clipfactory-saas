@@ -1,0 +1,92 @@
+# ClipFactory worker — single source of truth for model choices.
+#
+# provisional — pending benchmark 2026-09-29
+#
+# Every stage reads its model from here through app/settings.py. To swap a model,
+# edit this file (or override the matching env var, e.g. PRIMARY_TEXT_MODEL) —
+# no code change is needed. Never point a default at a model with an announced
+# OpenRouter expiry: qwen/qwen3-vl-32b-instruct (2026-10-09) and
+# google/gemini-2.5-flash (2026-10-20) are deliberately absent.
+
+schema_version = 1
+
+[stages.transcription]
+# OpenAI direct. Must return word + segment timestamps (verbose_json);
+# gpt-4o-*-transcribe models reject that format.
+provider = "openai"
+model = "whisper-1"
+env = "OPENAI_TRANSCRIBE_MODEL"
+
+[stages.transcription_local]
+provider = "mlx_whisper"
+model = "mlx-community/whisper-large-v3-turbo"
+env = "MLX_WHISPER_MODEL"
+
+[stages.text]
+# Candidate selection, story arcs, arc verification, scoring prompts.
+provider = "openrouter"
+model = "google/gemini-3.8-flash"
+env = "PRIMARY_TEXT_MODEL"
+
+[stages.vision_deep]
+# Per-candidate frames (few frames, higher stakes).
+provider = "openrouter"
+model = "google/gemini-3.8-flash"
+env = "PRIMARY_VISION_DEEP_MODEL"
+
+[stages.vision_cheap]
+# Global video map (many small frames).
+provider = "openrouter"
+model = "qwen/qwen3-vl-30b-a3b-instruct"
+env = "VISION_CHEAP_MODEL"
+
+[stages.fallback_text]
+provider = "anthropic"
+model = "claude-haiku-4-5-20251001"
+env = "FALLBACK_TEXT_MODEL"
+
+[stages.fallback_vision]
+provider = "anthropic"
+model = "claude-haiku-4-5-20251001"
+env = "FALLBACK_VISION_MODEL"
+
+[stages.clip_judge]
+# Native-video judge of a rendered clip. Off by default (CLIP_JUDGE_ENABLED).
+provider = "openrouter"
+model = "google/gemini-3.8-flash"
+env = "CLIP_JUDGE_MODEL"
+
+# Per-model call handling. Only output budget and reasoning are tuned here;
+# prompts stay model-agnostic.
+#   min_output_tokens: floor applied to every call's max_tokens. Models that
+#     spend reasoning tokens need headroom or the JSON gets truncated.
+#   reasoning_max_tokens: reasoning budget sent to OpenRouter (0 = disabled).
+#     If the model refuses, the provider retries without the field and keeps
+#     the min_output_tokens floor.
+[models."google/gemini-3.8-flash"]
+min_output_tokens = 6000
+reasoning_max_tokens = 0
+usd_per_mtok_input = 0.75
+usd_per_mtok_output = 3.75
+
+[models."qwen/qwen3-vl-30b-a3b-instruct"]
+min_output_tokens = 0
+reasoning_max_tokens = 0
+usd_per_mtok_input = 0.15
+usd_per_mtok_output = 0.60
+
+[models."claude-haiku-4-5-20251001"]
+min_output_tokens = 0
+usd_per_mtok_input = 1.00
+usd_per_mtok_output = 5.00
+
+[models."whisper-1"]
+usd_per_minute = 0.006
+
+# Cost-estimate assumptions (used only for total_cost_estimate_cents logging).
+[cost_assumptions]
+# Share of analysis tokens that are prompt tokens (rest is output).
+text_input_share = 0.8
+# Blended tokens billed per extracted frame (image tokens + prompt/output share).
+vision_cheap_tokens_per_frame = 300
+vision_deep_tokens_per_frame = 600
