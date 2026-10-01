@@ -1,5 +1,7 @@
 # Handoff Codex — ClipFactory SaaS V1
 
+> ⚠️ **Journal historique (état au 07/08/2026).** L'état courant et les règles sont dans `AGENTS.md` ; la carte du pipeline dans `docs/pipeline-map-2026-09-29.md` ; l'index de la doc dans `docs/README.md`.
+
 > **Pour Codex (ou tout autre agent) qui reprend ce projet sans contexte.**
 > Tout ce qu'il faut savoir tient dans ce doc + les docs cités ci-dessous.
 
