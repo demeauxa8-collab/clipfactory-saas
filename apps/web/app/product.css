@@ -112,19 +112,14 @@
 }
 
 .cf-app-chrome {
-  background: color-mix(in srgb, var(--cf-canvas) 76%, transparent);
+  /* Opaque enough to read on its own: a live backdrop blur on a sticky bar
+     re-renders everything scrolling (and every video frame) beneath it. */
+  background: color-mix(in srgb, var(--cf-canvas) 94%, transparent);
   border-bottom: 1px solid transparent;
   inset: 0 0 auto;
   position: sticky;
   top: 0;
   z-index: 40;
-}
-
-@supports (backdrop-filter: blur(1px)) {
-  .cf-app-chrome {
-    backdrop-filter: blur(24px) saturate(150%);
-    -webkit-backdrop-filter: blur(24px) saturate(150%);
-  }
 }
 
 .cf-app-chrome::after {
@@ -918,7 +913,7 @@
   }
   .cf-mobile-nav {
     align-items: center;
-    background: color-mix(in srgb, var(--cf-canvas) 88%, transparent);
+    background: color-mix(in srgb, var(--cf-canvas) 96%, transparent);
     border: 1px solid var(--cf-line-strong);
     border-radius: 1.2rem;
     bottom: calc(0.75rem + env(safe-area-inset-bottom));
@@ -933,12 +928,6 @@
     position: fixed;
     right: 0.75rem;
     z-index: 45;
-  }
-  @supports (backdrop-filter: blur(1px)) {
-    .cf-mobile-nav {
-      backdrop-filter: blur(22px) saturate(160%);
-      -webkit-backdrop-filter: blur(22px) saturate(160%);
-    }
   }
   .cf-mobile-nav a {
     align-items: center;
