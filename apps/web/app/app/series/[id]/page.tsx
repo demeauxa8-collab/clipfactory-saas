@@ -18,14 +18,14 @@ type ClipRow = {
 export default async function SeriesPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createSupabaseServerClient();
-  const { data: series } = await supabase
-    .from("clip_series").select("id, campaign_id, created_at").eq("id", id).maybeSingle();
+  const [{ data: series }, { data: jobs }] = await Promise.all([
+    supabase.from("clip_series").select("id, campaign_id, created_at").eq("id", id).maybeSingle(),
+    supabase
+      .from("jobs")
+      .select("id, source_url, status, current_step, error_message, credits_charged, series_position")
+      .eq("series_id", id).order("series_position", { ascending: true }),
+  ]);
   if (!series) notFound();
-
-  const { data: jobs } = await supabase
-    .from("jobs")
-    .select("id, source_url, status, current_step, error_message, credits_charged, series_position")
-    .eq("series_id", id).order("series_position", { ascending: true });
   const sourceJobs = (jobs ?? []) as SeriesJob[];
   const ids = sourceJobs.map((job) => job.id);
   const { data: clips } = ids.length > 0
