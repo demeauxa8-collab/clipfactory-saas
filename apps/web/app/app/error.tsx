@@ -1,18 +1,32 @@
 "use client";
 
+import * as React from "react";
 import { AlertTriangle, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { track } from "@/lib/analytics";
 import {
   ProductPanel,
   ProductStatus,
 } from "@/components/product/product-primitives";
 
 export default function AppError({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  // Report the crash so failures in the workspace become visible in analytics.
+  // Only the digest, error name and a short message leave the browser.
+  React.useEffect(() => {
+    void track("app_error", {
+      digest: error.digest ?? null,
+      name: error.name,
+      message: error.message.slice(0, 200),
+      path: window.location.pathname,
+    });
+  }, [error]);
+
   return (
     <div className="cf-page cf-route-error">
       <ProductPanel tone="signal">

@@ -25,23 +25,24 @@ export default async function JobPage({
 }) {
   const { id } = await params;
   const supabase = await createSupabaseServerClient();
-  const { data: job } = await supabase
-    .from("jobs")
-    .select(
-      "id, source_url, status, current_step, target_clip_count, duration_seconds, credits_charged, error_code, error_message, queued_at, finished_at, campaign_id",
-    )
-    .eq("id", id)
-    .maybeSingle();
+  const [{ data: job }, { data: clips }] = await Promise.all([
+    supabase
+      .from("jobs")
+      .select(
+        "id, source_url, status, current_step, target_clip_count, duration_seconds, credits_charged, error_code, error_message, queued_at, finished_at, campaign_id",
+      )
+      .eq("id", id)
+      .maybeSingle(),
+    supabase
+      .from("clips")
+      .select(
+        "id, idx, title, hook_text, rationale, visual_summary, transcript_excerpt, start_seconds, end_seconds, duration_seconds, rendered_duration_seconds, segments, score_total, score_breakdown",
+      )
+      .eq("job_id", id)
+      .order("idx", { ascending: true }),
+  ]);
 
   if (!job) notFound();
-
-  const { data: clips } = await supabase
-    .from("clips")
-    .select(
-      "id, idx, title, hook_text, rationale, visual_summary, transcript_excerpt, start_seconds, end_seconds, duration_seconds, rendered_duration_seconds, segments, score_total, score_breakdown",
-    )
-    .eq("job_id", id)
-    .order("idx", { ascending: true });
 
   const clipList = (clips ?? []) as ClipReviewData[];
   const backHref = (
