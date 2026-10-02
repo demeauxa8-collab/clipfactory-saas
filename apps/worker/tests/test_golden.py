@@ -61,7 +61,34 @@ def test_heatmap_union_and_reproducible_same_duration_baseline():
     result = audience_overlap([(9, 10), (9, 10)], heatmap, 10)
     assert result["selected_fraction"] == 1
     assert 0 < result["random_same_duration_fraction"] < 0.1
-    assert result == audience_overlap([(9, 10)], heatmap, 10)
+    assert result == audience_overlap([(9, 10), (9, 10)], heatmap, 10)
+    assert (
+        result["random_same_duration_fraction"]
+        != audience_overlap([(9, 10)], heatmap, 10)["random_same_duration_fraction"]
+    )
+
+
+@pytest.mark.parametrize(
+    "sentence,expected", [("The method works.", False), ("The method works,", True)]
+)
+def test_articles_are_not_dependent_openings_and_asr_fragments_are_not_sentence_ends(
+    sentence, expected
+):
+    words = [
+        {"word": w, "start": i, "end": i + 0.8} for i, w in enumerate(["The", "method", "works"])
+    ]
+    transcript = {"words": words, "sentences": [{"text": sentence, "end": 2.8}]}
+    render = {
+        "edl": {
+            "shots": [
+                {"from_word_id": 0, "to_word_id": 2, "source_in_ms": 0, "source_out_ms": 2800}
+            ]
+        },
+        "technical_qc": {"duration_seconds": 20},
+    }
+    result = clip_metrics(render, transcript)
+    assert not result["dependent_opening"]
+    assert result["suspended_ending"] is expected
 
 
 @pytest.mark.parametrize(
@@ -271,3 +298,13 @@ def test_prior_attempts_share_one_mission_cap(tmp_path):
     with pytest.raises(BudgetExceeded):
         budget.reserve("model", "text", Decimal("0.02"))
     assert budget.committed == Decimal("0.04")
+
+
+def test_a_violated_provider_bound_stops_all_future_requests(tmp_path):
+    budget = Budget("0.10", tmp_path / "ledger.json", {})
+    entry = budget.reserve("model", "text", Decimal("0.01"))
+    with pytest.raises(BudgetExceeded, match="exceeded"):
+        budget.settle(entry, "0.02", "provider_reported")
+    with pytest.raises(BudgetExceeded):
+        budget.reserve("model", "text", Decimal("0.01"))
+    assert budget.committed == Decimal("0.02")

@@ -11,8 +11,9 @@ ENDING = frozenset(
         "les au aux and but so if that because when with for of the a an to or"
     ).split()
 )
-OPENING = ENDING | frozenset(
+OPENING = frozenset(
     (
+        "et mais donc si que parce alors car lorsque puisque and but so if that because when or "
         "ca ceci cela il elle ils elles ce cette ces lui eux on it they he she this "
         "those these them"
     ).split()
@@ -50,7 +51,9 @@ def audience_overlap(segments, heatmap, source_duration, seed=0):
         : max(1, len(heatmap) // 10)
     ]
     selected = [(p["start_time"], p["end_time"]) for p in top]
-    intervals = union(segments)
+    # Keep shot multiplicity: replaying the same passage twice also doubles its
+    # playback duration. Only curve buckets are unioned to avoid double counting.
+    intervals = [(a, b) for a, b in segments if b > a]
     duration = sum(b - a for a, b in intervals)
     if duration <= 0 or source_duration < duration:
         return None
@@ -60,7 +63,7 @@ def audience_overlap(segments, heatmap, source_duration, seed=0):
         start = rng.uniform(0, source_duration - duration)
         baseline.append(overlap([(start, start + duration)], selected) / duration)
     return {
-        "selected_fraction": overlap(intervals, selected) / duration,
+        "selected_fraction": sum(overlap([(a, b)], selected) for a, b in intervals) / duration,
         "random_same_duration_fraction": sum(baseline) / len(baseline),
         "samples": 1000,
     }
@@ -75,7 +78,11 @@ def clip_metrics(manifest, transcript, heatmap=None, source_duration=0):
         intervals.append((start, end))
         first, last = words[shot["from_word_id"]], words[shot["to_word_id"]]
         connector = normalize(last["word"]) in ENDING
-        boundary = any(abs(end - s["end"]) <= SENTENCE_TOLERANCE for s in sentences)
+        boundary = any(
+            abs(end - s["end"]) <= SENTENCE_TOLERANCE
+            and s.get("text", "").rstrip().rstrip("\"'»”)] ").endswith((".", "?", "!", "…"))
+            for s in sentences
+        )
         cut_word = any(
             w["start"] + 0.001 < edge < w["end"] - 0.001 for edge in (start, end) for w in words
         )

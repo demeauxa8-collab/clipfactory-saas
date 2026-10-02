@@ -8,10 +8,11 @@ import importlib.util
 import json
 import os
 import shutil
+import statistics
 import subprocess
 import time
 import tomllib
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
@@ -196,6 +197,13 @@ def report(run, sources, budget, start, identity):
         "requested_clips": sum(s["requested_clips"] for s in sources),
         "metrics": rates,
         "durations_seconds": sorted(c["metrics"]["duration_seconds"] for c in clips),
+        "duration_summary_seconds": {
+            "min": min(c["metrics"]["duration_seconds"] for c in clips),
+            "median": statistics.median(c["metrics"]["duration_seconds"] for c in clips),
+            "max": max(c["metrics"]["duration_seconds"] for c in clips),
+        }
+        if clips
+        else None,
         "black_seconds": sum(c["metrics"]["black_seconds"] for c in clips),
         "silence_seconds": sum(c["metrics"]["silence_seconds"] for c in clips),
         "heatmap_sources": sum(s["heatmap_available"] for s in sources),
@@ -237,6 +245,10 @@ def report(run, sources, budget, start, identity):
         "elapsed_seconds": time.monotonic() - start,
         "judge_count": len(verdicts),
         "judge_publishable_count": sum(v["publishable"] for v in verdicts),
+        "judge_rejection_reasons": dict(
+            Counter(r for v in verdicts if not v["publishable"] for r in set(v["reasons"]))
+        ),
+        "cost_bound_violated": any(e.get("bound_violation") for e in budget.entries),
         "human_publishability": None,
         "status": "provisional_mini_reference",
     }
@@ -264,9 +276,13 @@ def report(run, sources, budget, start, identity):
         "",
         "## Definitions and limitations",
         "",
-        "Closed FR/EN connector/pronoun flags are heuristics. Sentence-end tolerance: 0.5s. "
+        "Closed FR/EN connector/pronoun flags are heuristics; "
+        "articles alone are not marked dependent. "
+        "Sentence-end tolerance: 0.5s against terminal punctuation in the ASR transcript. "
         "Word-cut tolerance: 1ms. Target duration: 15-60s.",
-        "Heatmap: top 10% of buckets ranked by value; source interval union; 1,000 seeded "
+        "Heatmap: top 10% of buckets ranked by value; "
+        "repeated shots count their playback duration; "
+        "1,000 seeded "
         "same-duration random windows. Missing curves are N/A.",
         "OpenRouter cost uses response usage.cost including discarded answers and retries. "
         "ASR uses returned duration at $0.006/min rounded up to seconds; Anthropic uses usage "
@@ -285,6 +301,39 @@ def report(run, sources, budget, start, identity):
             f"{len(s['clips'])}/{s['requested_clips']}; "
             f"${s.get('cost_usd', '0')}; {s.get('elapsed_seconds', 0):.1f}s."
         )
+        lines += ["", "| Stage | USD charged / reserved |", "|---|---:|"]
+        lines += [
+            f"| {stage} | {value} |"
+            for stage, value in sorted(s.get("costs_by_stage_usd", {}).items())
+        ]
+        lines += ["", "| Pipeline step | Wall seconds (sampled) |", "|---|---:|"]
+        lines += [
+            f"| {step} | {value:.2f} |"
+            for step, value in sorted(s.get("stage_wall_seconds", {}).items())
+        ]
+        lines.append("")
+    lines += [
+        "## Cost detail",
+        "",
+        f"Provider-reported charges: ${data['cost_provider_reported_usd']}.",
+        f"ASR / Anthropic usage tariff calculation: ${data['cost_tariff_usd']}.",
+        f"Uncertain conservative reserves: ${data['cost_uncertain_reserved_usd']}.",
+        f"Requests blocked before sending: {data['blocked_requests']}.",
+        f"A request cost bound was violated: {data['cost_bound_violated']}.",
+        "",
+        "## Duration distribution",
+        "",
+        str(data["duration_summary_seconds"]),
+        "",
+        "## Judge rejection reasons (model opinion)",
+        "",
+        "| Reason | Clips |",
+        "|---|---:|",
+    ]
+    lines += [
+        f"| {reason} | {count} |"
+        for reason, count in sorted(data["judge_rejection_reasons"].items())
+    ]
     (run / "report.md").write_text("\n".join(lines) + "\n")
     return data
 

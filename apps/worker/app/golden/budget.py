@@ -61,7 +61,9 @@ class Budget:
     def reserve(self, model: str, stage: str, amount: Decimal):
         if amount <= 0 or not amount.is_finite():
             raise ValueError("invalid cost bound")
-        if self.committed + amount > self.cap:
+        if self.committed + amount > self.cap or any(
+            e.get("bound_violation") for e in self.entries
+        ):
             self.entries.append(
                 {
                     "source": source_context.get(),

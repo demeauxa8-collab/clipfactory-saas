@@ -70,9 +70,10 @@ the shared provider account's spending limit.
 ## Interpretation
 
 Closed connector and pronoun flags are deterministic heuristics, not semantic
-proof. Sentence-end tolerance is 0.5s; word-boundary tolerance is 1ms. Target
+proof. Articles alone are not marked dependent. Sentence-end tolerance is 0.5s
+against ASR segment ends with terminal punctuation; word-boundary tolerance is 1ms. Target
 duration is 15-60s. Noir/silence reuses actual render QC. Missing heatmaps are N/A.
-Audience overlap uses the top 10% of buckets by value, a union of source windows,
+Audience overlap uses the top 10% of buckets by value, counts repeated shots in playback duration,
 and 1,000 seeded random windows of equal duration.
 
 Native-video judge verdicts are separate artifacts. They never affect delivery,
@@ -97,3 +98,7 @@ No paid requests are made by these tests. CI runs them against disposable Postgr
 The B0 branch explicitly disables its Vercel Git auto-deployment.
 
 Section 6 (human yield and judge agreement) remains pending human ratings.
+
+`golden_report.py RUN --sources-root /private/sources` recomputes only free
+measurements from retained manifests/transcripts. It records the measurement-code
+revision separately from the original paid runner revision, which stays unchanged.

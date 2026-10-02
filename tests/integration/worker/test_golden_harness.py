@@ -2,10 +2,14 @@
 
 import asyncio
 import json
+import shutil
 import subprocess
+from decimal import Decimal
+from types import SimpleNamespace
 
 import pytest
-from app.golden.harness import PreloadJournal, export_source, seed_source
+from app.golden.harness import PreloadJournal, export_source, report, seed_source
+from app.golden.reporting import recompute_report
 from app.golden.sources import sha256
 from app.models import Transcript, TranscriptSentence, TranscriptWord
 from app.pipeline import runner
@@ -165,5 +169,32 @@ async def test_synthetic_source_uses_real_runner_render_and_exports(
         assert (directory / clip["media"]).stat().st_size > 10000
         assert not list(work.rglob("source.mp4"))
         assert sha256(media) == metadata["sha256"]
+        # Measurements can be repaired/replayed freely without changing the
+        # recorded paid pipeline revision or calling any provider.
+        run, sources = tmp_path / "run", tmp_path / "sources"
+        shutil.copytree(directory, run / "fake_source")
+        shutil.copytree(source_dir, sources / "fake_source")
+        identity = {
+            "run_id": "offline-reference",
+            "git_sha": "original-pipeline-revision",
+            "models_sha256": "fixture",
+            "config_sha256": "fixture",
+            "pricing_catalog_sha256": "fixture",
+            "requirements_sha256": "fixture",
+            "runtime_versions": {},
+        }
+        budget = SimpleNamespace(cap=Decimal("1.50"), entries=[], committed=Decimal(0))
+        import time
+
+        report(run, [result], budget, time.monotonic(), identity)
+        (run / "cost_ledger.json").write_text(
+            json.dumps({"cap_usd": "1.50", "requests": []})
+        )
+        updated = recompute_report(run, sources)
+        assert updated["git_sha"] == "original-pipeline-revision"
+        assert len(updated["metrics_revision_git_sha"]) == 40
+        assert updated["cost_charged_or_reserved_usd"] == "0"
+        assert isinstance(updated["sources"][0]["clips"][0]["score_breakdown"], dict)
+        assert (run / "review/index.html").exists()
     finally:
         get_settings.cache_clear()

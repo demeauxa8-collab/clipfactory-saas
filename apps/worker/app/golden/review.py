@@ -73,5 +73,15 @@ def generate_review(run: Path):
         ensure_ascii=False,
     ).replace("<", "\\u003c")
     (directory / "index.html").write_text(HTML.replace("__DATA__", payload))
+    (directory / "LISEZ-MOI.txt").write_text(
+        "Ouvrez index.html dans votre navigateur. Gardez le dossier clips à côté.\n"
+        "Pour chaque clip : choisissez Oui ou Non, puis une accroche de 0 à 4.\n"
+        "Raisons et commentaire permettent de préciser votre décision.\n"
+        "Raccourcis : O / N ; flèches gauche et droite pour naviguer.\n"
+        "Les notes restent dans ce navigateur : exportez-les avant de changer de Mac.\n"
+        "Le bouton Exporter produit ratings.csv, à déposer dans le dossier du run.\n"
+        "Vous pouvez exporter après chaque session et continuer plus tard.\n"
+        "Pour déplacer la page, copiez tout ce dossier, pas seulement index.html.\n"
+    )
     (run / "review_mapping.json").write_text(json.dumps(mapping, indent=2))
     return directory / "index.html"
