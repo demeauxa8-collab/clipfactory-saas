@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import importlib.metadata
 import importlib.util
 import json
 import os
@@ -202,6 +203,37 @@ def report(run, sources, budget, start, identity):
         "cost_charged_or_reserved_usd": str(budget.committed),
         "cost_per_clip_usd": str(budget.committed / n) if n else None,
         "costs_by_stage_usd": dict(costs),
+        "cost_provider_reported_usd": str(
+            sum(
+                (
+                    Decimal(e["charged_or_reserved_usd"])
+                    for e in budget.entries
+                    if e["accounting"] == "provider_reported"
+                ),
+                Decimal(0),
+            )
+        ),
+        "cost_tariff_usd": str(
+            sum(
+                (
+                    Decimal(e["charged_or_reserved_usd"])
+                    for e in budget.entries
+                    if e["accounting"] in {"usage_tariff", "asr_duration_tariff"}
+                ),
+                Decimal(0),
+            )
+        ),
+        "cost_uncertain_reserved_usd": str(
+            sum(
+                (
+                    Decimal(e["charged_or_reserved_usd"])
+                    for e in budget.entries
+                    if "upper_bound" in e["accounting"] or e["accounting"] == "reserved"
+                ),
+                Decimal(0),
+            )
+        ),
+        "blocked_requests": sum(e["accounting"] == "blocked_before_send" for e in budget.entries),
         "elapsed_seconds": time.monotonic() - start,
         "judge_count": len(verdicts),
         "judge_publishable_count": sum(v["publishable"] for v in verdicts),
@@ -356,11 +388,22 @@ def execute(args):
 
     if (Path.cwd() / ".env").exists():
         raise ValueError("run from a checkout root without a .env file")
+    runtime = {}
+    for line in (ROOT / "apps/worker/requirements.lock").read_text().splitlines():
+        if "==" in line and not line.startswith("#"):
+            name, version = line.strip().split("==", 1)
+            if name in {"openai", "anthropic", "httpx", "asyncpg", "pydantic"}:
+                actual = importlib.metadata.version(name)
+                if actual != version:
+                    raise ValueError(f"runtime dependency {name} differs from requirements.lock")
+                runtime[name] = actual
 
     # Clear all inherited settings and use only three whitelisted credentials.
     credentials = dotenv_values(args.credentials_file) if args.credentials_file else {}
     for field in Settings.model_fields:
         os.environ.pop(field.upper(), None)
+    for name in ("OPENAI_BASE_URL", "ANTHROPIC_BASE_URL", "OPENAI_ORG_ID", "OPENAI_PROJECT_ID"):
+        os.environ.pop(name, None)
     for name in ("OPENAI_API_KEY", "OPENROUTER_API_KEY", "ANTHROPIC_API_KEY"):
         os.environ[name] = credentials.get(name) or ""
     if not os.environ["OPENAI_API_KEY"] or not os.environ["OPENROUTER_API_KEY"]:
@@ -399,8 +442,11 @@ def execute(args):
         "models_sha256": lock_sha,
         "config_sha256": sha256(args.config),
         "pricing_catalog_sha256": sha256(args.catalog),
+        "requirements_sha256": sha256(ROOT / "apps/worker/requirements.lock"),
+        "runtime_versions": runtime,
     }
-    budget = Budget(args.budget, run / "cost_ledger.json", prices)
+    prior = json.loads(args.prior_ledger.read_text())["requests"] if args.prior_ledger else []
+    budget = Budget(args.budget, run / "cost_ledger.json", prices, prior)
     with disposable_postgres(args.pg_bin) as dsn:
         os.environ.update(
             DATABASE_URL=dsn,

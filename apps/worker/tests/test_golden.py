@@ -106,7 +106,9 @@ async def test_budget_counts_discarded_answers_and_blocks_before_http(tmp_path):
                 await client.post("https://openrouter.ai/api/v1/chat/completions", json=body)
     assert len(calls) == 2
     assert budget.committed == Decimal("0.04")
-    assert [e["accounting"] for e in budget.entries] == ["provider_reported"] * 2
+    assert [e["accounting"] for e in budget.entries] == ["provider_reported"] * 2 + [
+        "blocked_before_send"
+    ]
 
 
 async def test_ambiguous_transport_keeps_asr_reservation(tmp_path):
@@ -227,3 +229,45 @@ async def test_provider_json_retry_accounts_for_discarded_paid_response(tmp_path
         )
     assert result.payload == {"ok": True}
     assert len(calls) == 2 and budget.committed == Decimal("0.002")
+
+
+async def test_default_sdk_transport_cannot_bypass_budget(tmp_path):
+    import importlib
+
+    from openai import AsyncOpenAI
+
+    calls = []
+    async with AsyncOpenAI(api_key="offline", max_retries=0) as client:
+        # Exercise the SDK's actual default HTTP implementation, not an injected
+        # legacy client. Newer SDKs may use httpx2 while our adapter uses httpx.
+        implementation = importlib.import_module(
+            type(client._client).__mro__[2].__module__.split(".")[0]
+        )
+
+        def handler(request):
+            calls.append(request)
+            return implementation.Response(200, json={"text": "Test", "duration": 70, "words": []})
+
+        client._client._transport = implementation.MockTransport(handler)
+        budget = Budget("0.10", tmp_path / "ledger.json", {})
+        token = duration_context.set(70)
+        try:
+            with budget.intercept():
+                await client.audio.transcriptions.create(
+                    model="whisper-1",
+                    file=("fixture.mp3", b"fixture", "audio/mpeg"),
+                    response_format="verbose_json",
+                )
+        finally:
+            duration_context.reset(token)
+    assert len(calls) == 1
+    assert budget.committed == Decimal("0.0070")
+    assert budget.entries[0]["stage"] == "transcription"
+
+
+def test_prior_attempts_share_one_mission_cap(tmp_path):
+    prior = [{"charged_or_reserved_usd": "0.04", "stage": "transcription"}]
+    budget = Budget("0.05", tmp_path / "ledger.json", {}, prior)
+    with pytest.raises(BudgetExceeded):
+        budget.reserve("model", "text", Decimal("0.02"))
+    assert budget.committed == Decimal("0.04")

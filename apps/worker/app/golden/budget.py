@@ -8,6 +8,7 @@ No provider key settings or production provider code are changed.
 from __future__ import annotations
 
 import contextvars
+import importlib
 import json
 import math
 import time
@@ -26,11 +27,13 @@ class BudgetExceeded(RuntimeError):
 
 
 class Budget:
-    def __init__(self, cap: str, path: Path, prices: dict):
+    def __init__(self, cap: str, path: Path, prices: dict, prior_entries=None):
         self.cap = Decimal(cap)
         if not Decimal("0") < self.cap <= Decimal("3"):
             raise ValueError("golden cap must be positive and at most $3")
-        self.path, self.prices, self.entries = path, prices, []
+        self.path, self.prices, self.entries = path, prices, list(prior_entries or [])
+        if self.committed > self.cap:
+            raise BudgetExceeded("prior attempts already exhaust this mission budget")
         if path.exists():
             raise ValueError("refusing to overwrite an existing budget ledger")
         self.save()
@@ -59,6 +62,17 @@ class Budget:
         if amount <= 0 or not amount.is_finite():
             raise ValueError("invalid cost bound")
         if self.committed + amount > self.cap:
+            self.entries.append(
+                {
+                    "source": source_context.get(),
+                    "stage": stage,
+                    "model": model,
+                    "charged_or_reserved_usd": "0",
+                    "accounting": "blocked_before_send",
+                    "required_reservation_usd": str(amount),
+                }
+            )
+            self.save()
             raise BudgetExceeded("request blocked before sending: golden budget exhausted")
         entry = {
             "source": source_context.get(),
@@ -134,10 +148,15 @@ class Budget:
 
     @contextmanager
     def intercept(self):
-        original = httpx.AsyncClient.send
         budget = self
+        clients = [httpx.AsyncClient]
+        try:
+            clients.append(importlib.import_module("httpx2").AsyncClient)
+        except ImportError:
+            pass
+        originals = [(client, client.send) for client in clients]
 
-        async def send(client, request, *args, **kwargs):
+        async def send(original, client, request, *args, **kwargs):
             host = request.url.host
             if request.method != "POST" or host not in {
                 "api.openai.com",
@@ -208,8 +227,16 @@ class Budget:
                 budget.settle(entry, None, "invalid_usage_upper_bound")
             return response
 
-        httpx.AsyncClient.send = send
+        def wrap(original):
+            async def guarded(client, request, *args, **kwargs):
+                return await send(original, client, request, *args, **kwargs)
+
+            return guarded
+
+        for client, original in originals:
+            client.send = wrap(original)
         try:
             yield
         finally:
-            httpx.AsyncClient.send = original
+            for client, original in originals:
+                client.send = original

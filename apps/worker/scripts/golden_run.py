@@ -14,6 +14,11 @@ def main():
     parser.add_argument("--budget", default="3.00")
     parser.add_argument("--credentials-file", type=Path, required=True)
     parser.add_argument("--catalog", type=Path, required=True)
+    parser.add_argument(
+        "--prior-ledger",
+        type=Path,
+        help="Carry earlier interrupted attempts into the same mission cap",
+    )
     parser.add_argument("--pg-bin", type=Path, default=Path("/opt/homebrew/opt/postgresql@17/bin"))
     parser.add_argument("--judge", action=argparse.BooleanOptionalAction, default=True)
     execute(parser.parse_args())

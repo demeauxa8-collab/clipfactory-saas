@@ -33,8 +33,12 @@ PYTHONPATH=apps/worker python apps/worker/scripts/golden_review.py \
 
 `--sources` accepts comma-separated IDs from the private config; `--no-judge`
 disables the separate observation pass. The mini run must use `--budget 1.50`.
+If an interrupted attempt was made, `--prior-ledger /private/prior-attempt-ledger.json`
+carries its costs and conservative reserves into that same mission cap.
 The code must be committed before a paid run. Run identities contain UTC date,
 code commit and the models-lock hash; the full hashes are in `report.json`.
+Runtime API/DB package versions must match `requirements.lock` before a paid
+request. Both httpx and newer SDK httpx2 transports are guarded when present.
 
 The TOML contains `[[sources]]` entries with `id`, `voices`, `voices_basis`, then
 `[sources.campaign]` with `audience`, `niche`, `tone`, `goal`, `example_hooks`
