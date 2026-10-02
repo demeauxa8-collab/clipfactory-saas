@@ -58,7 +58,7 @@ jobs:
       - name: Worker lint and regression tests
         if: matrix.app == 'worker'
         run: |
-          apps/worker/.venv/bin/ruff check apps/worker/app apps/worker/tests apps/worker/scripts/benchmark_clipping.py tests/integration
+          apps/worker/.venv/bin/ruff check apps/worker/app apps/worker/tests apps/worker/scripts/benchmark_clipping.py apps/worker/scripts/golden_*.py tests/integration
           apps/worker/.venv/bin/python -m pytest apps/worker/tests -q
       - name: API admission lint
         if: matrix.app == 'api'
