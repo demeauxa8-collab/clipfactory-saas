@@ -45,6 +45,49 @@ export function Analytics() {
     };
   }, [isAuthenticatedSurface]);
 
+  // Uncaught browser errors and rejected promises: crashes that escape React's
+  // error boundaries (the bare "Application error" screen) are otherwise
+  // invisible. Capped per page load so a looping error cannot flood analytics.
+  React.useEffect(() => {
+    if (!isAuthenticatedSurface) return;
+
+    let sent = 0;
+    const report = (kind: string, message: string, source?: string) => {
+      if (sent >= 5) return;
+      sent += 1;
+      void import("@/lib/analytics").then(({ track }) =>
+        track("client_error", {
+          kind,
+          message: message.slice(0, 300),
+          source: source ? source.slice(0, 200) : null,
+          path: window.location.pathname,
+        }),
+      );
+    };
+    const onError = (event: ErrorEvent) =>
+      report(
+        "error",
+        event.error?.stack ?? event.message ?? "unknown",
+        event.filename,
+      );
+    const onRejection = (event: PromiseRejectionEvent) => {
+      const reason = event.reason;
+      report(
+        "unhandledrejection",
+        reason instanceof Error
+          ? (reason.stack ?? reason.message)
+          : String(reason),
+      );
+    };
+
+    window.addEventListener("error", onError);
+    window.addEventListener("unhandledrejection", onRejection);
+    return () => {
+      window.removeEventListener("error", onError);
+      window.removeEventListener("unhandledrejection", onRejection);
+    };
+  }, [isAuthenticatedSurface]);
+
   // SPA pageviews: App Router client navigation does not reload the page.
   React.useEffect(() => {
     if (!pathname) return;
