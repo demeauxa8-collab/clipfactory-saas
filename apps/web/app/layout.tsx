@@ -14,6 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  other: { google: "notranslate" },
   metadataBase: new URL(SITE.url),
   title: {
     default: `${SITE.name} — AI clip maker for Shorts, Reels and TikToks`,
@@ -70,7 +71,9 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    // Browser auto-translation rewrites text nodes behind React, which then
+    // crashes on the next update ("Application error: a client-side exception").
+    <html lang="en" translate="no">
       <body className={`${inter.variable} min-h-dvh flex flex-col`}>
         <a className="cf-skip-link" href="#main-content">
           Skip to main content
