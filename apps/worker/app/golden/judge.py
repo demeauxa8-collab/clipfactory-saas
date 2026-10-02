@@ -7,6 +7,8 @@ import json
 import subprocess
 from pathlib import Path
 
+from ..pipeline.clip_judge import VideoJudgeProvider, call_native_video_judge
+
 REASONS = {
     "fin_coupee": "Fin coupée",
     "ouverture_sans_contexte": "Ouverture sans contexte",
@@ -53,7 +55,7 @@ def parse_verdict(payload):
     return payload
 
 
-async def judge_clip(path: Path, *, provider, model, campaign, transcript):
+async def judge_clip(path: Path, *, provider: VideoJudgeProvider, model, campaign, transcript):
     # Keep the whole clip/audio native; compress only if the inline media limit
     # would otherwise be exceeded. Delivered media and selection stay untouched.
     original = path
@@ -90,13 +92,14 @@ async def judge_clip(path: Path, *, provider, model, campaign, transcript):
         )
     if path.stat().st_size > 18 * 1024 * 1024:
         raise ValueError("native video exceeds inline judge limit")
-    result = await provider.video_json(
+    result = await call_native_video_judge(
+        str(path),
+        provider=provider,
         model=model,
-        system=SYSTEM,
-        user_text=json.dumps({"campaign": campaign, "transcript": transcript}, ensure_ascii=False),
-        video_mp4=path.read_bytes(),
-        max_tokens=1024,
-        temperature=0,
+        system_prompt=SYSTEM,
+        user_prompt=json.dumps(
+            {"campaign": campaign, "transcript": transcript}, ensure_ascii=False
+        ),
     )
     return {
         **parse_verdict(result.payload),

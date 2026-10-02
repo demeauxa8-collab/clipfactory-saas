@@ -308,3 +308,37 @@ def test_a_violated_provider_bound_stops_all_future_requests(tmp_path):
     with pytest.raises(BudgetExceeded):
         budget.reserve("model", "text", Decimal("0.01"))
     assert budget.committed == Decimal("0.02")
+
+
+async def test_observation_reuses_native_judge_io_with_its_own_closed_rubric(tmp_path):
+    from app.golden.judge import judge_clip
+    from app.providers.base import LLMCallResult
+
+    media = tmp_path / "clip.mp4"
+    media.write_bytes(b"native fixture")
+    requests = []
+
+    class Provider:
+        async def video_json(self, **kwargs):
+            requests.append(kwargs)
+            return LLMCallResult(
+                payload={
+                    "publishable": True,
+                    "hook_0_3s": 3,
+                    "reasons": [],
+                    "explanation": "Complete passage.",
+                },
+                model="resolved-judge",
+            )
+
+    verdict = await judge_clip(
+        media,
+        provider=Provider(),
+        model="requested-judge",
+        campaign={"goal": "Teach"},
+        transcript="Complete passage.",
+    )
+    assert requests[0]["video_mp4"] == b"native fixture"
+    assert json.loads(requests[0]["user_text"])["campaign"]["goal"] == "Teach"
+    assert verdict["hook_0_3s"] == 3 and verdict["model"] == "resolved-judge"
+    assert verdict["mode"] == "observation_only"
