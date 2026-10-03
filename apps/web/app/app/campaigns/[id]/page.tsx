@@ -74,7 +74,7 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
         <p className="mt-1 text-sm text-[var(--color-muted-foreground)]">
           {maxSeriesSources > 1
             ? `Add up to ${maxSeriesSources} YouTube videos to one series. Each source is processed in order.`
-            : "Paste one YouTube URL. Multi-video series are available with Pro."}
+            : "Paste one YouTube URL."}
         </p>
         <div className="pro-panel mt-4 rounded-lg p-5">
           <SubmitJobForm campaignId={String(campaign.id)} maxSources={maxSeriesSources} />

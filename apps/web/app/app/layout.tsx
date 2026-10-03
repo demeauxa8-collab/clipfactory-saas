@@ -12,17 +12,21 @@ export default async function AppLayout({
   children: React.ReactNode;
 }) {
   const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Auth and balance in parallel: the balance is read under the caller's RLS,
+  // so it is only rendered once the user is confirmed below.
+  const [
+    {
+      data: { user },
+    },
+    { data: balanceRow },
+  ] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.from("credit_balances").select("balance").maybeSingle(),
+  ]);
   if (!user) redirect("/login");
 
-  const { data: ledger } = await supabase.from("credit_ledger").select("delta");
-  const balance = (ledger ?? []).reduce(
-    (total, entry) =>
-      total + (typeof entry.delta === "number" ? entry.delta : 0),
-    0,
-  );
+  const balance =
+    typeof balanceRow?.balance === "number" ? balanceRow.balance : 0;
 
   return (
     <div className="cf-app">

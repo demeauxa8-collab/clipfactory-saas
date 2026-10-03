@@ -514,7 +514,7 @@
   }
 
   .actions {
-    background: color-mix(in srgb, var(--cf-panel) 93%, transparent);
+    background: color-mix(in srgb, var(--cf-panel) 98%, transparent);
     border: 1px solid var(--cf-line-strong);
     border-radius: 1rem;
     bottom: calc(4.75rem + env(safe-area-inset-bottom));
@@ -525,12 +525,6 @@
     z-index: 20;
   }
 
-  @supports (backdrop-filter: blur(1px)) {
-    .actions {
-      backdrop-filter: blur(18px) saturate(140%);
-      -webkit-backdrop-filter: blur(18px) saturate(140%);
-    }
-  }
 }
 
 @media (max-width: 560px) {
