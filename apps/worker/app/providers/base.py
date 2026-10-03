@@ -35,6 +35,7 @@ class LLMCallResult:
     tokens_in: int = 0
     tokens_out: int = 0
     model: str = ""
+    model_source: str = "request"
 
     @property
     def tokens_total(self) -> int:

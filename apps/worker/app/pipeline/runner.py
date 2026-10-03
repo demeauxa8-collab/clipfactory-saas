@@ -83,6 +83,7 @@ from .job_state import (
     fail_job,
     reserve_credits,
 )
+from .model_trace import TracedProvider, initialize_trace
 from .score import (
     HOOK_OPENING_WINDOW_SECONDS,
     joint_compatibility,
@@ -275,7 +276,9 @@ async def _mark_failed(
         )
 
 
-async def _advisory_clip_verdict(clip_path: str, *, log_ctx) -> dict | None:
+async def _advisory_clip_verdict(
+    clip_path: str, *, log_ctx, ctx: JobContext | None = None,
+) -> dict | None:
     """Optional native-video judge (CLIP_JUDGE_ENABLED). Never blocks delivery."""
     settings = get_settings()
     if not settings.clip_judge_enabled or not settings.openrouter_api_key:
@@ -283,7 +286,8 @@ async def _advisory_clip_verdict(clip_path: str, *, log_ctx) -> dict | None:
     try:
         verdict = await judge_clip(
             clip_path,
-            provider=OpenRouterProvider(),
+            provider=(TracedProvider(OpenRouterProvider(), ctx, "judge", "clip_judge")
+                      if ctx is not None else OpenRouterProvider()),
             model=settings.clip_judge_model,
             max_video_mb=settings.clip_judge_max_video_mb,
         )
@@ -320,6 +324,8 @@ async def _call_with_fallback(
     coroutine_factory,
     *,
     label: str,
+    ctx: JobContext | None = None,
+    stage: str = "text",
 ) -> tuple[LLMProvider, object]:
     """Run `coroutine_factory(provider, model)`, fall back on ProviderError.
 
@@ -327,14 +333,17 @@ async def _call_with_fallback(
     provider and the model name so the caller can produce the right awaitable.
     """
     try:
-        result = await coroutine_factory(primary, primary_model)
+        traced = TracedProvider(primary, ctx, stage, label) if ctx is not None else primary
+        result = await coroutine_factory(traced, primary_model)
         return primary, result
     except ProviderError as exc:
         log.warning("provider.primary_failed", step=label, kind=exc.kind, err=str(exc))
         if fallback is None:
             raise
     try:
-        result = await coroutine_factory(fallback, fallback_model)
+        traced = (TracedProvider(fallback, ctx, stage, label, fallback=True)
+                  if ctx is not None else fallback)
+        result = await coroutine_factory(traced, fallback_model)
         log.info("provider.fallback_used", step=label)
         return fallback, result
     except ProviderError as exc:
@@ -624,6 +633,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str, *, attempt_journal=None) -> N
         target_clip_count=int(job_row["target_clip_count"]),
         workdir=workdir,
         run_token=token,
+        model_trace=initialize_trace(settings),
     )
 
     try:
@@ -746,7 +756,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str, *, attempt_journal=None) -> N
             await _set_status(
                 conn, job_id, token=token, status="transcribing", current_step="transcribe"
             )
-        ctx.transcript = await transcribe(ctx.source_path)
+        ctx.transcript = await transcribe(ctx.source_path, trace_ctx=ctx)
         ctx.transcription_cost_cents = (
             0 if ctx.transcript.asr_backend == "mlx_whisper"
             else round(minutes * settings.cost_transcribe_cents_per_min)
@@ -811,6 +821,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str, *, attempt_journal=None) -> N
                         arc_idx=idx,
                     ),
                     label="deep_vision",
+                    ctx=ctx, stage="vision_deep",
                 )
             except ProviderError:
                 per_seg, frames, tokens = [], 0, 0
@@ -908,7 +919,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str, *, attempt_journal=None) -> N
                 )
                 continue
             rendered_dur = delivered.rendered_duration_seconds
-            verdict = await _advisory_clip_verdict(out_clip, log_ctx=log_ctx)
+            verdict = await _advisory_clip_verdict(out_clip, log_ctx=log_ctx, ctx=ctx)
             if verdict is not None:
                 ctx.analysis_tokens += int(verdict.get("tokens_in", 0)) + int(
                     verdict.get("tokens_out", 0)
@@ -1122,6 +1133,7 @@ async def run_job(pool: asyncpg.Pool, job_id: str, *, attempt_journal=None) -> N
             )
         )
     finally:
+        await checkpoint_job(ctx, "model_trace", {})
         shutil.rmtree(workdir, ignore_errors=True)
 
 
@@ -1159,6 +1171,7 @@ async def _run_story_path(
             workdir=os.path.join(ctx.workdir, "map_frames"),
         ),
         label="video_map",
+        ctx=ctx, stage="vision_cheap",
     )
     ctx.video_map = video_map
     ctx.vision_frames_count += frames_used
@@ -1195,6 +1208,7 @@ async def _run_story_path(
             transcript=ctx.transcript,
         ),
         label="story_arcs",
+        ctx=ctx, stage="text",
     )
     ctx.analysis_tokens += tokens2
     if used_provider.name != primary.name:
@@ -1284,6 +1298,7 @@ async def _run_simple_path(
             target_clip_count=ctx.target_clip_count,
         ),
         label="simple_segments",
+        ctx=ctx, stage="text",
     )
     ctx.analysis_tokens += tokens
     if used_provider.name != primary.name:

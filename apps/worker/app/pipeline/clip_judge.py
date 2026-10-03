@@ -94,6 +94,31 @@ def parse_verdict(payload: Any) -> dict[str, Any]:
     return {**payload, "reason": reason[:500]}
 
 
+async def call_native_video_judge(
+    clip_path: str,
+    *,
+    provider: VideoJudgeProvider,
+    model: str,
+    max_video_mb: float = 18.0,
+    system_prompt: str = JUDGE_SYSTEM_PROMPT,
+    user_prompt: str = JUDGE_USER_PROMPT,
+) -> LLMCallResult:
+    """Shared native-video IO for the production and B0 observation rubrics."""
+    data = Path(clip_path).read_bytes()
+    if not data:
+        raise ClipJudgeError("clip file is empty")
+    if len(data) > max_video_mb * 1024 * 1024:
+        raise ClipJudgeError(f"clip exceeds {max_video_mb} MB judge limit")
+    return await provider.video_json(
+        model=model,
+        system=system_prompt,
+        user_text=user_prompt,
+        video_mp4=data,
+        max_tokens=1024,
+        temperature=0.0,
+    )
+
+
 async def judge_clip(
     clip_path: str,
     *,
@@ -101,18 +126,8 @@ async def judge_clip(
     model: str,
     max_video_mb: float = 18.0,
 ) -> ClipVerdict:
-    data = Path(clip_path).read_bytes()
-    if not data:
-        raise ClipJudgeError("clip file is empty")
-    if len(data) > max_video_mb * 1024 * 1024:
-        raise ClipJudgeError(f"clip exceeds {max_video_mb} MB judge limit")
-    result = await provider.video_json(
-        model=model,
-        system=JUDGE_SYSTEM_PROMPT,
-        user_text=JUDGE_USER_PROMPT,
-        video_mp4=data,
-        max_tokens=1024,
-        temperature=0.0,
+    result = await call_native_video_judge(
+        clip_path, provider=provider, model=model, max_video_mb=max_video_mb
     )
     fields = parse_verdict(result.payload)
     return ClipVerdict(
@@ -121,4 +136,3 @@ async def judge_clip(
         tokens_in=result.tokens_in,
         tokens_out=result.tokens_out,
     )
-

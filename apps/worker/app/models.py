@@ -346,6 +346,7 @@ class JobContext:
     # Provider tracking
     primary_provider: str = ""
     fallback_used: bool = False
+    model_trace: dict[str, Any] = field(default_factory=dict)
 
 
 def is_long_video(duration_seconds: int | None, threshold_seconds: int = 300) -> bool:

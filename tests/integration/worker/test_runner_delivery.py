@@ -154,7 +154,7 @@ async def test_canceled_attempt_refunds_and_propagates(
 ):
     started = asyncio.Event()
 
-    async def stalled_transcription(*args):
+    async def stalled_transcription(*args, **kwargs):
         started.set()
         await asyncio.Event().wait()
 

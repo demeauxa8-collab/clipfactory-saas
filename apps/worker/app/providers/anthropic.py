@@ -65,7 +65,8 @@ class AnthropicProvider(LLMProvider):
             payload=payload,
             tokens_in=int(msg.usage.input_tokens or 0),
             tokens_out=int(msg.usage.output_tokens or 0),
-            model=model,
+            model=getattr(msg, "model", None) or model,
+            model_source="response" if getattr(msg, "model", None) else "request",
         )
 
     async def vision_json(
@@ -122,5 +123,6 @@ class AnthropicProvider(LLMProvider):
             payload=payload,
             tokens_in=int(msg.usage.input_tokens or 0),
             tokens_out=int(msg.usage.output_tokens or 0),
-            model=model,
+            model=getattr(msg, "model", None) or model,
+            model_source="response" if getattr(msg, "model", None) else "request",
         )

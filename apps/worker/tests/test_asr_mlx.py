@@ -30,7 +30,8 @@ async def test_mlx_mapping_uses_shared_cleanup(monkeypatch):
 async def test_openai_path_never_imports_mlx(monkeypatch, tmp_path):
     audio = tmp_path / "audio.mp3"
     audio.write_bytes(b"test")
-    settings = SimpleNamespace(asr_backend="openai", ffmpeg_bin="ffmpeg")
+    settings = SimpleNamespace(asr_backend="openai", ffmpeg_bin="ffmpeg",
+                               openai_transcribe_model="whisper-1")
     monkeypatch.setattr(transcribe, "get_settings", lambda: settings)
     async def extract(*_):
         return str(audio)
@@ -48,7 +49,8 @@ async def test_mlx_failure_falls_back_to_openai(monkeypatch, tmp_path):
     audio = tmp_path / "audio.mp3"
     audio.write_bytes(b"test")
     settings = SimpleNamespace(asr_backend="mlx_whisper", ffmpeg_bin="ffmpeg",
-                               mlx_whisper_model="model", asr_fallback_to_openai=True)
+                               mlx_whisper_model="model", asr_fallback_to_openai=True,
+                               openai_transcribe_model="whisper-1")
     monkeypatch.setattr(transcribe, "get_settings", lambda: settings)
     async def extract(*_):
         return str(audio)

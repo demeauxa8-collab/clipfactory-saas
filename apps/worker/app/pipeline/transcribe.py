@@ -7,8 +7,9 @@ import tempfile
 import structlog
 from openai import AsyncOpenAI
 
-from ..models import Transcript, TranscriptSentence, TranscriptWord
+from ..models import JobContext, Transcript, TranscriptSentence, TranscriptWord
 from ..settings import get_settings
+from .model_trace import record_call
 
 log = structlog.get_logger()
 
@@ -257,19 +258,49 @@ async def _transcribe_openai(audio_path: str, settings: object) -> Transcript:
                             language=getattr(resp, "language", None), backend="openai")
 
 
-async def transcribe(audio_or_video_path: str) -> Transcript:
+async def transcribe(
+    audio_or_video_path: str, *, trace_ctx: JobContext | None = None,
+) -> Transcript:
     settings = get_settings()
     audio_path = await _extract_audio(audio_or_video_path, settings.ffmpeg_bin)
+
+    async def observed(backend, model, call, *, fallback=False):
+        metadata = {
+            "step": "transcribe", "operation": "transcribe", "provider": backend,
+            "requested_model": model, "fallback": fallback,
+        }
+        try:
+            result = await call()
+        except (Exception, asyncio.CancelledError) as exc:
+            if trace_ctx is not None:
+                record_call(trace_ctx, "transcription", **metadata,
+                            status="canceled" if isinstance(exc, asyncio.CancelledError)
+                            else "failed",
+                            model=None, model_source=None, error_type=type(exc).__name__)
+            raise
+        if trace_ctx is not None:
+            record_call(trace_ctx, "transcription", **metadata, status="succeeded",
+                        model=model, model_source="request")
+        return result
+
+    fallback = False
     try:
         if settings.asr_backend == "mlx_whisper":
             try:
                 from .asr_mlx import transcribe_mlx
-                return await transcribe_mlx(audio_path, settings.mlx_whisper_model)
+                return await observed(
+                    "mlx_whisper", settings.mlx_whisper_model,
+                    lambda: transcribe_mlx(audio_path, settings.mlx_whisper_model),
+                )
             except Exception as exc:
                 if not settings.asr_fallback_to_openai:
                     raise
                 log.warning("transcribe.mlx_failed", error_type=type(exc).__name__)
-        return await _transcribe_openai(audio_path, settings)
+                fallback = True
+        return await observed(
+            "openai", settings.openai_transcribe_model,
+            lambda: _transcribe_openai(audio_path, settings), fallback=fallback,
+        )
     finally:
         try:
             os.remove(audio_path)
