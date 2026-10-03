@@ -1,0 +1,110 @@
+# ClipFactory worker — PREMIUM EXPERIMENT lock. NEVER used in production.
+#
+# Same schema as models.lock.toml. Select it per shell with
+#   MODELS_LOCK_PATH=models.premium.lock.toml
+# and run it with a SEPARATE, spending-capped OpenRouter key (docs/model-lab.md).
+# Prices checked against https://openrouter.ai/api/v1/models on 2026-10-03
+# (prompt tiers above 200k/272k tokens cost more; our prompts stay below).
+# Models that are not listed here keep the main lock's behaviour.
+
+schema_version = 1
+
+[stages.transcription]
+# OpenAI direct. Must return word + segment timestamps (verbose_json);
+# gpt-4o-*-transcribe models reject that format.
+provider = "openai"
+model = "whisper-1"
+env = "OPENAI_TRANSCRIBE_MODEL"
+
+[stages.transcription_openrouter]
+# OpenRouter STT (OpenAI-compatible verbose_json with word + segment timestamps).
+# Pre-test 2026-09-29: 0 zero-duration words on 2 min of French, ~3x cheaper
+# than whisper-1. Segment text comes back without punctuation.
+provider = "openrouter"
+model = "openai/whisper-large-v3"
+env = "OPENROUTER_TRANSCRIBE_MODEL"
+
+[stages.transcription_local]
+provider = "mlx_whisper"
+model = "mlx-community/whisper-large-v3-turbo"
+env = "MLX_WHISPER_MODEL"
+
+[stages.text]
+# Candidate selection, story arcs, arc verification, scoring prompts.
+provider = "openrouter"
+model = "openai/gpt-6-astra-pro"
+env = "PRIMARY_TEXT_MODEL"
+
+[stages.vision_deep]
+# Per-candidate frames (few frames, higher stakes).
+provider = "openrouter"
+model = "google/gemini-3.1-pro-preview"
+env = "PRIMARY_VISION_DEEP_MODEL"
+
+[stages.vision_cheap]
+# Global video map (many small frames).
+provider = "openrouter"
+model = "qwen/qwen3-vl-30b-a3b-instruct"
+env = "VISION_CHEAP_MODEL"
+
+[stages.fallback_text]
+provider = "anthropic"
+model = "claude-haiku-4-5-20251001"
+env = "FALLBACK_TEXT_MODEL"
+
+[stages.fallback_vision]
+provider = "anthropic"
+model = "claude-haiku-4-5-20251001"
+env = "FALLBACK_VISION_MODEL"
+
+[stages.clip_judge]
+# Native-video judge of a rendered clip. Off by default (CLIP_JUDGE_ENABLED).
+provider = "openrouter"
+model = "google/gemini-3.1-pro-preview"
+env = "CLIP_JUDGE_MODEL"
+
+# Per-model call handling (see models.lock.toml for the field semantics).
+# GPT-6 / Gemini 3.1 Pro are reasoning models: their thinking tokens count
+# against max_tokens, so keep a generous output floor. reasoning_max_tokens
+# is capped (not 0) because these models refuse to run with reasoning off;
+# the provider retries without the field if OpenRouter still rejects it.
+[models."openai/gpt-6-astra-pro"]
+min_output_tokens = 12000
+reasoning_max_tokens = 4000
+usd_per_mtok_input = 10.0
+usd_per_mtok_output = 50.0
+
+[models."google/gemini-3.1-pro-preview"]
+min_output_tokens = 8000
+reasoning_max_tokens = 2000
+usd_per_mtok_input = 2.0
+usd_per_mtok_output = 12.0
+
+[models."google/gemini-3.8-flash"]
+min_output_tokens = 6000
+reasoning_max_tokens = 0
+usd_per_mtok_input = 0.75
+usd_per_mtok_output = 3.75
+
+[models."qwen/qwen3-vl-30b-a3b-instruct"]
+min_output_tokens = 0
+reasoning_max_tokens = 0
+usd_per_mtok_input = 0.15
+usd_per_mtok_output = 0.60
+
+[models."claude-haiku-4-5-20251001"]
+min_output_tokens = 0
+usd_per_mtok_input = 1.00
+usd_per_mtok_output = 5.00
+
+[models."whisper-1"]
+usd_per_minute = 0.006
+
+[models."openai/whisper-large-v3"]
+# Not in the chat catalog (separate STT endpoint); observed billing figure.
+usd_per_minute = 0.00185
+
+[cost_assumptions]
+text_input_share = 0.8
+vision_cheap_tokens_per_frame = 300
+vision_deep_tokens_per_frame = 600

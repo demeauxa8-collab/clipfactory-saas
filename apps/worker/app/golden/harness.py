@@ -461,7 +461,8 @@ def execute(args):
     dirty = subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip()
     if dirty:
         raise ValueError("commit benchmark code before paid run")
-    lock = ROOT / "apps/worker/models.lock.toml"
+    lock = (getattr(args, "models_lock", None) or ROOT / "apps/worker/models.lock.toml").resolve()
+    os.environ["MODELS_LOCK_PATH"] = str(lock)
     lock_sha = sha256(lock)
     run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ") + "-" + git_sha[:10] + "-" + lock_sha[:10]
     run = args.root / "runs" / run_id
@@ -477,6 +478,8 @@ def execute(args):
     }
     catalog = json.loads(args.catalog.read_text())
     for model in [v["model"] for v in document["stages"].values() if v["provider"] == "openrouter"]:
+        if model not in prices:  # per-minute STT models are not in the chat catalog
+            continue
         actual = next(m["pricing"] for m in catalog["data"] if m["id"] == model)
         if Decimal(actual["prompt"]) > Decimal(prices[model]["input"]) or Decimal(
             actual["completion"]

@@ -95,3 +95,34 @@ def test_env_example_matches_the_lock():
     lock = tomllib.loads(models_lock.DEFAULT_LOCK_PATH.read_text())
     for stage in lock["stages"].values():
         assert env.get(stage["env"]) == stage["model"], stage["env"]
+
+
+PREMIUM_LOCK = models_lock.DEFAULT_LOCK_PATH.parent / "models.premium.lock.toml"
+
+
+def test_premium_lock_loads_and_every_stage_resolves(monkeypatch):
+    monkeypatch.setenv("MODELS_LOCK_PATH", str(PREMIUM_LOCK))
+    models_lock._load.cache_clear()
+    try:
+        models = {stage: models_lock.stage_model(stage) for stage in models_lock.STAGES}
+        assert models["text"] == "openai/gpt-6-astra-pro"
+        assert models["vision_deep"] == "google/gemini-3.1-pro-preview"
+        assert models["clip_judge"] == "google/gemini-3.1-pro-preview"
+        assert models["vision_cheap"] == "qwen/qwen3-vl-30b-a3b-instruct"
+        assert models["transcription_openrouter"] == "openai/whisper-large-v3"
+        assert not set(models.values()) & set(EXPIRING)
+        assert not set(models.values()) & RETIRED
+        # Every OpenRouter chat stage has a price and a reasoning-safe output floor.
+        for stage in ("text", "vision_deep", "vision_cheap", "clip_judge"):
+            profile = models_lock.model_profile(models[stage])
+            assert profile.usd_per_mtok_input > 0 and profile.usd_per_mtok_output > 0
+        assert models_lock.model_profile("openai/gpt-6-astra-pro").min_output_tokens >= 8000
+        assert models_lock.model_profile("openai/gpt-6-astra-pro").usd_per_mtok_output == 50.0
+    finally:
+        monkeypatch.delenv("MODELS_LOCK_PATH")
+        models_lock._load.cache_clear()
+
+
+def test_production_lock_is_not_the_premium_one():
+    assert models_lock.DEFAULT_LOCK_PATH.name == "models.lock.toml"
+    assert "gpt-6" not in models_lock.DEFAULT_LOCK_PATH.read_text()
