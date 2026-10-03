@@ -15,6 +15,8 @@ def initialize_trace(settings: Settings) -> dict[str, Any]:
         "transcription": (
             settings.asr_backend,
             settings.mlx_whisper_model if settings.asr_backend == "mlx_whisper"
+            else settings.openrouter_transcribe_model
+            if settings.asr_backend == "openrouter"
             else settings.openai_transcribe_model,
         ),
         "text": ("primary", settings.primary_text_model),
