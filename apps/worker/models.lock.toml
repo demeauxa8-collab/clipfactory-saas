@@ -17,6 +17,14 @@ provider = "openai"
 model = "whisper-1"
 env = "OPENAI_TRANSCRIBE_MODEL"
 
+[stages.transcription_openrouter]
+# OpenRouter STT (OpenAI-compatible verbose_json with word + segment timestamps).
+# Pre-test 2026-09-29: 0 zero-duration words on 2 min of French, ~3x cheaper
+# than whisper-1. Segment text comes back without punctuation.
+provider = "openrouter"
+model = "openai/whisper-large-v3"
+env = "OPENROUTER_TRANSCRIBE_MODEL"
+
 [stages.transcription_local]
 provider = "mlx_whisper"
 model = "mlx-community/whisper-large-v3-turbo"
@@ -82,6 +90,11 @@ usd_per_mtok_output = 5.00
 
 [models."whisper-1"]
 usd_per_minute = 0.006
+
+[models."openai/whisper-large-v3"]
+# Observed billing on 2026-09-29 (0.0037 $ for 120 s), above the 0.00045 $/min
+# catalog price: keep the conservative figure for cost logging.
+usd_per_minute = 0.00185
 
 # Cost-estimate assumptions (used only for total_cost_estimate_cents logging).
 [cost_assumptions]

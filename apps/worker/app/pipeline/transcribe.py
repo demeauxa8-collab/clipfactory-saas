@@ -4,6 +4,7 @@ import asyncio
 import os
 import tempfile
 
+import httpx
 import structlog
 from openai import AsyncOpenAI
 
@@ -258,6 +259,34 @@ async def _transcribe_openai(audio_path: str, settings: object) -> Transcript:
                             language=getattr(resp, "language", None), backend="openai")
 
 
+async def _transcribe_openrouter(audio_path: str, settings: object) -> Transcript:
+    """OpenRouter STT: OpenAI-compatible multipart request and verbose_json reply."""
+    url = settings.openrouter_base_url.rstrip("/") + "/audio/transcriptions"
+    headers = {"Authorization": f"Bearer {settings.openrouter_api_key}"}
+    data = {
+        "model": settings.openrouter_transcribe_model,
+        "response_format": "verbose_json",
+        "timestamp_granularities[]": ["word", "segment"],
+    }
+    async with httpx.AsyncClient(timeout=httpx.Timeout(600.0, connect=20.0)) as client:
+        with open(audio_path, "rb") as fh:
+            resp = await client.post(
+                url, headers=headers, data=data,
+                files={"file": (os.path.basename(audio_path), fh, "audio/mpeg")},
+            )
+    if resp.status_code != 200:
+        raise RuntimeError(f"openrouter_transcription_http_{resp.status_code}")
+    payload = resp.json()
+    raw_words = payload.get("words")
+    if not raw_words and isinstance(payload.get("segments"), list):
+        raw_words = [w for s in payload["segments"] for w in (s.get("words") or [])]
+    if not raw_words:
+        raise RuntimeError("openrouter_transcription_no_word_timestamps")
+    return build_transcript(text=payload.get("text") or "", raw_words=raw_words,
+                            raw_segments=payload.get("segments"),
+                            language=payload.get("language"), backend="openrouter")
+
+
 async def transcribe(
     audio_or_video_path: str, *, trace_ctx: JobContext | None = None,
 ) -> Transcript:
@@ -285,6 +314,17 @@ async def transcribe(
 
     fallback = False
     try:
+        if settings.asr_backend == "openrouter":
+            try:
+                return await observed(
+                    "openrouter", settings.openrouter_transcribe_model,
+                    lambda: _transcribe_openrouter(audio_path, settings),
+                )
+            except Exception as exc:
+                if not settings.asr_fallback_to_openai:
+                    raise
+                log.warning("transcribe.openrouter_failed", error_type=type(exc).__name__)
+                fallback = True
         if settings.asr_backend == "mlx_whisper":
             try:
                 from .asr_mlx import transcribe_mlx

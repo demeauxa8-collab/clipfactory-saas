@@ -39,7 +39,8 @@ class Settings(BaseSettings):
     # whisper-1 is required for word timestamps: the gpt-4o-*-transcribe family
     # rejects verbose_json, which transcribe() asks for.
     openai_transcribe_model: str = _locked("transcription")
-    asr_backend: Literal["openai", "mlx_whisper"] = "openai"
+    asr_backend: Literal["openai", "mlx_whisper", "openrouter"] = "openai"
+    openrouter_transcribe_model: str = _locked("transcription_openrouter")
     mlx_whisper_model: str = _locked("transcription_local")
     asr_fallback_to_openai: bool = True
 
@@ -122,7 +123,9 @@ class Settings(BaseSettings):
             raise ValueError("R2 credentials are required for R2 storage")
         if self.cost_transcribe_cents_per_min is None:
             self.cost_transcribe_cents_per_min = models_lock.transcribe_cents_per_minute(
-                self.openai_transcribe_model
+                self.openrouter_transcribe_model
+                if self.asr_backend == "openrouter"
+                else self.openai_transcribe_model
             )
         if self.cost_vision_cheap_cents_per_frame is None:
             self.cost_vision_cheap_cents_per_frame = models_lock.vision_cents_per_frame(
