@@ -193,8 +193,27 @@ def provider_check(url: str, token: str):
 
 
 def asr_check():
-    if worker_env.get("ASR_BACKEND", "openai") != "mlx_whisper":
-        return "OpenAI selected"
+    backend = worker_env.get("ASR_BACKEND", "openai")
+    if backend == "openai":
+        return f"backend openai ({worker_env.get('OPENAI_TRANSCRIBE_MODEL') or 'whisper-1'})"
+    if backend == "openrouter":
+        model = (worker_env.get("OPENROUTER_TRANSCRIBE_MODEL")
+                 or "openai/whisper-large-v3 (models.lock)")
+        token = worker_env.get("OPENROUTER_API_KEY", "")
+        if not token:
+            raise CheckError("ASR_BACKEND=openrouter but OPENROUTER_API_KEY is missing")
+        # Free endpoint: key metadata, including the remaining spending cap.
+        response = httpx.get("https://openrouter.ai/api/v1/key",
+                             headers={"Authorization": f"Bearer {token}"}, timeout=10)
+        if response.status_code != 200:
+            raise CheckError("OpenRouter rejected the transcription key")
+        remaining = (response.json().get("data") or {}).get("limit_remaining")
+        if remaining is None:
+            return f"backend openrouter ({model}); key has no spending cap"
+        detail = f"backend openrouter ({model}); key cap remaining {remaining:.2f} $"
+        return f"{detail} WARN: under 2 $" if remaining < 2 else detail
+    if backend != "mlx_whisper":
+        raise CheckError(f"unknown ASR_BACKEND {backend!r}")
     script = (
         "import asyncio,math,struct,tempfile,time,wave,os; "
         "from app.settings import get_settings; "
