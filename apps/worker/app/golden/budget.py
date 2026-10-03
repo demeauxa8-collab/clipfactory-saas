@@ -11,6 +11,7 @@ import contextvars
 import importlib
 import json
 import math
+import re
 import time
 from contextlib import contextmanager
 from decimal import Decimal
@@ -27,10 +28,11 @@ class BudgetExceeded(RuntimeError):
 
 
 class Budget:
-    def __init__(self, cap: str, path: Path, prices: dict, prior_entries=None):
+    def __init__(self, cap: str, path: Path, prices: dict, prior_entries=None, *, max_cap="3"):
         self.cap = Decimal(cap)
-        if not Decimal("0") < self.cap <= Decimal("3"):
-            raise ValueError("golden cap must be positive and at most $3")
+        ceiling = Decimal(max_cap)
+        if not self.cap.is_finite() or not Decimal("0") < self.cap <= ceiling <= Decimal("15"):
+            raise ValueError(f"golden cap must be positive and at most ${ceiling}")
         self.path, self.prices, self.entries = path, prices, list(prior_entries or [])
         if self.committed > self.cap:
             raise BudgetExceeded("prior attempts already exhaust this mission budget")
@@ -171,6 +173,25 @@ class Budget:
                     raise ValueError("ASR requires known source duration")
                 model, stage = "whisper-1", "transcription"
                 bound = Decimal(math.ceil(duration_context.get() + 1)) * Decimal("0.0001")
+            elif host == "openrouter.ai" and request.url.path == "/api/v1/audio/transcriptions":
+                if duration_context.get() <= 0:
+                    raise ValueError("ASR requires known source duration")
+                multipart = await request.aread()
+                match = re.search(rb'name="model"\r\n\r\n([^\r\n]+)', multipart)
+                model = match.group(1).decode() if match else ""
+                rates = budget.prices.get(model, {})
+                if "minute" not in rates:
+                    raise BudgetExceeded("unpriced OpenRouter ASR model blocked")
+                stage = "transcription"
+                # The lock's STT price is observed, not a contractual maximum.
+                # Keep four times that rate plus the usual 10% margin reserved
+                # unless the provider returns an actual usage.cost.
+                bound = (
+                    Decimal(math.ceil(duration_context.get() + 1))
+                    / 60
+                    * Decimal(str(rates["minute"]))
+                    * Decimal("4.4")
+                )
             elif request.url.path.endswith(("/chat/completions", "/messages")):
                 body = json.loads(await request.aread())
                 model, stage, bound = budget.quote(body)

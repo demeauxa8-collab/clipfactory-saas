@@ -3,7 +3,8 @@
   "regions": ["dub1"],
   "git": {
     "deploymentEnabled": {
-      "feat/b0-golden": false
+      "feat/b0-golden": false,
+      "codex/prospect-premium-2026-10-03": false
     }
   }
 }
