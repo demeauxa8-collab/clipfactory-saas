@@ -10,12 +10,12 @@ import styles from "./pricing.module.css";
 
 export const metadata: Metadata = {
   title: "Plans & pricing — Starter and Pro",
-  description: "Starter at €29/month for 300 credits. Explore Pro at €79/month for 1,000 credits and up to five YouTube sources per series. Pro is coming soon.",
+  description: "Starter at €29/month for 300 credits and up to three videos per series. Explore Pro at €79/month for 1,000 credits and up to five YouTube sources per series. Pro is coming soon.",
   alternates: { canonical: "/pricing" },
 };
 
 const FAQ = [
-  { q: "Can I use several videos in one series?", a: "Multi-source series are reserved for Pro, with two to five YouTube videos under one campaign brief. Sources are processed in order and results stay grouped. Each exported clip uses one source; footage from different videos is not mixed. Pro subscriptions are not open yet." },
+  { q: "Can I use several videos in one series?", a: "Yes. Starter series take up to three YouTube videos under one campaign brief; Pro will take up to five. Sources are processed in order and results stay grouped. Each exported clip uses one source; footage from different videos is not mixed." },
   { q: "How are credits counted?", a: "One credit covers one minute of source video. A 12-minute video uses 12 credits, whether it produces one clip or three. In a multi-source series, the duration of each video counts toward the total." },
   { q: "How many clips will I receive?", a: "You can request up to three clips per video. Quality checks may return fewer distinct cuts when the source does not support three. Every delivered clip includes vertical framing, burned captions and a download without a watermark." },
   { q: "Can I cancel my subscription?", a: "Contact hello@clipfactory.app for billing, invoices or cancellation during the pilot. Pro is not open for subscriptions yet, so joining its notification list does not start a subscription or create a charge." },

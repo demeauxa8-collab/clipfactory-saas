@@ -90,7 +90,7 @@ export function BillingContent({ status, sub, plans }: {
         )}
         {sub?.plan_code === "starter" && (
           <p className="mt-6 text-sm text-[var(--color-muted-foreground)]">
-            Need multi-video series? <a href="mailto:hello@clipfactory.app?subject=Pro%20upgrade" className="text-[var(--color-brand)] hover:underline">Ask us about Pro</a>.
+            Need more than three videos per series? <a href="mailto:hello@clipfactory.app?subject=Pro%20upgrade" className="text-[var(--color-brand)] hover:underline">Ask us about Pro</a>.
           </p>
         )}
       </div>

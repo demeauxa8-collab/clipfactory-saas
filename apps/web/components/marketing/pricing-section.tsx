@@ -51,8 +51,8 @@ export function PricingSection({ startHref, standalone = false }: { startHref: R
             ],
             [
               "Source",
-              "Up to 30 minutes per source",
-              "One YouTube or Vimeo video per job. Multi-source series require Pro.",
+              "Up to 3 videos per series",
+              "Up to 30 minutes per source. One shared campaign brief.",
             ],
             [
               "Cuts",
