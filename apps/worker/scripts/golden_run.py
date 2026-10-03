@@ -12,6 +12,13 @@ def main():
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--sources")
     parser.add_argument("--budget", default="3.00")
+    parser.add_argument("--target-clips", type=int, choices=range(1, 6), default=5)
+    parser.add_argument("--asr-backend", choices=("openai", "openrouter"), default="openai")
+    parser.add_argument(
+        "--reuse-transcripts",
+        action="store_true",
+        help="Use hash-verified frozen transcripts as shared experimental inputs",
+    )
     parser.add_argument("--credentials-file", type=Path, required=True)
     parser.add_argument(
         "--models-lock",

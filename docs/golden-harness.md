@@ -35,6 +35,9 @@ PYTHONPATH=apps/worker python apps/worker/scripts/golden_review.py \
 disables the separate observation pass. The mini run must use `--budget 1.50`.
 If an interrupted attempt was made, `--prior-ledger /private/prior-attempt-ledger.json`
 carries its costs and conservative reserves into that same mission cap.
+An explicitly authorized method experiment can use `--budget 8.00`,
+`--target-clips 3`, `--asr-backend openrouter`, and `--reuse-transcripts`.
+See `method-model-experiment.md` for shared input hashes and cost allocation.
 The code must be committed before a paid run. Run identities contain UTC date,
 code commit and the models-lock hash; the full hashes are in `report.json`.
 Runtime API/DB package versions must match `requirements.lock` before a paid
