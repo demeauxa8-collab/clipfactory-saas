@@ -36,7 +36,9 @@ def check(name: str, operation) -> None:
     global failures
     try:
         detail = operation()
-        print(f"OK {name}: {detail}", flush=True)
+        # A detail containing "WARN" is reported but never counts as a failure.
+        status = "WARN" if "WARN" in str(detail) else "OK"
+        print(f"{status} {name}: {detail}", flush=True)
     except CheckError as exc:
         failures += 1
         print(f"KO {name}: {exc}", flush=True)

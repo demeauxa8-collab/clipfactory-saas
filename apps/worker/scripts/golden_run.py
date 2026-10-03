@@ -13,6 +13,11 @@ def main():
     parser.add_argument("--sources")
     parser.add_argument("--budget", default="3.00")
     parser.add_argument("--credentials-file", type=Path, required=True)
+    parser.add_argument(
+        "--models-lock",
+        type=Path,
+        help="Alternative lock (e.g. models.premium.lock.toml); default models.lock.toml",
+    )
     parser.add_argument("--catalog", type=Path, required=True)
     parser.add_argument(
         "--prior-ledger",

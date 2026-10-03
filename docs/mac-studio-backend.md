@@ -303,7 +303,7 @@ Script **lecture seule** (aucun job créé, aucune écriture en base), sortie un
 | Stockage | écrit un fichier test dans `STORAGE_LOCAL_DIR`, génère une URL signée, la télécharge **via l'URL publique** (Funnel), compare le contenu, vérifie qu'une URL expirée renvoie 403, supprime le fichier |
 | OpenRouter | `GET https://openrouter.ai/api/v1/key` (gratuit) → clé valide |
 | OpenAI | `GET https://api.openai.com/v1/models/whisper-1` (gratuit) → 200 |
-| ASR local | si `ASR_BACKEND=mlx_whisper` : transcrit 5 s de silence + bip, sans erreur, temps affiché |
+| ASR | affiche le vrai backend (`openai` / `openrouter` / `mlx_whisper`). `openrouter` : `GET /api/v1/key` (gratuit), affiche `limit_remaining`, **WARN** (jamais KO) sous 2 $. `mlx_whisper` : transcrit 5 s de silence + bip, temps affiché |
 | YouTube | `yt-dlp --simulate --remote-components ejs:github <une vidéo publique courte>` → OK |
 | Services | api et worker `running` dans launchd |
 | Disque | espace libre, taille de `WORKER_TMP_DIR` |
