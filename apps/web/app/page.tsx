@@ -37,7 +37,7 @@ const HOME_FAQ = [
   },
   {
     q: "How much does it cost?",
-    a: "Starter is 29 euros per month for 300 credits and individual videos. Pro is planned at 79 euros per month for 1,000 credits and up to five YouTube sources per series. Pro subscriptions are not open yet.",
+    a: "Starter is 29 euros per month for 300 credits and series of up to three videos. Pro is planned at 79 euros per month for 1,000 credits and up to five YouTube sources per series. Pro subscriptions are not open yet.",
   },
 ];
 
