@@ -210,7 +210,12 @@ class Budget:
             try:
                 data = response.json()
                 usage = data.get("usage", {})
-                if stage == "transcription" and response.is_success and "duration" in data:
+                if (
+                    host == "api.openai.com"
+                    and stage == "transcription"
+                    and response.is_success
+                    and "duration" in data
+                ):
                     amount = Decimal(math.ceil(float(data["duration"]))) * Decimal("0.0001")
                     budget.settle(
                         entry, amount, "asr_duration_tariff", duration_seconds=data["duration"]

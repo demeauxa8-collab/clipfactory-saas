@@ -39,8 +39,12 @@ async def execute(args):
     settings = get_settings()
     document = tomllib.loads(args.models_lock.read_text())
     model = document["stages"]["transcription_openrouter"]["model"]
+    prior = json.loads(args.prior_ledger.read_text())["requests"] if args.prior_ledger else []
     budget = Budget(
-        "0.50", args.ledger, {model: {"minute": str(document["models"][model]["usd_per_minute"])}}
+        "0.50",
+        args.ledger,
+        {model: {"minute": str(document["models"][model]["usd_per_minute"])}},
+        prior_entries=prior,
     )
     for source in read_sources(args.config):
         directory = args.shared_root / source["id"]
@@ -55,7 +59,15 @@ async def execute(args):
         audio = await _extract_audio(str(directory / "source.mp4"), settings.ffmpeg_bin)
         try:
             with budget.intercept():
-                transcript = await _transcribe_openrouter(audio, settings)
+                expected_language = (meta.get("language") or "").split("-")[0]
+                transcript = await _transcribe_openrouter(
+                    audio, settings, language=expected_language
+                )
+                if expected_language and transcript.language not in (
+                    expected_language,
+                    {"fr": "french", "en": "english"}.get(expected_language),
+                ):
+                    raise ValueError("shared ASR language differs from original source")
         finally:
             Path(audio).unlink(missing_ok=True)
         target.write_text(json.dumps(asdict(transcript), ensure_ascii=False, indent=2))
@@ -78,6 +90,7 @@ def main():
     parser.add_argument("--models-lock", type=Path, required=True)
     parser.add_argument("--credentials-file", type=Path, required=True)
     parser.add_argument("--ledger", type=Path, required=True)
+    parser.add_argument("--prior-ledger", type=Path)
     asyncio.run(execute(parser.parse_args()))
 
 

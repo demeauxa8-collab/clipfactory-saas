@@ -81,7 +81,7 @@ async def test_openrouter_stt_attempt_is_accounted_and_unknown_model_blocked(tmp
 
     def handler(request):
         sent.append(request)
-        return httpx.Response(200, json={"text": "Test", "usage": {"cost": 0.002}})
+        return httpx.Response(200, json={"text": "Test", "duration": 120, "usage": {"cost": 0.002}})
 
     budget = Budget(
         "0.10", tmp_path / "ledger.json", {"openai/whisper-large-v3": {"minute": "0.00185"}}
