@@ -193,7 +193,8 @@ def export(root):
         "",
         "Coût attribué : tous les appels de la source, y compris essais et passages rejetés. "
         "A répartit ce coût entre les clips livrés. B et C isolent les appels propres au candidat "
-        "et répartissent les frais communs et rejets. Ces allocations ne sont pas des factures par clip.",
+        "et répartissent les frais communs et rejets. "
+        "Ces allocations ne sont pas des factures par clip.",
         "Les fins sont évaluées automatiquement, sans validation humaine.",
         "Les candidats de diagnostic restent signalés : leur livraison ne signifie pas "
         "qu'ils passent les seuils éditoriaux de leur méthode.",
