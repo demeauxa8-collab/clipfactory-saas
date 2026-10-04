@@ -20,7 +20,7 @@ def latest(root):
 
 
 def export(root):
-    rows, costs = [], {}
+    rows, costs, accounting = [], {}, {}
     for method in ("A", "B"):
         run = latest(root / method)
         if run is None:
@@ -28,6 +28,28 @@ def export(root):
             continue
         ledger = load(run / "cost_ledger.json")
         costs[method] = ledger["charged_or_reserved_usd"]
+        accounting[method] = {
+            "provider_reported_usd": str(
+                sum(
+                    (
+                        Decimal(e["charged_or_reserved_usd"])
+                        for e in ledger["requests"]
+                        if e.get("accounting", "unspecified") == "provider_reported"
+                    ),
+                    Decimal(0),
+                )
+            ),
+            "other_charged_or_reserved_usd": str(
+                sum(
+                    (
+                        Decimal(e["charged_or_reserved_usd"])
+                        for e in ledger["requests"]
+                        if e.get("accounting", "unspecified") != "provider_reported"
+                    ),
+                    Decimal(0),
+                )
+            ),
+        }
         sources = (
             load(run / "report.json").get("sources", []) if (run / "report.json").exists() else []
         )
@@ -91,6 +113,11 @@ def export(root):
                     "duration_seconds": round(duration, 3),
                     "ending_words": " ".join(ending.split()[-18:]),
                     "closed_ending_automatic": closed,
+                    "native_judge_publishable": clip.get("judge", {}).get("publishable"),
+                    "native_judge_reasons": clip.get("judge", {}).get("reasons", []),
+                    "premium_qualified": clip.get("premium_qualified") if method == "B" else None,
+                    "diagnostic_only": bool(clip.get("diagnostic")),
+                    "delivery_note": clip.get("delivery_note", ""),
                     "direct_api_usd": str(direct) if direct is not None else "unattributed",
                     "allocated_api_usd": str(allocated),
                     "video": str(path.relative_to(root)),
@@ -105,6 +132,13 @@ def export(root):
         else Decimal(0)
     )
     total = sum((Decimal(v) for v in costs.values()), uncarried)
+    source_counts = {
+        m: {
+            source: sum(r["method"] == m and r["source_id"] == source for r in rows)
+            for source in {r["source_id"] for r in rows if r["method"] == m}
+        }
+        for m in ("A", "B")
+    }
     if rows:
         with (root / "CLIPS.csv").open("w", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=list(rows[0]))
@@ -113,9 +147,23 @@ def export(root):
     status = {
         "clips": rows,
         "costs_usd": costs,
+        "accounting": accounting,
         "total_charged_or_reserved_usd": str(total),
         "caps_usd": {"A": "8.00", "B": "7.00", "total": "15.00"},
-        "complete": all(sum(r["method"] == m for r in rows) == 6 for m in ("A", "B")),
+        "complete": (
+            source_counts["A"].keys() == source_counts["B"].keys()
+            and all(
+                len(source_counts[m]) == 2
+                and all(count == 3 for count in source_counts[m].values())
+                for m in ("A", "B")
+            )
+        ),
+        "human_rating": "pending",
+        "native_judge_publishable": {
+            m: sum(r["method"] == m and r["native_judge_publishable"] is True for r in rows)
+            for m in ("A", "B")
+        },
+        "B_premium_qualified": sum(r["premium_qualified"] is True for r in rows),
     }
     (root / "COMPARISON.json").write_text(json.dumps(status, ensure_ascii=False, indent=2))
     lines = [
@@ -131,18 +179,28 @@ def export(root):
         "A répartit ce coût entre les clips livrés. B isole les appels propres au candidat et "
         "répartit les frais communs et rejets. Ces allocations ne sont pas des factures par clip.",
         "Les fins sont évaluées automatiquement, sans validation humaine.",
+        "Les candidats de diagnostic restent signalés : leur livraison ne signifie pas "
+        "qu'ils passent les seuils de la méthode B.",
         "",
-        "| Méthode | Source | Clip | Durée | Coût attribué | Derniers mots |",
-        "|---|---|---:|---:|---:|---|",
+        f"Coûts A : {costs.get('A', '0')} $. B : {costs.get('B', '0')} $.",
+        f"Avis du juge natif : A {status['native_judge_publishable']['A']}/6 ; "
+        f"B {status['native_judge_publishable']['B']}/6. "
+        f"Seuils de livraison premium B : {status['B_premium_qualified']}/6.",
+        "",
+        "| Méthode | Source | Clip | Durée | Coût attribué | État | Derniers mots |",
+        "|---|---|---:|---:|---:|---|---|",
     ]
     lines.extend(
         f"| {r['method']} | {r['source_id']} | {r['clip']} | "
         f"{r['duration_seconds']:.2f} s | {Decimal(r['allocated_api_usd']):.4f} $ | "
+        f"{'À revoir — diagnostic' if r['diagnostic_only'] else 'Avis positif' if r['native_judge_publishable'] else 'Avis négatif'} | "  # noqa: E501
         f"{r['ending_words'].replace('|', '/')} |"
         for r in rows
     )
     if not status["complete"]:
         lines.extend(["", "**Expérience incomplète : aucun vainqueur établi.**"])
+    else:
+        lines.extend(["", "**12 médias livrés. Aucun vainqueur établi sans notation humaine.**"])
     (root / "COMPARISON.md").write_text("\n".join(lines) + "\n")
     print(json.dumps({"clips": len(rows), "cost_usd": str(total), "complete": status["complete"]}))
 

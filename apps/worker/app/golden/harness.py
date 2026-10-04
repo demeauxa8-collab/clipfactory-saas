@@ -326,7 +326,9 @@ def report(run, sources, budget, start, identity):
         "1,000 seeded "
         "same-duration random windows. Missing curves are N/A.",
         "OpenRouter cost uses response usage.cost including discarded answers and retries. "
-        "ASR uses returned duration at $0.006/min rounded up to seconds; Anthropic uses usage "
+        "OpenAI direct ASR uses returned duration at $0.006/min rounded up to seconds; "
+        "OpenRouter ASR uses usage.cost when available, retaining its reserve otherwise. "
+        "Anthropic uses usage "
         "tariffs. Ambiguous requests retain the pre-call upper bound. Provider invoices are "
         "not reconciled.",
         "Stage wall times are sampled every 0.5s; HTTP ledger contains precise request "

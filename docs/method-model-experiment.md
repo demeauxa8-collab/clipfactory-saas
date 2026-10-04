@@ -96,3 +96,8 @@ ending words and costs. A allocates each source's entire cost among delivered
 clips. B identifies candidate-specific requests and allocates shared/rejected work.
 Cost allocations are explicitly distinguished from direct per-clip API charges.
 Human judgment of the outputs remains necessary before claiming a better method.
+If fewer than six B clips pass its original gates, separately labelled diagnostic
+renders can be included for comparison inside the same cumulative budget. They
+remain unqualified; media delivery and editorial acceptance are separate counts.
+The report records native judge opinions, premium qualification, diagnostic flags,
+provider-reported charges and other retained accounting separately.
