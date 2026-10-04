@@ -6,6 +6,7 @@ import argparse
 import csv
 import json
 import shutil
+import tomllib
 from decimal import Decimal
 from pathlib import Path
 
@@ -28,6 +29,12 @@ def export(root):
             costs[method] = "0"
             continue
         ledger = load(run / "cost_ledger.json")
+        model_lock = run / "models.lock.toml"
+        judge_model = (
+            tomllib.loads(model_lock.read_text())["stages"]["clip_judge"]["model"]
+            if model_lock.exists()
+            else None
+        )
         costs[method] = ledger["charged_or_reserved_usd"]
         accounting[method] = {
             "provider_reported_usd": str(
@@ -116,6 +123,9 @@ def export(root):
                     "closed_ending_automatic": closed,
                     "native_judge_publishable": clip.get("judge", {}).get("publishable"),
                     "native_judge_reasons": clip.get("judge", {}).get("reasons", []),
+                    "native_judge_model": clip.get("judge", {}).get("model", judge_model),
+                    "native_judge_quality_0_100": clip.get("judge", {}).get("quality_0_100"),
+                    "native_judge_explanation": clip.get("judge", {}).get("explanation", ""),
                     "premium_qualified": clip.get("premium_qualified")
                     if method in {"B", "C"}
                     else None,
@@ -211,13 +221,15 @@ def export(root):
         if "C" in methods
         else "",
         "",
-        "| Méthode | Source | Clip | Durée | Coût attribué | État | Derniers mots |",
-        "|---|---|---:|---:|---:|---|---|",
+        "| Méthode | Source | Clip | Durée | Coût attribué | État | Juge / note | Derniers mots |",
+        "|---|---|---:|---:|---:|---|---|---|",
     ]
     lines.extend(
         f"| {r['method']} | {r['source_id']} | {r['clip']} | "
         f"{r['duration_seconds']:.2f} s | {Decimal(r['allocated_api_usd']):.4f} $ | "
         f"{'À revoir — diagnostic' if r['diagnostic_only'] else 'Avis positif' if r['native_judge_publishable'] else 'Avis négatif'} | "  # noqa: E501
+        f"{'Positif' if r['native_judge_publishable'] else 'Négatif'} / "
+        f"{r['native_judge_quality_0_100'] if r['native_judge_quality_0_100'] is not None else '—'} | "
         f"{r['ending_words'].replace('|', '/')} |"
         for r in rows
     )
