@@ -1,4 +1,4 @@
-"""Export A/B clips and costs privately. Never infer a winner from missing clips."""
+"""Export A/B/C clips and costs privately. Never infer a winner from missing clips."""
 
 from __future__ import annotations
 
@@ -21,7 +21,8 @@ def latest(root):
 
 def export(root):
     rows, costs, accounting = [], {}, {}
-    for method in ("A", "B"):
+    methods = ("A", "B", "C") if latest(root / "C") else ("A", "B")
+    for method in methods:
         run = latest(root / method)
         if run is None:
             costs[method] = "0"
@@ -53,7 +54,7 @@ def export(root):
         sources = (
             load(run / "report.json").get("sources", []) if (run / "report.json").exists() else []
         )
-        if method == "B":
+        if method in {"B", "C"}:
             sources = [load(f) for f in (run / "production/delivery").glob("*.json")]
         for source in sources:
             source_id = source.get("source_id") or source["source"]["id"]
@@ -63,7 +64,7 @@ def export(root):
             entries = [e for e in ledger["requests"] if e["source"] == source_id]
             total = sum((Decimal(e["charged_or_reserved_usd"]) for e in entries), Decimal(0))
             specific = {}
-            if method == "B":
+            if method in {"B", "C"}:
                 for clip in clips:
                     key = (
                         Path(clip["path"]).parent.name
@@ -115,7 +116,9 @@ def export(root):
                     "closed_ending_automatic": closed,
                     "native_judge_publishable": clip.get("judge", {}).get("publishable"),
                     "native_judge_reasons": clip.get("judge", {}).get("reasons", []),
-                    "premium_qualified": clip.get("premium_qualified") if method == "B" else None,
+                    "premium_qualified": clip.get("premium_qualified")
+                    if method in {"B", "C"}
+                    else None,
                     "diagnostic_only": bool(clip.get("diagnostic")),
                     "delivery_note": clip.get("delivery_note", ""),
                     "direct_api_usd": str(direct) if direct is not None else "unattributed",
@@ -137,7 +140,7 @@ def export(root):
             source: sum(r["method"] == m and r["source_id"] == source for r in rows)
             for source in {r["source_id"] for r in rows if r["method"] == m}
         }
-        for m in ("A", "B")
+        for m in methods
     }
     if rows:
         with (root / "CLIPS.csv").open("w", newline="") as f:
@@ -149,43 +152,63 @@ def export(root):
         "costs_usd": costs,
         "accounting": accounting,
         "total_charged_or_reserved_usd": str(total),
-        "caps_usd": {"A": "8.00", "B": "7.00", "total": "15.00"},
+        "caps_usd": {
+            "A": "8.00",
+            "B": "7.00",
+            **({"C": "2.00"} if "C" in methods else {}),
+            "total": "15.00",
+        },
         "complete": (
-            source_counts["A"].keys() == source_counts["B"].keys()
+            all(source_counts[m].keys() == source_counts["A"].keys() for m in methods)
             and all(
                 len(source_counts[m]) == 2
                 and all(count == 3 for count in source_counts[m].values())
-                for m in ("A", "B")
+                for m in methods
             )
         ),
         "human_rating": "pending",
         "native_judge_publishable": {
             m: sum(r["method"] == m and r["native_judge_publishable"] is True for r in rows)
-            for m in ("A", "B")
+            for m in methods
         },
-        "B_premium_qualified": sum(r["premium_qualified"] is True for r in rows),
+        "B_premium_qualified": sum(
+            r["method"] == "B" and r["premium_qualified"] is True for r in rows
+        ),
+        "editorial_qualified": {
+            m: sum(r["method"] == m and r["premium_qualified"] is True for r in rows)
+            for m in methods
+            if m != "A"
+        },
     }
     (root / "COMPARISON.json").write_text(json.dumps(status, ensure_ascii=False, indent=2))
     lines = [
-        "# Comparaison méthode A / B",
+        "# Comparaison méthode " + " / ".join(methods),
         "",
         f"Coût payé ou réservé : **{total:.6f} $** sur 15,00 $ maximum.",
         "",
         "A : pipeline du produit, budget 8 $. B : méthode éditoriale premium, budget 7 $.",
-        "Mêmes sources, transcriptions gelées et verrou de modèles. Transcription déjà existante "
+        "Mêmes sources et transcriptions gelées. A et B partagent le verrou premium ; "
+        "C, quand présent, utilise le verrou de production. Transcription déjà existante "
         "hors coût du run ; nouvelle transcription partagée imputée au plafond A.",
         "",
         "Coût attribué : tous les appels de la source, y compris essais et passages rejetés. "
-        "A répartit ce coût entre les clips livrés. B isole les appels propres au candidat et "
-        "répartit les frais communs et rejets. Ces allocations ne sont pas des factures par clip.",
+        "A répartit ce coût entre les clips livrés. B et C isolent les appels propres au candidat "
+        "et répartissent les frais communs et rejets. Ces allocations ne sont pas des factures par clip.",
         "Les fins sont évaluées automatiquement, sans validation humaine.",
         "Les candidats de diagnostic restent signalés : leur livraison ne signifie pas "
-        "qu'ils passent les seuils de la méthode B.",
+        "qu'ils passent les seuils éditoriaux de leur méthode.",
         "",
-        f"Coûts A : {costs.get('A', '0')} $. B : {costs.get('B', '0')} $.",
-        f"Avis du juge natif : A {status['native_judge_publishable']['A']}/6 ; "
-        f"B {status['native_judge_publishable']['B']}/6. "
-        f"Seuils de livraison premium B : {status['B_premium_qualified']}/6.",
+        "Coûts : " + "; ".join(f"{m} : {costs[m]} $" for m in methods) + ".",
+        "Avis du juge natif : "
+        + "; ".join(f"{m} {status['native_judge_publishable'][m]}/6" for m in methods)
+        + ".",
+        "Seuils éditoriaux : "
+        + "; ".join(f"{m} {count}/6" for m, count in status["editorial_qualified"].items())
+        + ".",
+        "C : méthode B avec Gemini 3.8 Flash, plafond 2 $. Son juge utilise également Flash, "
+        "alors que A/B utilisent Pro : les avis ne sont pas directement comparables."
+        if "C" in methods
+        else "",
         "",
         "| Méthode | Source | Clip | Durée | Coût attribué | État | Derniers mots |",
         "|---|---|---:|---:|---:|---|---|",
@@ -200,7 +223,9 @@ def export(root):
     if not status["complete"]:
         lines.extend(["", "**Expérience incomplète : aucun vainqueur établi.**"])
     else:
-        lines.extend(["", "**12 médias livrés. Aucun vainqueur établi sans notation humaine.**"])
+        lines.extend(
+            ["", f"**{len(rows)} médias livrés. Aucun vainqueur établi sans notation humaine.**"]
+        )
     (root / "COMPARISON.md").write_text("\n".join(lines) + "\n")
     print(json.dumps({"clips": len(rows), "cost_usd": str(total), "complete": status["complete"]}))
 

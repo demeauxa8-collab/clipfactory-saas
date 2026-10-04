@@ -50,3 +50,40 @@ def test_report_keeps_round_identity_and_allocates_all_source_cost(tmp_path):
         Decimal("0.20"),
     ]
     assert sum(Decimal(c["allocated_api_usd"]) for c in report["clips"]) == Decimal("1.00")
+
+    c_run = tmp_path / "C/runs/fixture"
+    c_delivery = c_run / "production/delivery"
+    c_delivery.mkdir(parents=True)
+    c_clips = [
+        {**clips[0], "premium_qualified": True},
+        {**clips[1], "premium_qualified": False, "diagnostic": True},
+    ]
+    (c_delivery / "fixture.json").write_text(
+        json.dumps({"source": {"id": "fixture"}, "clips": c_clips})
+    )
+    (c_run / "cost_ledger.json").write_text(
+        json.dumps(
+            {
+                "cap_usd": "2.00",
+                "charged_or_reserved_usd": "0.50",
+                "requests": [
+                    {
+                        "source": "fixture",
+                        "charged_or_reserved_usd": "0.50",
+                        "candidate_key": None,
+                        "accounting": "provider_reported",
+                    }
+                ],
+            }
+        )
+    )
+    module.export(tmp_path)
+    report = json.loads((tmp_path / "COMPARISON.json").read_text())
+    assert report["costs_usd"]["B"] == "1.00"
+    assert report["costs_usd"]["C"] == "0.50"
+    assert report["total_charged_or_reserved_usd"] == "1.50"
+    assert report["editorial_qualified"] == {"B": 0, "C": 1}
+    assert len([c for c in report["clips"] if c["method"] == "C"]) == 2
+    assert sum(
+        Decimal(c["allocated_api_usd"]) for c in report["clips"] if c["method"] == "C"
+    ) == Decimal("0.50")
