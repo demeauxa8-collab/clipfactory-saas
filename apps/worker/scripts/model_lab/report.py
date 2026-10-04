@@ -20,6 +20,11 @@ def latest(root):
     return candidates[-1].parent if candidates else None
 
 
+def judge_score(row):
+    score = row["native_judge_quality_0_100"]
+    return "—" if score is None else str(score)
+
+
 def export(root):
     rows, costs, accounting = [], {}, {}
     methods = ("A", "B", "C") if latest(root / "C") else ("A", "B")
@@ -229,7 +234,7 @@ def export(root):
         f"{r['duration_seconds']:.2f} s | {Decimal(r['allocated_api_usd']):.4f} $ | "
         f"{'À revoir — diagnostic' if r['diagnostic_only'] else 'Avis positif' if r['native_judge_publishable'] else 'Avis négatif'} | "  # noqa: E501
         f"{'Positif' if r['native_judge_publishable'] else 'Négatif'} / "
-        f"{r['native_judge_quality_0_100'] if r['native_judge_quality_0_100'] is not None else '—'} | "
+        f"{judge_score(r)} | "
         f"{r['ending_words'].replace('|', '/')} |"
         for r in rows
     )
