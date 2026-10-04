@@ -22,7 +22,29 @@ from app.golden.sources import read_sources, sha256, verify_source
 CODE = Path(__file__).resolve().parents[4]
 
 
+def ensure_media_tools():
+    missing = [tool for tool in ("ffmpeg", "ffprobe") if not shutil.which(tool)]
+    if missing:
+        raise ValueError("media tools missing from PATH before paid calls: " + ", ".join(missing))
+
+
+def stage_source(shared, target, meta, *, resume):
+    target.mkdir(parents=True, exist_ok=resume)
+    if resume and (target / "source.mp4").exists():
+        if (
+            sha256(target / "transcript.json") != meta["transcript_sha256"]
+            or sha256(target / "source.mp4") != meta["sha256"]
+        ):
+            raise ValueError("resumed source content changed")
+    else:
+        if any(target.iterdir()):
+            raise ValueError("incomplete source staging requires inspection")
+        os.link(shared / "source.mp4", target / "source.mp4")
+        shutil.copyfile(shared / "transcript.json", target / "transcript.json")
+
+
 async def execute(args):
+    ensure_media_tools()
     revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=CODE, text=True).strip()
     if subprocess.check_output(["git", "status", "--porcelain"], cwd=CODE, text=True).strip():
         raise ValueError("commit the method before paid requests")
@@ -122,12 +144,17 @@ async def execute(args):
         "git_sha": revision,
         "models_sha256": lock_hash,
         "source_config_sha256": sha256(args.config),
-        "method": "B",
+        "method": args.root.name if args.root.name in {"B", "C"} else "B",
         "transport": "OpenRouter only",
         "warm_shared_transcripts": True,
     }
     if args.resume_run:
-        identity = {**previous_identity, "recovery_git_sha": revision}
+        identity = {
+            **previous_identity,
+            "recovery_git_sha": revision,
+            "original_runner_method": previous_identity["method"],
+            "method": identity["method"],
+        }
     write_json(run / "identity.json", identity)
     shutil.copyfile(args.models_lock, run / "models.lock.toml")
     try:
@@ -138,16 +165,7 @@ async def execute(args):
                 if sha256(shared / "transcript.json") != meta.get("transcript_sha256"):
                     raise ValueError("shared transcript hash mismatch")
                 target = run / "production/sources" / source["id"]
-                target.mkdir(parents=True, exist_ok=bool(args.resume_run))
-                if args.resume_run:
-                    if (
-                        sha256(target / "transcript.json") != meta["transcript_sha256"]
-                        or sha256(target / "source.mp4") != meta["sha256"]
-                    ):
-                        raise ValueError("resumed source content changed")
-                else:
-                    os.link(shared / "source.mp4", target / "source.mp4")
-                    shutil.copyfile(shared / "transcript.json", target / "transcript.json")
+                stage_source(shared, target, meta, resume=bool(args.resume_run))
                 p.write(
                     target / "media.json",
                     {
