@@ -5,7 +5,7 @@ import httpx
 import pytest
 
 from app.golden.budget import Budget, BudgetExceeded, duration_context
-from app.golden.harness import PreloadJournal
+from app.golden.harness import PreloadJournal, frozen_transcript
 from app.golden.judge import parse_verdict
 from app.golden.metrics import audience_overlap, clip_metrics, normalize, union
 from app.golden.review import generate_review
@@ -27,6 +27,83 @@ def test_preload_verifies_immutable_media_and_caches_absent_curve(tmp_path):
     media.write_bytes(b"tampered")
     with pytest.raises(ValueError, match="hash mismatch"):
         verify_source(source)
+
+
+async def test_shared_transcript_preserves_words_and_restores_product_function(tmp_path):
+    from app.pipeline import runner
+
+    (tmp_path / "source.mp4").write_bytes(b"frozen media")
+    data = {
+        "text": "Une fin.",
+        "language": "fr",
+        "asr_backend": "openai",
+        "words": [
+            {"word": "Une", "start": 0.1, "end": 0.3},
+            {"word": "fin.", "start": 0.4, "end": 0.8},
+        ],
+        "sentences": [{"text": "Une fin.", "start": 0.1, "end": 0.8}],
+    }
+    (tmp_path / "transcript.json").write_text(json.dumps(data))
+    (tmp_path / "meta.json").write_text(
+        json.dumps(
+            {
+                "sha256": sha256(tmp_path / "source.mp4"),
+                "duration": 1,
+                "transcript_sha256": sha256(tmp_path / "transcript.json"),
+            }
+        )
+    )
+    original = runner.transcribe
+    with frozen_transcript(tmp_path, True):
+        transcript = await runner.transcribe(str(tmp_path / "source.mp4"))
+        assert [(w.word, w.start, w.end) for w in transcript.words] == [
+            ("Une", 0.1, 0.3),
+            ("fin.", 0.4, 0.8),
+        ]
+    assert runner.transcribe is original
+    (tmp_path / "transcript.json").write_text("{}")
+    with pytest.raises(ValueError, match="transcript hash mismatch"):
+        with frozen_transcript(tmp_path, True):
+            pass
+
+
+def test_experiment_cap_is_explicit_and_does_not_relax_default(tmp_path):
+    with pytest.raises(ValueError):
+        Budget("8", tmp_path / "default.json", {})
+    budget = Budget("8", tmp_path / "experiment.json", {}, max_cap="8")
+    budget.reserve("model", "text", Decimal("7.99"))
+    with pytest.raises(BudgetExceeded):
+        budget.reserve("model", "text", Decimal("0.02"))
+
+
+async def test_openrouter_stt_attempt_is_accounted_and_unknown_model_blocked(tmp_path):
+    sent = []
+
+    def handler(request):
+        sent.append(request)
+        return httpx.Response(200, json={"text": "Test", "duration": 120, "usage": {"cost": 0.002}})
+
+    budget = Budget(
+        "0.10", tmp_path / "ledger.json", {"openai/whisper-large-v3": {"minute": "0.00185"}}
+    )
+    token = duration_context.set(120)
+    try:
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            with budget.intercept():
+                await client.post(
+                    "https://openrouter.ai/api/v1/audio/transcriptions",
+                    data={"model": "openai/whisper-large-v3"},
+                    files={"file": ("test.mp3", b"audio", "audio/mpeg")},
+                )
+                with pytest.raises(BudgetExceeded, match="unpriced"):
+                    await client.post(
+                        "https://openrouter.ai/api/v1/audio/transcriptions",
+                        data={"model": "unknown"},
+                        files={"file": ("test.mp3", b"audio", "audio/mpeg")},
+                    )
+    finally:
+        duration_context.reset(token)
+    assert len(sent) == 1 and budget.committed == Decimal("0.002")
 
 
 def test_metrics_detect_inner_word_cut_and_suspended_segment():

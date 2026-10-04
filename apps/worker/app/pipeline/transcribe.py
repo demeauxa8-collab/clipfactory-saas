@@ -259,7 +259,9 @@ async def _transcribe_openai(audio_path: str, settings: object) -> Transcript:
                             language=getattr(resp, "language", None), backend="openai")
 
 
-async def _transcribe_openrouter(audio_path: str, settings: object) -> Transcript:
+async def _transcribe_openrouter(
+    audio_path: str, settings: object, *, language: str | None = None
+) -> Transcript:
     """OpenRouter STT: OpenAI-compatible multipart request and verbose_json reply."""
     url = settings.openrouter_base_url.rstrip("/") + "/audio/transcriptions"
     headers = {"Authorization": f"Bearer {settings.openrouter_api_key}"}
@@ -268,6 +270,8 @@ async def _transcribe_openrouter(audio_path: str, settings: object) -> Transcrip
         "response_format": "verbose_json",
         "timestamp_granularities[]": ["word", "segment"],
     }
+    if language:
+        data["language"] = language
     async with httpx.AsyncClient(timeout=httpx.Timeout(600.0, connect=20.0)) as client:
         with open(audio_path, "rb") as fh:
             resp = await client.post(

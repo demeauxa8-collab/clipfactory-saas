@@ -13,6 +13,7 @@ import subprocess
 import time
 import tomllib
 from collections import Counter, defaultdict
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
@@ -54,6 +55,44 @@ class PreloadJournal:
         if not isinstance(data, dict):
             data = {"points": data}
         write_json(destination / "heatmap.json", data)
+
+
+@contextmanager
+def frozen_transcript(source_directory, enabled):
+    """Supply a verified experimental input; selection/render code stays unchanged."""
+    if not enabled:
+        yield
+        return
+    from app.models import Transcript, TranscriptSentence, TranscriptWord
+    from app.pipeline import runner
+
+    metadata = verify_source(source_directory)
+    path = source_directory / "transcript.json"
+    if sha256(path) != metadata.get("transcript_sha256"):
+        raise ValueError("frozen transcript hash mismatch")
+    data = json.loads(path.read_text())
+    if not data.get("words") or any(
+        not 0 <= w["start"] <= w["end"] <= metadata["duration"] + 1 for w in data["words"]
+    ):
+        raise ValueError("invalid frozen transcript clock")
+    original = runner.transcribe
+
+    async def cached_transcribe(source_path, **kwargs):
+        if sha256(Path(source_path)) != metadata["sha256"]:
+            raise ValueError("frozen transcript media mismatch")
+        return Transcript(
+            text=data["text"],
+            language=data.get("language"),
+            asr_backend=data.get("asr_backend", "openai"),
+            words=[TranscriptWord(**w) for w in data["words"]],
+            sentences=[TranscriptSentence(**s) for s in data.get("sentences", [])],
+        )
+
+    runner.transcribe = cached_transcribe
+    try:
+        yield
+    finally:
+        runner.transcribe = original
 
 
 async def seed_source(pool, source, *, target=5):
@@ -197,13 +236,15 @@ def report(run, sources, budget, start, identity):
         "requested_clips": sum(s["requested_clips"] for s in sources),
         "metrics": rates,
         "durations_seconds": sorted(c["metrics"]["duration_seconds"] for c in clips),
-        "duration_summary_seconds": {
-            "min": min(c["metrics"]["duration_seconds"] for c in clips),
-            "median": statistics.median(c["metrics"]["duration_seconds"] for c in clips),
-            "max": max(c["metrics"]["duration_seconds"] for c in clips),
-        }
-        if clips
-        else None,
+        "duration_summary_seconds": (
+            {
+                "min": min(c["metrics"]["duration_seconds"] for c in clips),
+                "median": statistics.median(c["metrics"]["duration_seconds"] for c in clips),
+                "max": max(c["metrics"]["duration_seconds"] for c in clips),
+            }
+            if clips
+            else None
+        ),
         "black_seconds": sum(c["metrics"]["black_seconds"] for c in clips),
         "silence_seconds": sum(c["metrics"]["silence_seconds"] for c in clips),
         "heatmap_sources": sum(s["heatmap_available"] for s in sources),
@@ -285,7 +326,9 @@ def report(run, sources, budget, start, identity):
         "1,000 seeded "
         "same-duration random windows. Missing curves are N/A.",
         "OpenRouter cost uses response usage.cost including discarded answers and retries. "
-        "ASR uses returned duration at $0.006/min rounded up to seconds; Anthropic uses usage "
+        "OpenAI direct ASR uses returned duration at $0.006/min rounded up to seconds; "
+        "OpenRouter ASR uses usage.cost when available, retaining its reserve otherwise. "
+        "Anthropic uses usage "
         "tariffs. Ambiguous requests retain the pre-call upper bound. Provider invoices are "
         "not reconciled.",
         "Stage wall times are sampled every 0.5s; HTTP ledger contains precise request "
@@ -366,14 +409,15 @@ async def run_sources(args, dsn, run, budget, identity):
             get_settings.cache_clear()
             source_context.set(source["id"])
             duration_context.set(metadata["duration"])
-            jid = await seed_source(pool, source)
+            jid = await seed_source(pool, source, target=getattr(args, "target_clips", 5))
             done = asyncio.Event()
             watch = asyncio.create_task(observe_steps(pool, jid, done))
             source_start = time.monotonic()
             try:
-                await run_job(
-                    pool, jid, attempt_journal=PreloadJournal(source_directory, run / ".work")
-                )
+                with frozen_transcript(source_directory, getattr(args, "reuse_transcripts", False)):
+                    await run_job(
+                        pool, jid, attempt_journal=PreloadJournal(source_directory, run / ".work")
+                    )
             finally:
                 done.set()
                 steps = await watch
@@ -455,6 +499,9 @@ def execute(args):
         os.environ.pop(name, None)
     for name in ("OPENAI_API_KEY", "OPENROUTER_API_KEY", "ANTHROPIC_API_KEY"):
         os.environ[name] = credentials.get(name) or ""
+    openrouter_asr = getattr(args, "asr_backend", "openai") == "openrouter"
+    if openrouter_asr and not os.environ["OPENAI_API_KEY"]:
+        os.environ["OPENAI_API_KEY"] = "unused-offline"
     if not os.environ["OPENAI_API_KEY"] or not os.environ["OPENROUTER_API_KEY"]:
         raise ValueError("benchmark provider credentials missing")
     git_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
@@ -476,9 +523,16 @@ def execute(args):
         for m, p in document["models"].items()
         if "usd_per_mtok_input" in p
     }
+    prices.update(
+        {
+            m: {"minute": str(p["usd_per_minute"])}
+            for m, p in document["models"].items()
+            if "usd_per_minute" in p
+        }
+    )
     catalog = json.loads(args.catalog.read_text())
     for model in [v["model"] for v in document["stages"].values() if v["provider"] == "openrouter"]:
-        if model not in prices:  # per-minute STT models are not in the chat catalog
+        if "input" not in prices.get(model, {}):  # STT is not in the chat catalog
             continue
         actual = next(m["pricing"] for m in catalog["data"] if m["id"] == model)
         if Decimal(actual["prompt"]) > Decimal(prices[model]["input"]) or Decimal(
@@ -496,9 +550,12 @@ def execute(args):
         "pricing_catalog_sha256": sha256(args.catalog),
         "requirements_sha256": sha256(ROOT / "apps/worker/requirements.lock"),
         "runtime_versions": runtime,
+        "asr_backend": getattr(args, "asr_backend", "openai"),
+        "reused_transcripts": getattr(args, "reuse_transcripts", False),
+        "target_clips": getattr(args, "target_clips", 5),
     }
     prior = json.loads(args.prior_ledger.read_text())["requests"] if args.prior_ledger else []
-    budget = Budget(args.budget, run / "cost_ledger.json", prices, prior)
+    budget = Budget(args.budget, run / "cost_ledger.json", prices, prior, max_cap="8")
     with disposable_postgres(args.pg_bin) as dsn:
         os.environ.update(
             DATABASE_URL=dsn,
@@ -507,6 +564,7 @@ def execute(args):
             WORKER_TMP_DIR=str(run / ".work"),
             CLIP_JUDGE_ENABLED="false",
             ENV="dev",
+            ASR_BACKEND=getattr(args, "asr_backend", "openai"),
         )
         get_settings.cache_clear()
         with budget.intercept():
