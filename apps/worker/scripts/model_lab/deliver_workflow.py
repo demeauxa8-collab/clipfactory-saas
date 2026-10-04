@@ -5,13 +5,15 @@ from __future__ import annotations
 import asyncio
 import contextvars
 import copy
-import difflib
 import hashlib
 import json
+import shutil
 from pathlib import Path
 
 import premium_workflow as p
+from verbatim_alignment import align_verbatim as align_words
 
+from app.golden.budget import BudgetExceeded
 from app.pipeline import clip_render
 from app.pipeline.edl_captions import write_ass_for_edl
 
@@ -133,44 +135,7 @@ def make_srt(manifest):
 
 
 def align_verbatim(t, ids, text):
-    """Only one-for-one ASR lexical corrections. Original clock/word IDs stay fixed."""
-    result = copy.deepcopy(t)
-    tokens = []
-    for token in __import__("re").findall(r"\S+", text):
-        if not p.norm(token) and tokens:
-            tokens[-1] += token
-        else:
-            tokens.append(token)
-    old = [p.norm(t.words[i].word) for i in ids]
-    new = [p.norm(x) for x in tokens]
-    matcher = difflib.SequenceMatcher(None, old, new, autojunk=False)
-    changes = []
-    unresolved = []
-    for tag, a, b, c, d in matcher.get_opcodes():
-        if tag == "equal" or (tag == "replace" and b - a == d - c and b - a <= 8):
-            for left, right in zip(range(a, b), range(c, d), strict=True):
-                wid = ids[left]
-                newword = tokens[right]
-                if result.words[wid].word != newword:
-                    changes.append(
-                        {"word_id": wid, "before": result.words[wid].word, "after": newword}
-                    )
-                result.words[wid].word = newword
-        else:
-            unresolved.append(
-                {
-                    "operation": tag,
-                    "word_ids": ids[a:b],
-                    "original": [t.words[i].word for i in ids[a:b]],
-                    "second_asr": tokens[c:d],
-                }
-            )
-    return result, {
-        "ratio": matcher.ratio(),
-        "changes": changes,
-        "unresolved": unresolved,
-        "clock_changed": False,
-    }
+    return align_words(t, ids, text, p.norm)
 
 
 async def verify_audio(source, t, c, label):
@@ -291,7 +256,7 @@ async def export(source, items):
         src = Path(item["path"])
         dest = directory / f"{idx:02}-{p.slug(item['candidate']['title'])}.mp4"
         if not dest.exists():
-            p.shutil.copy2(src, dest)
+            shutil.copy2(src, dest)
         digest = hashlib.file_digest(dest.open("rb"), "sha256").hexdigest()
         if digest != item["sha256"]:
             raise ValueError("delivery digest mismatch")
@@ -354,7 +319,7 @@ async def export(source, items):
     return exported
 
 
-async def produce(source, model, max_rounds=3):
+async def produce(source, model, max_rounds=3, *, reuse_paid_candidates=False):
     directory = ROOT / "production/sources" / source["id"]
     status = directory / "delivery-status.json"
     t = p.load_t(directory / "transcript.json")
@@ -379,7 +344,19 @@ async def produce(source, model, max_rounds=3):
             },
             ensure_ascii=False,
         )
-        candidates = await p.selection(source, t, model, label, feedback)
+        validated = directory / f"selection-{label}.validated.json"
+        audit = directory / f"audit-{label}.json"
+        if reuse_paid_candidates and validated.exists() and audit.exists():
+            paid_audit = json.loads(audit.read_text())
+            if paid_audit["model"] != p.AUDIT:
+                raise ValueError("cached audit model mismatch")
+            reviews = {x["candidate_id"]: x for x in paid_audit["payload"]["reviews"]}
+            candidates = [
+                {**c, "audit": reviews.get(c["candidate_id"], {})}
+                for c in json.loads(validated.read_text())["candidates"]
+            ]
+        else:
+            candidates = await p.selection(source, t, model, label, feedback)
         for c in candidates:
             if len(selected) >= 3:
                 break
@@ -394,6 +371,8 @@ async def produce(source, model, max_rounds=3):
                     selected.append(item)
                     selected.sort(key=lambda x: x["judge"]["quality_0_100"], reverse=True)
                     await export(source, selected)
+            except BudgetExceeded:
+                raise
             except Exception as e:
                 history.append(
                     {

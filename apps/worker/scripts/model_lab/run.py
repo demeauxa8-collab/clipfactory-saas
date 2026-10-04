@@ -30,8 +30,23 @@ async def execute(args):
         raise ValueError("lab credentials file missing")
     document = tomllib.loads(args.models_lock.read_text())
     lock_hash = sha256(args.models_lock)
-    run = args.root / "runs" / (datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ") + "-" + revision[:10])
-    run.mkdir(parents=True, mode=0o700)
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    run = args.resume_run or args.root / "runs" / (stamp + "-" + revision[:10])
+    if args.resume_run:
+        previous_identity = json.loads((run / "identity.json").read_text())
+        if previous_identity["models_sha256"] != lock_hash or previous_identity[
+            "source_config_sha256"
+        ] != sha256(args.config):
+            raise ValueError("cannot resume with changed models or sources")
+        previous_ledger = json.loads((run / "cost_ledger.json").read_text())
+        if Decimal(previous_ledger["cap_usd"]) != Decimal(args.budget):
+            raise ValueError("resuming cannot change the original budget")
+        if any(e.get("bound_violation") for e in previous_ledger["requests"]):
+            raise BudgetExceeded("prior bound violation prohibits more requests")
+        shutil.copyfile(run / "cost_ledger.json", run / f"ledger-before-{stamp}.json")
+        shutil.copyfile(run / "report.json", run / f"report-before-{stamp}.json")
+    else:
+        run.mkdir(parents=True, mode=0o700)
     os.environ.update(
         MODEL_LAB_ROOT=str(run),
         MODEL_LAB_LOCK=str(args.models_lock.resolve()),
@@ -57,7 +72,13 @@ async def execute(args):
             for k, v in (("prompt", "input"), ("completion", "output"))
         ):
             raise ValueError("model catalog price exceeds frozen lock")
-    budget = Budget(args.budget, run / "cost_ledger.json", prices, max_cap="7")
+    budget = Budget(
+        args.budget,
+        run / (f"recovery-ledger-{stamp}.json" if args.resume_run else "cost_ledger.json"),
+        prices,
+        prior_entries=previous_ledger["requests"] if args.resume_run else None,
+        max_cap="7",
+    )
     original_call = p.call
 
     async def measured_call(*a, **kwargs):
@@ -105,6 +126,8 @@ async def execute(args):
         "transport": "OpenRouter only",
         "warm_shared_transcripts": True,
     }
+    if args.resume_run:
+        identity = {**previous_identity, "recovery_git_sha": revision}
     write_json(run / "identity.json", identity)
     shutil.copyfile(args.models_lock, run / "models.lock.toml")
     try:
@@ -115,9 +138,16 @@ async def execute(args):
                 if sha256(shared / "transcript.json") != meta.get("transcript_sha256"):
                     raise ValueError("shared transcript hash mismatch")
                 target = run / "production/sources" / source["id"]
-                target.mkdir(parents=True)
-                os.link(shared / "source.mp4", target / "source.mp4")
-                shutil.copyfile(shared / "transcript.json", target / "transcript.json")
+                target.mkdir(parents=True, exist_ok=bool(args.resume_run))
+                if args.resume_run:
+                    if (
+                        sha256(target / "transcript.json") != meta["transcript_sha256"]
+                        or sha256(target / "source.mp4") != meta["sha256"]
+                    ):
+                        raise ValueError("resumed source content changed")
+                else:
+                    os.link(shared / "source.mp4", target / "source.mp4")
+                    shutil.copyfile(shared / "transcript.json", target / "transcript.json")
                 p.write(
                     target / "media.json",
                     {
@@ -137,7 +167,12 @@ async def execute(args):
                 p.BRIEFS["podcast"] = json.dumps(source["campaign"], ensure_ascii=False)
                 source_context.set(source["id"])
                 try:
-                    clips = await delivery.produce(config, p.MODELS[0], max_rounds=2)
+                    clips = await delivery.produce(
+                        config,
+                        p.MODELS[0],
+                        max_rounds=3 if args.resume_run else 2,
+                        reuse_paid_candidates=bool(args.resume_run),
+                    )
                     results.append({"source_id": source["id"], "clips": clips})
                 except BudgetExceeded:
                     raise
@@ -150,6 +185,10 @@ async def execute(args):
                         }
                     )
     finally:
+        if args.resume_run:
+            temporary = run / "cost_ledger.resume.tmp"
+            shutil.copyfile(budget.path, temporary)
+            temporary.replace(run / "cost_ledger.json")
         write_json(
             run / "report.json",
             {
@@ -171,6 +210,9 @@ def main():
     parser.add_argument("--credentials-file", type=Path, required=True)
     parser.add_argument("--catalog", type=Path, required=True)
     parser.add_argument("--budget", default="7.00")
+    parser.add_argument(
+        "--resume-run", type=Path, help="Reuse paid candidates and cumulative ledger"
+    )
     asyncio.run(execute(parser.parse_args()))
 
 

@@ -3,6 +3,8 @@
 This lab is private and isolated. It never submits a production job, uses a production
 database, changes a service, or uploads sources or clips to GitHub. Use a separate
 OpenRouter lab key in an external credentials file, as described in `model-lab.md`.
+An explicitly authorized shared key can instead be supplied through that same file;
+this does not authorize editing production configuration or changing account limits.
 
 ## Frozen inputs and identities
 
@@ -62,6 +64,21 @@ PYTHONPATH=apps/worker apps/worker/.venv/bin/python apps/worker/scripts/model_la
 The gate can reject candidates; budget exhaustion or fewer than six qualified
 clips is an incomplete result, never a fabricated delivery. Existing historical
 clips and selection responses are not reused as outputs of this experiment.
+
+### Recovery without resetting spending
+
+`--resume-run /private/experiment/B/runs/<identity>` verifies the original model
+lock, source configuration, source media and transcripts. It carries every prior
+request into a new cumulative ledger under the original $7 cap, retains the previous
+report and ledger, and records the recovery revision separately from the paid run's
+original revision. Validated selection/audit responses from this experiment are
+reused without another selection request. A third selection round is allowed only
+if cached candidates do not produce three qualified clips and the guard permits it.
+
+French elisions such as `J'ai` and the ASR's separate `J` / `'ai` tokens are compared
+as equivalent lexical atoms. Word IDs, timestamps, the 0.84 agreement threshold,
+unresolved disagreement gate and delivery quality thresholds are retained. A translated
+transcript of English speech still fails agreement; it is not silently admitted.
 
 ## Budget and reporting
 
